@@ -1,0 +1,1 @@
+By default, Project Manager icon size is 32x32, but it can be permanently changed by extracting one of the available zip files here or running svg2png.bat (requires Inkscape-program) to generate custom side length icons.

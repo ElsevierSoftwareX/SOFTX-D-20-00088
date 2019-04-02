@@ -1,0 +1,17 @@
+<svg width="10mm" height="10mm" version="1.1" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+ <title>TDLinearTransformation</title>
+ <defs>
+  <marker id="SquareS" overflow="visible" orient="auto">
+   <path transform="scale(.2)" d="m-5-5v10h10v-10h-10z" fill="#f00" fill-rule="evenodd" stroke="#f00" stroke-width="1pt"/>
+  </marker>
+  <marker id="TriangleOutM" overflow="visible" orient="auto">
+   <path transform="scale(.4)" d="m5.77 0-8.65 5v-10l8.65 5z" fill="#f00" fill-rule="evenodd" stroke="#f00" stroke-width="1pt"/>
+  </marker>
+ </defs>
+ <g transform="translate(-1.9076865,-288.10791)">
+  <rect x="1.9076865" y="288.10791" width="10" height="10" fill="#fff"/>
+  <text x="0.8504464" y="292.29892" fill="#000000" font-family="sans-serif" font-size="10.58333302px" letter-spacing="0px" stroke-width=".26458332" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="0.8504464" y="301.66269" stroke-width=".26458332"/></text>
+  <path d="m2.3395148 297.10791h7.9999992" fill="#f00" marker-end="url(#TriangleOutM)" marker-mid="url(#SquareS)" stroke="#f00" stroke-linejoin="round" stroke-width=".40000001"/>
+  <text x="1.2826027" y="294.91653" fill="#000000" font-family="sans-serif" font-size="10.58333302px" letter-spacing="0px" stroke-width=".26458332" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="1.2826027" y="294.91653" fill="#00ffff" font-family="'Courier New'" font-size="8.81944466px" font-weight="bold" stroke="#000000" stroke-width=".26458332"><tspan fill="#00ffff" font-family="'Source Code Pro'" font-size="8.81944561px" font-weight="bold">LT</tspan></tspan></text>
+ </g>
+</svg>
