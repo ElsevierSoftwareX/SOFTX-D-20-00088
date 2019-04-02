@@ -73,6 +73,9 @@ C_wip.add_Data(new_TDBitmap, new_TDBitmap_TSpace); % Make new objects visible in
 % Create new Image<TDGraph with random content
 new_TDGraph = wid.new_Graph(C_wit); % Create empty Image<TDGraph
 % new_TDGraph.SubType = 'Image'; % Set its ImageIndex
+% SubTypes are listed in @wid\wid_SubType_set.m and are as follows:
+% 'Image', 'Line', 'Point', 'Array', 'Histogram', 'Time' and 'Mask'
+
 new_TDGraph.Name = 'Customized Image<TDGraph';
 
 % Create customized Data
@@ -100,7 +103,6 @@ new_TDGraph_TSpectral.Data = new_TDGraph_TSpectral_Data; % Save all changes once
 % Read TDLUTTransformation details in 'README on WIT-tag formatting.txt'.
 
 % Interpret Graph-variable (nm) as (rel. 1/cm)
-% TODO: Fix NaN Version when ExcitationWavelength (not ExcitationWaveLength) is set to NaN in new!
 new_TDGraph_ISpectral = wid.new_Interpretation_Spectral(C_wit);
 new_TDGraph_ISpectral.Data.TDSpectralInterpretation.ExcitationWaveLength = 532; % Green laser
 new_TDGraph_ISpectral.Data.TDInterpretation.UnitIndex = 3; % (rel. 1/cm)
