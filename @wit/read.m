@@ -28,8 +28,7 @@ function obj = read(File, N_bytes_max),
     C = onCleanup(@() fclose(fid)); % https://blogs.mathworks.com/loren/2008/03/10/keeping-things-tidy/
     
     % From relative path to full path
-    S = dir(File);
-    File = fullfile(S.folder, S.name);
+    File = which(File);
     
     % Read the Tag(s)
     obj = wit();
