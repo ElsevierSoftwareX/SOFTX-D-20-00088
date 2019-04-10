@@ -27,8 +27,9 @@ function obj = read(File, N_bytes_max),
     % Close the file ONLY WHEN out of the function scope
     C = onCleanup(@() fclose(fid)); % https://blogs.mathworks.com/loren/2008/03/10/keeping-things-tidy/
     
-    % From relative path to full path
-    File = which(File);
+    % Try to get full path from relative path.
+    File_full = which(File); % This might fail for network addresses
+    if ~isempty(File_full), File = File_full; end % Update only if not failed
     
     % Read the Tag(s)
     obj = wit();
