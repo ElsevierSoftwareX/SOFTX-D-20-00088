@@ -105,7 +105,7 @@ function [h_label, h_label_1, h_edit_1, h_label_2, h_edit_2, h_label_3, h_edit_3
                 % Also, add a circle as position marker on top of the view
                 CircleObject = findobj(Ax, 'Tag', 'circle_by_ui_sidebar_for_cursor');
                 if isempty(CircleObject), % Create new if needed
-                    CircleObject = rectangle(Ax, 'Position',[round_X-1 round_Y-1 2 2],'Curvature', [1 1], 'EdgeColor', 'white', 'LineWidth', 1);
+                    CircleObject = rectangle('Parent', Ax, 'Position', [round_X-1 round_Y-1 2 2], 'Curvature', [1 1], 'EdgeColor', 'white', 'LineWidth', 1);
                     set(CircleObject, 'Tag', 'circle_by_ui_sidebar_for_cursor');
                 else, set(CircleObject, 'Position', [round_X-1 round_Y-1 2 2]); end
             else, set([h_label_3 h_label_4 h_edit_3 h_edit_4], 'Visible', 'off'); end
