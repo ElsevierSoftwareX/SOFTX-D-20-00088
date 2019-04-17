@@ -15,6 +15,10 @@ function [Graph, Data, W, D] = spectral_stitch_helper(Graphs_nm, Datas, isdebug)
     % Test if '-debug' was given
     if nargin < 3, isdebug = false; end % By default, hide debug plots
     
+    % Cellify
+    if ~iscell(Graphs_nm), Graphs_nm = {Graphs_nm}; end
+    if ~iscell(Datas), Datas = {Datas}; end
+    
     N_TDGraph = numel(Datas); % Number of TDGraph
     if N_TDGraph == 0 || numel(Graphs_nm) ~= N_TDGraph, error('No input or inconsistent input!'); end % Test if TDGraphs OR ABORT
     
@@ -29,6 +33,7 @@ function [Graph, Data, W, D] = spectral_stitch_helper(Graphs_nm, Datas, isdebug)
     if any(delta_size(:)), error('Inconsistent Data dimension sizes! Only 3rd dimension can vary in size.'); end
     [SizeX, SizeY, ~, SizeZ] = size(Datas{1});
     SizeXYZ = SizeX.*SizeY.*SizeZ;
+    ind_debug = randi(SizeXYZ); % Choose a random index for debug plotting
     
     % Store Graphs (in nm), Weights, min/max of Graphs and indices
     Graphs_nm = reshape(Graphs_nm, [], 1);
@@ -36,6 +41,8 @@ function [Graph, Data, W, D] = spectral_stitch_helper(Graphs_nm, Datas, isdebug)
     indices = nan(N_TDGraph, 2);
     Weights = cell(N_TDGraph, 1);
     for ii = 1:N_TDGraph,
+        Datas{ii} = reshape(permute(Datas{ii}, [3 1 2 4]), [], SizeXYZ); % Permute and collapse to 2-D matrix
+        Graphs_nm{ii} = reshape(Graphs_nm{ii}, [], 1); % Force to column vector
         Graph_nm_minmax(ii,:) = [min(Graphs_nm{ii}) max(Graphs_nm{ii})]; % Min, max
         indices(ii,:) = ii;
         % Preallocate Weights
@@ -108,8 +115,8 @@ function [Graph, Data, W, D] = spectral_stitch_helper(Graphs_nm, Datas, isdebug)
             bw_skip(ii,jj) = true;
             bw_skip(jj,ii) = true; % Due to symmetry!
             if isdebug,
-                figure(1); subplot(2,1,1); plot(x_ii, w_ii_on_jj, x_jj, w_jj_on_ii); title(sprintf('Weights: (%d vs. %d)', ii, jj));
-                subplot(2,1,2); plot(x_ii, reshape(Datas{ii}, [], 1), x_jj, reshape(Datas{jj}, [], 1));  title(sprintf('Datas: (%d vs. %d)', ii, jj));
+                figure(1); subplot(2,1,1); plot(x_ii, w_ii_on_jj, 'r', x_jj, w_jj_on_ii, 'g'); title(sprintf('Weights @ %d/%d: (%d vs. %d)', ind_debug, SizeXYZ, ii, jj));
+                subplot(2,1,2); plot(x_ii, Datas{ii}(:,ind_debug), 'r', x_jj, Datas{jj}(:,ind_debug), 'g'); title(sprintf('Datas @ %d/%d: (%d vs. %d)', ind_debug, SizeXYZ, ii, jj));
                 java.lang.Thread.sleep(10000./sum(bw_overlap(:))); % Aim for total ~10 sec
             end
         end
@@ -148,7 +155,7 @@ function [Graph, Data, W, D] = spectral_stitch_helper(Graphs_nm, Datas, isdebug)
         % Interpolate datas
         Data_ii_bw = zeros(sum(bw), N_ii, SizeXYZ);
         for jj = 1:N_ii,
-            Data_ii_bw(:,jj,:) = interp1(Graphs_nm_ii{jj}, permute(double(Datas_ii{jj}), [3 1 2 4]), Graph(bw), 'linear');
+            Data_ii_bw(:,jj,:) = interp1(Graphs_nm_ii{jj}, double(Datas_ii{jj}), Graph(bw), 'linear');
         end
         if isdebug || nargout > 2, D(bw,bw_ii,:) = Data_ii_bw; end % Store only if requested
         
@@ -158,18 +165,18 @@ function [Graph, Data, W, D] = spectral_stitch_helper(Graphs_nm, Datas, isdebug)
     
     % For debugging
     if isdebug,
-        figure(2); clf; plot(Graph, bsxfun(@times, D(:,:,1), W), '.'); % Weighted interpolated datas
-        hold on; plot(Graph, Data(:,1), 'k'); % Plot stitching result
-        title('Stitched Data (black) vs. Weighted Datas');
+        figure(2); clf; plot(Graph, bsxfun(@times, D(:,:,ind_debug), W), '.'); % Weighted interpolated datas
+        hold on; plot(Graph, Data(:,ind_debug), 'k'); % Plot stitching result
+        title(sprintf('Stitched Data (black) @ %d/%d vs. Weighted Datas @ %d/%d', ind_debug, SizeXYZ, ind_debug, SizeXYZ));
 
         % Plot interpolated datas
-        figure(3); clf; plot(Graph, D(:,:,1)); title('Datas');
+        figure(3); clf; plot(Graph, D(:,:,ind_debug)); title(sprintf('Datas @ %d/%d', ind_debug, SizeXYZ));
 
         % Plot normalized weights
         figure(4); clf; plot(Graph, W); title('Normalized weights');
     end
     
-    % Reshape
+    % Reshape and permute to original
     Data = reshape(Data, numel(Graph), SizeX, SizeY, SizeZ);
     Data = ipermute(Data, [3 1 2 4]);
 end
