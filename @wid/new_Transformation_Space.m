@@ -15,12 +15,12 @@ function obj = new_Transformation_Space(C_wit)
             wit('Scale', double(eye(3))) ...
             wit('Rotation', double(eye(3))) ...
             ]) ...
-        wit('LineInformationValid', false) ... % Unimplemented
-        wit('LineStart_D', double([0 0 0])) ... % Unimplemented
-        wit('LineStart', single([0 0 0])) ... % Unimplemented
-        wit('LineStop_D', double([0 0 0])) ... % Unimplemented
-        wit('LineStop', single([0 0 0])) ... % Unimplemented
-        wit('NumberOfLinePoints', int32(1)) ... % Unimplemented
+        wit('LineInformationValid', true) ...
+        wit('LineStart_D', double([0 0 0])) ... % 1st point == WorldOrigin<ViewPort3D
+        wit('LineStart', single([0 0 0])) ... % 1st point
+        wit('LineStop_D', double([1 1 1])) ... % N+1'th point
+        wit('LineStop', single([1 1 1])) ... % N+1'th point
+        wit('NumberOfLinePoints', int32(1)) ... % N points
         ]);
     
     Tag_DataClassName = wit('DataClassName 0', 'TDSpaceTransformation');

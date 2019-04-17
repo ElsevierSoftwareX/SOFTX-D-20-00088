@@ -179,7 +179,7 @@ Graph_Raman = C.interpret_Graph('(rel. 1/cm)'); % Convert the INTERNAL input == 
 
 % MANUAL: Same as above but behind the scenes revealed
 [GraphUnit_meV_2, Graph_meV_2] = ...
-    wip.interpret('Spectral', '(meV)', '(nm)', Graph_nm); % Direct conversion from meV to nm
+    wip.interpret('Spectral', '(meV)', '(nm)', Graph_nm); % Direct conversion from nm to meV
 [GraphUnit_Raman_2, Graph_Raman_2] = ...
     wip.interpret(C_Info.GraphInterpretation, '(rel. 1/cm)', C_Info.GraphUnit, C_Info.Graph); % More generic than previous line, assuming that C_Info.GraphInterpretation exists (as it usually does for Graph-axis).
 %-------------------------------------------------------------------------%

@@ -51,13 +51,13 @@ function [Data_range, Graph_range, Data_range_bg, range] = reduce_Graph_with_bg_
     
     % Calculate lower background averaging
     [Data_start, Graph_start] = quick_indexing(idx_lower-bg_avg_lower, idx_lower-1);
-    Data_mean_start = nanmean_without_toolbox(Data_start, 3);
-    Graph_mean_start = nanmean_without_toolbox(Graph_start, 3);
+    Data_mean_start = mynanmean(Data_start, 3);
+    Graph_mean_start = mynanmean(Graph_start, 3);
     
     % Calculate upper background averaging
     [Data_end, Graph_end] = quick_indexing(idx_upper+1, idx_upper+bg_avg_upper);
-    Data_mean_end = nanmean_without_toolbox(Data_end, 3);
-    Graph_mean_end = nanmean_without_toolbox(Graph_end, 3);
+    Data_mean_end = mynanmean(Data_end, 3);
+    Graph_mean_end = mynanmean(Graph_end, 3);
     
     % If no lower background averaging
     Graph_mean_start(isnan(Graph_mean_start)) = Graph_mean_end(isnan(Graph_mean_start));
@@ -83,12 +83,6 @@ function [Data_range, Graph_range, Data_range_bg, range] = reduce_Graph_with_bg_
     % Reshape Graph_range to be like Graph if they are vectors
     if ~isempty(S_Graph_dim),
         Graph_range = permute(Graph_range(:), [2:S_Graph_dim 1:1+min(1,S_Graph_dim==1)]);
-    end
-    
-    function [y] = nanmean_without_toolbox(x, dim),
-        bw_nan = isnan(x);
-        x(bw_nan) = 0;
-        y = sum(x, dim)./sum(~bw_nan, dim);
     end
     
     % LOOP VERSION: SIMPLEST, LOWEST-memory and FASTEST for N-D input!

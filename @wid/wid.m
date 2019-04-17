@@ -54,7 +54,7 @@ classdef wid < handle, % Since R2008a
         Tag = struct.empty; % Either empty OR contains all the fields defined in wid-constructor
     end
     
-    properties (SetAccess = {?wip}) % Limit SetAccess to wip-class (not supported by R2010b)
+    properties
         Project = wip.empty;
     end
     
@@ -293,6 +293,9 @@ classdef wid < handle, % Since R2008a
         % Spatial filter object Data
         [obj, Average] = spatial_average(obj);
         
+        % Spectral stitching
+        [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin); % Add '-debug' as input to see debug plots
+        
         % Masking tools
         [obj, Data_NaN_masked] = image_mask(obj, varargin);
         [new_obj, image_mask] = image_mask_editor(obj, image_mask);
@@ -343,6 +346,7 @@ classdef wid < handle, % Since R2008a
         
         %% OTHER PUBLIC METHODS
         [Data_range, Graph_range, Data_range_bg, range] = reduce_Graph_with_bg_helper(Data, Graph, range, bg_avg_lower, bg_avg_upper);
+        [Graph, Data, W, D] = spectral_stitch_helper(Graphs_nm, Datas, isdebug);
     end
     
     %% PRIVATE METHODS
