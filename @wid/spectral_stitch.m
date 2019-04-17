@@ -11,8 +11,11 @@
 % WARNING! The related instrumental errors, if NOT corrected for, can lead
 % to UNPHYSICAL stitching result in the overlapping regions, even if their
 % apparent stitching result looks smooth!
-function [new_obj, Graph, Data, W, D] = spectral_stitch(varargin)
+function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin)
     new_obj = wid.Empty;
+    
+    % Add obj(s) as varargin
+    varargin = [{obj}; varargin(:)];
     
     % Test if '-debug' was given
     bw_char = cellfun(@ischar, varargin);
@@ -40,7 +43,7 @@ function [new_obj, Graph, Data, W, D] = spectral_stitch(varargin)
     end
     
     % Call a helper function
-    [Graph, Data, W, D] = spectral_stitch_helper(Graphs_nm, Datas, isdebug);
+    [Graph, Data, W, D] = wid.spectral_stitch_helper(Graphs_nm, Datas, isdebug);
     
     % Create new object if permitted
     obj = C_wid(1);
