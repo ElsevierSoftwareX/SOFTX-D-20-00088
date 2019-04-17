@@ -54,7 +54,7 @@ classdef wid < handle, % Since R2008a
         Tag = struct.empty; % Either empty OR contains all the fields defined in wid-constructor
     end
     
-    properties (SetAccess = {?wip}) % Limit SetAccess to wip-class (not supported by R2010b)
+    properties
         Project = wip.empty;
     end
     
