@@ -13,8 +13,10 @@ function strs = get_valid_and_unique_names(strs, prefix)
     if nargin > 1, % Always add prefix if specified
         strs = regexprep(strs, '^(.*)$', sprintf('%s$1', prefix));
     end
-    strs = matlab.lang.makeValidName(strs); % Truncates to namelengthmax
+    strs = get_valid_names(strs); % Truncates to namelengthmax
+%     strs = matlab.lang.makeValidName(strs); % Truncates to namelengthmax
     if iscell(strs), % Test uniqueness only if multiple strings was given
-        strs = matlab.lang.makeUniqueStrings(strs, true(size(strs)), namelengthmax);
+        strs = get_unique_names(strs);
+%         strs = matlab.lang.makeUniqueStrings(strs, true(size(strs)), namelengthmax);
     end
 end

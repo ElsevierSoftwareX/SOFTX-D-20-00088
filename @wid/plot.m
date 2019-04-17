@@ -22,6 +22,12 @@ function plot(obj, varargin)
     h_sub = []; % Handle to line-objects
     isBusy = false; % Was implemented to avoid replotting while busy
     
+    % Avoid clipboard asyncronous bug
+    isCopyingQueue = false; % Status of copying queue
+    isCopyingBusy = false; % Status of copying
+    srcCopyingQueue = [];
+    evtCopyingQueue = [];
+    
     ind_extra_begin = find(strncmp(varargin, '-', 1));
     ind_extra_end = [ind_extra_begin(2:end)-1 numel(varargin)];
     showSidebar = ~any(strcmpi(varargin(ind_extra_begin), '-nosidebar')); % By default, show sidebar
@@ -221,38 +227,51 @@ function plot(obj, varargin)
     
     % Added feature on 8th November 2017
     function [] = uitable_selection_to_clipboard(src, evt),
-        Data = get(src, 'Data'); % Backward compatible
-        strs = repmat({''}, S_Data); % Create empty table
-        inds = sub2ind(size(strs), evt.Indices(:,1), evt.Indices(:,2)); % Get indices
-        strs(inds) = Data(inds); % Copy data based on the indices
-        strs = strs(unique(evt.Indices(:,1)),:); % Keep only fully or partially selected rows
-        strs = strs(:,unique(evt.Indices(:,2))); % Keep only fully or partially selected columns
-%         strs = strs(any(~cellfun(@isempty, strs),2),:); % Keep only fully or partially non-empty rows
-%         strs = strs(:,any(~cellfun(@isempty, strs),1)); % Keep only fully or partially non-empty columns
-        if isempty(strs), return; end
-        % Fixed-width representation of the data
-        lens = cellfun(@numel, strs);
-        lens_max = max(max(lens, [], 1), 1);
-        str = repmat(' ', sum(lens_max)+size(strs, 2), size(strs, 1));
-        str(end,:) = char(10); % \n
-        for jj = 1:size(strs, 1),
-            for kk = 1:size(strs, 2),
-                if isempty(strs{jj, kk}), continue; end
-                str((1:lens(jj,kk))+kk-1+sum(lens_max(1:(kk-1))),jj) = strs{jj, kk};
+        if ~isCopyingBusy,
+            isCopyingBusy = true;
+            Data = get(src, 'Data'); % Backward compatible
+            strs = repmat({''}, S_Data); % Create empty table
+            inds = sub2ind(size(strs), evt.Indices(:,1), evt.Indices(:,2)); % Get indices
+            strs(inds) = Data(inds); % Copy data based on the indices
+            strs = strs(unique(evt.Indices(:,1)),:); % Keep only fully or partially selected rows
+            strs = strs(:,unique(evt.Indices(:,2))); % Keep only fully or partially selected columns
+%             strs = strs(any(~cellfun(@isempty, strs),2),:); % Keep only fully or partially non-empty rows
+%             strs = strs(:,any(~cellfun(@isempty, strs),1)); % Keep only fully or partially non-empty columns
+            if isempty(strs), return; end
+            % Fixed-width representation of the data
+            lens = cellfun(@numel, strs);
+            lens_max = max(max(lens, [], 1), 1);
+            str = repmat(' ', sum(lens_max)+size(strs, 2), size(strs, 1));
+            str(end,:) = char(10); % \n
+            for jj = 1:size(strs, 1),
+                for kk = 1:size(strs, 2),
+                    if isempty(strs{jj, kk}), continue; end
+                    str((1:lens(jj,kk))+kk-1+sum(lens_max(1:(kk-1))),jj) = strs{jj, kk};
+                end
             end
-        end
-        str = str(:)';
-        % \t as column-separator and \n as row-separator
-%         str = '';
-%         for jj = 1:size(strs, 1),
-%             for kk = 1:size(strs, 2),
-%                 if kk == 1,
-%                     if jj == 1, str = strs{jj, kk};
-%                     else, str = sprintf('%s\n%s', str, strs{jj, kk}); end
-%                 else, str = sprintf('%s\t%s', str, strs{jj, kk}); end
+            str = str(:)';
+            % \t as column-separator and \n as row-separator
+%             str = '';
+%             for jj = 1:size(strs, 1),
+%                 for kk = 1:size(strs, 2),
+%                     if kk == 1,
+%                         if jj == 1, str = strs{jj, kk};
+%                         else, str = sprintf('%s\n%s', str, strs{jj, kk}); end
+%                     else, str = sprintf('%s\t%s', str, strs{jj, kk}); end
+%                 end
 %             end
-%         end
-        clipboard('copy', str);
+            clipboard('copy', str); % This line can cause error if called too often!
+            pause(0.5); % And sleep for 500 ms. Strangely works better than java.lang.Thread.sleep(500);
+            isCopyingBusy = false;
+            if isCopyingQueue, % Release copying queue
+                isCopyingQueue = false;
+                uitable_selection_to_clipboard(srcCopyingQueue, evtCopyingQueue),
+            end
+        else,
+            isCopyingQueue = true;
+            srcCopyingQueue = src;
+            evtCopyingQueue = evt;
+        end
     end
     
     % TDBitmap & TDGraph & TDImage
@@ -267,16 +286,14 @@ function plot(obj, varargin)
     function [] = updateGraphVolume(filter_range),
         set(0, 'CurrentFigure', Fig);
         Data_range = wid.reduce_Graph_with_bg_helper(Data, Info.Graph, filter_range);
-        Data_range(isnan(Data_range)) = 0; % Set NaNs to zero to avoid usage of nansum (requires: Statistics and Machine Learning Toolbox)
-        data_plot_Volume(sum(Data_range, 3));
+        data_plot_Volume(mynansum(Data_range, 3));
     end
     % Update Graph Image
     function [] = updateGraphImage(filter_range),
         set(0, 'CurrentFigure', Fig);
         Data_range = wid.reduce_Graph_with_bg_helper(Data, Info.Graph, filter_range);
         bw_isnan_3rd_dim = all(isnan(Data_range), 3); % Test if all NaN in the same location
-        Data_range(isnan(Data_range)) = 0; % Set NaNs to zero to avoid usage of nansum (requires: Statistics and Machine Learning Toolbox)
-        sum_3rd_dim = sum(Data_range, 3);
+        sum_3rd_dim = mynansum(Data_range, 3);
         sum_3rd_dim(bw_isnan_3rd_dim) = NaN; % Restore NaN if all NaN in the same location
         plot_Image(sum_3rd_dim, Info.DataUnit, Info.XUnit, Info.XLength, Info.YLength);
     end

@@ -5,5 +5,6 @@
 this_script = [mfilename('fullpath') '.m'];
 [root, ~, ~] = fileparts(this_script);
 toolbox_path = root; % This if in the same folder as wit_io
-addpath(genpath(toolbox_path)); % Add all subfolder dependencies!
+toolbox_paths_wo_git = regexprep(genpath(toolbox_path), '[^;]*(?<=\.git)[^;]*;', ''); % Exclude all .git folders from addpath
+addpath(toolbox_paths_wo_git); % Add all subfolder dependencies!
 savepath; % Permanently save the dependencies

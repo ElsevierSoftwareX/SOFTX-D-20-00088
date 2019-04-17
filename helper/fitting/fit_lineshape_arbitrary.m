@@ -71,10 +71,19 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     % contain NaN values.
     
     % IDEAS:
-    % Allow '-fitOne2Area' which asks for a SP x SD matrix to set which
+    % * Allow '-fitOne2Area' which asks for a SP x SD matrix to set which
     % spatial areas fit one parameter per area. Each area are marked with
     % an integer. Uses sparse-functionality to reduce Jr2 and Hr2 problem
     % spaces by summing. (23.8.2018)
+    % * Consider implementing '-groups', what would generalize '-locks'
+    % feature to the specified labelled or indexed regions. This would be
+    % particularly useful if dataset is known to have a single shared
+    % parameter in such regions. (20.9.2018)
+    % * Consider implementing Semi-Implicit Root (SIR) solver, what is
+    % claimed to possess superior global convergence properties over GN and
+    % NR, or even LMA [1]. (3.4.2019)
+    % [1] J. Scheffel and K. Lindvall (2018), 'SIR - An efficient solver
+    % for systems of equation', https://doi.org/10.1016/j.softx.2018.01.003
     
     if nargin < 5, dim = 3; end % By default, operate 3rd or spectral dimension
     T_begin = now.*86400; % [s]
@@ -216,7 +225,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
         r(:,bw) = weights(:,bw).*(Y(:,bw)-Y_fit(:,bw)); % With linear weight contribution
 
         % Bookkeeping
-        SSres(ii+1,bw) = nansum(r(:,bw).^2, 1); % Sum squares of residuals
+        SSres(ii+1,bw) = mynansum(r(:,bw).^2, 1); % Sum squares of residuals
         R2(ii+1,bw) = 1-SSres(ii+1,bw)./SStot(:,bw);
         N_iterations(:,bw) = ii;
         
@@ -262,12 +271,12 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
                 % Update converged
                 bw_converged(:,bw) = ...
                     bw_dP_all_zero(:,bw) | ... % Converged if all derivatives are zero
-                    repmat(abs(nansum(SSres(ii+1,bw)-SSres(ii,bw),2)) <= max(tol_rel*abs(nansum(SSres(ii+1,bw),2)), tol_abs), [1 SD]); % Converged if within absolute/relative tolerances
+                    repmat(abs(mynansum(SSres(ii+1,bw)-SSres(ii,bw),2)) <= max(tol_rel*abs(mynansum(SSres(ii+1,bw),2)), tol_abs), [1 SD]); % Converged if within absolute/relative tolerances
 
                 % Update diverged
                 bw_diverged(:,bw) = ...
                     bw_dP_any_nan(:,bw) | bw_dP_any_inf(:,bw) | ... % Diverged if any derivates are NaN or Inf
-                    repmat(nansum(SSres(ii+1,bw),2)./nansum(SSres(1,bw),2) >= 10, [1 SD]); % Diverged if an order of magnitude increase compared to the initial guess
+                    repmat(mynansum(SSres(ii+1,bw),2)./mynansum(SSres(1,bw),2) >= 10, [1 SD]); % Diverged if an order of magnitude increase compared to the initial guess
             else,
                 % Update converged
                 bw_converged(:,bw) = ...
@@ -321,7 +330,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
 
         % Evaluate Jacobian matrix of the weighted residual squared function
         Jf_reshaped = reshape(Jf, S(1), SD_reduced, SP_unlocked);
-        Jr2 = -2.*nansum(bsxfun(@times, weights(:,bw).*r(:,bw), Jf_reshaped), 1);
+        Jr2 = -2.*mynansum(bsxfun(@times, weights(:,bw).*r(:,bw), Jf_reshaped), 1);
         
         if ~lowOnMemory,
             % First term of Hr2 is outer product of Jf
@@ -333,7 +342,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
 
             % Evaluate Hessian of r2 (or Jacobian of Jr2)
             % Always symmetric if Hf is symmetric
-            Hr2 = 2.*nansum(JfJf-rHf, 1); % Sums of Hessian matrices
+            Hr2 = 2.*mynansum(JfJf-rHf, 1); % Sums of Hessian matrices
         else, % LOW-ON-MEMORY LOOP ALTERNATIVE (VERIFIED 20.9.2018)
             % NOTE: NOT numerically equivalent DOWN TO MACHINE PRECISION.
             % Improve the loop by providing a Jacobian sparsity matrix.
@@ -341,8 +350,8 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
             for ind = 1:SP_unlocked.^2,
                 [kk, ll] = ind2sub([SP_unlocked SP_unlocked], ind);
                 w_Jf_kk_ll = weights(:,bw).^2.*Jf_reshaped(:,:,kk).*Jf_reshaped(:,:,ll);
-                if ~evalHessian, Hr2(1,:,ind) = 2.*nansum(w_Jf_kk_ll, 1);
-                else, Hr2(1,:,ind) = 2.*nansum(w_Jf_kk_ll - rHf(:,:,ind), 1); end
+                if ~evalHessian, Hr2(1,:,ind) = 2.*mynansum(w_Jf_kk_ll, 1);
+                else, Hr2(1,:,ind) = 2.*mynansum(w_Jf_kk_ll - rHf(:,:,ind), 1); end
             end
 %              max(abs(Hr2(:)-Hr2(:))) % Should be (nearly) ZERO!
 %              sum(abs(Hr2(:)-Hr2(:)) > eps) % Should be (nearly) ZERO!
@@ -355,8 +364,8 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
         end
 
         if ~fitMany, % Fit only one set of parameters to all datasets!
-            Jr2 = nansum(Jr2, 2);
-            Hr2 = nansum(Hr2, 2);
+            Jr2 = mynansum(Jr2, 2);
+            Hr2 = mynansum(Hr2, 2);
         end
         
         if ~avoidLMA, % Fit using the Levenberg-Marquardt algorithm

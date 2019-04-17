@@ -347,11 +347,11 @@ TDSpaceTransformation (wit)
 		Scale (3x3 double)
 		Rotation (3x3 double)
 	LineInformationValid (logical)
-	LineStart_D (Nx3 double)
-	LineStart (Nx3 single)
-	LineStop_D (Nx3 double)
-	LineStop (Nx3 single)
-	NumberOfLinePoints (int32)
+	LineStart_D (Nx3 double) (1st point == WorldOrigin<ViewPort3D)
+	LineStart (Nx3 single) (1st point)
+	LineStop_D (Nx3 double) (N+1'th point)
+	LineStop (Nx3 single) (N+1'th point)
+	NumberOfLinePoints (int32) (N points)
 
 %% MORE INFORMATION:
 TData

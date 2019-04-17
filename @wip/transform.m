@@ -93,12 +93,7 @@ function [ValueUnit, varargout] = transform(T, varargin)
             for ii = 1:N,
                 Value = Value + Polynom(ii).*X.^(ii-1);
             end
-        elseif STT == 1 || STT == 2, % Spectral transformation
-            if STT == 2, % Free polynomial correction of pixels?
-                % TODO HERE!
-                warning('Unimplemented SpectralTransformationType: %d', STT);
-            end
-            
+        elseif STT == 1,
             nC = TSpectral.nC; % Pixel # at LambdaC (1)
             LambdaC = TSpectral.LambdaC; % Wavelength (nm) at center of array (where exit slit would usually be located)
             Gamma = TSpectral.Gamma; % The included angle or deviation angle or angle between incident and diffracted light (rad)
@@ -135,6 +130,36 @@ function [ValueUnit, varargout] = transform(T, varargin)
 %             fun2 = @(p) d./m.*(sin(asin(LambdaC.*m./d./(2.*cos(Gamma./2)))-Gamma./2)+sin(Gamma+asin(LambdaC.*m./d./(2.*cos(Gamma./2)))-Gamma./2+Delta-atan2(x.*(p(1)*nC+p(2)-(N-1))+f.*sin(Delta),f.*cos(Delta))));
 %             p_init2 = [1 0]; % params: d m LambdaC Gamma Delta x f nC_scale nC_offset
 %             p_optim2 = lsqnonlin(@(p) data-fun2(p), p_init2);
+        elseif STT == 2, % Constrained arbitrary-order polynomial transformation
+            % CALCULUS VERIFIED (2.4.2019) by generating a LUT comparison
+            FreePolynom = TSpectral.FreePolynom;
+            FreePolynomOrder = min(double(TSpectral.FreePolynomOrder), numel(FreePolynom)-1); % Prefer smallest
+            
+            % Preparation
+            X = Value-1;
+            Value = zeros(size(X));
+            
+            % Determine value at lower and upper constraint
+            X_Start = TSpectral.FreePolynomStartBin;
+            X_Stop = max(X_Start, TSpectral.FreePolynomStopBin); % Mimic behaviour of WITec Project 2.10.3
+            Value_Start = 0;
+            Value_Stop = 0;
+            for ii = 1:FreePolynomOrder+1,
+                Value_Start = Value_Start + FreePolynom(ii).*X_Start.^(ii-1);
+                Value_Stop = Value_Stop + FreePolynom(ii).*X_Stop.^(ii-1);
+            end
+            
+            % Set values at or outside the constraint
+            bw_le = X <= X_Start;
+            bw_ge = X >= X_Stop;
+            Value(bw_le) = Value_Start;
+            Value(bw_ge) = Value_Stop;
+            
+            % Determine values inside
+            bw_in = ~bw_le & ~bw_ge;
+            for ii = 1:FreePolynomOrder+1,
+                Value(bw_in) = Value(bw_in) + FreePolynom(ii).*X(bw_in).^(ii-1);
+            end
         else,
             warning('Unimplemented SpectralTransformationType: %d', STT);
         end

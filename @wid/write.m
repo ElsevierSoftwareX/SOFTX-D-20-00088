@@ -9,7 +9,7 @@ function write(obj, File) % For saving WIT-formatted WID-files!
     if nargin < 2 || iscell(File), % If no or many filenames specified
         for ii = 1:numel(obj),
             if nargin < 2 || isempty(File{ii}), File{ii} = obj(ii).Tag.Data.File; end
-            C_wit = wid.new(wid.get_Root_Version(obj(ii))); % Create minimal data for each object
+            C_wit = wid.new(wip.get_Root_Version(obj(ii))); % Create minimal data for each object
             if all(isfield(obj(ii).Tag, {'DataClassName', 'Data'})),
                 C_wits = [obj(ii).Tag.DataClassName obj(ii).Tag.Data];
             end
@@ -24,12 +24,12 @@ function write(obj, File) % For saving WIT-formatted WID-files!
             C_wit.destroy();
         end
     elseif ischar(File), % If only one filename specified for all, then save all to the same
-        Version = wid.get_Root_Version(obj(1));
+        Version = wip.get_Root_Version(obj(1));
         if numel(obj) > 0, C_wit = wid.new(Version);
         else, C_wit = wid.new(); end % Create minimal data for all objects
         C_wits = wit.Empty;
         for ii = 1:numel(obj),
-            if wid.get_Root_Version(obj(ii)) ~= Version,
+            if wip.get_Root_Version(obj(ii)) ~= Version,
                 warning('Object with index ii has mismatching Version numbering.', ii);
             end
             if all(isfield(obj(ii).Tag, {'DataClassName', 'Data'})),

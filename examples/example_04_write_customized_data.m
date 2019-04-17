@@ -60,8 +60,9 @@ new_TDBitmap_TSpace = wid.new_Transformation_Space(C_wit);
 % Read TDSpaceTransformation details in 'README on WIT-tag formatting.txt'.
 
 % Add links to transformations and interpretations
-new_TDBitmap.Tag.Data.regexp('^SpaceTransformationID<TDBitmap<', true).Data = new_TDBitmap_TSpace.Id;
-% new_TDBitmap.Tag.Data.regexp('^SecondaryTransformationID<TDBitmap<', true).Data = 0; % (v7)
+new_TDBitmap_Tag_Data = new_TDBitmap.Tag.Data; % Required by R2011a
+new_TDBitmap_Tag_Data.regexp('^SpaceTransformationID<TDBitmap<', true).Data = new_TDBitmap_TSpace.Id;
+% new_TDBitmap_Tag_Data.regexp('^SecondaryTransformationID<TDBitmap<', true).Data = 0; % (v7)
 
 % Append all new objects to Project
 C_wip.add_Data(new_TDBitmap, new_TDBitmap_TSpace); % Make new objects visible in Project-object
@@ -73,19 +74,43 @@ C_wip.add_Data(new_TDBitmap, new_TDBitmap_TSpace); % Make new objects visible in
 % Create new Image<TDGraph with random content
 new_TDGraph = wid.new_Graph(C_wit); % Create empty Image<TDGraph
 % new_TDGraph.SubType = 'Image'; % Set its ImageIndex
+% SubTypes are listed in @wid\wid_SubType_set.m and are as follows:
+% 'Image', 'Line', 'Point', 'Array', 'Histogram', 'Time' and 'Mask'
+
 new_TDGraph.Name = 'Customized Image<TDGraph';
 
 % Create customized Data
-DataUnit = 'TDGraph a.u.';
-SizeGraph = 30;
-Data_TDGraph = randn(10, 20, SizeGraph); % Double
+DataUnit = wip.ArbitraryUnit;
+SizeX = 10; % X-axis is always the 1st dimension of the wid object Data property!
+SizeY = 20; % Y-axis is always the 2nd dimension of the wid object Data property!
+SizeGraph = 30; % Graph-axis is always the 3rd dimension of the wid object Data property!
+Data_TDGraph = randn(SizeX, SizeY, SizeGraph); % Data with DataUnit!
+
+
+
+% new_TDGraph.SubType = 'Point';
+% Data_TDGraph = permute(Data_spectrum(:), [2 3 1]); % Make a data vector (spectrum) a data cube (X, Y, spectrum)
+
+
+
+% new_TDGraph.SubType = 'Line';
+% Data_TDGraph = permute(Data_X_spectrum, [1 3 2]); % Make a data matrix (X, spectrum) a data cube (X, Y, spectrum) 
+% % Data_TDGraph = permute(Data_spectrum_X, [2 3 1]); % Make a data matrix (spectrum, X) a data cube (X, Y, spectrum)
+
+
 
 % Set new Data (and its SizeX, SizeY and SizeGraph parameters)
 new_TDGraph.Data = Data_TDGraph;
 
-% Create customized Graph-axis (3rd dimension of Data).
-Graph = 530+(1:SizeGraph); % Custom spectral axis
-Graph = Graph + randn(size(Graph)); % Add gaussian noise to spectral axis
+% Create customized Graph-axis (Data's 3rd dimension).
+ExcitationWavelength = 532.1; % (nm)
+Graph_nm = 530+(1:SizeGraph); % Custom spectral axis
+Graph_nm = Graph_nm + randn(size(Graph_nm)); % Add gaussian noise to spectral axis
+% IMPORTANT: Its SpectralUnit is ALWAYS wip.interpret_StandardUnit('nm')
+% due to the way TDSpectralTransformation was implemented by WITec.
+% In other words, Graph with non-'nm' SpectralUnit must first be converted
+% to Graph with 'nm' SpectralUnit! It can be done as follows:
+% [~, Graph_nm] = wip.interpret({'Spectral', ExcitationWavelength}, '(nm)', '(meV)', Graph_meV); % Direct conversion from meV to nm. Here ExcitationWavelength's extra input is only used when converting from relative units.
 
 % Create customized transformations and interpretations
 new_TDGraph_TSpace = wid.new_Transformation_Space(C_wit);
@@ -93,16 +118,15 @@ new_TDGraph_TSpace = wid.new_Transformation_Space(C_wit);
 
 new_TDGraph_TSpectral = wid.new_Transformation_LUT(C_wit);
 new_TDGraph_TSpectral_Data = new_TDGraph_TSpectral.Data; % Get formatted struct once to speed-up
-new_TDGraph_TSpectral_Data.TDLUTTransformation.LUT = Graph; % Its SpectralUnit is always (nm) under the hood until interpreted to other kind!
-new_TDGraph_TSpectral_Data.TDLUTTransformation.LUTSize = numel(Graph); % Ignored by wit_io, but used in WITec software
+new_TDGraph_TSpectral_Data.TDLUTTransformation.LUT = Graph_nm; % Its SpectralUnit is always (nm) under the hood until interpreted to other kind!
+new_TDGraph_TSpectral_Data.TDLUTTransformation.LUTSize = numel(Graph_nm); % Ignored by wit_io, but used in WITec software
 new_TDGraph_TSpectral_Data.TDLUTTransformation.LUTIsIncreasing = false; % Ignored by wit_io, but used in WITec software
 new_TDGraph_TSpectral.Data = new_TDGraph_TSpectral_Data; % Save all changes once
 % Read TDLUTTransformation details in 'README on WIT-tag formatting.txt'.
 
 % Interpret Graph-variable (nm) as (rel. 1/cm)
-% TODO: Fix NaN Version when ExcitationWavelength (not ExcitationWaveLength) is set to NaN in new!
 new_TDGraph_ISpectral = wid.new_Interpretation_Spectral(C_wit);
-new_TDGraph_ISpectral.Data.TDSpectralInterpretation.ExcitationWaveLength = 532; % Green laser
+new_TDGraph_ISpectral.Data.TDSpectralInterpretation.ExcitationWaveLength = ExcitationWavelength; % Green laser
 new_TDGraph_ISpectral.Data.TDInterpretation.UnitIndex = 3; % (rel. 1/cm)
 % UnitIndex (TDInterpretation<TDSpectralInterpretation)
 % 0 = nm, 1 = µm, 2 = 1/cm, 3 = rel. 1/cm, 4 = eV, 5 = meV, 6 = rel. eV, 7 = rel. meV, >7 = a.u. (but in nm)
@@ -119,11 +143,12 @@ new_TDGraph_IData.Data.TDZInterpretation.UnitName = DataUnit;
 % Read TDZInterpretation details in 'README on WIT-tag formatting.txt'.
 
 % Add links to transformations and interpretations
-new_TDGraph.Tag.Data.regexp('^SpaceTransformationID<TDGraph<', true).Data = new_TDGraph_TSpace.Id;
-% new_TDGraph.Tag.Data.regexp('^SecondaryTransformationID<TDGraph<', true).Data = 0; % (v7)
-new_TDGraph.Tag.Data.regexp('^XTransformationID<TDGraph<', true).Data = new_TDGraph_TSpectral.Id;
-new_TDGraph.Tag.Data.regexp('^XInterpretationID<TDGraph<', true).Data = new_TDGraph_ISpectral.Id;
-new_TDGraph.Tag.Data.regexp('^ZInterpretationID<TDGraph<', true).Data = new_TDGraph_IData.Id;
+new_TDGraph_Tag_Data = new_TDGraph.Tag.Data; % Required by R2011a
+new_TDGraph_Tag_Data.regexp('^SpaceTransformationID<TDGraph<', true).Data = new_TDGraph_TSpace.Id;
+% new_TDGraph_Tag_Data.regexp('^SecondaryTransformationID<TDGraph<', true).Data = 0; % (v7)
+new_TDGraph_Tag_Data.regexp('^XTransformationID<TDGraph<', true).Data = new_TDGraph_TSpectral.Id;
+new_TDGraph_Tag_Data.regexp('^XInterpretationID<TDGraph<', true).Data = new_TDGraph_ISpectral.Id;
+new_TDGraph_Tag_Data.regexp('^ZInterpretationID<TDGraph<', true).Data = new_TDGraph_IData.Id;
 
 % Append all new objects to Project
 C_wip.add_Data(new_TDGraph, new_TDGraph_TSpace, new_TDGraph_TSpectral, new_TDGraph_ISpectral, new_TDGraph_IData); % Make new objects visible in Project-object
@@ -152,9 +177,10 @@ new_TDImage_IData.Data.TDZInterpretation.UnitName = DataUnit_TDImage;
 % Read TDZInterpretation details in 'README on WIT-tag formatting.txt'.
 
 % Add links to transformations and interpretations
-new_TDImage.Tag.Data.regexp('^PositionTransformationID<TDImage<', true).Data = new_TDImage_TSpace.Id;
-% new_TDImage.Tag.Data.regexp('^SecondaryTransformationID<TDImage<', true).Data = 0; % (v7)
-new_TDImage.Tag.Data.regexp('^ZInterpretationID<TDImage<', true).Data = new_TDImage_IData.Id;
+new_TDImage_Tag_Data = new_TDImage.Tag.Data; % Required by R2011a
+new_TDImage_Tag_Data.regexp('^PositionTransformationID<TDImage<', true).Data = new_TDImage_TSpace.Id;
+% new_TDImage_Tag_Data.regexp('^SecondaryTransformationID<TDImage<', true).Data = 0; % (v7)
+new_TDImage_Tag_Data.regexp('^ZInterpretationID<TDImage<', true).Data = new_TDImage_IData.Id;
 
 % Append all new objects to Project
 C_wip.add_Data(new_TDImage, new_TDImage_TSpace, new_TDImage_IData); % Make new objects visible in Project-object
