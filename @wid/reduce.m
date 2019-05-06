@@ -60,7 +60,7 @@ function [obj, Data_reduced, X_reduced, Y_reduced, Graph_reduced, Z_reduced] = r
                     T_Data.TDLUTTransformation.LUT = T_Data.TDLUTTransformation.LUT(ind_X_begin:ind_X_end);
                     T_Data.TDLUTTransformation.LUTSize = ind_X_end-ind_X_begin+1;
                 case 'TDSpaceTransformation',
-                    T_Data.TDSpaceTransformation.ModelOrigin(1) = T_Data.TDSpaceTransformation.ModelOrigin(1) - (ind_X_begin - 1);
+                    T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(1) = T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(1) - (ind_X_begin - 1);
                 case 'TDSpectralTransformation',
                     T_Data.TDSpectralTransformation.nC = T_Data.TDSpectralTransformation.nC - (ind_X_begin - 1);
             end
@@ -78,7 +78,7 @@ function [obj, Data_reduced, X_reduced, Y_reduced, Graph_reduced, Z_reduced] = r
                     T_Data.TDLUTTransformation.LUT = T_Data.TDLUTTransformation.LUT(ind_Y_begin:ind_Y_end);
                     T_Data.TDLUTTransformation.LUTSize = ind_Y_end-ind_Y_begin+1;
                 case 'TDSpaceTransformation',
-                    T_Data.TDSpaceTransformation.ModelOrigin(2) = T_Data.TDSpaceTransformation.ModelOrigin(2) - (ind_Y_begin - 1);
+                    T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(2) = T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(2) - (ind_Y_begin - 1);
                 case 'TDSpectralTransformation',
                     T_Data.TDSpectralTransformation.nC = T_Data.TDSpectralTransformation.nC - (ind_Y_begin - 1);
             end
@@ -114,7 +114,7 @@ function [obj, Data_reduced, X_reduced, Y_reduced, Graph_reduced, Z_reduced] = r
                     T_Data.TDLUTTransformation.LUT = T_Data.TDLUTTransformation.LUT(ind_Z_begin:ind_Z_end);
                     T_Data.TDLUTTransformation.LUTSize = ind_Z_end-ind_Z_begin+1;
                 case 'TDSpaceTransformation',
-                    T_Data.TDSpaceTransformation.ModelOrigin(3) = T_Data.TDSpaceTransformation.ModelOrigin(3) - (ind_Z_begin - 1);
+                    T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(3) = T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(3) - (ind_Z_begin - 1);
                 case 'TDSpectralTransformation',
                     T_Data.TDSpectralTransformation.nC = T_Data.TDSpectralTransformation.nC - (ind_Z_begin - 1);
             end
