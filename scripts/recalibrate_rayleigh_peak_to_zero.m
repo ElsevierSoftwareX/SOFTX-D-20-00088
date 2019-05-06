@@ -2,19 +2,14 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Substract the selected DARK CURRENT from the selected DATA.
+% Recalibrate the Raman spectrum's Rayleigh-peak (or 0-peak) to zero by
+% automatically fitting a Gaussian function to the peak within range of
+% [-25, 25] rel. 1/cm and reshifting of the X-axis with the new laser
+% excitation wavelength.
 %
-% Post-processing used for DARK CURRENT:
-% Use 'clever statistics' to remove occasional cosmic ray spikes from (and
-% calculate the mean for) measurement.
-%
-% Algorithm is based on an article written by G. Buzzi-Ferraris and
-% F. Manenti: 'Outlier detection in large data sets'
-% Source: http://dx.doi.org/10.1016/j.compchemeng.2010.11.004
-%
-% This interactive script was implemented 5.3.2019 by Joonas Holmi
+% This interactive script was implemented 6.5.2019 by Joonas Holmi
 
-% Load and select the dark current
+% Load and select the data with Rayleigh-peak
 [C_wid_w_Rayleigh, C_wip, ~] = wip.read('-SpectralUnit', '(rel. 1/cm)', '-Manager', ...
     {'-closepreview', '-singlesection', '-Title', 'SELECT ONE DATA WITH RAYLEIGH-PEAK', '-Type', 'TDGraph'});
 if isempty(C_wid_w_Rayleigh), return; end
