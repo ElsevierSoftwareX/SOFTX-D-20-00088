@@ -31,7 +31,7 @@ for ii = 1:numel(C_wid),
     if makecopies, C_wid_new = C_wid(ii).copy(); % Make a copy
     else, C_wid_new = C_wid(ii); end % Do not make a copy
     new_Data = C_wid_new.Data;
-    [Data_range, Graph_range] = wid.reduce_Graph_with_bg_helper(new_Data, C_wid_new.Info.Graph, bounds, 0, 0);
+    [Data_range, Graph_range] = wid.crop_Graph_with_bg_helper(new_Data, C_wid_new.Info.Graph, bounds, 0, 0);
     C_wid_new.Data = double(new_Data) ./ max(Data_range, [], 3);
     C_wid_new.Name = sprintf('Normalized[%g,%g]<%s', bounds(1), bounds(2), C_wid_new.Name);
 end
