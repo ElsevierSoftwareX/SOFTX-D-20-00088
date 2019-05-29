@@ -2,12 +2,12 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Use this function to reduce the TDBitmap, TDGraph or TDImage object Data
+% Use this function to crop the TDBitmap, TDGraph or TDImage object Data
 % and its X, Y, Graph, Z ranges to the given pixel indices. It is assumed
 % that the given object and pixel indices are valid. If any of the begin
 % indices are [], then they are set 1. If any of the end indices are [],
 % then they are set to the end of Data.
-function [obj, Data_reduced, X_reduced, Y_reduced, Graph_reduced, Z_reduced] = crop(obj, ind_X_begin, ind_X_end, ind_Y_begin, ind_Y_end, ind_Graph_begin, ind_Graph_end, ind_Z_begin, ind_Z_end)
+function [obj, Data_cropped, X_cropped, Y_cropped, Graph_cropped, Z_cropped] = crop(obj, ind_X_begin, ind_X_end, ind_Y_begin, ind_Y_end, ind_Graph_begin, ind_Graph_end, ind_Z_begin, ind_Z_end)
     if nargin < 2, ind_X_begin = []; end
     if nargin < 3, ind_X_end = []; end
     if nargin < 4, ind_Y_begin = []; end
@@ -47,16 +47,16 @@ function [obj, Data_reduced, X_reduced, Y_reduced, Graph_reduced, Z_reduced] = c
     if isempty(ind_Z_end) || ind_Z_end > Info.ZSize, ind_Z_end = Info.ZSize; end
     
     % Get reduced data
-    X_reduced = Info.X(ind_X_begin:ind_X_end);
-    Y_reduced = Info.Y(ind_Y_begin:ind_Y_end);
-    Graph_reduced = Info.Graph(ind_Graph_begin:ind_Graph_end);
-    Z_reduced = Info.Z(ind_Z_begin:ind_Z_end);
-    Data_reduced = obj.Data(ind_X_begin:ind_X_end,ind_Y_begin:ind_Y_end,ind_Graph_begin:ind_Graph_end,ind_Z_begin:ind_Z_end);
+    X_cropped = Info.X(ind_X_begin:ind_X_end);
+    Y_cropped = Info.Y(ind_Y_begin:ind_Y_end);
+    Graph_cropped = Info.Graph(ind_Graph_begin:ind_Graph_end);
+    Z_cropped = Info.Z(ind_Z_begin:ind_Z_end);
+    Data_cropped = obj.Data(ind_X_begin:ind_X_end,ind_Y_begin:ind_Y_end,ind_Graph_begin:ind_Graph_end,ind_Z_begin:ind_Z_end);
     
     % Modify the object (or its copy) if permitted
     if isempty(obj.Project) || obj.Project.AutoModifyObj,
         % Update the object
-        obj.Data = Data_reduced; % Update the data accordingly
+        obj.Data = Data_cropped; % Update the data accordingly
 
         T = Info.XTransformation; % Get the x transformation object
         if ~isempty(T), % Continue only if there is transformation
