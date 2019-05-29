@@ -2,9 +2,10 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Renames the selected data names using regexprep.
+% Renames the selected data names using regexprep-syntax [1].
+% [1] https://se.mathworks.com/help/matlab/ref/regexprep.html
 
-% This interactive script was implemented 13.5.2019 by Joonas Holmi
+% This interactive script was implemented 29.5.2019 by Joonas Holmi
 
 % Load and select the datas of interest
 [C_wid, C_wip, n] = wip.read('-ifall', '-Manager', ...
