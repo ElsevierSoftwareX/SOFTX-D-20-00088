@@ -67,8 +67,9 @@ helpdlg({'!!! (1A) Load and browse file contents in a GUI by executing:' ...
 % ForceSpectralUnit, ForceTimeUnit, UseLineValid, AutoCopyObj,
 % AutoModifyObj and ArbitraryUnit.
 % * HtmlNames: The Html names of the selected datas. Double-click HtmlNames
-% under Workspace to see these. This is useful feature, when loading a lot
-% of data at once.
+% under Workspace to see these (and rescale the 1st column by holding left-
+% mouse on the border between 1 and 2). This is useful feature, when
+% loading a lot of data at once.
 %-------------------------------------------------------------------------%
 
 

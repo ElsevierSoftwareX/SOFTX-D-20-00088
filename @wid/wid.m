@@ -273,7 +273,7 @@ classdef wid < handle, % Since R2008a
         Info_Graph_merged = merge_Info_Graph(obj);
         
         % Get object Html-name, which includes the WITec software icon
-        HtmlName = get_HtmlName(obj);
+        HtmlName = get_HtmlName(obj, isWorkspaceOptimized);
         
         % Reduce object Data
         [Data_reduced, Graph_reduced] = crop_Graph(obj, ind_range, Data_reduced, Graph_reduced);
