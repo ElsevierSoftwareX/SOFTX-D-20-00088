@@ -66,9 +66,9 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin)
             new_obj(ii).Data = result_ii; % Save result-variable content as Data
 
             % Give it the same transformations and interpretations
-            new_obj(ii).Tag.Data.regexp('^PositionTransformationID<TDImage<', true).Data = SpaceT(1);
+            new_obj(ii).Tag.Data.regexp('^PositionTransformationID<TDImage<', true).Data = int32(SpaceT(1)); % Must be int32!
             if Version == 7,
-                new_obj(ii).Tag.Data.regexp('^SecondaryTransformationID<TDImage<', true).Data = SpaceST(1); %v7
+                new_obj(ii).Tag.Data.regexp('^SecondaryTransformationID<TDImage<', true).Data = int32(SpaceST(1)); %v7 % Must be int32!
             end
             % Avoid setting DataUnit, because the result_ii units are unknown.
         end

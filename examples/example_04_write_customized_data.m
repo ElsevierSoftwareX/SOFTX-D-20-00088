@@ -61,8 +61,8 @@ new_TDBitmap_TSpace = wid.new_Transformation_Space(C_wit);
 
 % Add links to transformations and interpretations
 new_TDBitmap_Tag_Data = new_TDBitmap.Tag.Data; % Required by R2011a
-new_TDBitmap_Tag_Data.regexp('^SpaceTransformationID<TDBitmap<', true).Data = new_TDBitmap_TSpace.Id;
-% new_TDBitmap_Tag_Data.regexp('^SecondaryTransformationID<TDBitmap<', true).Data = 0; % (v7)
+new_TDBitmap_Tag_Data.regexp('^SpaceTransformationID<TDBitmap<', true).Data = new_TDBitmap_TSpace.Id; % Must be int32! (Required by WITec software)
+% new_TDBitmap_Tag_Data.regexp('^SecondaryTransformationID<TDBitmap<', true).Data = int32(0); % (v7) % Must be int32!
 
 % Append all new objects to Project
 C_wip.add_Data(new_TDBitmap, new_TDBitmap_TSpace); % Make new objects visible in Project-object
@@ -144,11 +144,11 @@ new_TDGraph_IData.Data.TDZInterpretation.UnitName = DataUnit;
 
 % Add links to transformations and interpretations
 new_TDGraph_Tag_Data = new_TDGraph.Tag.Data; % Required by R2011a
-new_TDGraph_Tag_Data.regexp('^SpaceTransformationID<TDGraph<', true).Data = new_TDGraph_TSpace.Id;
-% new_TDGraph_Tag_Data.regexp('^SecondaryTransformationID<TDGraph<', true).Data = 0; % (v7)
-new_TDGraph_Tag_Data.regexp('^XTransformationID<TDGraph<', true).Data = new_TDGraph_TSpectral.Id;
-new_TDGraph_Tag_Data.regexp('^XInterpretationID<TDGraph<', true).Data = new_TDGraph_ISpectral.Id;
-new_TDGraph_Tag_Data.regexp('^ZInterpretationID<TDGraph<', true).Data = new_TDGraph_IData.Id;
+new_TDGraph_Tag_Data.regexp('^SpaceTransformationID<TDGraph<', true).Data = new_TDGraph_TSpace.Id; % Must be int32!
+% new_TDGraph_Tag_Data.regexp('^SecondaryTransformationID<TDGraph<', true).Data = int32(0); % (v7) % Must be int32!
+new_TDGraph_Tag_Data.regexp('^XTransformationID<TDGraph<', true).Data = new_TDGraph_TSpectral.Id; % Must be int32!
+new_TDGraph_Tag_Data.regexp('^XInterpretationID<TDGraph<', true).Data = new_TDGraph_ISpectral.Id; % Must be int32!
+new_TDGraph_Tag_Data.regexp('^ZInterpretationID<TDGraph<', true).Data = new_TDGraph_IData.Id; % Must be int32!
 
 % Append all new objects to Project
 C_wip.add_Data(new_TDGraph, new_TDGraph_TSpace, new_TDGraph_TSpectral, new_TDGraph_ISpectral, new_TDGraph_IData); % Make new objects visible in Project-object
@@ -178,9 +178,9 @@ new_TDImage_IData.Data.TDZInterpretation.UnitName = DataUnit_TDImage;
 
 % Add links to transformations and interpretations
 new_TDImage_Tag_Data = new_TDImage.Tag.Data; % Required by R2011a
-new_TDImage_Tag_Data.regexp('^PositionTransformationID<TDImage<', true).Data = new_TDImage_TSpace.Id;
-% new_TDImage_Tag_Data.regexp('^SecondaryTransformationID<TDImage<', true).Data = 0; % (v7)
-new_TDImage_Tag_Data.regexp('^ZInterpretationID<TDImage<', true).Data = new_TDImage_IData.Id;
+new_TDImage_Tag_Data.regexp('^PositionTransformationID<TDImage<', true).Data = new_TDImage_TSpace.Id; % Must be int32!
+% new_TDImage_Tag_Data.regexp('^SecondaryTransformationID<TDImage<', true).Data = int32(0); % (v7) % Must be int32!
+new_TDImage_Tag_Data.regexp('^ZInterpretationID<TDImage<', true).Data = new_TDImage_IData.Id; % Must be int32!
 
 % Append all new objects to Project
 C_wip.add_Data(new_TDImage, new_TDImage_TSpace, new_TDImage_IData); % Make new objects visible in Project-object

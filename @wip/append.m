@@ -127,7 +127,7 @@ function [C_wit, varargout] = append(varargin),
     if ~isempty(Tag_Viewer), Tag_Viewer.Data = [Tag_NV.Siblings ViewerOrViewerClassNames Tag_NV]; end % Does not exist for WITec Data
     
     % Update the counters
-    if ~isempty(Tag_ID), Tag_ID.Data = offset; end % Does not exist for WITec Data
+    if ~isempty(Tag_ID), Tag_ID.Data = int32(offset); end % Must be int32! % Does not exist for WITec Data
     Tag_ND.Data = ND;
     if ~isempty(Tag_Viewer), Tag_NV.Data = NV; end % Does not exist for WITec Data
 end

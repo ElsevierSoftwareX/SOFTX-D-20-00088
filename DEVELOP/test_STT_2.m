@@ -28,8 +28,8 @@ new_TDGraph_ISpectral.Data.TDSpectralInterpretation.ExcitationWaveLength = 532.0
 new_TDGraph_ISpectral.Data.TDInterpretation.UnitIndex = 3; % (rel. 1/cm)
 
 % Add links to transformations and interpretations
-new_TDGraph.Tag.Data.regexp('^XTransformationID<TDGraph<', true).Data = new_TDGraph_TSpectral.Id;
-new_TDGraph.Tag.Data.regexp('^XInterpretationID<TDGraph<', true).Data = new_TDGraph_ISpectral.Id;
+new_TDGraph.Tag.Data.regexp('^XTransformationID<TDGraph<', true).Data = new_TDGraph_TSpectral.Id; % Must be int32!
+new_TDGraph.Tag.Data.regexp('^XInterpretationID<TDGraph<', true).Data = new_TDGraph_ISpectral.Id; % Must be int32!
 
 % Append all new objects to Project
 C_wip.add_Data(new_TDGraph, new_TDGraph_TSpectral, new_TDGraph_ISpectral); % Make new objects visible in Project-object
@@ -62,7 +62,7 @@ for ii = 1:7,
     LUTT_Data.TDLUTTransformation.LUTSize = SizeGraph; % Ignored by wit_io, but used in WITec software
     LUTT_Data.TDLUTTransformation.LUTIsIncreasing = true; % Ignored by wit_io, but used in WITec software
     LUTT.Data = LUTT_Data; % Save all changes once
-    obj_LUT.Tag.Data.regexp('^XTransformationID<TDGraph<', true).Data = LUTT.Id;
+    obj_LUT.Tag.Data.regexp('^XTransformationID<TDGraph<', true).Data = LUTT.Id; % Must be int32!
     
     C_wip.add_Data(LUTT);
 end

@@ -40,9 +40,9 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask)
         new_obj.Data = image_mask;
         
         % Give it the same transformations and interpretations
-        new_obj.Tag.Data.regexp('^PositionTransformationID<TDImage<', true).Data = max([obj.Info.XTransformation.Id 0]);
+        new_obj.Tag.Data.regexp('^PositionTransformationID<TDImage<', true).Data = int32(max([obj.Info.XTransformation.Id 0])); % Must be int32!
         if wip.get_Root_Version(obj) == 7,
-            new_obj.Tag.Data.regexp('^SecondaryTransformationID<TDImage<', true).Data = max([obj.Info.XSecondaryTransformation.Id 0]); %v7
+            new_obj.Tag.Data.regexp('^SecondaryTransformationID<TDImage<', true).Data = int32(max([obj.Info.XSecondaryTransformation.Id 0])); %v7 % Must be int32!
         end
     end
     
