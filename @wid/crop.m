@@ -8,6 +8,15 @@
 % indices are [], then they are set 1. If any of the end indices are [],
 % then they are set to the end of Data.
 function [obj, Data_reduced, X_reduced, Y_reduced, Graph_reduced, Z_reduced] = crop(obj, ind_X_begin, ind_X_end, ind_Y_begin, ind_Y_end, ind_Graph_begin, ind_Graph_end, ind_Z_begin, ind_Z_end)
+    if nargin < 2, ind_X_begin = []; end
+    if nargin < 3, ind_X_end = []; end
+    if nargin < 4, ind_Y_begin = []; end
+    if nargin < 5, ind_Y_end = []; end
+    if nargin < 6, ind_Graph_begin = []; end
+    if nargin < 7, ind_Graph_end = []; end
+    if nargin < 8, ind_Z_begin = []; end
+    if nargin < 9, ind_Z_end = []; end
+
     % Copy the object if permitted
     if isempty(obj.Project) || obj.Project.AutoCopyObj,
         obj = obj.copy();
