@@ -8,7 +8,7 @@
 
 % Load and select the datas of interest
 [C_wid, C_wip, n] = wip.read('-ifall', '-Manager', ...
-    {'-nopreview', '-Title', 'SELECT DATA TO RENAME'});
+    {'-all', '-nopreview', '-Title', 'SELECT DATA TO RENAME'});
 if isempty(C_wid), return; end
 
 % Set regexprep parameters
