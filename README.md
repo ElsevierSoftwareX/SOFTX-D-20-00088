@@ -90,7 +90,7 @@ Please report any bugs in [Issues](https://gitlab.com/jtholmi/wit_io/issues)-pag
 ## Additional information
 
 ### Citation *(optional)*
-J. T. Holmi (2019). wit_io: Toolbox for WITec Project/Data (\*.wip/\*.wid) files (https://gitlab.com/jtholmi/wit_io), GitLab. Retrieved April 2, 2019.
+J. T. Holmi (2019). wit_io: Toolbox for WITec Project/Data (\*.wip/\*.wid) files (https://gitlab.com/jtholmi/wit_io), GitLab. Retrieved June 25, 2019.
 
 ### 3rd party content
 * [export_fig](https://se.mathworks.com/matlabcentral/fileexchange/23629-export_fig)
