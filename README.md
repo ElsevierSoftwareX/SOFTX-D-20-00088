@@ -52,9 +52,9 @@ to add *'MATLAB'*-option to the **\*.wip** and **\*.wid** file right-click conte
 menus to enable a quick call to `[C_wid, C_wid, HtmlNames] = wip.read(file);`. **This
 also requires administration rights.**
 
-### Example scripts
-Run *(or F5)* interactive example scripts under [*'examples'*](https://gitlab.com/jtholmi/wit_io/tree/master/examples)
-folder to learn **wit_io**.
+### Example cases
+Run *(or F5)* interactive example cases (*\*.m*) under [*'examples'*](https://gitlab.com/jtholmi/wit_io/tree/master/examples)
+folder to learn **wit_io**. Begin by opening and running *'E_01_A_import_file_to_get_started.m'*.
 
 ### Semi-automated scripts
 Consider using semi-automated scripts under [*'scripts'*](https://gitlab.com/jtholmi/wit_io/tree/master/scripts)
