@@ -66,9 +66,9 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin)
             new_obj(ii).Data = result_ii; % Save result-variable content as Data
 
             % Give it the same transformations and interpretations
-            new_obj(ii).Tag.Data.regexp('^PositionTransformationID<TDImage<', true).Data = SpaceT(1);
+            new_obj(ii).Tag.Data.regexp('^PositionTransformationID<TDImage<', true).Data = int32(SpaceT(1)); % Must be int32!
             if Version == 7,
-                new_obj(ii).Tag.Data.regexp('^SecondaryTransformationID<TDImage<', true).Data = SpaceST(1); %v7
+                new_obj(ii).Tag.Data.regexp('^SecondaryTransformationID<TDImage<', true).Data = int32(SpaceST(1)); %v7 % Must be int32!
             end
             % Avoid setting DataUnit, because the result_ii units are unknown.
         end
@@ -90,7 +90,7 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin)
             Project.AutoCopyObj = true;
             Project.AutoModifyObj = true;
 
-            new_TDGraph = obj.reduce_Graph([], Data_range_new, Graph_range); % Which uses wid.copy-function that automatically appends new copy (and its Links) to the Project
+            new_TDGraph = obj.crop_Graph([], Data_range_new, Graph_range); % Which uses wid.copy-function that automatically appends new copy (and its Links) to the Project
             new_TDGraph.Name = sprintf('%s[%g-%g]<%s', str_fun{end}, varargin{1}(1), varargin{1}(2), Name); % Generate new name
 
             new_obj = [new_obj new_TDGraph]; % Also return new_TDGraph

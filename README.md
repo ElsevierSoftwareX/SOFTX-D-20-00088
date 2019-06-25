@@ -39,19 +39,25 @@ and extract it as a new folder (i.e. *'wit_io'*) to your workfolder.
 
 **For the first time**, go to the created folder and run *(or F5)* [*'load_or_addpath_permanently.m'*](https://gitlab.com/jtholmi/wit_io/blob/master/load_or_addpath_permanently.m)
 to **permanently** add it and its subfolders to MATLAB path so that the toolbox
-can be called from anywhere. This requires administration rights.
+can be called from anywhere. **This requires administration rights.**
+* Without the rights, do one of the following once per MATLAB instance to make **wit_io**
+findable:
+    1. Execute `addpath(genpath('toolbox_path'));`, where `'toolbox_path'` is **wit_io**'s
+full installation path.
+    2. Manually right-click **wit_io**'s main folder in "Current Folder"-view and
+from the context menu left-click "Add to Path" and "Selected Folders and Subfolders".
 
 **Optionally**, run *(or F5)* also [*'update_wip_and_wid_context_menus.m'*](https://gitlab.com/jtholmi/wit_io/blob/master/update_wip_and_wid_context_menus.m)
 to add *'MATLAB'*-option to the **\*.wip** and **\*.wid** file right-click context
-menus to enable a quick call to `[C_wid, C_wid, HtmlNames] = wip.read(file);`. This
-also requires administration rights.
+menus to enable a quick call to `[C_wid, C_wid, HtmlNames] = wip.read(file);`. **This
+also requires administration rights.**
 
-### Example scripts
-Run *(or F5)* interactive example scripts under [*'examples'*](https://gitlab.com/jtholmi/wit_io/tree/master/examples)
-folder to learn **wit_io**.
+### Example cases
+Run *(or F5)* interactive code (*\*.m*) under [*'EXAMPLE cases'*](https://gitlab.com/jtholmi/wit_io/blob/master/EXAMPLE%20cases)
+folder to learn **wit_io**. Begin by opening and running *'E_01_A_import_file_to_get_started.m'*.
 
 ### Semi-automated scripts
-Consider using semi-automated scripts under [*'scripts'*](https://gitlab.com/jtholmi/wit_io/tree/master/scripts)
+Consider using semi-automated scripts under [*'SCRIPT cases'*](https://gitlab.com/jtholmi/wit_io/blob/master/SCRIPT%20cases)
 folder on your WITec Project/Data files. They will read the given file, interact
 with the user, process the relevant file contents and finally write back to the
 original file.
@@ -84,7 +90,7 @@ Please report any bugs in [Issues](https://gitlab.com/jtholmi/wit_io/issues)-pag
 ## Additional information
 
 ### Citation *(optional)*
-J. T. Holmi (2019). wit_io: Toolbox for WITec Project/Data (\*.wip/\*.wid) files (https://gitlab.com/jtholmi/wit_io), GitLab. Retrieved April 2, 2019.
+J. T. Holmi (2019). wit_io: Toolbox for WITec Project/Data (\*.wip/\*.wid) files (https://gitlab.com/jtholmi/wit_io), GitLab. Retrieved June 25, 2019.
 
 ### 3rd party content
 * [export_fig](https://se.mathworks.com/matlabcentral/fileexchange/23629-export_fig)

@@ -61,7 +61,7 @@ function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin)
         new_SpectralT_Data.TDLUTTransformation.LUTIsIncreasing = true; % Ignored by wit_io, but used in WITec software
         new_SpectralT.Data = new_SpectralT_Data; % Save all changes once
 
-        new_obj.Tag.Data.regexp('^XTransformationID<TDGraph<', true).Data = new_SpectralT.Id;
+        new_obj.Tag.Data.regexp('^XTransformationID<TDGraph<', true).Data = new_SpectralT.Id; % Must be int32!
         
         % Add new object to current Project, modifying its Project-property.
         if ~isempty(obj.Project),

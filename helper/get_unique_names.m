@@ -6,6 +6,9 @@
 function strs = get_unique_names(strs, maxStringLength)
     if nargin < 2, maxStringLength = namelengthmax; end
     if iscell(strs) && ~isempty(strs),
+        S = size(strs); % Store the original shape
+        strs = strs(:).'; % Force to a row vector
+        
         % Truncate strs if too long
         for ii = 1:numel(strs), strs{ii} = strs{ii}(1:min(numel(strs{ii}), maxStringLength)); end
 %         strs = regexprep(strs, sprintf('^(.{0,%d}).*$', maxStringLength), '$1'); % The length of the character vector is less than or equal to maxStringLength.
@@ -116,5 +119,8 @@ function strs = get_unique_names(strs, maxStringLength)
         
         % Restore original unsorted order
         strs(ind_sorted) = strs_sorted;
+        
+        % Restore original shape
+        strs = reshape(strs, S);
     else, strs = strs(1:min(numel(strs), maxStringLength)); end % Truncate
 end

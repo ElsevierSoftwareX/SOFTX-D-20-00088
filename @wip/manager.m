@@ -90,7 +90,7 @@ function C_wid = manager(obj, varargin)
     height_table = 60;
     
     % First create simple list
-    list = C_wid.get_HtmlName();
+    list = C_wid.get_HtmlName(false); % Get ProjectManager-optimized names
     % Then modify the created list by adding filenames whenever needed (6.11.2017)
     files = cell(size(list));
     prev = ''; % Keep track of the previous filename
