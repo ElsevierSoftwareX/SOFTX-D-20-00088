@@ -2,23 +2,23 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE 6: DATA CROPPING
-% The data cropping demonstration.
+%% WIT_IO EXAMPLE CASE 2 C: DATA CROPPING
+% Simple examples of (E2C 5) data cropping.
 
 clear all; % Clear workspace
 close all; % Close figures
 
 % Example file
 pathstr = fileparts([mfilename('fullpath') '.m']); % Get folder of this script
-file = fullfile(pathstr, 'example_v5.wip'); % Construct full path of the example file
+file = fullfile(pathstr, 'E_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-h = helpdlg({'EXAMPLE 6: DATA CROPPING' ...
+h = helpdlg({'EXAMPLE CASE 2 C: DATA CROPPING' ...
     '' ...
-    '* Using ''example_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.' ...
+    '* Using ''E_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.' ...
     '' ...
     '* Please note that MOST of this ''wit_io'' code is OPEN-SOURCED under simple and permissive BSD 3-Clause License and is FREE-TO-USE like described in LICENSE.txt!'});
 if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before continuing.
@@ -44,15 +44,14 @@ figure; C_PointScan.plot();
 
 
 %-------------------------------------------------------------------------%
-h = helpdlg({'!!! (1) Cropping objects:' ...
+h = helpdlg({'!!! (E2C 5) Cropping objects:' ...
     '' ...
     '* Any TDBitmap, TDGraph or TDImage can be cropped using crop-function, which takes pixel indices as input.' ...
     '' ...
     '* Also, spectral range of any TDGraph can be cropped using crop_Graph-function. (This feature is automatically used by filter_bg-function.)' ...
     '' ...
-    '* Close this dialog to show cropped examples of the opened figures.'});
+    '* Close this dialog to END and show cropped examples of the opened figures.'});
 if ishandle(h), figure(h); uiwait(h); end
-close all; % Close the plot
 %-------------------------------------------------------------------------%
 
 

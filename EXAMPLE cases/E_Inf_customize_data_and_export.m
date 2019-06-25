@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE 4: WRITE CUSTOMIZED DATA
+%% WIT_IO EXAMPLE CASE INF: CUSTOMIZE DATA AND EXPORT
 % Illustrating the creation of Project, its customized objects and writing
 % to a new file. Customized object examples for TDBitmap, Image<TDGraph,
 % TDImage and TDText datatypes (and some related transformations and
@@ -14,12 +14,12 @@ close all; % Close figures
 
 % Example file
 pathstr = fileparts([mfilename('fullpath') '.m']); % Get folder of this script
-file = fullfile(pathstr, 'example_v5.wip'); % Construct full path of the example file
+file = fullfile(pathstr, 'E_v5.wip'); % Construct full path of the example file
 
 
 
 %-------------------------------------------------------------------------%
-h = helpdlg({'EXAMPLE 4: WRITE CUSTOMIZED DATA' ...
+h = helpdlg({'EXAMPLE CASE INF: CUSTOMIZE DATA AND EXPORT' ...
     '' ...
     '* If unfamiliar with ''wit_io'', then go through the previous examples first.' ...
     '' ...
@@ -31,7 +31,7 @@ uiwait(h); % Wait for helpdlg to be closed before continuing.
 
 %-------------------------------------------------------------------------%
 % Create new Project objects
-Version = 5; % Use version 5 here for forward-compability
+Version = 5; % Use version 5 here for forward-compability. For instance, WITec Project 2.1.
 C_wit = wip.new(Version); % Create new Project (*.WIP-format) WIT-tree root
 % C_wit = wid.new(Version); % Create new Project (*.WID-format) WIT-tree root
 C_wip = wip(C_wit); % Create its Project object
@@ -50,7 +50,10 @@ new_TDBitmap = wid.new_Bitmap(C_wit); % Create empty TDBitmap
 new_TDBitmap.Name = 'Customized TDBitmap';
 
 % Create customized Data
-Data = randi(256, [100 200 3])-1; % Uniformly-distributed values from 0-255
+SizeX_TDBitmap = 100; % X-axis is always the 1st dimension of the wid object Data property!
+SizeY_TDBitmap = 200; % Y-axis is always the 2nd dimension of the wid object Data property!
+SizeGraph_TDBitmap = 3; % = 3 for the RGB channels. Graph-axis is always the 3rd dimension of the wid object Data property!
+Data = randi(256, [SizeX_TDBitmap SizeY_TDBitmap SizeGraph_TDBitmap])-1; % Uniformly-distributed values from 0-255
 
 % Set new Data (and its SizeX and SizeY parameters)
 new_TDBitmap.Data = Data;
@@ -88,12 +91,12 @@ Data_TDGraph = randn(SizeX, SizeY, SizeGraph); % Data with DataUnit!
 
 
 
-% new_TDGraph.SubType = 'Point';
+% new_TDGraph.SubType = 'Point'; % Makes sense only if SizeX == SizeY == 1
 % Data_TDGraph = permute(Data_spectrum(:), [2 3 1]); % Make a data vector (spectrum) a data cube (X, Y, spectrum)
 
 
 
-% new_TDGraph.SubType = 'Line';
+% new_TDGraph.SubType = 'Line'; % Makes sense only if SizeY == 1
 % Data_TDGraph = permute(Data_X_spectrum, [1 3 2]); % Make a data matrix (X, spectrum) a data cube (X, Y, spectrum) 
 % % Data_TDGraph = permute(Data_spectrum_X, [2 3 1]); % Make a data matrix (spectrum, X) a data cube (X, Y, spectrum)
 
@@ -163,7 +166,9 @@ new_TDImage.Name = 'Customized TDImage';
 
 % Create customized Data
 DataUnit_TDImage = 'TDImage a.u.';
-Data_TDImage = randn(100, 80); % Double
+SizeX_TDImage = 100; % X-axis is always the 1st dimension of the wid object Data property!
+SizeY_TDImage = 80; % Y-axis is always the 2nd dimension of the wid object Data property
+Data_TDImage = randn(SizeX_TDImage, SizeY_TDImage); % Double
 
 % Set new Data (and its SizeX and SizeY parameters)
 new_TDImage.Data = Data_TDImage;
@@ -207,10 +212,22 @@ C_wip.add_Data(new_TDText); % Make new object visible in Project-object
 %-------------------------------------------------------------------------%
 % C_wip.write(); % Overwrite the original
 
-new_file = [mfilename '.wip']; % Generate a new filename
+new_file = [mfilename('fullpath') '.wip']; % Generate a new filename
 C_wip.write(new_file); % Write Project to the specified file
 
 C_wip.manager('-all', '-closepreview'); % Show the newly created Project
+%-------------------------------------------------------------------------%
+
+
+
+%-------------------------------------------------------------------------%
+h = helpdlg({'!!! (EInf) Customizing data and exporting:' ...
+    '' ...
+    '* In this advanced example, customized TDBitmap, TDGraph, TDImage and TDText were created and exported to a file. See the generated data in the opened Project Manager.' ...
+    '' ...
+    '* Close this dialog to END and close all the opened figures.'});
+if ishandle(h), figure(h); uiwait(h); end
+close all;
 %-------------------------------------------------------------------------%
 
 

@@ -2,27 +2,25 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE 3: MORE DATA POST-PROCESSING
-% Simple examples of lineshape fitting functions under 'helper'-folder,
-% result cleaning and histograms.
+%% WIT_IO EXAMPLE CASE 3: GRAPHENE DATA ANALYSIS
+% Graphene data analysis case with examples of (E3 i.) laser line
+% recalibration, (E3 ii.) lineshape fitting, (E3 iii.) result cleaning and
+% (E3 iv.) histogram generation.
 
-% TOOLBOX REQUIREMENTS: Image Processing Toolbox
-
-clc; % Clear command window
 clear all; % Clear workspace
 close all; % Close figures
 
 % Example file
 pathstr = fileparts([mfilename('fullpath') '.m']); % Get folder of this script
-file = fullfile(pathstr, 'example_v5.wip'); % Construct full path of the example file
+file = fullfile(pathstr, 'E_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-h = helpdlg({'EXAMPLE 3: MORE DATA POST-PROCESSING' ...
+h = helpdlg({'EXAMPLE CASE 3: GRAPHENE DATA ANALYSIS' ...
     '' ...
-    '* Using ''example_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.' ...
+    '* Using ''E_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.' ...
     '' ...
     '* Please note that MOST of this ''wit_io'' code is OPEN-SOURCED under simple and permissive BSD 3-Clause License and is FREE-TO-USE like described in LICENSE.txt!'});
 if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before continuing.
@@ -41,7 +39,7 @@ C_Point = C_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 1
 
 
 %-------------------------------------------------------------------------%
-h = helpdlg({'!!! (1) Recalibrating the Rayleigh-peak to zero position:' ...
+h = helpdlg({'!!! (E3 i.) Recalibrating the Rayleigh-peak to zero position:' ...
     '' ...
     '* The Rayleigh-peak (or the laser line or the 0-peak) has Gaussian intensity distribution and may be shifted from zero due to instrumental reasons. Misaligned 0-peak offsets all other Raman peak position information, for which reason it should be recalibrated.' ...
     '' ...
@@ -53,7 +51,7 @@ h = helpdlg({'!!! (1) Recalibrating the Rayleigh-peak to zero position:' ...
 
 
 %-------------------------------------------------------------------------%
-% !!! (1) SINGLE GAUSS FITTING OF THE RAYLEIGH-PEAK and RECALIBRATION OF THE RAYLEIGH-PEAK
+% !!! (E3 i.) SINGLE GAUSS FITTING OF THE RAYLEIGH-PEAK and RECALIBRATION OF THE RAYLEIGH-PEAK
 Range_0 = [-25 25]; % Rayleigh-peak or 0-peak
 C_Point_old = C_Point.copy(); % Store the old data for comparison purposes
 C_0 = C_Point.filter_gaussian({'-silent'}, Range_0); % Gauss filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
@@ -76,7 +74,7 @@ close all;
 
 
 %-------------------------------------------------------------------------%
-h = helpdlg({'!!! (2) Lorentzians are fitted to the D-, G- and 2D-peaks.' ...
+h = helpdlg({'!!! (E3 ii.) Lorentzians are fitted to the D-, G- and 2D-peaks.' ...
     '' ...
     '* Ideal Raman peaks have Lorentzian function form, but may sometimes consist of multiple peaks like graphene 2D-peak.' ...
     '' ...
@@ -86,7 +84,7 @@ h = helpdlg({'!!! (2) Lorentzians are fitted to the D-, G- and 2D-peaks.' ...
 
 
 %-------------------------------------------------------------------------%
-% !!! (2) SINGLE LORENTZ FITTING OF THE D-, G- AND 2D-PEAKS
+% !!! (E3 ii.) SINGLE LORENTZ FITTING OF THE D-, G- AND 2D-PEAKS
 % Filter ranges
 Range_D = [1250 1450]; % D-peak
 Range_G = [1500 1650]; % G-peak
@@ -105,7 +103,7 @@ close all;
 
 
 %-------------------------------------------------------------------------%
-h = helpdlg({'!!! (3) Clean-up of the fitted data:' ...
+h = helpdlg({'!!! (E3 iii.) Clean-up of the fitted data:' ...
     '' ...
     '* Sometimes the fitting fails or contains invalid regions. For example, here the D-peak exists only in some graphene edges and elsewhere the results are invalid. It can be useful to discard such outlier regions from the dataset as NaN values.' ...
     '' ...
@@ -119,7 +117,7 @@ h = helpdlg({'!!! (3) Clean-up of the fitted data:' ...
 
 
 %-------------------------------------------------------------------------%
-% !!! (3) CLEAN-UP OF THE LORENTZ FITTED DATA
+% !!! (E3 iii.) CLEAN-UP OF THE LORENTZ FITTED DATA
 % Get invalid areas and modify I, Pos, Fwhm and I0
 R_2_threshold = 0.2; % A rough threshold for very poorly fitted data
 [bw_D_invalid, C_D(1).Data, C_D(2).Data, C_D(3).Data, C_D(4).Data] = ...
@@ -160,7 +158,7 @@ close all;
 
 
 %-------------------------------------------------------------------------%
-h = helpdlg({'!!! (4) Histograms of the previously cleaned intensity ratios, I(D)/I(G) and I(2D)/I(G) are evaluated and shown:' ...
+h = helpdlg({'!!! (E3 iv.) Histograms of the previously cleaned intensity ratios, I(D)/I(G) and I(2D)/I(G) are evaluated and shown:' ...
     '' ...
     '* Please note that the previously done cleaning procedure removed most invalid fitting values, what would have otherwise hidden these distributions.' ...
     '' ...
@@ -170,7 +168,7 @@ h = helpdlg({'!!! (4) Histograms of the previously cleaned intensity ratios, I(D
 
 
 %-------------------------------------------------------------------------%
-% !!! (4) CALCULATE AND SHOW HISTOGRAMS
+% !!! (E3 iv.) CALCULATE AND SHOW HISTOGRAMS
 C_hist_I_DperG = C_I_DperG.histogram();
 C_hist_I_2DperG = C_I_2DperG.histogram();
 figure; C_hist_I_DperG.plot();
