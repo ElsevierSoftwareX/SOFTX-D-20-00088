@@ -285,13 +285,13 @@ function plot(obj, varargin)
     % Update Graph Volume (CUSTOM TYPE)
     function [] = updateGraphVolume(filter_range),
         set(0, 'CurrentFigure', Fig);
-        Data_range = wid.reduce_Graph_with_bg_helper(Data, Info.Graph, filter_range);
+        Data_range = wid.crop_Graph_with_bg_helper(Data, Info.Graph, filter_range);
         data_plot_Volume(mynansum(Data_range, 3));
     end
     % Update Graph Image
     function [] = updateGraphImage(filter_range),
         set(0, 'CurrentFigure', Fig);
-        Data_range = wid.reduce_Graph_with_bg_helper(Data, Info.Graph, filter_range);
+        Data_range = wid.crop_Graph_with_bg_helper(Data, Info.Graph, filter_range);
         bw_isnan_3rd_dim = all(isnan(Data_range), 3); % Test if all NaN in the same location
         sum_3rd_dim = mynansum(Data_range, 3);
         sum_3rd_dim(bw_isnan_3rd_dim) = NaN; % Restore NaN if all NaN in the same location

@@ -2,6 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
+% Requires 3rd party export_fig
 function [] = export_ui_figure(Fig),
     % Updated 8.1.2019 by Joonas T. Holmi
     if nargin < 1 || isempty(Fig), Fig = gcf; end % By default, update gcf

@@ -57,14 +57,14 @@ function [C_wit, varargout] = append(varargin),
 %         fprintf('REPOPULATE\n');
         for jj = 1:numel(Tags_with_TData_ID),
             old = Tags_with_TData_ID(jj).Data;
-            Tags_with_TData_ID(jj).Data = jj;
+            Tags_with_TData_ID(jj).Data = int32(jj); % Must be int32!
 %             fprintf('TData ID: %d -> %d\n', old, jj);
             for kk = 1:numel(Tags_with_ID),
                 if isa(Tags_with_ID(kk).Data, 'wit'), % SPECIAL CASE: ID list
                     ID_list = Tags_with_ID(kk).Data.regexp('^Data<');
-                    if ~isempty(ID_list) && ~isempty(ID_list.Data), ID_list.Data(ID_list.Data == old) = jj; end
+                    if ~isempty(ID_list) && ~isempty(ID_list.Data), ID_list.Data(ID_list.Data == old) = int32(jj); end % Must be int32!
                 elseif Tags_with_ID(kk).Data == old,
-                    Tags_with_ID(kk).Data = jj;
+                    Tags_with_ID(kk).Data = int32(jj); % Must be int32!
                 end
             end
         end
@@ -79,12 +79,12 @@ function [C_wit, varargout] = append(varargin),
                 ID_list = Tags_with_ID(jj).Data.regexp('^Data<');
                 if ~isempty(ID_list) && ~isempty(ID_list.Data), % Skip empty
                     ID_max = max(ID_max, max(ID_list.Data));
-                    ID_list.Data = ID_list.Data + offset-1;
+                    ID_list.Data = int32(ID_list.Data + offset-1); % Must be int32!
                 end
             elseif Tags_with_ID(jj).Data ~= 0, % Proceed if non-zero ID
                 ID_max = max(ID_max, Tags_with_ID(jj).Data);
 %                 fprintf('ID: %d -> %d\n', Tags_with_ID(jj).Data, Tags_with_ID(jj).Data + offset-1);
-                Tags_with_ID(jj).Data = Tags_with_ID(jj).Data + offset-1;
+                Tags_with_ID(jj).Data = int32(Tags_with_ID(jj).Data + offset-1); % Must be int32!
             end
         end
         
@@ -98,8 +98,9 @@ function [C_wit, varargout] = append(varargin),
             DataClassNames(jj).Name = regexprep(str_DataClassNames{jj}, '\d+', sprintf('%d', ND));
             Datas(bw_pair).Name = regexprep(str_Datas{bw_pair}, '\d+', sprintf('%d', ND));
             ND = ND+1;
+            DataOrDataClassNames = [DataOrDataClassNames DataClassNames(jj) Datas(bw_pair)]; % Store the modified copies in sorted order
         end
-        DataOrDataClassNames = [DataOrDataClassNames reshape([DataClassNames(:)'; Datas(:)'], 1, [])]; % Store the modified copies
+%         DataOrDataClassNames = [DataOrDataClassNames reshape([DataClassNames(:)'; Datas(:)'], 1, [])]; % Store the modified copies
         
         if ~isempty(Tag_Viewer), % Does not exist for WITec Data
             % Update the Viewer/ViewerClassName-pair numbering and append them
@@ -112,8 +113,9 @@ function [C_wit, varargout] = append(varargin),
                 ViewerClassNames(jj).Name = regexprep(str_ViewerClassNames{jj}, '\d+', sprintf('%d', ND));
                 Viewers(bw_pair).Name = regexprep(str_Viewers{bw_pair}, '\d+', sprintf('%d', ND));
                 NV = NV+1;
+                ViewerOrViewerClassNames = [ViewerOrViewerClassNames ViewerClassNames(jj) Viewers(bw_pair)]; % Store the modified copies in sorted order
             end
-            ViewerOrViewerClassNames = [ViewerOrViewerClassNames reshape([ViewerClassNames(:)'; Viewers(:)'], 1, [])]; % Store the modified copies
+%             ViewerOrViewerClassNames = [ViewerOrViewerClassNames reshape([ViewerClassNames(:)'; Viewers(:)'], 1, [])]; % Store the modified copies
         end
         
         % Update the counters
@@ -125,7 +127,7 @@ function [C_wit, varargout] = append(varargin),
     if ~isempty(Tag_Viewer), Tag_Viewer.Data = [Tag_NV.Siblings ViewerOrViewerClassNames Tag_NV]; end % Does not exist for WITec Data
     
     % Update the counters
-    if ~isempty(Tag_ID), Tag_ID.Data = offset; end % Does not exist for WITec Data
+    if ~isempty(Tag_ID), Tag_ID.Data = int32(offset); end % Must be int32! % Does not exist for WITec Data
     Tag_ND.Data = ND;
     if ~isempty(Tag_Viewer), Tag_NV.Data = NV; end % Does not exist for WITec Data
 end

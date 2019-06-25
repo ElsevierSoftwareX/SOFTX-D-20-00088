@@ -70,8 +70,8 @@ function [new_obj, Bin_Counts, Bin_Centers] = histogram(obj, N_bins, lower_quant
         new_ILUT = wid.new_Interpretation_Z(obj.Tag.Root); % This does not add newly created object to Project yet!
         new_ILUT.Data.TDZInterpretation.UnitName = obj.Info.DataUnit;
 
-        new_obj.Tag.Data.regexp('^XTransformationID<TDGraph<', true).Data = new_TLUT.Id;
-        new_obj.Tag.Data.regexp('^XInterpretationID<TDGraph<', true).Data = new_ILUT.Id;
+        new_obj.Tag.Data.regexp('^XTransformationID<TDGraph<', true).Data = new_TLUT.Id; % Must be int32!
+        new_obj.Tag.Data.regexp('^XInterpretationID<TDGraph<', true).Data = new_ILUT.Id; % Must be int32!
 
         % Add new object to current Project, modifying its Project-property.
         if ~isempty(obj.Project),

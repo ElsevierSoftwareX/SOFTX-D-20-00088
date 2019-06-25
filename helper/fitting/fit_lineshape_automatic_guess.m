@@ -7,6 +7,15 @@
 % (= Full width at half maximum) and I0 (= Offset), respectively. Resulting
 % size(P0, 2) == numel(Y)/size(Y, dim), because the dim'th dimension was
 % truncated.
+
+% IDEAS:
+% * Add N for number of lineshapes, related to a needed automated feature
+% to iteratively guess MULTIPLE PEAKS by some method. It may be possible
+% to implement such a feature by the residual procedure or the second
+% derivative procedure (in combination of reliable smoothening algorithm).
+% If it uses a simplified lineshape (i.e. Lorentzian), then it should warn
+% the user. If it does not, then it should take function as input fun.
+% The peaks are then guessed gradually based on the lineshape. (25.6.2019)
 function [P0] = fit_lineshape_automatic_guess(x, Y, dim)
     % Written by Joonas T. Holmi
     if nargin < 3, dim = 3; end % By default, operate 3rd or spectral dimension
