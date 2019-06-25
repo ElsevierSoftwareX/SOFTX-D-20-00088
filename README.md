@@ -53,11 +53,11 @@ menus to enable a quick call to `[C_wid, C_wid, HtmlNames] = wip.read(file);`. *
 also requires administration rights.**
 
 ### Example cases
-Run *(or F5)* interactive example cases (*\*.m*) under [*'examples'*](https://gitlab.com/jtholmi/wit_io/tree/master/examples)
+Run *(or F5)* interactive code (*\*.m*) under [*'EXAMPLE cases'*](/EXAMPLE cases)
 folder to learn **wit_io**. Begin by opening and running *'E_01_A_import_file_to_get_started.m'*.
 
 ### Semi-automated scripts
-Consider using semi-automated scripts under [*'scripts'*](https://gitlab.com/jtholmi/wit_io/tree/master/scripts)
+Consider using semi-automated scripts under [*'SCRIPT cases'*](/SCRIPT cases)
 folder on your WITec Project/Data files. They will read the given file, interact
 with the user, process the relevant file contents and finally write back to the
 original file.
