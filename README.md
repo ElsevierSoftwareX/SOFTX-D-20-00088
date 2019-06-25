@@ -40,10 +40,11 @@ and extract it as a new folder (i.e. *'wit_io'*) to your workfolder.
 **For the first time**, go to the created folder and run *(or F5)* [*'load_or_addpath_permanently.m'*](https://gitlab.com/jtholmi/wit_io/blob/master/load_or_addpath_permanently.m)
 to **permanently** add it and its subfolders to MATLAB path so that the toolbox
 can be called from anywhere. **This requires administration rights.**
-* Without the rights, do the following once per MATLAB instance to make **wit_io** findable:
-(1) Execute `addpath(genpath('toolbox_path'));`, where `'toolbox_path'` is
-**wit_io**'s full installation path.
-(2) Manually right-click **wit_io**'s main folder in "Current Folder"-view and
+* Without the rights, do one of the following once per MATLAB instance to make **wit_io**
+findable:
+    1. Execute `addpath(genpath('toolbox_path'));`, where `'toolbox_path'` is **wit_io**'s
+full installation path.
+    2. Manually right-click **wit_io**'s main folder in "Current Folder"-view and
 from the context menu left-click "Add to Path" and "Selected Folders and Subfolders".
 
 **Optionally**, run *(or F5)* also [*'update_wip_and_wid_context_menus.m'*](https://gitlab.com/jtholmi/wit_io/blob/master/update_wip_and_wid_context_menus.m)
