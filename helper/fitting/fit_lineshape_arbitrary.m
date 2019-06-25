@@ -71,7 +71,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     % contain NaN values.
     
     % IDEAS:
-    % * Allow '-fitOne2Area' which asks for a SP x SD matrix to set which
+    % * Allow '-fitOne2Area', which asks for a SP x SD matrix to set which
     % spatial areas fit one parameter per area. Each area are marked with
     % an integer. Uses sparse-functionality to reduce Jr2 and Hr2 problem
     % spaces by summing. (23.8.2018)
@@ -84,6 +84,9 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     % NR, or even LMA [1]. (3.4.2019)
     % [1] J. Scheffel and K. Lindvall (2018), 'SIR - An efficient solver
     % for systems of equation', https://doi.org/10.1016/j.softx.2018.01.003
+    % * Implement '-NLineshapes' (number of lineshapes) to allow simpler
+    % fun-input. For instance, one could simply give a single lineshape
+    % fun, which is then used for N lineshapes. (25.6.2019)
     
     if nargin < 5, dim = 3; end % By default, operate 3rd or spectral dimension
     T_begin = now.*86400; % [s]
