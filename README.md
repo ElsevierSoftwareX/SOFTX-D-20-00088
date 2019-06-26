@@ -20,10 +20,12 @@ steps. Toolbox can also [read/write **any** WIT-tag formatted files](#any-wit-ta
 
 ### Background
 The **wit_io** (or earlier *wip_reader*) project began in 2016 as a side product
-of MATLAB analysis of huge Raman spectroscopic datasets obtained from WITec Raman
-Alpha 300 RA. The main aim of this project is to reduce the time consumed by importing,
-exporting and various post-processing steps. During its development author worked
-for prof. Harri Lipsanen's group in Aalto University, Finland.
+of MATLAB analysis of huge Raman spectroscopic datasets obtained by WITec Raman
+Alpha 300 RA. The hope was to reduce time spent to manual exporting (from WITec
+software) and importing (in MATLAB software) and benefit from MATLAB's many
+libraries, scriptability, customizability and better suitability to BIG data
+analysis. During its development author worked for prof. Harri Lipsanen's group
+in Aalto University, Finland.
 
 
 
