@@ -1,6 +1,6 @@
 # [wit_io: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wid) files](https://se.mathworks.com/matlabcentral/fileexchange/70983-wit_io-toolbox-for-witec-project-data-wip-wid-files)
 
-Toolbox can directly **read**/**write** [WITec.de](https://witec.de/) Project/Data (\*.wip/\*.wid)
+Toolbox can directly **read**/**write** [WITec](https://witec.de/) Project/Data (\*.wip/\*.wid)
 files in [MATLAB](https://www.mathworks.com/products/matlab.html) with or without
 GUI. It also provides data analysis tools.
 
@@ -12,7 +12,7 @@ GUI. It also provides data analysis tools.
 
 ### Description
 This [MATLAB](https://www.mathworks.com/products/matlab.html) toolbox is intended
-for users of [WITec](https://witec.de/) microscopes (i.e. Raman or SNOM), who work
+for users of [WITec.de](https://witec.de/) microscopes (i.e. Raman or SNOM), who work
 with **\*.wip**/**\*.wid** files (**v5**, **v6** or **v7**) and wish to directly
 **read**/**write** and **analyze** them in MATLAB. The main aim of this project
 is to reduce the time consumed by importing, exporting and various post-processing
