@@ -1,6 +1,6 @@
-# [wit_io: Toolbox for WITec Project/Data (\*.wip/\*.wid) files](https://se.mathworks.com/matlabcentral/fileexchange/70983-wit_io-toolbox-for-witec-project-data-wip-wid-files)
+# [wit_io: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wid) files](https://se.mathworks.com/matlabcentral/fileexchange/70983-wit_io-toolbox-for-witec-project-data-wip-wid-files)
 
-Toolbox can directly **read**/**write** [WITec](https://witec.de/) Project/Data (\*.wip/\*.wid)
+Toolbox can directly **read**/**write** [WITec.de](https://witec.de/) Project/Data (\*.wip/\*.wid)
 files in [MATLAB](https://www.mathworks.com/products/matlab.html) with or without
 GUI. It also provides data analysis tools.
 
@@ -92,7 +92,7 @@ Please report any bugs in [Issues](https://gitlab.com/jtholmi/wit_io/issues)-pag
 ## Additional information
 
 ### Citation *(optional)*
-J. T. Holmi (2019). wit_io: Toolbox for WITec Project/Data (\*.wip/\*.wid) files (https://gitlab.com/jtholmi/wit_io), GitLab. Retrieved June 25, 2019.
+J. T. Holmi (2019). wit_io: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wid) files (https://gitlab.com/jtholmi/wit_io), GitLab. Version <x.y.z>. Retrieved <Month> <Day>, <Year>.
 
 ### 3rd party content
 * [export_fig](https://se.mathworks.com/matlabcentral/fileexchange/23629-export_fig)
