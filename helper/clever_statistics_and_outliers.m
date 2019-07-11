@@ -165,6 +165,8 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     
     % FIXED "Single NaN output when all NaN input" BUG (11.7.2019)
     
+    % ADDED SUPPORT TO MULTIPLE DIM (11.7.2019)
+    
     % ---------------------------------------------------------------------
     
     % TODO (5.1.2016): If dim == [], then use more optimized loop-routine.
@@ -193,11 +195,28 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     SX = size(X); % Original input dimensions
     if isempty(dim),
         X = X(:); % Force column vector (Nx1-vector)
-    else % Permute desired dimension to first
-        order = [dim:ndims(X) 1:dim-1];
+    elseif numel(dim) == 1, % Permute desired dimension to first
+        otherdims = setdiff(1:ndims(X), dim);
+        order = [dim otherdims];
+%         order = [dim:ndims(X) 1:dim-1];
         X = permute(X, order);
+    else,
+        dim = reshape(sort(dim), 1, []); % Force row vector and sort
+        N_dims = ndims(X);
+        dim = dim(dim <= N_dims); % Remove excess dim
+        alldims = 1:N_dims; % All dims
+        B_dim = any(bsxfun(@eq, dim(:), alldims),1);
+        otherdims = alldims(~B_dim); % Get all but dim
+        order = [otherdims dim];
+        X = permute(X, order); % Permute all dim last
+        SX_otherdims = SX(otherdims);
+        if isempty(SX_otherdims), SX_otherdims = 1; end % Even if no other dims, then enforce dim at 2nd or later place
+        N_otherdims = numel(SX_otherdims);
+        X = reshape(X, [SX_otherdims prod(SX(dim))]); % Merge dim together (and have result at 2nd or later place)
+        suborder = [N_otherdims+1 1:N_otherdims];
+        X = permute(X, suborder); % Permute merged dim first
     end
-    SX_perm = size(X); % Permuted input dimensions
+    SX_perm = [size(X) 1]; % Permuted input dimensions
     X = X(:,:); % Force 2-dimensional array (NxM-matrix)
     
     if ~islogical(X), X(isinf(X)) = NaN; end % Treat -Inf and Inf as NaN!
@@ -344,15 +363,28 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     
     % Restore array dimensions
     if ~isempty(dim),
-        isOutlier = ipermute(reshape(isOutlier, SX_perm), order);
-        cmean = ipermute(reshape(cmean, [1 SX_perm(2:end)]), order);
-        cvar = ipermute(reshape(cvar, [1 SX_perm(2:end)]), order);
-        cstd = ipermute(reshape(cstd, [1 SX_perm(2:end)]), order);
-        cmedian = ipermute(reshape(cmedian, [1 SX_perm(2:end)]), order);
-        cmin = ipermute(reshape(cmin, [1 SX_perm(2:end)]), order);
-        cmax = ipermute(reshape(cmax, [1 SX_perm(2:end)]), order);
-        if nargout >= 8, % Only if requested
-            sigmas = ipermute(reshape(sigmas, SX_perm), order);
+        if numel(dim) == 1,
+            isOutlier = ipermute(reshape(isOutlier, SX_perm), order);
+            cmean = ipermute(reshape(cmean, [1 SX_perm(2:end)]), order);
+            cvar = ipermute(reshape(cvar, [1 SX_perm(2:end)]), order);
+            cstd = ipermute(reshape(cstd, [1 SX_perm(2:end)]), order);
+            cmedian = ipermute(reshape(cmedian, [1 SX_perm(2:end)]), order);
+            cmin = ipermute(reshape(cmin, [1 SX_perm(2:end)]), order);
+            cmax = ipermute(reshape(cmax, [1 SX_perm(2:end)]), order);
+            if nargout >= 8, % Only if requested
+                sigmas = ipermute(reshape(sigmas, SX_perm), order);
+            end
+        else,
+            isOutlier = ipermute(reshape(ipermute(reshape(isOutlier, SX_perm), suborder), [SX(otherdims) SX(dim)]), order);
+            cmean = ipermute(reshape(cmean, SX_perm(2:end)), order);
+            cvar = ipermute(reshape(cvar, SX_perm(2:end)), order);
+            cstd = ipermute(reshape(cstd, SX_perm(2:end)), order);
+            cmedian = ipermute(reshape(cmedian, SX_perm(2:end)), order);
+            cmin = ipermute(reshape(cmin, SX_perm(2:end)), order);
+            cmax = ipermute(reshape(cmax, SX_perm(2:end)), order);
+            if nargout >= 8, % Only if requested
+                sigmas = ipermute(reshape(ipermute(reshape(sigmas, SX_perm), suborder), [SX(otherdims) SX(dim)]), order);
+            end
         end
     else,
         isOutlier = reshape(isOutlier, SX);
