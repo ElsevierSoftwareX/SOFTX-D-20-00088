@@ -180,6 +180,8 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % TODO (4.8.2016): Add try-catch to use cumsum's 'reverse' feature when
     % possible. This would benefit from newer MATLAB version optimizations.
     
+    % TODO (11.7.2019): Interpret negative dim values as NOT operation.
+    
     % ---------------------------------------------------------------------
     
     % Default (used for standardized residual analysis to detect outliers)
