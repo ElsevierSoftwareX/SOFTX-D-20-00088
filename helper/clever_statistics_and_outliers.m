@@ -163,6 +163,8 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     
     % IMRPOVED ITERATION USING FLAGS TO MARK IF DONE (11.7.2019)
     
+    % FIXED "Single NaN output when all NaN input" BUG (11.7.2019)
+    
     % ---------------------------------------------------------------------
     
     % TODO (5.1.2016): If dim == [], then use more optimized loop-routine.
@@ -181,8 +183,6 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % Default (used for standardized residual analysis to detect outliers)
     if nargin < 3 || isempty(delta), delta = 2.5; end % If set to 4, then gives approximately same variance as var would
     if nargin < 2, dim = []; end % If set to [], then force vectorizes the input.
-    [cmean, cvar, cstd, cmedian, cmin, cmax] = deal(NaN);
-    isOutlier = false(size(X));
     
     % Test the input value type OR error
     if ~isnumeric(X) && ~islogical(X),
@@ -202,7 +202,6 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     
     if ~islogical(X), X(isinf(X)) = NaN; end % Treat -Inf and Inf as NaN!
     B_nan = isnan(X); % The NaN (or Inf) state of the X data
-    if all(B_nan(:)), return; end % ABORT if all values are NaNs
     
     % Precalculate the row-offset constant
     col = (1:size(X, 2));
@@ -245,6 +244,9 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     N0 = sum(~B_nan, 1); % Initial number of elements per column
     cmean = S./N0; % Regular mean
     cvar = (S2-2.*S.*cmean+N0.*cmean.^2)./(N0-1); % Regular variance
+    
+    % Preallocate results
+    [cmedian, cmin, cmax] = deal(nan(size(N0)));
     
     % Store boolean maps
     B_not_empty = N0 ~= 0; % Ability to ignore empty datasets
