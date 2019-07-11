@@ -75,7 +75,7 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % This was written, tested and optimized for MATLAB R2010b-R2018b using
     % the built-in functions and does not require any toolboxes to be used.
     
-    % Updated 28.3.2019
+    % Updated 11.7.2019
     
     % ---------------------------------------------------------------------
     
@@ -159,6 +159,10 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     
     % PUBLISHED CODE UNDER BSD-LICENSE (28.3.2019)
     
+    % FIXED "Error if first column is all NaN" BUG (11.7.2019)
+    
+    % IMRPOVED ITERATION USING FLAGS TO MARK IF DONE (11.7.2019)
+    
     % ---------------------------------------------------------------------
     
     % TODO (5.1.2016): If dim == [], then use more optimized loop-routine.
@@ -197,8 +201,8 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     X = X(:,:); % Force 2-dimensional array (NxM-matrix)
     
     if ~islogical(X), X(isinf(X)) = NaN; end % Treat -Inf and Inf as NaN!
-    bwNan = isnan(X); % The NaN (or Inf) state of the X data
-    if all(bwNan(:)), return; end % ABORT if all values are NaNs
+    B_nan = isnan(X); % The NaN (or Inf) state of the X data
+    if all(B_nan(:)), return; end % ABORT if all values are NaNs
     
     % Precalculate the row-offset constant
     col = (1:size(X, 2));
@@ -238,9 +242,15 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % Case j == 0: (If no outliers == regular mean and variance)
     S = CS_neg(1, :) + CS_pos(end, :); % S = nansum(X_sorted, 1);
     S2 = CS2_neg(1, :) + CS2_pos(end, :); % S2 = nansum(X_sorted_2, 1);
-    N0 = sum(~bwNan, 1); % Initial number of elements per column
+    N0 = sum(~B_nan, 1); % Initial number of elements per column
     cmean = S./N0; % Regular mean
     cvar = (S2-2.*S.*cmean+N0.*cmean.^2)./(N0-1); % Regular variance
+    
+    % Store boolean maps
+    B_not_empty = N0 ~= 0; % Ability to ignore empty datasets
+    B_loop = N0 > 1; % Ability to reduce workload when heavy on outliers
+    B_min_temp = false(size(N0)); % Preallocate only once
+    B_max_temp = false(size(N0)); % Preallocate only once
     
     % Case j > 0: (Possible outliers == clever mean and variance)
     isOutlier = false(size(X_sorted)); % The initial outlier state of the X data
@@ -250,7 +260,7 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     sub_median_max = ceil((N0-1)./2)+1; % Index to current max-side median
     for jj = 1:size(X_sorted, 1)-1, % ONE-LINERS speed-up a HUGE loop
         % Current sample count AND indices of the min/max of each row
-        N = sub_max - sub_min; ind_min = sub_min + col_offset; ind_max = sub_max + col_offset;
+        N = sub_max(B_loop) - sub_min(B_loop); ind_min = sub_min(B_loop) + col_offset(B_loop); ind_max = sub_max(B_loop) + col_offset(B_loop);
         
         % A new outlier is either the minimum or the maximum or neither
         x_min = X_sorted(ind_min); x_max = X_sorted(ind_max);
@@ -269,44 +279,52 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
         cmean_max = S_max./N; cvar_max = (S2_max-2.*S_max.*cmean_max+N.*cmean_max.^2)./(N-1);
 
         % Compare which removal results in smaller sample variance
-        bw_min = cvar_min < cvar_max & cvar_min <= cvar & (cmean_min-x_min).^2 > delta.^2.*cvar_min; % Test if the minimum is an outlier
-        bw_max = cvar_min >= cvar_max & cvar_max <= cvar & (cmean_max-x_max).^2 > delta.^2.*cvar_max; % Test if the maximum is an outlier
+        B_min = cvar_min < cvar_max & cvar_min <= cvar(B_loop) & (cmean_min-x_min).^2 > delta.^2.*cvar_min; % Test if the minimum is an outlier
+        B_max = cvar_min >= cvar_max & cvar_max <= cvar(B_loop) & (cmean_max-x_max).^2 > delta.^2.*cvar_max; % Test if the maximum is an outlier
+        
+        % Set temporary boolean maps
+        B_min_temp(B_loop) = B_min;
+        B_max_temp(B_loop) = B_max;
         
         % The minimum is an outlier
-        cmean(bw_min) = cmean_min(bw_min);
-        cvar(bw_min) = cvar_min(bw_min);
-        sub_min(bw_min) = sub_min(bw_min)+1;
-        isOutlier(IND(ind_min(bw_min))) = true; % Better for matrices
-        bw_move_max = sub_median_min == sub_median_max;
-        sub_median_min(bw_min & ~bw_move_max) = sub_median_min(bw_min & ~bw_move_max)+1;
-        sub_median_max(bw_min & bw_move_max) = sub_median_max(bw_min & bw_move_max)+1;
+        cmean(B_min_temp) = cmean_min(B_min);
+        cvar(B_min_temp) = cvar_min(B_min);
+        sub_min(B_min_temp) = sub_min(B_min)+1;
+        isOutlier(IND(ind_min(B_min))) = true; % Better for matrices
+        bw_move_max_all = sub_median_min == sub_median_max;
+        sub_median_min(B_min_temp & ~bw_move_max_all) = sub_median_min(B_min_temp & ~bw_move_max_all)+1;
+        sub_median_max(B_min_temp & bw_move_max_all) = sub_median_max(B_min_temp & bw_move_max_all)+1;
         
         % The maximum is an outlier
-        cmean(bw_max) = cmean_max(bw_max);
-        cvar(bw_max) = cvar_max(bw_max);
-        sub_max(bw_max) = sub_max(bw_max)-1;
-        isOutlier(IND(ind_max(bw_max))) = true; % Better for matrices
-        bw_move_min = sub_median_min == sub_median_max;
-        sub_median_min(bw_max & bw_move_min) = sub_median_min(bw_max & bw_move_min)-1;
-        sub_median_max(bw_max & ~bw_move_min) = sub_median_max(bw_max & ~bw_move_min)-1;
+        cmean(B_max_temp) = cmean_max(B_max);
+        cvar(B_max_temp) = cvar_max(B_max);
+        sub_max(B_max_temp) = sub_max(B_max)-1;
+        isOutlier(IND(ind_max(B_max))) = true; % Better for matrices
+        bw_move_min_all = sub_median_min == sub_median_max;
+        sub_median_min(B_max_temp & bw_move_min_all) = sub_median_min(B_max_temp & bw_move_min_all)-1;
+        sub_median_max(B_max_temp & ~bw_move_min_all) = sub_median_max(B_max_temp & ~bw_move_min_all)-1;
+        
+        % Restore temporary boolean maps to false
+        B_min_temp(B_loop) = false;
+        B_max_temp(B_loop) = false;
+        
+        % If no outliers, then mark as done
+        B_loop(~B_min_temp & ~B_max_temp) = false;
         
         % Break if no more outliers detected
-        if ~any(bw_min) && ~any(bw_max), break; end
+        if ~any(B_min) && ~any(B_max), break; end
     end
     
     % Clever min/max using latest indices of the min/max of each row
-    ind_min = sub_min + col_offset;
-    ind_max = sub_max + col_offset;
-    cmin = X_sorted(ind_min);
-    cmax = X_sorted(ind_max);
-    cmin(sub_max < sub_min) = NaN; % Restore NaN values!
-    cmax(sub_max < sub_min) = NaN; % Restore NaN values!
+    ind_min = sub_min(B_not_empty) + col_offset(B_not_empty);
+    ind_max = sub_max(B_not_empty) + col_offset(B_not_empty);
+    cmin(B_not_empty) = X_sorted(ind_min);
+    cmax(B_not_empty) = X_sorted(ind_max);
     
     % Clever median using latest indices of the median(s) of each row
-    ind_median_min = sub_median_min + col_offset;
-    ind_median_max = sub_median_max + col_offset;
-    cmedian = (X_sorted(ind_median_min) + X_sorted(ind_median_max))./2;
-    cmedian(sub_median_max > N0) = NaN; % Restore NaN values!
+    ind_median_min = sub_median_min(B_not_empty) + col_offset(B_not_empty);
+    ind_median_max = sub_median_max(B_not_empty) + col_offset(B_not_empty);
+    cmedian(B_not_empty) = (X_sorted(ind_median_min) + X_sorted(ind_median_max))./2;
     
     % Clever std
     cstd = sqrt(cvar);
@@ -314,11 +332,11 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % Distance (in sigmas) from cmean for each data point (if requested)
     if nargout >= 8,
         X_sorted(IND) = X_sorted; % Unsort
-        X_sorted(bwNan) = NaN; % Restore NaN's (or Inf's) as outliers
+        X_sorted(B_nan) = NaN; % Restore NaN's (or Inf's) as outliers
         sigmas = bsxfun(@rdivide, abs(bsxfun(@minus, cmean, X_sorted)), cstd);
     end
     
-    isOutlier(bwNan) = true; % Restore NaN's (or Inf's) as outliers
+    isOutlier(B_nan) = true; % Restore NaN's (or Inf's) as outliers
     
     % Restore array dimensions
     if ~isempty(dim),
