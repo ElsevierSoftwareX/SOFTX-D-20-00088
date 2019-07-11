@@ -251,8 +251,7 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % Store boolean maps
     B_not_empty = N0 ~= 0; % Ability to ignore empty datasets
     B_loop = N0 > 1; % Ability to reduce workload when heavy on outliers
-    B_min_temp = false(size(N0)); % Preallocate only once
-    B_max_temp = false(size(N0)); % Preallocate only once
+    [B_min_temp, B_max_temp] = deal(false(size(N0))); % Preallocate only once
     
     % Case j > 0: (Possible outliers == clever mean and variance)
     isOutlier = false(size(X_sorted)); % The initial outlier state of the X data
@@ -293,25 +292,28 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
         cvar(B_min_temp) = cvar_min(B_min);
         sub_min(B_min_temp) = sub_min(B_min)+1;
         isOutlier(IND(ind_min(B_min))) = true; % Better for matrices
-        bw_move_max_all = sub_median_min == sub_median_max;
-        sub_median_min(B_min_temp & ~bw_move_max_all) = sub_median_min(B_min_temp & ~bw_move_max_all)+1;
-        sub_median_max(B_min_temp & bw_move_max_all) = sub_median_max(B_min_temp & bw_move_max_all)+1;
+        B_move_max_all = sub_median_min == sub_median_max;
+        sub_median_min(B_min_temp & ~B_move_max_all) = sub_median_min(B_min_temp & ~B_move_max_all)+1;
+        sub_median_max(B_min_temp & B_move_max_all) = sub_median_max(B_min_temp & B_move_max_all)+1;
         
         % The maximum is an outlier
         cmean(B_max_temp) = cmean_max(B_max);
         cvar(B_max_temp) = cvar_max(B_max);
         sub_max(B_max_temp) = sub_max(B_max)-1;
         isOutlier(IND(ind_max(B_max))) = true; % Better for matrices
-        bw_move_min_all = sub_median_min == sub_median_max;
-        sub_median_min(B_max_temp & bw_move_min_all) = sub_median_min(B_max_temp & bw_move_min_all)-1;
-        sub_median_max(B_max_temp & ~bw_move_min_all) = sub_median_max(B_max_temp & ~bw_move_min_all)-1;
+        B_move_min_all = sub_median_min == sub_median_max;
+        sub_median_min(B_max_temp & B_move_min_all) = sub_median_min(B_max_temp & B_move_min_all)-1;
+        sub_median_max(B_max_temp & ~B_move_min_all) = sub_median_max(B_max_temp & ~B_move_min_all)-1;
+        
+        % Store 'neither' state before restoring B_min_temp and B_max_temp
+        B_neither = ~B_min_temp & ~B_max_temp;
         
         % Restore temporary boolean maps to false
         B_min_temp(B_loop) = false;
         B_max_temp(B_loop) = false;
         
         % If no outliers, then mark as done
-        B_loop(~B_min_temp & ~B_max_temp) = false;
+        B_loop(B_neither) = false;
         
         % Break if no more outliers detected
         if ~any(B_min) && ~any(B_max), break; end
