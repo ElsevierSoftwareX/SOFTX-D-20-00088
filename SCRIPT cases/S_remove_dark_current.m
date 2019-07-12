@@ -21,8 +21,7 @@ if isempty(C_wid_dark), return; end
 
 % Remove the cosmic rays from the dark current (can be 0-D, 1-D, 2-D and
 % 3-D datas) and average down into 0-D data.
-[~, dark] = clever_statistics_and_outliers(reshape(permute(C_wid_dark.Data, [3 1 2 4]), C_wid_dark.Info.GraphSize, []), 2, 4);
-dark = ipermute(dark, [3 1 2 4]);
+[~, dark] = clever_statistics_and_outliers(C_wid_dark.Data, -3, 4); % Here -3 reads as NOT 3rd dimension
 
 % Load and select the datas of interest
 [C_wid, C_wip, n] = wip.read(C_wip.File, '-ifall', '-Manager', ...

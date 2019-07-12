@@ -28,7 +28,7 @@
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
-    clever_statistics_and_outliers(X, dim, delta)
+    clever_statistics_and_outliers(X, dims, delta)
     % An iterative and robust clever-variance-based outlier detection
     % scheme by G. Buzzi-Ferraris and F. Manenti (2011) [1] was implemented
     % in order to simultaneously evaluate mean, variance, minimum, maximum,
@@ -37,13 +37,18 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % INPUTS:
     % (1) X: Any N-D matrix of numeric or logical data. Any NaN or Inf
     % values are treated as outliers and ignored in the evaluations.
-    % (2) dim = [] (by default): Determines which dimension of X is to be
-    % treated as a single set of observations. If set to [], then all data
-    % in X is treated as a single set of observations.
+    % (2) dims = [] (by default): Determines which dimensions of X are to
+    % be merged and treated as a single set of observations.
+    %   IF EMPTY: all dimensions are merged together.
+    %   IF ARRAY: (a) When all positive, then set the given dimensions to
+    %   TRUE for merging. Otherwise set to FALSE. This is an OR operation.
+    %   (b) When all negative, then same as above but NOT'ed. This is a
+    %   NAND operation. (c) Mixing of signs is not allowed and gives error.
+    %   EXAMPLE: [-3 -5] reads as NOT 3rd AND NOT 5th dimensions!
     % (3) delta = 2.5 (by default): Free threshold parameter. It determines
     % maximum allowed deviation (in sigmas) from the mean before treating a
     % data point as an outlier. The larger the threshold, the smaller the
-    % chance to detect outliers. It is recommended to try values 2.5 - 4.
+    % chance to detect outliers. It is recommended to try values 2 - 4.
     
     % OUTPUTS:
     % (1) isOutlier: Boolean array with same dimensions as the input X.
@@ -75,24 +80,24 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % This was written, tested and optimized for MATLAB R2010b-R2018b using
     % the built-in functions and does not require any toolboxes to be used.
     
-    % Updated 11.7.2019
+    % Updated 12.7.2019
     
     % ---------------------------------------------------------------------
     
     % PERFORMANCE: ~5x slower than mean/var/std/median/min/max -combo:
 %     X = randn(5000, 5000);
-%     dim = 1;
+%     dims = 1;
 %     tic;
-%     cmean0 = mean(X, dim);
-%     cvar0 = var(X, [], dim);
-%     cstd0 = sqrt(cvar0);
-%     cmedian0 = median(X, dim);
-%     cmin0 = min(X, [], dim);
-%     cmax0 = max(X, [], dim);
+%     cmean_ref = mean(X, dims);
+%     cvar_ref = var(X, [], dims);
+%     cstd_ref = sqrt(cvar0);
+%     cmedian_ref = median(X, dims);
+%     cmin_ref = min(X, [], dims);
+%     cmax_ref = max(X, [], dims);
 %     t1 = toc;
 %     tic;
 %     [~, cmean, cvar, cstd, cmedian, cmin, cmax, ~] = ...
-%         clever_statistics_and_outliers(X, dim, inf);
+%         clever_statistics_and_outliers(X, dims, inf);
 %     t2 = toc;
 %     t2/t1
     
@@ -102,18 +107,26 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % (*) Due to vectorization and extra features, this is twice slower
     % than older looped DEBUG version. Implement wrapper ONLY IF REQUESTED.
     
-    % VERIFICATION:
-%     X = normrnd(777, 143, 5000, 4000);
-%     ind_nan = randi(numel(X), round(0.10.*numel(X)), 1);
-%     ind_salt = randi(numel(X), round(0.30.*numel(X)), 1);
+%     % VERIFICATION WITH MULTIPLE DIMS (WHETHER ALL NEG. OR ALL POS.):
+%     SX = [5 4 3 2 7 20 13 6];
+%     X = normrnd(777, 143, SX);
+%     ind_nan = randi(numel(X), round(0.20.*numel(X)), 1);
+%     ind_salt = randi(numel(X), round(0.40.*numel(X)), 1);
 %     X(ind_nan) = NaN;
 %     X(ind_salt) = randn(size(ind_salt));
+%     dims = [-3 -5]; % Reads as NOT 3rd AND NOT 5th dimensions
 %     [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
-%         clever_statistics_and_outliers(X, 1, 4);
-%     [cmean_ref, cvar_ref, cstd_ref, cmedian_ref, cmin_ref, cmax_ref] = deal(nan(1, size(X, 2)));
-%     for ii = 1:size(X, 2),
-%         X_ii = X(:,ii);
-%         X_ii = X_ii(~isOutlier(:,ii));
+%         clever_statistics_and_outliers(X, dims, 2);
+%     % Calculate reference using loop
+%     [cmean_ref, cvar_ref, cstd_ref, cmedian_ref, cmin_ref, cmax_ref] = ...
+%         deal(nan(size(cmean)));
+%     alldims = 1:ndims(X);
+%     Sy = {}; [Sy{1:ndims(X)}] = size(cmean_ref); Sy = cat(2, Sy{:});
+%     dims = alldims(SX ~= Sy); otherdims = alldims(SX == Sy);
+%     for ii = 1:prod(SX(otherdims)),
+%         C = repmat({':'}, [ndims(X) 1]);
+%         [C{otherdims}] = ind2sub(SX(otherdims), ii);
+%         X_ii = X(C{:}); X_ii = X_ii(~isOutlier(C{:}));
 %         cmean_ref(ii) = mean(X_ii);
 %         cvar_ref(ii) = var(X_ii);
 %         cstd_ref(ii) = sqrt(cvar_ref(ii));
@@ -124,9 +137,9 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     
     % ---------------------------------------------------------------------
     
-    % ADDED SUPPORT TO DIM (5.1.2016):
+    % ADDED SUPPORT TO DIMS (5.1.2016):
     % Useful when analyzing large data sets.
-    % If dim == [], then the function forces the input to a column vector.
+    % If dims == [], then the function forces the input to a column vector.
     
     % ADDED SUPPORT TO MIN/MAX (5.1.2016):
     % Performs outlier removal first, then outputs min/max.
@@ -141,7 +154,9 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     
     % ADDED SUPPORT TO NON-DOUBLE NUMERIC AND LOGICAL ARRAYS (7.1.2016):
     % Simply by force converting X_sorted to double (to force real maths).
-    % ERRORs when input is non-numeric and non-logical.% ADDED THAT XMIN, XMAX DIMENSIONS WILL ALSO BE RESTORED! (7.4.2017)
+    % ERRORs when input is non-numeric and non-logical.
+    
+    % ADDED THAT XMIN, XMAX DIMENSIONS WILL ALSO BE RESTORED! (7.4.2017)
     
     % FIXED "Error if NaN only input" BUG (25.7.2016)
     
@@ -165,11 +180,16 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     
     % FIXED "Single NaN output when all NaN input" BUG (11.7.2019)
     
-    % ADDED SUPPORT TO MULTIPLE DIM (11.7.2019)
+    % ADDED SUPPORT TO MULTIPLE DIMS (11.7.2019)
+    
+    % ADDED SUPPORT TO DIMS NEGATION (12.7.2019)
+    % Negative values are NOT operations. Sign mixing is not allowed.
+    
+    % IMPROVED DOCUMENTING AND VERIFICATIONS (12.7.2019)
     
     % ---------------------------------------------------------------------
     
-    % TODO (5.1.2016): If dim == [], then use more optimized loop-routine.
+    % TODO (5.1.2016): If dims == [], then use more optimized loop-routine.
     
     % TODO (7.1.2016-24.1.2017): ADD SUPPORT TO INFINITE OUTLIERS.
     % If population of Inf is 50% or below, then treat them outliers.
@@ -180,43 +200,45 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % TODO (4.8.2016): Add try-catch to use cumsum's 'reverse' feature when
     % possible. This would benefit from newer MATLAB version optimizations.
     
-    % TODO (11.7.2019): Interpret negative dim values as NOT operation.
-    
     % ---------------------------------------------------------------------
     
     % Default (used for standardized residual analysis to detect outliers)
     if nargin < 3 || isempty(delta), delta = 2.5; end % If set to 4, then gives approximately same variance as var would
-    if nargin < 2, dim = []; end % If set to [], then force vectorizes the input.
+    if nargin < 2, dims = []; end % If set to [], then force vectorizes the input.
     
     % Test the input value type OR error
     if ~isnumeric(X) && ~islogical(X),
-        error('ERROR: Input must be either numeric or logical!');
+        error('ERROR: X must be either numeric or logical!');
     end
     
     % Rearrange dimensions of N-D array
     SX = size(X); % Original input dimensions
-    if isempty(dim),
+    if isempty(dims),
         X = X(:); % Force column vector (Nx1-vector)
-    elseif numel(dim) == 1, % Permute desired dimension to first
-        otherdims = setdiff(1:ndims(X), dim);
-        order = [dim otherdims];
-%         order = [dim:ndims(X) 1:dim-1];
+    elseif numel(dims) == 1 && dims > 0, % Permute desired dimension to first
+        otherdims = setdiff(1:ndims(X), dims);
+        order = [dims otherdims];
+%         order = [dims:ndims(X) 1:dims-1];
         X = permute(X, order);
-    else,
-        dim = reshape(sort(dim), 1, []); % Force row vector and sort
-        N_dims = ndims(X);
-        dim = dim(dim <= N_dims); % Remove excess dim
-        alldims = 1:N_dims; % All dims
-        B_dim = any(bsxfun(@eq, dim(:), alldims),1);
-        otherdims = alldims(~B_dim); % Get all but dim
-        order = [otherdims dim];
-        X = permute(X, order); % Permute all dim last
+    else
+        % Parse dims input to get which dims are observations and which not
+        alldims = 1:ndims(X); % All dims
+        B = mod(bsxfun(@plus, (1-sign(dims(:)))./2, bsxfun(@eq, abs(dims(:)), alldims)), 2); % Negative dims are NOT'ed
+        if all(dims(:)>0), B_dims = any(B(dims(:)>0,:),1); % All positive: OR'ed together
+        elseif all(dims(:)<0), B_dims = all(B(dims(:)<0,:),1); % All negative: AND'ed together
+        else, error('ERROR: dims must be either all positive or all negative!'); end
+        dims = alldims(B_dims);
+        if isempty(dims), error('ERROR: dims gives an empty set!'); end
+        otherdims = alldims(~B_dims); % Get all but dims
+        % Permute and merge X input accordingly
+        order = [otherdims dims];
+        X = permute(X, order); % Permute all dims last
         SX_otherdims = SX(otherdims);
-        if isempty(SX_otherdims), SX_otherdims = 1; end % Even if no other dims, then enforce dim at 2nd or later place
+        if isempty(SX_otherdims), SX_otherdims = 1; end % Even if no other dims, then enforce dims at 2nd or later place
         N_otherdims = numel(SX_otherdims);
-        X = reshape(X, [SX_otherdims prod(SX(dim))]); % Merge dim together (and have result at 2nd or later place)
+        X = reshape(X, [SX_otherdims prod(SX(dims))]); % Merge dims together (and have result at 2nd or later place)
         suborder = [N_otherdims+1 1:N_otherdims];
-        X = permute(X, suborder); % Permute merged dim first
+        X = permute(X, suborder); % Permute merged dims first
     end
     SX_perm = [size(X) 1]; % Permuted input dimensions
     X = X(:,:); % Force 2-dimensional array (NxM-matrix)
@@ -266,9 +288,6 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     cmean = S./N0; % Regular mean
     cvar = (S2-2.*S.*cmean+N0.*cmean.^2)./(N0-1); % Regular variance
     
-    % Preallocate results
-    [cmedian, cmin, cmax] = deal(nan(size(N0)));
-    
     % Store boolean maps
     B_not_empty = N0 ~= 0; % Ability to ignore empty datasets
     B_loop = N0 > 1; % Ability to reduce workload when heavy on outliers
@@ -311,7 +330,7 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
         % The minimum is an outlier
         cmean(B_min_temp) = cmean_min(B_min);
         cvar(B_min_temp) = cvar_min(B_min);
-        sub_min(B_min_temp) = sub_min(B_min)+1;
+        sub_min(B_min_temp) = sub_min(B_min_temp)+1;
         isOutlier(IND(ind_min(B_min))) = true; % Better for matrices
         B_move_max_all = sub_median_min == sub_median_max;
         sub_median_min(B_min_temp & ~B_move_max_all) = sub_median_min(B_min_temp & ~B_move_max_all)+1;
@@ -320,7 +339,7 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
         % The maximum is an outlier
         cmean(B_max_temp) = cmean_max(B_max);
         cvar(B_max_temp) = cvar_max(B_max);
-        sub_max(B_max_temp) = sub_max(B_max)-1;
+        sub_max(B_max_temp) = sub_max(B_max_temp)-1;
         isOutlier(IND(ind_max(B_max))) = true; % Better for matrices
         B_move_min_all = sub_median_min == sub_median_max;
         sub_median_min(B_max_temp & B_move_min_all) = sub_median_min(B_max_temp & B_move_min_all)-1;
@@ -340,19 +359,22 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
         if ~any(B_min) && ~any(B_max), break; end
     end
     
-    % Clever min/max using latest indices of the min/max of each row
-    ind_min = sub_min(B_not_empty) + col_offset(B_not_empty);
-    ind_max = sub_max(B_not_empty) + col_offset(B_not_empty);
-    cmin(B_not_empty) = X_sorted(ind_min);
-    cmax(B_not_empty) = X_sorted(ind_max);
+    % Clever std
+    cstd = sqrt(cvar);
+    
+    % Preallocate other results
+    [cmedian, cmin, cmax] = deal(nan(size(N0)));
     
     % Clever median using latest indices of the median(s) of each row
     ind_median_min = sub_median_min(B_not_empty) + col_offset(B_not_empty);
     ind_median_max = sub_median_max(B_not_empty) + col_offset(B_not_empty);
     cmedian(B_not_empty) = (X_sorted(ind_median_min) + X_sorted(ind_median_max))./2;
     
-    % Clever std
-    cstd = sqrt(cvar);
+    % Clever min/max using latest indices of the min/max of each row
+    ind_min = sub_min(B_not_empty) + col_offset(B_not_empty);
+    ind_max = sub_max(B_not_empty) + col_offset(B_not_empty);
+    cmin(B_not_empty) = X_sorted(ind_min);
+    cmax(B_not_empty) = X_sorted(ind_max);
     
     % Distance (in sigmas) from cmean for each data point (if requested)
     if nargout >= 8,
@@ -364,8 +386,8 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     isOutlier(B_nan) = true; % Restore NaN's (or Inf's) as outliers
     
     % Restore array dimensions
-    if ~isempty(dim),
-        if numel(dim) == 1,
+    if ~isempty(dims),
+        if numel(dims) == 1,
             isOutlier = ipermute(reshape(isOutlier, SX_perm), order);
             cmean = ipermute(reshape(cmean, [1 SX_perm(2:end)]), order);
             cvar = ipermute(reshape(cvar, [1 SX_perm(2:end)]), order);
@@ -377,7 +399,7 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
                 sigmas = ipermute(reshape(sigmas, SX_perm), order);
             end
         else,
-            isOutlier = ipermute(reshape(ipermute(reshape(isOutlier, SX_perm), suborder), [SX(otherdims) SX(dim)]), order);
+            isOutlier = ipermute(reshape(ipermute(reshape(isOutlier, SX_perm), suborder), [SX(otherdims) SX(dims)]), order);
             cmean = ipermute(reshape(cmean, SX_perm(2:end)), order);
             cvar = ipermute(reshape(cvar, SX_perm(2:end)), order);
             cstd = ipermute(reshape(cstd, SX_perm(2:end)), order);
@@ -385,7 +407,7 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
             cmin = ipermute(reshape(cmin, SX_perm(2:end)), order);
             cmax = ipermute(reshape(cmax, SX_perm(2:end)), order);
             if nargout >= 8, % Only if requested
-                sigmas = ipermute(reshape(ipermute(reshape(sigmas, SX_perm), suborder), [SX(otherdims) SX(dim)]), order);
+                sigmas = ipermute(reshape(ipermute(reshape(sigmas, SX_perm), suborder), [SX(otherdims) SX(dims)]), order);
             end
         end
     else,
@@ -396,7 +418,7 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     end
 end
 
-%% TODO (5.1.2016): If dim == [], then use more optimized loop-routine.
+%% TODO (5.1.2016): If dims == [], then use more optimized loop-routine.
 %     % Compare which removal results in smaller sample variance
 %     if cvj_min < cvj_max,
 %         % Test if the minimum is an outlier
