@@ -300,7 +300,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
             Ns = sum(bw_dP_any_nan);
             Is = sum(bw_dP_any_inf);
             Zs = sum(bw_dP_all_zero);
-            fprintf_if_permitted('ii == %d: U == %d, D == %d, C == %d, N == %d, I == %d, Z == %d\n', ii, Undone, Diverged, Converged, Ns, Is, Zs);
+            fprintf_if_permitted('ii = %d: U = %d, D = %d, C = %d, N = %d, I = %d, Z = %d -> TSSres = %.5g (DSSres = %.5g)\n', ii, Undone, Diverged, Converged, Ns, Is, Zs, nansum(SSres(ii+1,:)), nansum(SSres(ii+1,:)-SSres(ii,:)));
             
             % TEST IF TO EXIT THE MAIN LOOP
             if all(~bw) || ii >= N_max_iterations,
@@ -312,7 +312,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
                 fprintf_if_permitted('Operation terminated by user during %s\n', mfilename);
                 break;
             end
-        else, fprintf_if_permitted('(U)ndone, (D)iverged, (C)onverged state\n(N)aN, (I)nfinite, (Z)ero step\n'); end
+        else, fprintf_if_permitted('(U)ndone, (D)iverged, (C)onverged state\n(N)aN, (I)nfinite, (Z)ero step -> Total (and Delta) Sum of Squared Residuals:\n'); end
         SD_reduced = sum(bw);
         
         %% CALCULATE NEXT PARAMETERS
@@ -359,11 +359,11 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
 %              max(abs(Hr2(:)-Hr2(:))) % Should be (nearly) ZERO!
 %              sum(abs(Hr2(:)-Hr2(:)) > eps) % Should be (nearly) ZERO!
             
-            R2 = zeros(m, m);
-            TX = X';
-            for jj = 1:m,
-                R2(:,jj) = TX*(X(:,jj).*Y);
-            end
+%             R2 = zeros(m, m);
+%             TX = X';
+%             for jj = 1:m,
+%                 R2(:,jj) = TX*(X(:,jj).*Y);
+%             end
         end
 
         if ~fitMany, % Fit only one set of parameters to all datasets!
