@@ -32,7 +32,7 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % An iterative and robust clever-variance-based outlier detection
     % scheme by G. Buzzi-Ferraris and F. Manenti (2011) [1] was implemented
     % in order to simultaneously evaluate mean, variance, minimum, maximum,
-    % median, std and outliers.
+    % median, std and outliers. This uses unbiased sample variance.
     
     % INPUTS:
     % (1) X: Any N-D matrix of numeric or logical data. Any NaN or Inf
@@ -80,7 +80,7 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % This was written, tested and optimized for MATLAB R2010b-R2018b using
     % the built-in functions and does not require any toolboxes to be used.
     
-    % Updated 12.7.2019
+    % Updated 15.7.2019
     
     % ---------------------------------------------------------------------
     
@@ -216,7 +216,7 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     if isempty(dims),
         X = X(:); % Force column vector (Nx1-vector)
     elseif numel(dims) == 1 && dims > 0, % Permute desired dimension to first
-        otherdims = setdiff(1:ndims(X), dims);
+        otherdims = [1:dims-1 dims+1:ndims(X)];
         order = [dims otherdims];
 %         order = [dims:ndims(X) 1:dims-1];
         X = permute(X, order);
@@ -228,7 +228,12 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
         elseif all(dims(:)<0), B_dims = all(B(dims(:)<0,:),1); % All negative: AND'ed together
         else, error('ERROR: dims must be either all positive or all negative!'); end
         dims = alldims(B_dims);
-        if isempty(dims), error('ERROR: dims gives an empty set!'); end
+        if isempty(dims), % If no dims to merge, then exit
+            isOutlier = false(size(X));
+            [cmean, cmedian, cmin, cmax] = deal(X);
+            [cvar, cstd, sigmas] = deal(nan(size(X)));
+            return;
+        end
         otherdims = alldims(~B_dims); % Get all but dims
         % Permute and merge X input accordingly
         order = [otherdims dims];
