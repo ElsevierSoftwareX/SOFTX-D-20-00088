@@ -72,10 +72,11 @@ original file.
 
 ### Any WIT-tag formatted file
 Toolbox can also **read** from and **write** to **arbitrary** WIT-tag formatted
-files with use of `obj = wit.read(file);` and `obj.write();`, respectively. Any
-WIT-tag tree content can be modified using `S_DT = wit.DataTree_get(obj);` and `wit.DataTree_set(obj, S_DT);`
-class functions. Trees can also be viewed in collapsed form from workspace after
-call to `S = obj.collapse();` (read-only) or `obj = wit_debug(obj);` (read+write).
+files with use of `O_wit = wit.read(file);` and `O_wit.write();`, respectively.
+Any WIT-tag tree content can be modified using `S_DT = wit.DataTree_get(O_wit);`
+and `wit.DataTree_set(O_wit, S_DT);` class functions. Trees can also be viewed
+in collapsed form from workspace after call to `S = O_wit.collapse();` (read-only)
+or `O_wit_debug = wit_debug(O_wit);` (read+write).
 
 ### Format details of \*.wip/\*.wid-files
 For more information, read [*'README on WIT-tag formatting.txt'*](https://gitlab.com/jtholmi/wit_io/blob/master/README%20on%20WIT-tag%20formatting.txt).
