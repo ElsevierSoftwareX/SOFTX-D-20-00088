@@ -11,22 +11,27 @@ function O_wid = manager(obj, varargin)
     ind_extra_end = [ind_extra_begin(2:end)-1 numel(varargin)];
     show_all = any(strcmpi(varargin(ind_extra_begin), '-all')); % By default, show only all plottable
     is_multiple_selection = ~any(strcmpi(varargin(ind_extra_begin), '-singlesection')); % By default, multiple selection
+    show_indices = any(strcmpi(varargin(ind_extra_begin), '-indices')); % By default, do not show indices
+    show_sorted = ~any(strcmpi(varargin(ind_extra_begin), '-nosort')); % By default, show sorted
     show_manager = ~any(strcmpi(varargin(ind_extra_begin), '-nomanager')); % By default, show manager
     show_preview = ~any(strcmpi(varargin(ind_extra_begin), '-nopreview')); % By default, show preview
     close_preview = any(strcmpi(varargin(ind_extra_begin), '-closepreview')); % By default, keep preview figures opened
-    ind_Title = find(strcmpi(varargin(ind_extra_begin), '-Title'), 1, 'first');
+    
     % Check if Title was specified
+    ind_Title = find(strcmpi(varargin(ind_extra_begin), '-Title'), 1, 'first');
     Title = '';
     if ~isempty(ind_Title) && ind_extra_end(ind_Title)-ind_extra_begin(ind_Title) > 0,
         Title = varargin{ind_extra_end(ind_Title)};
     end
-    ind_Type = find(strcmpi(varargin(ind_extra_begin), '-Type'), 1, 'first');
+    
     % Check if Type was specified
+    ind_Type = find(strcmpi(varargin(ind_extra_begin), '-Type'), 1, 'first');
     Type = plottable_types;
     if ~isempty(ind_Type) && ind_extra_end(ind_Type)-ind_extra_begin(ind_Type) > 0,
         Type = varargin{ind_extra_end(ind_Type)};
         if ~iscell(Type), Type = {Type}; end
     end
+    
     % Check if SubType was specified
     ind_SubType = find(strcmpi(varargin(ind_extra_begin), '-SubType'), 1, 'first');
     SubType = repmat({''}, size(Type));
@@ -35,13 +40,20 @@ function O_wid = manager(obj, varargin)
         if ~iscell(SubType), SubType = {SubType}; end
     end
     
+    % Get all the objects in the project
+    O_wid = obj.Data; % ASSUMING THAT PROJECT HAS SELF-CONSISTENT WID-DATA!
+    
+    % Check if Data was specified
+    ind_Data = find(strcmpi(varargin(ind_extra_begin), '-Data'), 1, 'first');
+    if ~isempty(ind_Data) && ind_extra_end(ind_Data)-ind_extra_begin(ind_Data) > 0,
+        O_wid = varargin{ind_extra_end(ind_Data)};
+    end
+    
+    if isempty(O_wid), return; end % Exit if no project data
+    
     %http://undocumentedmatlab.com/blog/matlab-java-memory-leaks-performance
     %http://undocumentedmatlab.com/blog/setting-status-bar-components
     %http://undocumentedmatlab.com/blog/matlab-callbacks-for-java-events
-    
-    % Get all the objects in the project
-    O_wid = obj.Data; % ASSUMING THAT PROJECT HAS SELF-CONSISTENT WID-DATA!
-    if isempty(O_wid), return; end % Exit if no project data
     
     % Keep only the plottable types
     if ~show_all,
@@ -58,8 +70,10 @@ function O_wid = manager(obj, varargin)
     end
     
     % Sort by ID
-    [~, idx_sorted] = sort([O_wid.Id]);
-    O_wid = O_wid(idx_sorted);
+    if show_sorted,
+        [~, idx_sorted] = sort([O_wid.Id]);
+        O_wid = O_wid(idx_sorted);
+    end
     
     % Do not show manager if specified so, and exit
     if ~show_manager, return; end
@@ -102,6 +116,7 @@ function O_wid = manager(obj, varargin)
         end
     end
     for ii = 1:numel(O_wid),
+        if show_indices, list{ii} = strrep(list{ii}, '&nbsp;', sprintf('&nbsp;<b>%d</b>: ', ii)); end
         if isempty(files{ii}), continue; end
         [pathstr, name, ext] = fileparts(files{ii});
         list{ii} = strrep(list{ii}, '<html>', ['<html>&#x25BE; <b>' name ext '</b> (v' sprintf('%d', O_wid(ii).Version) ') @ ' pathstr ':<br>']);

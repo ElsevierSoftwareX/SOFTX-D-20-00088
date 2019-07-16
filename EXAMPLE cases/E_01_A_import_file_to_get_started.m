@@ -75,7 +75,8 @@ helpdlg({'!!! (E1A i.) Load and browse file contents in a GUI by executing:' ...
 % The Html names of the selected datas. Double-click O_wid_HtmlNames under
 % Workspace to see these (and rescale the 1st column by holding left-mouse
 % on the border between 1 and 2). This is useful feature, when loading a
-% lot of data at once.
+% lot of data at once. Alternatively, call 'O_wid.manager;' to open
+% selected WID-class objects in Project Manager view.
 %-------------------------------------------------------------------------%
 
 

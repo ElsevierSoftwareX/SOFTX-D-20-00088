@@ -260,6 +260,7 @@ classdef wid < handle, % Since R2008a
         %% OTHER PUBLIC METHODS
         % Object plotting
         plot(obj, varargin);
+        varargout = manager(obj, varargin); % A wrapper method that shows the given objects via Project Manager view.
         
         % Object copying, destroying, writing
         new = copy(obj); % Copy-method
