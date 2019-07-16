@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [C_wid, C_wip, HtmlNames] = read(varargin),
+function [O_wid, O_wip, O_HtmlNames] = read(varargin),
     % WITec Project/Data (*.WIP/*.WID) -file data reader. Returns the
     % selected data when the Project Manager -window (if opened) is CLOSED.
     % 0) Input is parsed into files and extra options:
@@ -18,9 +18,9 @@ function [C_wid, C_wip, HtmlNames] = read(varargin),
     % 4) The selected items in Project Manager -window are returned.
     
     % By default, empty output
-    C_wid = wid.Empty;
-    C_wip = wip.empty;
-    HtmlNames = cell.empty;
+    O_wid = wid.Empty;
+    O_wip = wip.empty;
+    O_HtmlNames = cell.empty;
     
     % Parse input file and extra arguments
     ind_extra_begin = find(strncmp(varargin, '-', 1));
@@ -45,31 +45,31 @@ function [C_wid, C_wip, HtmlNames] = read(varargin),
     end
     
     % Read all files preferring limited read and append them together
-    C_wit = wit.Empty;
+    O_wit = wit.Empty;
     h = waitbar(0, 'Please wait...');
     for ii = 1:numel(files),
         if ~ishandle(h), return; end % Abort if cancelled!
         waitbar((ii-1)/numel(files), h, sprintf('Loading file %d/%d. Please wait...', ii, numel(files)));
-        C_wit = wip.append(C_wit, wit.read(files{ii}, 4096)); % Prefer 4KB limited read
+        O_wit = wip.append(O_wit, wit.read(files{ii}, 4096)); % Prefer 4KB limited read
     end
     if ~ishandle(h), return; end % Abort if cancelled!
     waitbar(1, h, 'Completed!');
     delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Avoids the closing issues with close-function!
-    C_wip = wip(C_wit);
+    O_wip = wip(O_wit);
     
     % Force DataUnit, SpaceUnit, SpectralUnit, TimeUnit:
     % Parse input arguments
     if ~isempty(ind_DataUnit) && ind_extra_end(ind_DataUnit)-ind_extra_begin(ind_DataUnit) > 0,
-        C_wip.ForceDataUnit = varargin{ind_extra_end(ind_DataUnit)};
+        O_wip.ForceDataUnit = varargin{ind_extra_end(ind_DataUnit)};
     end
     if ~isempty(ind_SpaceUnit) && ind_extra_end(ind_SpaceUnit)-ind_extra_begin(ind_SpaceUnit) > 0,
-        C_wip.ForceSpaceUnit = varargin{ind_extra_end(ind_SpaceUnit)};
+        O_wip.ForceSpaceUnit = varargin{ind_extra_end(ind_SpaceUnit)};
     end
     if ~isempty(ind_SpectralUnit) && ind_extra_end(ind_SpectralUnit)-ind_extra_begin(ind_SpectralUnit) > 0,
-        C_wip.ForceSpectralUnit = varargin{ind_extra_end(ind_SpectralUnit)};
+        O_wip.ForceSpectralUnit = varargin{ind_extra_end(ind_SpectralUnit)};
     end
     if ~isempty(ind_TimeUnit) && ind_extra_end(ind_TimeUnit)-ind_extra_begin(ind_TimeUnit) > 0,
-        C_wip.ForceTimeUnit = varargin{ind_extra_end(ind_TimeUnit)};
+        O_wip.ForceTimeUnit = varargin{ind_extra_end(ind_TimeUnit)};
     end
     ManagerVarargin = {};
     if ~isempty(ind_Manager) && ind_extra_end(ind_Manager)-ind_extra_begin(ind_Manager) > 0,
@@ -79,12 +79,12 @@ function [C_wid, C_wip, HtmlNames] = read(varargin),
     % Show project manager on demand
     if show_ui_ifall, showProjectManager = strncmp(questdlg('Would you like to 1) browse & select data OR 2) load all data?', 'How to proceed?', '1) Browse & select', '2) Load all', '1) Browse & select'), '1)', 2); end
     if ~showProjectManager, ManagerVarargin{end+1} = '-nomanager'; end
-    C_wid = C_wip.manager(ManagerVarargin{:});
+    O_wid = O_wip.manager(ManagerVarargin{:});
     
     % Get html names with icons
-    HtmlNames = C_wid.get_HtmlName();
+    O_HtmlNames = O_wid.get_HtmlName();
     
     % Force output to column (More user-friendly!)
-    C_wid = C_wid(:);
-    HtmlNames = HtmlNames(:); % Much more user-friendly this way!
+    O_wid = O_wid(:);
+    O_HtmlNames = O_HtmlNames(:); % Much more user-friendly this way!
 end

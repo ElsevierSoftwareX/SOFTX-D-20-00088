@@ -67,11 +67,11 @@ classdef wip < handle, % Since R2008a
     %% PUBLIC METHODS
     methods
         % CONSTRUCTOR
-        function obj = wip(C_wit),
-            if nargin == 0, C_wit = wip.new(); end % Create minimal project
-            if ~isempty(C_wit),
-                obj.Tree = C_wit;
-                obj.Data = wid(C_wit);
+        function obj = wip(O_wit),
+            if nargin == 0, O_wit = wip.new(); end % Create minimal project
+            if ~isempty(O_wit),
+                obj.Tree = O_wit;
+                obj.Data = wid(O_wit);
             end
             obj.storeState(); % Store this state
         end
@@ -147,7 +147,7 @@ classdef wip < handle, % Since R2008a
         end
         
         % Open Project Manager with the given parameters
-        C_wid = manager(obj, varargin);
+        O_wid = manager(obj, varargin);
         
         % File writer
         write(obj, File);
@@ -161,7 +161,7 @@ classdef wip < handle, % Since R2008a
         % Helper functions for adding, removing and finding wid-objects
         add_Data(obj, varargin);
         destroy_Data(obj, varargin);
-        C_wid = find_Data(obj, ID);
+        O_wid = find_Data(obj, ID);
         
         % Transformations and interpretations (project version)
         [ValueUnit, varargout] = transform_forced(obj, S, varargin);
@@ -170,17 +170,17 @@ classdef wip < handle, % Since R2008a
     
     methods (Static)
         % Constructor WIP-formatted WIT-tree
-        C_wit = new(Version); % WITec Project WIT-tree
-        C_wit = new_TData(Version, Caption); % Only TData WIT-tree
+        O_wit = new(Version); % WITec Project WIT-tree
+        O_wit = new_TData(Version, Caption); % Only TData WIT-tree
         
         % Get valid DataClassName-Data pairs from the given WIT-tree
-        Pairs = get_Data_DataClassName_pairs(C_wit);
+        Pairs = get_Data_DataClassName_pairs(O_wit);
         
         % Appender of multiple WIT-trees (or Projects)
-        [C_wit, varargout] = append(varargin);
+        [O_wit, varargout] = append(varargin);
         
         % File reader
-        [C_wid, C_wip, HtmlNames] = read(varargin);
+        [O_wid, O_wip, O_HtmlNames] = read(varargin);
         
         % File version
         Version = get_Root_Version(obj); % Can be wid-, wip- or wit-class

@@ -61,8 +61,8 @@ classdef wid < handle, % Since R2008a
     %% PUBLIC METHODS
     methods
         % CONSTRUCTOR
-        function obj = wid(C_wit),
-            % Loops through each element in C_wit array. It checks whether
+        function obj = wid(O_wit),
+            % Loops through each element in O_wit array. It checks whether
             % the element points directly to a specific Data/DataClassName
             % (or its children) or not. If yes, then it only adds that as
             % new wid. If no, then it adds all found Data/DataClassName
@@ -75,7 +75,7 @@ classdef wid < handle, % Since R2008a
             end
             
             % Get valid tag pairs
-            Pairs = wip.get_Data_DataClassName_pairs(C_wit);
+            Pairs = wip.get_Data_DataClassName_pairs(O_wit);
             
             % Loop the found pairs to construct wids
             N_pairs = size(Pairs, 1);
@@ -272,7 +272,7 @@ classdef wid < handle, % Since R2008a
         Data_merged = merge_Data(obj, dim);
         Info_Graph_merged = merge_Info_Graph(obj);
         
-        % Get object Html-name, which includes the WITec software icon
+        % Get object Html-name, which includes the data type icon
         HtmlName = get_HtmlName(obj, isWorkspaceOptimized);
         
         % Reduce object Data
@@ -316,21 +316,21 @@ classdef wid < handle, % Since R2008a
     %% STATIC PUBLIC METHODS
     methods (Static)
         % Constructor WID-formatted WIT-tree
-        C_wit = new(Version); % WITec Data WIT-tree
+        O_wit = new(Version); % WITec Data WIT-tree
         
         % Constructors for various types of objects
-        obj = new_Bitmap(C_wit);
-        obj = new_Graph(C_wit);
-        obj = new_Image(C_wit);
-        obj = new_Interpretation_Space(C_wit);
-        obj = new_Interpretation_Spectral(C_wit);
-        obj = new_Interpretation_Time(C_wit);
-        obj = new_Interpretation_Z(C_wit);
-        obj = new_Text(C_wit);
-        obj = new_Transformation_Linear(C_wit);
-        obj = new_Transformation_LUT(C_wit, LUTSize);
-        obj = new_Transformation_Space(C_wit);
-        obj = new_Transformation_Spectral(C_wit);
+        obj = new_Bitmap(O_wit);
+        obj = new_Graph(O_wit);
+        obj = new_Image(O_wit);
+        obj = new_Interpretation_Space(O_wit);
+        obj = new_Interpretation_Spectral(O_wit);
+        obj = new_Interpretation_Time(O_wit);
+        obj = new_Interpretation_Z(O_wit);
+        obj = new_Text(O_wit);
+        obj = new_Transformation_Linear(O_wit);
+        obj = new_Transformation_LUT(O_wit, LUTSize);
+        obj = new_Transformation_Space(O_wit);
+        obj = new_Transformation_Spectral(O_wit);
         
         % DataTree formats
         format = DataTree_format_TData(Version_or_obj);

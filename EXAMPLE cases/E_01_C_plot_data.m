@@ -27,14 +27,14 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before
 
 
 %-------------------------------------------------------------------------%
-[C_wid, C_wip, HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)'); % Load all the file plottable content
+[O_wid, O_wip, O_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)'); % Load all the file plottable content
 
 % Get handles to some specific data
-C_Text = C_wid(1); % Get object of "Global (Calibration Information)" at index 1
-C_Bitmap = C_wid(2); % Get object of "Exfoliated graphene (Gr) on SiO2/Si-substrate<Video Image (Data)" at index 2
-C_ImageScan = C_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
-C_Mask = C_wid(6); % Get object of "1-layer Gr<Mask 2" at index 6
-% To see these names, double-click HtmlNames-variable under your Workspace!
+C_Text = O_wid(1); % Get object of "Global (Calibration Information)" at index 1
+C_Bitmap = O_wid(2); % Get object of "Exfoliated graphene (Gr) on SiO2/Si-substrate<Video Image (Data)" at index 2
+C_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
+C_Mask = O_wid(6); % Get object of "1-layer Gr<Mask 2" at index 6
+% To see these names, double-click O_HtmlNames-variable under your Workspace!
 
 
 

@@ -13,24 +13,24 @@ if folder ~= 0, file = fullfile(folder, filename);
 else, return; end % Abort as no file was selected!
 
 % Read file wit-tags
-C_wit = wit.read(file{1});
-if isempty(C_wit), return; end
-fprintf('File = %s\nVersion = %d\n', file{1}, wip.get_Root_Version(C_wit));
+O_wit = wit.read(file{1});
+if isempty(O_wit), return; end
+fprintf('File = %s\nVersion = %d\n', file{1}, wip.get_Root_Version(O_wit));
 
 % Find tags with nonzero Versions
-C_wit_w_version = C_wit.regexp('^Version<');
-C_wit_w_nonzero_version = C_wit_w_version.match_by_Data_criteria(@(x) x ~= 0);
+O_wit_w_version = O_wit.regexp('^Version<');
+O_wit_w_nonzero_version = O_wit_w_version.match_by_Data_criteria(@(x) x ~= 0);
 
 % Find names of the parents using regexp
-str_Parent_Name = regexprep({C_wit_w_version.FullName}, '^Version<([^<]*)<?.*$', '$1');
-str_Parent_Name_nonzero = regexprep({C_wit_w_nonzero_version.FullName}, '^Version<([^<]*)<?.*$', '$1');
+str_Parent_Name = regexprep({O_wit_w_version.FullName}, '^Version<([^<]*)<?.*$', '$1');
+str_Parent_Name_nonzero = regexprep({O_wit_w_nonzero_version.FullName}, '^Version<([^<]*)<?.*$', '$1');
 
 % Keep only the unique-Parent-Name any and nonzero Versions
 [~, ind_unique] = unique(str_Parent_Name);
-UNIQUE_C_wit_w_version = C_wit_w_version(ind_unique);
+UNIQUE_O_wit_w_version = O_wit_w_version(ind_unique);
 [~, ind_unique_nonzero] = unique(str_Parent_Name_nonzero);
-UNIQUE_C_wit_w_nonzero_version = C_wit_w_nonzero_version(ind_unique_nonzero);
+UNIQUE_O_wit_w_nonzero_version = O_wit_w_nonzero_version(ind_unique_nonzero);
 
 % See the tree structure by double-clicking either variable under Workspace
-C_static_tree = C_wit.collapse; % Fast to load because it is ONLY READ!
-% C_dynamic_tree = wit_debug(C_wit); % Slow to load because it is READ+WRITE!
+C_static_tree = O_wit.collapse; % Fast to load because it is ONLY READ!
+% C_dynamic_tree = wit_debug(O_wit); % Slow to load because it is READ+WRITE!

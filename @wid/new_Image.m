@@ -2,9 +2,9 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function obj = new_Image(C_wit)
-    if nargin == 0 || isempty(C_wit), C_wit = wid.new(); end % Create C_wit
-    Version = wip.get_Root_Version(C_wit);
+function obj = new_Image(O_wit)
+    if nargin == 0 || isempty(O_wit), O_wit = wid.new(); end % Create O_wit
+    Version = wip.get_Root_Version(O_wit);
     
     Tag_DataClassName = wit('DataClassName 0', 'TDImage');
     Tag_Data = wit('Data 0');
@@ -45,8 +45,8 @@ function obj = new_Image(C_wit)
         Tag_Data.Data = [Tag_TData Tag_TDImage];
     else, error('Unimplemented Version (%d)!', Version); end
     
-    % Append these to the given (or created) C_wit
-    [~, Pair] = wip.append(C_wit, [Tag_DataClassName Tag_Data]);
+    % Append these to the given (or created) O_wit
+    [~, Pair] = wip.append(O_wit, [Tag_DataClassName Tag_Data]);
     
     % Create new wid
     obj = wid(Pair(2));

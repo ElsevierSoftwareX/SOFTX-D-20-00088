@@ -34,28 +34,28 @@
 classdef wit_debug < dynamicprops, % Since R2008a
     methods
         % Use this constructor for reverse engineering to achieve interoperability.
-        function obj = wit_debug(C_wit),
+        function obj = wit_debug(O_wit),
             if nargin > 0,
-                obj.collapse(C_wit);
+                obj.collapse(O_wit);
             end
         end
         
         % This uses different property-naming than collapse-function under
         % wit-class because of automatic property sorting feature. Anyhow
         % the output is more compacto for this class due to lack of Tags.
-        function collapse(obj, C_wit, Pre),
+        function collapse(obj, O_wit, Pre),
             if nargin < 3, Pre = 'Tree_'; end
-            for ii = 1:numel(C_wit),
-                Id = sprintf(sprintf('%%0%dd', floor(log10(numel(C_wit))+1)), ii);
+            for ii = 1:numel(O_wit),
+                Id = sprintf(sprintf('%%0%dd', floor(log10(numel(O_wit))+1)), ii);
                 prop_name = addprop(obj, [Pre Id '_Name']);
-                prop_name.GetMethod = @(x) get_Name(x, C_wit(ii));
-                prop_name.SetMethod = @(x, y) set_Name(x, y, C_wit(ii));
-                if isa(C_wit(ii).Data, 'wit'),
-                    obj.collapse(C_wit(ii).Data, [Pre Id '_Value_']);
+                prop_name.GetMethod = @(x) get_Name(x, O_wit(ii));
+                prop_name.SetMethod = @(x, y) set_Name(x, y, O_wit(ii));
+                if isa(O_wit(ii).Data, 'wit'),
+                    obj.collapse(O_wit(ii).Data, [Pre Id '_Value_']);
                 else,
                     prop_data = addprop(obj, [Pre Id '_Value']);
-                    prop_data.GetMethod = @(x) get_Data(x, C_wit(ii));
-                    prop_data.SetMethod = @(x, y) set_Data(x, y, C_wit(ii));
+                    prop_data.GetMethod = @(x) get_Data(x, O_wit(ii));
+                    prop_data.SetMethod = @(x, y) set_Data(x, y, O_wit(ii));
                 end
             end
         end

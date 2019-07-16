@@ -28,23 +28,23 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before
 
 
 %-------------------------------------------------------------------------%
-[C_wid, C_wip, HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)'); % Load all the file plottable content and force SpectralUnit to Raman shift
+[O_wid, O_wip, O_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)'); % Load all the file plottable content and force SpectralUnit to Raman shift
 
 % Get handles to some specific data
-C_Text = C_wid(1); % Get object of "Global (Calibration Information)" at index 1
-C_Bitmap = C_wid(2); % Get object of "Exfoliated graphene (Gr) on SiO2/Si-substrate<Video Image (Data)" at index 2
-C_ImageScan = C_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
-C_Mask = C_wid(6); % Get object of "1-layer Gr<Mask 2" at index 6
-C_Point = C_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 17
-% To see these names, double-click HtmlNames-variable under your Workspace!
+C_Text = O_wid(1); % Get object of "Global (Calibration Information)" at index 1
+C_Bitmap = O_wid(2); % Get object of "Exfoliated graphene (Gr) on SiO2/Si-substrate<Video Image (Data)" at index 2
+C_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
+C_Mask = O_wid(6); % Get object of "1-layer Gr<Mask 2" at index 6
+C_Point = O_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 17
+% To see these names, double-click O_HtmlNames-variable under your Workspace!
 
 % Alternative way to get these handles is by use of manager without GUI and
 % with a little prior knowledge of the file contents
-C_ImageScans = C_wip.manager('-nomanager', '-Type', 'TDGraph', '-SubType', 'Image');
+C_ImageScans = O_wip.manager('-nomanager', '-Type', 'TDGraph', '-SubType', 'Image');
 C_ImageScan = C_ImageScans(1); % Get the first Image<TDGraph in the file
-C_Images = C_wip.manager('-nomanager', '-Type', 'TDImage');
+C_Images = O_wip.manager('-nomanager', '-Type', 'TDImage');
 C_Mask = C_Images(2); % Get the second TDImage in the file
-C_Points = C_wip.manager('-nomanager', '-Type', 'TDGraph', '-SubType', 'Point');
+C_Points = O_wip.manager('-nomanager', '-Type', 'TDGraph', '-SubType', 'Point');
 C_Point = C_Points(end); % Get the last TDGraph Point in the file
 %-------------------------------------------------------------------------%
 
@@ -63,10 +63,10 @@ h = helpdlg({'!!! (E2A i.) Applying filters on the Raman D-, G- and 2D-peaks:' .
 %-------------------------------------------------------------------------%
 % Determine project parameters (but not needed because AutoCreateObj,
 % AutoCopyObj and AutoModifyObj are true by default).
-% oldState = C_wip.storeState(); % Store the original Project state
-% C_wip.AutoCreateObj = true; % If wid-class functions should create new object
-% C_wip.AutoCopyObj = true; % If wid-class functions should copy object
-% C_wip.AutoModifyObj = true; % If wid-class functions should modify object
+% oldState = O_wip.storeState(); % Store the original Project state
+% O_wip.AutoCreateObj = true; % If wid-class functions should create new object
+% O_wip.AutoCopyObj = true; % If wid-class functions should copy object
+% O_wip.AutoModifyObj = true; % If wid-class functions should modify object
 
 % Specify the spectral ranges for the Raman D, G and 2D-peaks of graphene
 Range_D = [1300 1400]; % Filtering range for the D-peak
@@ -87,7 +87,7 @@ Sum_D = sum(Data_D, 3);
 % starting with 'filter_'. You can also write your own custom filter by
 % utilizing a generic filter_fun (under @wid) like filter_sum and others.
 
-C_wip.manager;
+O_wip.manager;
 if ishandle(h), figure(h); uiwait(h); end
 close all; % Close Project Manager
 %-------------------------------------------------------------------------%

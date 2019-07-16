@@ -27,11 +27,11 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before
 
 
 %-------------------------------------------------------------------------%
-[C_wid, C_wip, HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)'); % Load all the file plottable content
+[O_wid, O_wip, O_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)'); % Load all the file plottable content
 
 % Get handles to some specific data
-C_Bitmap = C_wid(2); % Get object of "Exfoliated graphene (Gr) on SiO2/Si-substrate<Video Image (Data)" at index 2
-C_PointScan = C_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 17
+C_Bitmap = O_wid(2); % Get object of "Exfoliated graphene (Gr) on SiO2/Si-substrate<Video Image (Data)" at index 2
+C_PointScan = O_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 17
 %-------------------------------------------------------------------------%
 
 

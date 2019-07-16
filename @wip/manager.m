@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function C_wid = manager(obj, varargin)
+function O_wid = manager(obj, varargin)
     if isempty(obj), error('No project given!'); end
     
     % Parse extra arguments
@@ -40,26 +40,26 @@ function C_wid = manager(obj, varargin)
     %http://undocumentedmatlab.com/blog/matlab-callbacks-for-java-events
     
     % Get all the objects in the project
-    C_wid = obj.Data; % ASSUMING THAT PROJECT HAS SELF-CONSISTENT WID-DATA!
-    if isempty(C_wid), return; end % Exit if no project data
+    O_wid = obj.Data; % ASSUMING THAT PROJECT HAS SELF-CONSISTENT WID-DATA!
+    if isempty(O_wid), return; end % Exit if no project data
     
     % Keep only the plottable types
     if ~show_all,
-        bw = false(size(C_wid));
+        bw = false(size(O_wid));
         for ii = 1:numel(Type),
             type_ii = Type{ii};
-            bw1 = strncmp({C_wid.Type}, type_ii, numel(type_ii));
+            bw1 = strncmp({O_wid.Type}, type_ii, numel(type_ii));
             subtype_ii = SubType{ii};
-            bw2 = strncmp({C_wid.SubType}, subtype_ii, numel(subtype_ii));
+            bw2 = strncmp({O_wid.SubType}, subtype_ii, numel(subtype_ii));
             bw(bw1 & bw2) = true; % Keep only specified types and subtypes
         end
-        C_wid = C_wid(bw);
-        if isempty(C_wid), return; end % Exit if no project data
+        O_wid = O_wid(bw);
+        if isempty(O_wid), return; end % Exit if no project data
     end
     
     % Sort by ID
-    [~, idx_sorted] = sort([C_wid.Id]);
-    C_wid = C_wid(idx_sorted);
+    [~, idx_sorted] = sort([O_wid.Id]);
+    O_wid = O_wid(idx_sorted);
     
     % Do not show manager if specified so, and exit
     if ~show_manager, return; end
@@ -90,21 +90,21 @@ function C_wid = manager(obj, varargin)
     height_table = 60;
     
     % First create simple list
-    list = C_wid.get_HtmlName(false); % Get ProjectManager-optimized names
+    list = O_wid.get_HtmlName(false); % Get ProjectManager-optimized names
     % Then modify the created list by adding filenames whenever needed (6.11.2017)
     files = cell(size(list));
     prev = ''; % Keep track of the previous filename
-    for ii = 1:numel(C_wid), % Add only the first filename and omit immediately subsequent duplicates
-        this = C_wid(ii).Tag.Data.File;
+    for ii = 1:numel(O_wid), % Add only the first filename and omit immediately subsequent duplicates
+        this = O_wid(ii).Tag.Data.File;
         if isempty(prev) || ~strcmp(this, prev);
             files{ii} = this;
             prev = this;
         end
     end
-    for ii = 1:numel(C_wid),
+    for ii = 1:numel(O_wid),
         if isempty(files{ii}), continue; end
         [pathstr, name, ext] = fileparts(files{ii});
-        list{ii} = strrep(list{ii}, '<html>', ['<html>&#x25BE; <b>' name ext '</b> (v' sprintf('%d', C_wid(ii).Version) ') @ ' pathstr ':<br>']);
+        list{ii} = strrep(list{ii}, '<html>', ['<html>&#x25BE; <b>' name ext '</b> (v' sprintf('%d', O_wid(ii).Version) ') @ ' pathstr ':<br>']);
     end
     
     % Create list using Java
@@ -141,7 +141,7 @@ function C_wid = manager(obj, varargin)
     indices = []; % Store old indices (to be updated by MouseReleasedCallback)
     if nargout > 0,
         waitfor(fig); % If output is expected, then wait until the manager is closed!
-        C_wid = C_wid(indices(~isnan(indices))); % ~isnan removes NaN's due to deselecting indices
+        O_wid = O_wid(indices(~isnan(indices))); % ~isnan removes NaN's due to deselecting indices
     end
     
     % To handle main window closing (and '-closepreview'-option)
@@ -190,7 +190,7 @@ function C_wid = manager(obj, varargin)
                 indices(idx) = next_indices(jj); % Store current truly new index
                 if isPreview, 
                     invisible_figure(idx+fig_offset); % Create new invisible figure
-                    plot(C_wid(next_indices(jj))); % Show data
+                    plot(O_wid(next_indices(jj))); % Show data
                 end
                 waitbar(jj / N_new);
             end

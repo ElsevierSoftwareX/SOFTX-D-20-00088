@@ -15,22 +15,22 @@
 % This interactive script was implemented 24.7.2018 by Joonas Holmi
 
 % Load and select the dark current
-[C_wid_dark, C_wip, ~] = wip.read('-Manager', ...
+[O_wid_dark, O_wip, ~] = wip.read('-Manager', ...
     {'-closepreview', '-singlesection', '-Title', 'SELECT ONE DARK', '-Type', 'TDGraph'});
-if isempty(C_wid_dark), return; end
+if isempty(O_wid_dark), return; end
 
 % Remove the cosmic rays from the dark current (can be 0-D, 1-D, 2-D and
 % 3-D datas) and average down into 0-D data.
-[~, dark] = clever_statistics_and_outliers(C_wid_dark.Data, -3, 4); % Here -3 reads as NOT 3rd dimension
+[~, dark] = clever_statistics_and_outliers(O_wid_dark.Data, -3, 4); % Here -3 reads as NOT 3rd dimension
 
 % Load and select the datas of interest
-[C_wid, C_wip, n] = wip.read(C_wip.File, '-ifall', '-Manager', ...
+[O_wid, O_wip, O_HtmlNames] = wip.read(O_wip.File, '-ifall', '-Manager', ...
     {'-nopreview', '-Title', 'SELECT NON-DARK', '-Type', 'TDGraph'});
-if isempty(C_wid), return; end
+if isempty(O_wid), return; end
 
 % Remove the selected dark current from the selection
-bw_nondark = all(bsxfun(@ne, [C_wid.Id].', [C_wid_dark.Id]), 2);
-C_wid = C_wid(bw_nondark);
+bw_nondark = all(bsxfun(@ne, [O_wid.Id].', [O_wid_dark.Id]), 2);
+O_wid = O_wid(bw_nondark);
 n = n(bw_nondark);
 
 % Ask if to make copies
@@ -38,19 +38,19 @@ makecopies = strncmp(questdlg('Would you like to 1) make copies OR 2) overwrite 
 
 % Remove the dark current
 h = waitbar(0, 'Please wait...');
-for ii = 1:numel(C_wid),
+for ii = 1:numel(O_wid),
     if ~ishandle(h), return; end % Abort if cancelled!
-    waitbar((ii-1)/numel(C_wid), h, sprintf('Processing data %d/%d. Please wait...', ii, numel(C_wid)));
-    if makecopies, C_wid_new = C_wid(ii).copy(); % Make a copy
-    else, C_wid_new = C_wid(ii); end % Do not make a copy
-    C_wid_new.Data = double(C_wid_new.Data) - dark;
-    C_wid_new.Name = sprintf('No Dark<%s', C_wid_new.Name);
+    waitbar((ii-1)/numel(O_wid), h, sprintf('Processing data %d/%d. Please wait...', ii, numel(O_wid)));
+    if makecopies, O_wid_new = O_wid(ii).copy(); % Make a copy
+    else, O_wid_new = O_wid(ii); end % Do not make a copy
+    O_wid_new.Data = double(O_wid_new.Data) - dark;
+    O_wid_new.Name = sprintf('No Dark<%s', O_wid_new.Name);
 end
 if ~ishandle(h), return; end % Abort if cancelled!
 waitbar(1, h, 'Completed! Writing...');
 
 % Overwrite the file
-C_wip.write();
+O_wip.write();
 
 % Close the waitbar
 delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Avoids the closing issues with close-function!
