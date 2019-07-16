@@ -57,7 +57,7 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before
 % corresponding units. For '-DataUnit', the input can be a string (new name
 % of the Unit). For others, the input can be an integer (UnitIndex) or a
 % search string.
-[O_wid, O_wip, O_HtmlNames] = wip.read(file, '-all', ...
+[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', ...
     '-DataUnit', 'Counts', ... % Can be a string
     '-SpaceUnit', '(µm)', ... % Can be an integer (0-5) or a search string
     '-SpectralUnit', '(nm)', ... % Can be an integer (0-7) or a search string

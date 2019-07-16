@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [O_wid, O_wip, O_HtmlNames] = read(varargin),
+function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     % WITec Project/Data (*.WIP/*.WID) -file data reader. Returns the
     % selected data when the Project Manager -window (if opened) is CLOSED.
     % 0) Input is parsed into files and extra options:
@@ -20,7 +20,7 @@ function [O_wid, O_wip, O_HtmlNames] = read(varargin),
     % By default, empty output
     O_wid = wid.Empty;
     O_wip = wip.empty;
-    O_HtmlNames = cell.empty;
+    O_wid_HtmlNames = cell.empty;
     
     % Parse input file and extra arguments
     ind_extra_begin = find(strncmp(varargin, '-', 1));
@@ -82,9 +82,9 @@ function [O_wid, O_wip, O_HtmlNames] = read(varargin),
     O_wid = O_wip.manager(ManagerVarargin{:});
     
     % Get html names with icons
-    O_HtmlNames = O_wid.get_HtmlName();
+    O_wid_HtmlNames = O_wid.get_HtmlName();
     
     % Force output to column (More user-friendly!)
     O_wid = O_wid(:);
-    O_HtmlNames = O_HtmlNames(:); % Much more user-friendly this way!
+    O_wid_HtmlNames = O_wid_HtmlNames(:); % Much more user-friendly this way!
 end

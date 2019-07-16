@@ -51,7 +51,7 @@ from the context menu left-click "Add to Path" and "Selected Folders and Subfold
 
 **Optionally**, run *(or F5)* also [*'update_wip_and_wid_context_menus.m'*](https://gitlab.com/jtholmi/wit_io/blob/master/update_wip_and_wid_context_menus.m)
 to add *'MATLAB'*-option to the **\*.wip** and **\*.wid** file right-click context
-menus to enable a quick call to `[O_wid, O_wip, O_HtmlNames] = wip.read(file);`. **This
+menus to enable a quick call to `[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file);`. **This
 also requires administration rights.**
 
 ### Example cases

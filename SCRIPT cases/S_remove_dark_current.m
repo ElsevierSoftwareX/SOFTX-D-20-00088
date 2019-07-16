@@ -24,7 +24,7 @@ if isempty(O_wid_dark), return; end
 [~, dark] = clever_statistics_and_outliers(O_wid_dark.Data, -3, 4); % Here -3 reads as NOT 3rd dimension
 
 % Load and select the datas of interest
-[O_wid, O_wip, O_HtmlNames] = wip.read(O_wip.File, '-ifall', '-Manager', ...
+[O_wid, O_wip, O_wid_HtmlNames] = wip.read(O_wip.File, '-ifall', '-Manager', ...
     {'-nopreview', '-Title', 'SELECT NON-DARK', '-Type', 'TDGraph'});
 if isempty(O_wid), return; end
 

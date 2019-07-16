@@ -8,7 +8,7 @@
 % This interactive script was implemented 29.5.2019 by Joonas Holmi
 
 % Load and select the datas of interest
-[O_wid, O_wip, O_HtmlNames] = wip.read('-ifall', '-Manager', ...
+[O_wid, O_wip, O_wid_HtmlNames] = wip.read('-ifall', '-Manager', ...
     {'-all', '-nopreview', '-Title', 'SELECT DATA TO RENAME'});
 if isempty(O_wid), return; end
 

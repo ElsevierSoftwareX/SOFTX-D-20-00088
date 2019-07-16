@@ -28,7 +28,7 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before
 
 
 %-------------------------------------------------------------------------%
-[O_wid, O_wip, O_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)'); % Load all the file plottable content and force SpectralUnit to Raman shift
+[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)'); % Load all the file plottable content and force SpectralUnit to Raman shift
 
 % Get handles to some specific data
 C_Text = O_wid(1); % Get object of "Global (Calibration Information)" at index 1
@@ -36,7 +36,7 @@ C_Bitmap = O_wid(2); % Get object of "Exfoliated graphene (Gr) on SiO2/Si-substr
 C_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
 C_Mask = O_wid(6); % Get object of "1-layer Gr<Mask 2" at index 6
 C_Point = O_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 17
-% To see these names, double-click O_HtmlNames-variable under your Workspace!
+% To see these names, double-click O_wid_HtmlNames-variable under your Workspace!
 
 % Alternative way to get these handles is by use of manager without GUI and
 % with a little prior knowledge of the file contents

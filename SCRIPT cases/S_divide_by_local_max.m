@@ -16,7 +16,7 @@ if any(isnan(bounds) | bounds(1) == bounds(2)), return; end % Stop if invalid in
 bounds = [min(bounds) max(bounds)]; % Rearrange bounds
 
 % Load and select the datas of interest
-[O_wid, O_wip, O_HtmlNames] = wip.read('-ifall', '-SpectralUnit', SpectralUnit, '-Manager', ...
+[O_wid, O_wip, O_wid_HtmlNames] = wip.read('-ifall', '-SpectralUnit', SpectralUnit, '-Manager', ...
     {'-nopreview', '-Title', 'SELECT NORMALIZABLE DATA', '-Type', 'TDGraph'});
 if isempty(O_wid), return; end
 

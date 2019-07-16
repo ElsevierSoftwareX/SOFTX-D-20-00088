@@ -30,7 +30,7 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before
 
 %-------------------------------------------------------------------------%
 % This opens the specified file. Then automatically loads all.
-[O_wid, O_wip, O_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)');
+[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)');
 
 C_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
 C_Point = O_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 17
