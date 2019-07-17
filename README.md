@@ -35,8 +35,12 @@ in Aalto University, Finland.
 This is published under **free** and **permissive** [BSD 3-Clause License](/LICENSE).
 All exceptions to this license are listed under [*'helper/3rd party'*](/helper/3rd%20party) folder.
 
-### Installation
-Download [the latest zip file](https://gitlab.com/jtholmi/wit_io/-/archive/master/wit_io-master.zip)
+### Installation to MATLAB (for R2014b or newer)
+Download [the latest toolbox installer](wit_io.mltbx) and double-click it to
+install it.
+
+### Installation to MATLAB (from R2011a to R2014a)
+Download [the latest zip archive](https://gitlab.com/jtholmi/wit_io/-/archive/master/wit_io-master.zip)
 and extract it as a new folder (i.e. *'wit_io'*) to your workfolder.
 
 **For the first time**, go to the created folder and run *(or F5)* [*'load_or_addpath_permanently.m'*](load_or_addpath_permanently.m)
@@ -49,6 +53,7 @@ full installation path.
     2. Manually right-click **wit_io**'s main folder in "Current Folder"-view and
 from the context menu left-click "Add to Path" and "Selected Folders and Subfolders".
 
+### Installation to context menus (for MATLAB R2011a or newer)
 **Optionally**, run *(or F5)* also [*'update_wip_and_wid_context_menus.m'*](update_wip_and_wid_context_menus.m)
 to add *'MATLAB'*-option to the **\*.wip** and **\*.wid** file right-click context
 menus to enable a quick call to `[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file);`. **This

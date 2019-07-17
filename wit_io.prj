@@ -1,0 +1,80 @@
+<deployment-project plugin="plugin.toolbox" plugin-version="1.0">
+  <configuration build-checksum="890960803" file="\\home.org.aalto.fi\jtmakin1\data\Documents\MATLAB\WITec\wit_io\wit_io.prj" location="\\home.org.aalto.fi\jtmakin1\data\Documents\MATLAB\WITec\wit_io" name="wit_io" target="target.toolbox" target-name="Package Toolbox">
+    <param.appname>wit_io</param.appname>
+    <param.authnamewatermark>Joonas T. Holmi</param.authnamewatermark>
+    <param.email>jtholmi@gmail.com</param.email>
+    <param.company>Aalto University</param.company>
+    <param.summary>Toolbox can directly read/write WITec Project/Data (*.wip/*.wid) files in MATLAB with or without GUI. It also provides data analysis tools.</param.summary>
+    <param.description>This MATLAB toolbox is intended for users of WITec.de microscopes (i.e. Raman or SNOM), who work with *.wip/*.wid files (v5, v6 or v7) and wish to directly read/write and analyze them in MATLAB. The main aim of this project is to reduce the time consumed by importing, exporting and various post-processing steps. Toolbox can also read/write any WIT-tag formatted files.
+
+For installation and usage details or more information, go to: https://gitlab.com/jtholmi/wit_io/#readme.
+
+Please report any bugs in https://gitlab.com/jtholmi/wit_io/issues.</param.description>
+    <param.screenshot>${PROJECT_ROOT}\example.png</param.screenshot>
+    <param.version>1.1.1</param.version>
+    <param.output>${PROJECT_ROOT}\wit_io.mltbx</param.output>
+    <param.products.name>
+      <item>MATLAB</item>
+      <item>Image Processing Toolbox</item>
+    </param.products.name>
+    <param.products.id>
+      <item>1</item>
+      <item>17</item>
+    </param.products.id>
+    <param.products.version>
+      <item>8.4</item>
+      <item>9.1</item>
+    </param.products.version>
+    <param.platforms />
+    <param.guid>f7492c06-9713-4f81-83d3-695891a90526</param.guid>
+    <param.exclude.filters>.git/*
+DEVELOP/*
+*.sh
+*.prj
+*.mlappinstall
+*.mltbx</param.exclude.filters>
+    <param.examples>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;examples/&gt;</param.examples>
+    <param.demosxml>\\home.org.aalto.fi\jtmakin1\data\Documents\MATLAB</param.demosxml>
+    <param.apps />
+    <param.docs>\\home.org.aalto.fi\jtmakin1\data\Documents\MATLAB</param.docs>
+    <unset>
+      <param.authnamewatermark />
+      <param.email />
+      <param.company />
+      <param.output />
+      <param.platforms />
+      <param.apps />
+    </unset>
+    <fileset.rootdir>
+      <file>\\home.org.aalto.fi\jtmakin1\data\Documents\MATLAB\WITec\wit_io</file>
+    </fileset.rootdir>
+    <fileset.rootfiles />
+    <fileset.depfun.included />
+    <fileset.depfun.excluded />
+    <fileset.package />
+    <build-deliverables>
+      <file location="\\home.org.aalto.fi\jtmakin1\data\Documents\MATLAB\WITec\wit_io" name="wit_io.mltbx" optional="false">\\home.org.aalto.fi\jtmakin1\data\Documents\MATLAB\WITec\wit_io\wit_io.mltbx</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>C:\Program Files\MATLAB\R2014b</root>
+      <toolboxes />
+    </matlab>
+    <platform>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>6.2</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>
