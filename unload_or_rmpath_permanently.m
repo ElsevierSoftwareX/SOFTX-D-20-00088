@@ -2,6 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
+% Prefer toolbox installer (*.mltbx) instead (and its uninstallation)!
 function [] = unload_or_rmpath_permanently(toolbox_path, ispermanent),
     if nargin < 1 || isempty(toolbox_path),
         this_script = [mfilename('fullpath') '.m'];
