@@ -28,13 +28,10 @@ function plot(obj, varargin)
     srcCopyingQueue = [];
     evtCopyingQueue = [];
     
-    ind_extra_begin = find(strncmp(varargin, '-', 1));
-    ind_extra_end = [ind_extra_begin(2:end)-1 numel(varargin)];
-    showSidebar = ~any(strcmpi(varargin(ind_extra_begin), '-nosidebar')); % By default, show sidebar
-    showPreview = ~any(strcmpi(varargin(ind_extra_begin), '-nopreview')); % By default, show preview
-    showCursor = ~any(strcmpi(varargin(ind_extra_begin), '-nocursor')); % By default, show cursor
-    ind_compare = find(strcmpi(varargin(ind_extra_begin), '-compare'), 1, 'first');
-    ind_mask = find(strcmpi(varargin(ind_extra_begin), '-mask'), 1, 'first');
+    showSidebar = ~varargin_dashed_str_exists('nosidebar', varargin); % By default, show sidebar
+    showPreview = ~varargin_dashed_str_exists('nopreview', varargin); % By default, show preview
+    showCursor = ~varargin_dashed_str_exists('nocursor', varargin); % By default, show cursor
+    out_compare = varargin_dashed_str_datas('compare', varargin);
     fun_auto = @(x) true; % By default, enable autoscaling
     
     Name = obj.Name;
@@ -61,12 +58,8 @@ function plot(obj, varargin)
     set(Fig, 'Units', Units); % Restore Units
     
     % Mask Data
-    if ~isempty(ind_mask),
-        ind_begin = ind_extra_begin(ind_mask);
-        ind_end = ind_extra_end(ind_mask);
-        N = ind_end-ind_begin;
-        for ii = 1:N, [~, Data] = data_mask(Data, varargin{ind_begin+ii}.Data); end
-    end
+    out = varargin_dashed_str_datas('mask', varargin);
+    for ii = 1:numel(out), [~, Data] = data_mask(Data, out{ii}.Data); end
     
     if ~isempty(Data),
         switch(obj.Type),
@@ -336,16 +329,14 @@ function plot(obj, varargin)
         if isempty(h_sub) || ~ishandle(h_sub(1)),
             if nargin < 3, fun_plot = []; end
             h_sub = plot_Spectrum(Fig_sub, Info.Graph, Info.GraphUnit, Data(indX,indY,:), Info.DataUnit, fun_plot, fun_auto());
-            if ~isempty(ind_compare),
+            if numel(out_compare) > 0,
                 hold on;
-                ind_begin = ind_extra_begin(ind_compare);
-                N = ind_extra_end(ind_compare)-ind_extra_begin(ind_compare);
                 Colors = get(get(h_sub(1), 'Parent'), 'ColorOrder');
                 set(h_sub(1), 'Color', Colors(1,:));
                 strs = {obj.Name};
                 counter = 0;
-                for ii = 1:N,
-                    C_compare = varargin{ind_begin+ii};
+                for ii = 1:numel(out_compare),
+                    C_compare = out_compare{ii};
                     for jj = 1:numel(C_compare),
                         if ~strcmp(C_compare(jj).Type, 'TDGraph'), continue; end
                         Data_compare = C_compare(jj).Data;
@@ -371,22 +362,18 @@ function plot(obj, varargin)
         else,
             set(h_sub(1), 'YData', Data(indX,indY,:));
             if fun_auto(), autoaxis(get(h_sub(1), 'Parent'), Info.Graph, Data(indX,indY,:)); end
-            if ~isempty(ind_compare),
-                ind_begin = ind_extra_begin(ind_compare);
-                N = ind_extra_end(ind_compare)-ind_extra_begin(ind_compare);
-                counter = 0;
-                for ii = 1:N,
-                    C_compare = varargin{ind_begin+ii};
-                    for jj = 1:numel(C_compare),
-                        if ~strcmp(C_compare(jj).Type, 'TDGraph'), continue; end
-                        Data_compare = C_compare(jj).Data;
-                        S_Data_latest = size(Data_compare);
-                        S_Data_latest(end+1:numel(S_Data)) = 1;
-                        if all(S_Data_latest(1:2) == S_Data(1:2) | S_Data_latest(1:2) == 1),
-                            counter = counter+1;
-                            Data_compare = bsxfun(@plus, Data_compare, zeros(S_Data(1:2)));
-                            set(h_sub(1+counter), 'YData', Data_compare(indX,indY,:));
-                        end
+            counter = 0;
+            for ii = 1:numel(out_compare),
+                C_compare = out_compare{ii};
+                for jj = 1:numel(C_compare),
+                    if ~strcmp(C_compare(jj).Type, 'TDGraph'), continue; end
+                    Data_compare = C_compare(jj).Data;
+                    S_Data_latest = size(Data_compare);
+                    S_Data_latest(end+1:numel(S_Data)) = 1;
+                    if all(S_Data_latest(1:2) == S_Data(1:2) | S_Data_latest(1:2) == 1),
+                        counter = counter+1;
+                        Data_compare = bsxfun(@plus, Data_compare, zeros(S_Data(1:2)));
+                        set(h_sub(1+counter), 'YData', Data_compare(indX,indY,:));
                     end
                 end
             end

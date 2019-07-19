@@ -22,19 +22,15 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     O_wip = wip.empty;
     O_wid_HtmlNames = cell.empty;
     
-    % Parse input file and extra arguments
-    ind_extra_begin = find(strncmp(varargin, '-', 1));
-    ind_extra_end = [ind_extra_begin(2:end)-1 numel(varargin)];
-    showProjectManager = ~any(strcmpi(varargin(ind_extra_begin), '-all')); % By default, show Project Manager
-    show_ui_ifall = any(strcmpi(varargin(ind_extra_begin), '-ifall'));
-    ind_DataUnit = find(strcmpi(varargin(ind_extra_begin), '-DataUnit'), 1, 'first');
-    ind_SpectralUnit = find(strcmpi(varargin(ind_extra_begin), '-SpectralUnit'), 1, 'first');
-    ind_SpaceUnit = find(strcmpi(varargin(ind_extra_begin), '-SpaceUnit'), 1, 'first');
-    ind_TimeUnit = find(strcmpi(varargin(ind_extra_begin), '-TimeUnit'), 1, 'first');
-    ind_Manager = find(strcmpi(varargin(ind_extra_begin), '-Manager'), 1, 'first');
+    % START OF VARARGIN PARSING
     
+    % Parse input file and extra arguments
+    ind_extra_begin = varargin_dashed_str_inds('', varargin);
     if isempty(ind_extra_begin), files = varargin;
     else, files = varargin(1:ind_extra_begin(1)-1); end
+    
+    showProjectManager = ~varargin_dashed_str_exists('all', varargin); % By default, show Project Manager
+    show_ui_ifall = varargin_dashed_str_exists('ifall', varargin);
     
     if isempty(files),
         [filename, folder] = uigetfile({'*.wip;*.wid;*.zip', 'WITec Project/Data Files (*.wip/*.wid)'}, 'Open Project', 'MultiSelect', 'on');
@@ -59,22 +55,21 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     
     % Force DataUnit, SpaceUnit, SpectralUnit, TimeUnit:
     % Parse input arguments
-    if ~isempty(ind_DataUnit) && ind_extra_end(ind_DataUnit)-ind_extra_begin(ind_DataUnit) > 0,
-        O_wip.ForceDataUnit = varargin{ind_extra_end(ind_DataUnit)};
-    end
-    if ~isempty(ind_SpaceUnit) && ind_extra_end(ind_SpaceUnit)-ind_extra_begin(ind_SpaceUnit) > 0,
-        O_wip.ForceSpaceUnit = varargin{ind_extra_end(ind_SpaceUnit)};
-    end
-    if ~isempty(ind_SpectralUnit) && ind_extra_end(ind_SpectralUnit)-ind_extra_begin(ind_SpectralUnit) > 0,
-        O_wip.ForceSpectralUnit = varargin{ind_extra_end(ind_SpectralUnit)};
-    end
-    if ~isempty(ind_TimeUnit) && ind_extra_end(ind_TimeUnit)-ind_extra_begin(ind_TimeUnit) > 0,
-        O_wip.ForceTimeUnit = varargin{ind_extra_end(ind_TimeUnit)};
-    end
+    out = varargin_dashed_str_datas('DataUnit', varargin, true);
+    if numel(out) > 0, O_wip.ForceDataUnit = out{1}; end
+    
+    out = varargin_dashed_str_datas('SpectralUnit', varargin, true);
+    if numel(out) > 0, O_wip.ForceSpectralUnit = out{1}; end
+    
+    out = varargin_dashed_str_datas('SpaceUnit', varargin, true);
+    if numel(out) > 0, O_wip.ForceSpaceUnit = out{1}; end
+    
+    out = varargin_dashed_str_datas('TimeUnit', varargin, true);
+    if numel(out) > 0, O_wip.ForceTimeUnit = out{1}; end
+    
+    out = varargin_dashed_str_datas('Manager', varargin, true);
     ManagerVarargin = {};
-    if ~isempty(ind_Manager) && ind_extra_end(ind_Manager)-ind_extra_begin(ind_Manager) > 0,
-        ManagerVarargin = varargin{ind_extra_end(ind_Manager)};
-    end
+    if numel(out) > 0, ManagerVarargin = out{1}; end
     
     % Show project manager on demand
     if show_ui_ifall, showProjectManager = strncmp(questdlg('Would you like to 1) browse & select data OR 2) load all data?', 'How to proceed?', '1) Browse & select', '2) Load all', '1) Browse & select'), '1)', 2); end

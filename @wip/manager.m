@@ -5,51 +5,41 @@
 function O_wid = manager(obj, varargin)
     if isempty(obj), error('No project given!'); end
     
+    % START OF VARARGIN PARSING
+    
     % Parse extra arguments
-    plottable_types = {'TDBitmap', 'TDGraph', 'TDImage', 'TDText'}; % Default
-    ind_extra_begin = find(strncmp(varargin, '-', 1));
-    ind_extra_end = [ind_extra_begin(2:end)-1 numel(varargin)];
-    show_all = any(strcmpi(varargin(ind_extra_begin), '-all')); % By default, show only all plottable
-    is_multiple_selection = ~any(strcmpi(varargin(ind_extra_begin), '-singlesection')); % By default, multiple selection
-    show_indices = any(strcmpi(varargin(ind_extra_begin), '-indices')); % By default, do not show indices
-    show_sorted = ~any(strcmpi(varargin(ind_extra_begin), '-nosort')); % By default, show sorted
-    show_manager = ~any(strcmpi(varargin(ind_extra_begin), '-nomanager')); % By default, show manager
-    show_preview = ~any(strcmpi(varargin(ind_extra_begin), '-nopreview')); % By default, show preview
-    close_preview = any(strcmpi(varargin(ind_extra_begin), '-closepreview')); % By default, keep preview figures opened
+    show_all = varargin_dashed_str_exists('all', varargin); % By default, show only all plottable
+    is_multiple_selection = ~varargin_dashed_str_exists('singlesection', varargin); % By default, multiple selection
+    show_indices = varargin_dashed_str_exists('indices', varargin); % By default, do not show indices
+    show_sorted = ~varargin_dashed_str_exists('nosort', varargin); % By default, show sorted
+    show_manager = ~varargin_dashed_str_exists('nomanager', varargin); % By default, show manager
+    show_preview = ~varargin_dashed_str_exists('nopreview', varargin); % By default, show preview
+    close_preview = varargin_dashed_str_exists('closepreview', varargin); % By default, keep preview figures opened
     
     % Check if Title was specified
-    ind_Title = find(strcmpi(varargin(ind_extra_begin), '-Title'), 1, 'first');
+    out = varargin_dashed_str_datas('Title', varargin, true);
     Title = '';
-    if ~isempty(ind_Title) && ind_extra_end(ind_Title)-ind_extra_begin(ind_Title) > 0,
-        Title = varargin{ind_extra_end(ind_Title)};
-    end
+    if numel(out) > 0, Title = out{1}; end
     
     % Check if Type was specified
-    ind_Type = find(strcmpi(varargin(ind_extra_begin), '-Type'), 1, 'first');
-    Type = plottable_types;
-    if ~isempty(ind_Type) && ind_extra_end(ind_Type)-ind_extra_begin(ind_Type) > 0,
-        Type = varargin{ind_extra_end(ind_Type)};
-        if ~iscell(Type), Type = {Type}; end
-    end
+    out = varargin_dashed_str_datas('Type', varargin, true);
+    Type = {'TDBitmap', 'TDGraph', 'TDImage', 'TDText'}; % Default
+    if numel(out) > 0, Title = out{1}; end
+    if ~iscell(Type), Type = {Type}; end
     
     % Check if SubType was specified
-    ind_SubType = find(strcmpi(varargin(ind_extra_begin), '-SubType'), 1, 'first');
+    out = varargin_dashed_str_datas('SubType', varargin, true);
     SubType = repmat({''}, size(Type));
-    if ~isempty(ind_SubType) && ind_extra_end(ind_SubType)-ind_extra_begin(ind_SubType) > 0,
-        SubType = varargin{ind_extra_end(ind_SubType)};
-        if ~iscell(SubType), SubType = {SubType}; end
-    end
-    
-    % Get all the objects in the project
-    O_wid = obj.Data; % ASSUMING THAT PROJECT HAS SELF-CONSISTENT WID-DATA!
+    if numel(out) > 0, SubType = out{1}; end
+    if ~iscell(SubType), SubType = {SubType}; end
     
     % Check if Data was specified
-    ind_Data = find(strcmpi(varargin(ind_extra_begin), '-Data'), 1, 'first');
-    if ~isempty(ind_Data) && ind_extra_end(ind_Data)-ind_extra_begin(ind_Data) > 0,
-        O_wid = varargin{ind_extra_end(ind_Data)};
-    end
-    
+    out = varargin_dashed_str_datas('Data', varargin, true);
+    O_wid = obj.Data; % Get all the objects in the project % ASSUMING THAT PROJECT HAS SELF-CONSISTENT WID-DATA!
+    if numel(out) > 0, O_wid = out{1}; end
     if isempty(O_wid), return; end % Exit if no project data
+    
+    % END OF VARARGIN PARSING
     
     %http://undocumentedmatlab.com/blog/matlab-java-memory-leaks-performance
     %http://undocumentedmatlab.com/blog/setting-status-bar-components

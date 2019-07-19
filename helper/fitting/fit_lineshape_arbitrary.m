@@ -93,13 +93,11 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     SP = size(P0, 1); % Determine the number of fitting parameters
     
     % Parse extra arguments
-    ind_extra_begin = find(strncmp(varargin, '-', 1));
-    ind_extra_end = [ind_extra_begin(2:end)-1 numel(varargin)];
-    silent = any(strcmpi(varargin(ind_extra_begin), '-silent')); % By default, do not utilize the silent option
-    lowOnMemory = any(strcmpi(varargin(ind_extra_begin), '-lowOnMemory')); % By default, do not utilize the low-on-memory option
-    avoidLMA = any(strcmpi(varargin(ind_extra_begin), '-avoidLMA')); % By default, use the Levenberg–Marquardt algorithm or avoidLMA = false
-    evalHessian = any(strcmpi(varargin(ind_extra_begin), '-evalHessian')); % By default, avoid Hessian or evalHessian = false
-    fitMany = ~any(strcmpi(varargin(ind_extra_begin), '-fitOne')); % By default, fit many Lineshape(s) or fitMany = true
+    silent = varargin_dashed_str_exists('silent', varargin); % By default, do not utilize the silent option
+    lowOnMemory = varargin_dashed_str_exists('lowOnMemory', varargin); % By default, do not utilize the low-on-memory option
+    avoidLMA = varargin_dashed_str_exists('avoidLMA', varargin); % By default, use the Levenberg–Marquardt algorithm or avoidLMA = false
+    evalHessian = varargin_dashed_str_exists('evalHessian', varargin); % By default, avoid Hessian or evalHessian = false
+    fitMany = ~varargin_dashed_str_exists('fitOne', varargin); % By default, fit many Lineshape(s) or fitMany = true
     % Consider implementing -minimizeChiSquared feature using photon shot noise estimate (21.8.2018)
     % Consider implementing -absTol, -relTol, -maxIterations features (1.3.2019)
     
@@ -130,40 +128,32 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     P = P0;
     
     % Check if CUSTOM lambdas was specified
-    ind_locks = find(strcmpi(varargin(ind_extra_begin), '-lambdas'), 1, 'first');
+    out = varargin_dashed_str_datas('lambdas', varargin, true);
     lambdas = 1e-1.*ones(1, SD);
-    if ~isempty(ind_locks) && ind_extra_end(ind_locks)-ind_extra_begin(ind_locks) > 0,
-        lambdas = varargin{ind_extra_end(ind_locks)};
-        if numel(lambdas) == 1,
-            lambdas = repmat(lambdas, [1 SD]);
-        else,
-            lambdas = permute(lambdas, perm);
-            lambdas = lambdas(:,:);
-        end
+    if numel(out) > 0, lambdas = out{1}; end
+    if numel(lambdas) == 1,
+        lambdas = repmat(lambdas, [1 SD]);
+    else,
+        lambdas = permute(lambdas, perm);
+        lambdas = lambdas(:,:);
     end
     
     % Check if CUSTOM weights was specified
-    ind_weights = find(strcmpi(varargin(ind_extra_begin), '-weights'), 1, 'first');
+    out = varargin_dashed_str_datas('weights', varargin, true);
     weights = ones(S(1), SD);
-    if ~isempty(ind_weights) && ind_extra_end(ind_weights)-ind_extra_begin(ind_weights) > 0,
-        weights = reshape(varargin{ind_extra_end(ind_weights)}, S(1), SD);
-    end
+    if numel(out) > 0, weights = reshape(out{1}, S(1), SD); end
     
     % Check if CUSTOM locks was specified
-    ind_locks = find(strcmpi(varargin(ind_extra_begin), '-locks'), 1, 'first');
+    out = varargin_dashed_str_datas('locks', varargin, true);
     locks = false(SP, 1);
-    if ~isempty(ind_locks) && ind_extra_end(ind_locks)-ind_extra_begin(ind_locks) > 0,
-        locks = logical(reshape(varargin{ind_extra_end(ind_locks)}, SP, 1));
-    end
+    if numel(out) > 0, locks = logical(reshape(out{1}, SP, 1)); end
     SP_unlocked = sum(~locks);
     
 %     % Check if CUSTOM groups was specified
 %     % NOT IMPLEMENTED YET!!! (20.9.2018)
-%     ind_groups = find(strcmpi(varargin(ind_extra_begin), '-groups'), 1, 'first');
+%     out = varargin_dashed_str_datas('groups', varargin, true);
 %     groups = false(SP, 1);
-%     if ~isempty(ind_groups) && ind_extra_end(ind_groups)-ind_extra_begin(ind_groups) > 0,
-%         groups = reshape(varargin{ind_extra_end(ind_groups)}, S(1), SD);
-%     end
+%     if numel(out) > 0, groups = reshape(out{1}, S(1), SD); end
     
     %% NEWTON-RAPHSON METHOD
     N_max_iterations = 100; % Maximum number of iterations
