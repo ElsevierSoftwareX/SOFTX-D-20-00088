@@ -55,19 +55,19 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     
     % Force DataUnit, SpaceUnit, SpectralUnit, TimeUnit:
     % Parse input arguments
-    out = varargin_dashed_str_datas('DataUnit', varargin, true);
+    out = varargin_dashed_str_datas('DataUnit', varargin, -1);
     if numel(out) > 0, O_wip.ForceDataUnit = out{1}; end
     
-    out = varargin_dashed_str_datas('SpectralUnit', varargin, true);
+    out = varargin_dashed_str_datas('SpectralUnit', varargin, -1);
     if numel(out) > 0, O_wip.ForceSpectralUnit = out{1}; end
     
-    out = varargin_dashed_str_datas('SpaceUnit', varargin, true);
+    out = varargin_dashed_str_datas('SpaceUnit', varargin, -1);
     if numel(out) > 0, O_wip.ForceSpaceUnit = out{1}; end
     
-    out = varargin_dashed_str_datas('TimeUnit', varargin, true);
+    out = varargin_dashed_str_datas('TimeUnit', varargin, -1);
     if numel(out) > 0, O_wip.ForceTimeUnit = out{1}; end
     
-    out = varargin_dashed_str_datas('Manager', varargin, true);
+    out = varargin_dashed_str_datas('Manager', varargin, -1);
     ManagerVarargin = {};
     if numel(out) > 0, ManagerVarargin = out{1}; end
     

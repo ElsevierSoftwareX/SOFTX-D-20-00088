@@ -128,7 +128,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     P = P0;
     
     % Check if CUSTOM lambdas was specified
-    out = varargin_dashed_str_datas('lambdas', varargin, true);
+    out = varargin_dashed_str_datas('lambdas', varargin, -1);
     lambdas = 1e-1.*ones(1, SD);
     if numel(out) > 0, lambdas = out{1}; end
     if numel(lambdas) == 1,
@@ -139,19 +139,19 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     end
     
     % Check if CUSTOM weights was specified
-    out = varargin_dashed_str_datas('weights', varargin, true);
+    out = varargin_dashed_str_datas('weights', varargin, -1);
     weights = ones(S(1), SD);
     if numel(out) > 0, weights = reshape(out{1}, S(1), SD); end
     
     % Check if CUSTOM locks was specified
-    out = varargin_dashed_str_datas('locks', varargin, true);
+    out = varargin_dashed_str_datas('locks', varargin, -1);
     locks = false(SP, 1);
     if numel(out) > 0, locks = logical(reshape(out{1}, SP, 1)); end
     SP_unlocked = sum(~locks);
     
 %     % Check if CUSTOM groups was specified
 %     % NOT IMPLEMENTED YET!!! (20.9.2018)
-%     out = varargin_dashed_str_datas('groups', varargin, true);
+%     out = varargin_dashed_str_datas('groups', varargin, -1);
 %     groups = false(SP, 1);
 %     if numel(out) > 0, groups = reshape(out{1}, S(1), SD); end
     

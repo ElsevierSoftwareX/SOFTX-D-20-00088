@@ -17,24 +17,24 @@ function O_wid = manager(obj, varargin)
     close_preview = varargin_dashed_str_exists('closepreview', varargin); % By default, keep preview figures opened
     
     % Check if Title was specified
-    out = varargin_dashed_str_datas('Title', varargin, true);
+    out = varargin_dashed_str_datas('Title', varargin, -1);
     Title = '';
     if numel(out) > 0, Title = out{1}; end
     
     % Check if Type was specified
-    out = varargin_dashed_str_datas('Type', varargin, true);
+    out = varargin_dashed_str_datas('Type', varargin, -1);
     Type = {'TDBitmap', 'TDGraph', 'TDImage', 'TDText'}; % Default
     if numel(out) > 0, Title = out{1}; end
     if ~iscell(Type), Type = {Type}; end
     
     % Check if SubType was specified
-    out = varargin_dashed_str_datas('SubType', varargin, true);
+    out = varargin_dashed_str_datas('SubType', varargin, -1);
     SubType = repmat({''}, size(Type));
     if numel(out) > 0, SubType = out{1}; end
     if ~iscell(SubType), SubType = {SubType}; end
     
     % Check if Data was specified
-    out = varargin_dashed_str_datas('Data', varargin, true);
+    out = varargin_dashed_str_datas('Data', varargin, -1);
     O_wid = obj.Data; % Get all the objects in the project % ASSUMING THAT PROJECT HAS SELF-CONSISTENT WID-DATA!
     if numel(out) > 0, O_wid = out{1}; end
     if isempty(O_wid), return; end % Exit if no project data
