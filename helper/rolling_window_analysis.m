@@ -36,7 +36,7 @@ function varargout = rolling_window_analysis(X, W, fun, varargin),
     N = prod(S);
     
     % Parse input
-    if nargin < 3, fun = clever_statistics_and_outliers; end % Default fun
+    if nargin < 3, fun = @clever_statistics_and_outliers; end % Default fun
     if nargin < 2, W = 0; end
     if numel(W) ~= 1 && numel(W) ~= D, error('Input W must have length of 1 or ndims(X) = %d!', D); end
     if any(W(:) < 0), error('Input W elements must not be negative!'); end
