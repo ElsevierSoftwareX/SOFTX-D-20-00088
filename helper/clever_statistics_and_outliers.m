@@ -80,7 +80,7 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % This was written, tested and optimized for MATLAB R2010b-R2018b using
     % the built-in functions and does not require any toolboxes to be used.
     
-    % Updated 21.7.2019
+    % Updated 30.7.2019
     
     % ---------------------------------------------------------------------
     
@@ -199,6 +199,14 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     
     % TODO (4.8.2016): Add try-catch to use cumsum's 'reverse' feature when
     % possible. This would benefit from newer MATLAB version optimizations.
+    
+    % TODO (30.7.2019): Add varargin and allow i.e. '-LowMemory' extra
+    % option, which disables automatic conversion of X to double and
+    % converts to double only when needed. This is challenging to
+    % implement, especially if it should perform calculations in a way that
+    % avoids numerical overflows. One way to mitigate this is to shift
+    % values closer to zero (by minimizing the average) and restoring them
+    % in the end.
     
     % ---------------------------------------------------------------------
     
