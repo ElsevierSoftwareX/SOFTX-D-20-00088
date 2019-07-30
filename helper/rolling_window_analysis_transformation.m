@@ -68,7 +68,7 @@ function [X_RWA, ind_RWA] = rolling_window_analysis_transformation(X, W),
     % Generate indices back to X if requested
     if nargout > 1,
         I_pad = zeros(S_pad, 'uint32');
-        I_pad(C_subind{:}) = uint32(1:N);
+        I_pad(C_subind{:}) = reshape(uint32(1:N), S);
         ind_RWA = I_pad(ind_pad);
     end
 end
