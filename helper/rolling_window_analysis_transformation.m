@@ -18,10 +18,15 @@
 % 5, respectively.
 
 % OUTPUTS:
-% (1) X_RWA: The rolling window analysis dataset with size of [size(X)
-% prod(1+2.*W)].
-function X_RWA = rolling_window_analysis_transformation(X, W),
+% (1) X_RWA <double>: The rolling window analysis dataset with size of
+% [size(X) prod(1+2.*W)]. Treat NaN values as outliers.
+% (2) ind_RWA <uint32>: The rolling window analysis indices pointing back to
+% X. Zeros are references to a NaN padding values and should be removed
+% before using this on X.
+%   EXAMPLE: X_RWA(ind_RWA>0) = X(ind_RWA(ind_RWA>0));
+function [X_RWA, ind_RWA] = rolling_window_analysis_transformation(X, W),
     % Get input X main properties
+    N = numel(X);
     D = ndims(X);
     S = size(X);
     
@@ -59,4 +64,11 @@ function X_RWA = rolling_window_analysis_transformation(X, W),
     
     % Create a rolling window analysis dataset
     X_RWA = D_pad(ind_pad); % Generate a 2-D matrix
+    
+    % Generate indices back to X if requested
+    if nargout > 1,
+        I_pad = zeros(S_pad, 'uint32');
+        I_pad(C_subind{:}) = uint32(1:N);
+        ind_RWA = I_pad(ind_pad);
+    end
 end
