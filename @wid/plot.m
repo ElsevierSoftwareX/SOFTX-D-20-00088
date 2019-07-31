@@ -242,7 +242,7 @@ function plot(obj, varargin)
                     str((1:lens(jj,kk))+kk-1+sum(lens_max(1:(kk-1))),jj) = strs{jj, kk};
                 end
             end
-            str = str(:)';
+            str = str(:).';
             % \t as column-separator and \n as row-separator
 %             str = '';
 %             for jj = 1:size(strs, 1),
@@ -253,6 +253,7 @@ function plot(obj, varargin)
 %                     else, str = sprintf('%s\t%s', str, strs{jj, kk}); end
 %                 end
 %             end
+            str = str(1:end-1); % Remove last \n
             clipboard('copy', str); % This line can cause error if called too often!
             pause(0.5); % And sleep for 500 ms. Strangely works better than java.lang.Thread.sleep(500);
             isCopyingBusy = false;
