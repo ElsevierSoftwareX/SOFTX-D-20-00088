@@ -51,7 +51,7 @@ if ishandle(h), figure(h); uiwait(h); end
 % WARNING! The related instrumental errors, if NOT corrected for, can lead
 % to UNPHYSICAL stitching result in the overlapping regions, even if their
 % apparent stitching result looks smooth!
-[obj, X, Y] = O_wid.spectral_stitch('-debug'); % Here debug-mode is used to visualize the progress to the user. It can be used for double-checking. Remove '-debug' to disable such demonstration.
+[O_result, X, Y] = O_wid.spectral_stitch('-debug'); % Here debug-mode is used to visualize the progress to the user. It can be used for double-checking. Remove '-debug' to disable such demonstration.
 %-------------------------------------------------------------------------%
 
 
@@ -69,7 +69,7 @@ if ishandle(h), figure(h); uiwait(h); end
 
 %-------------------------------------------------------------------------%
 close all;
-figure; obj.plot;
+figure; O_result.plot;
 %-------------------------------------------------------------------------%
 
 

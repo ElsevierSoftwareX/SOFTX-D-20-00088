@@ -30,15 +30,15 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before
 [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)'); % Load all the file plottable content
 
 % Get handles to some specific data
-C_Bitmap = O_wid(2); % Get object of "Exfoliated graphene (Gr) on SiO2/Si-substrate<Video Image (Data)" at index 2
-C_PointScan = O_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 17
+O_Bitmap = O_wid(2); % Get object of "Exfoliated graphene (Gr) on SiO2/Si-substrate<Video Image (Data)" at index 2
+O_PointScan = O_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 17
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-figure; C_Bitmap.plot();
-figure; C_PointScan.plot();
+figure; O_Bitmap.plot();
+figure; O_PointScan.plot();
 %-------------------------------------------------------------------------%
 
 
@@ -63,26 +63,26 @@ if ishandle(h), figure(h); uiwait(h); end
 % crop(obj, ind_X_begin, ind_X_end, ind_Y_begin, ind_Y_end, ...
 % ind_Graph_begin, ind_Graph_end, ind_Z_begin, ind_Z_end);
 
-C_Bitmap_cropped = C_Bitmap.crop(150, [], 250, [], [], [], [], []); % Start/end indices in (px) for X, Y, Graph and Z dimensions. Here [] means no cropping.
-% C_Bitmap_cropped = C_Bitmap.crop(150, [], 250, []); % Same as above but allow crop-function to fill-in the missing input.
+O_Bitmap_cropped = O_Bitmap.crop(150, [], 250, [], [], [], [], []); % Start/end indices in (px) for X, Y, Graph and Z dimensions. Here [] means no cropping.
+% O_Bitmap_cropped = O_Bitmap.crop(150, [], 250, []); % Same as above but allow crop-function to fill-in the missing input.
 
 % [obj, Data_reduced, Graph_reduced] = crop_Graph(obj, ind_range, ...
 % Data_reduced, Graph_reduced);
-C_PointScan_cropped = C_PointScan.crop_Graph([332 1130]);  % Start/end indices in (px) for Graph dimension. Here [] means no cropping.
-% C_PointScan_cropped = C_PointScan.filter_bg([900 2800]); % Same as above, but here start/end values are in (rel. 1/cm). This is a specialized wrapper function for crop_Graph.
+O_PointScan_cropped = O_PointScan.crop_Graph([332 1130]);  % Start/end indices in (px) for Graph dimension. Here [] means no cropping.
+% O_PointScan_cropped = O_PointScan.filter_bg([900 2800]); % Same as above, but here start/end values are in (rel. 1/cm). This is a specialized wrapper function for crop_Graph.
 
 % Additionally, if Graph and Data were cropped elsewhere, then one can
 % update all related wid objects (and all underlying wit objects) to it.
-% Data_cropped = C_PointScan_cropped.Data;
-% Graph_cropped = C_PointScan_cropped.Graph;
-% C_PointScan_cropped = C_PointScan.crop_Graph([], Data_cropped, Graph_cropped); % Special case, used sometimes after wid.crop_Graph_with_bg_helper.
+% Data_cropped = O_PointScan_cropped.Data;
+% Graph_cropped = O_PointScan_cropped.Graph;
+% O_PointScan_cropped = O_PointScan.crop_Graph([], Data_cropped, Graph_cropped); % Special case, used sometimes after wid.crop_Graph_with_bg_helper.
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-figure; C_Bitmap_cropped.plot(); % Cropped bitmap
-figure; C_PointScan_cropped.plot(); % Cropped spectrum
+figure; O_Bitmap_cropped.plot(); % Cropped bitmap
+figure; O_PointScan_cropped.plot(); % Cropped spectrum
 %-------------------------------------------------------------------------%
 
 
