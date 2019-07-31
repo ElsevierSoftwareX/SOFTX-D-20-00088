@@ -18,9 +18,7 @@ function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin)
     varargin = [{obj}; varargin(:)];
     
     % Test if '-debug' was given
-    bw_char = cellfun(@ischar, varargin);
-    isdebug = any(strcmp(varargin(bw_char), '-debug'));
-    varargin = varargin(~bw_char); % Ignore char
+    isdebug = varargin_dashed_str_exists('debug', varargin);
     
     % Parse the input and keep only TDGraph wid objects
     bw_valid_wid = cellfun(@(x) isa(x, 'wid'), varargin); % Test if wid
