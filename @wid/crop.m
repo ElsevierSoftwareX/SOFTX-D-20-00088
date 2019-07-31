@@ -2,12 +2,12 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Use this function to crop the TDBitmap, TDGraph or TDImage object Data
-% and its X, Y, Graph, Z ranges to the given pixel indices. It is assumed
-% that the given object and pixel indices are valid. If any of the begin
-% indices are [], then they are set 1. If any of the end indices are [],
-% then they are set to the end of Data.
-function [obj, Data_cropped, X_cropped, Y_cropped, Graph_cropped, Z_cropped] = crop(obj, ind_X_begin, ind_X_end, ind_Y_begin, ind_Y_end, ind_Graph_begin, ind_Graph_end, ind_Z_begin, ind_Z_end)
+% Crops a scalar TDBitmap, TDGraph or TDImage object, cropping its Data and
+% its X, Y, Graph, Z ranges to the given pixel indices. The pixel indices
+% are assumed to be either empty or scalar numeric values. Similarly,
+% isDataCropped is assumed to be a scalar logical value. Any empty begin
+% and end indices are set to first and last index of Data, respectively.
+function [obj, Data_cropped, X_cropped, Y_cropped, Graph_cropped, Z_cropped] = crop(obj, ind_X_begin, ind_X_end, ind_Y_begin, ind_Y_end, ind_Graph_begin, ind_Graph_end, ind_Z_begin, ind_Z_end, isDataCropped)
     if nargin < 2, ind_X_begin = []; end
     if nargin < 3, ind_X_end = []; end
     if nargin < 4, ind_Y_begin = []; end
@@ -16,7 +16,33 @@ function [obj, Data_cropped, X_cropped, Y_cropped, Graph_cropped, Z_cropped] = c
     if nargin < 7, ind_Graph_end = []; end
     if nargin < 8, ind_Z_begin = []; end
     if nargin < 9, ind_Z_end = []; end
-
+    if nargin < 10, isDataCropped = false; end
+    
+    % Test object
+    if numel(obj) ~= 1 || ...
+            ~strcmp(obj.Type, 'TDBitmap') && ...
+            ~strcmp(obj.Type, 'TDGraph') && ...
+            ~strcmp(obj.Type, 'TDImage'),
+        error('Only a scalar TDBitmap, TDGraph or TDImage object can be cropped!');
+    end
+    
+    % Test indices
+    if ~isempty(ind_X_begin) && (~isscalar(ind_X_begin) || ~isnumeric(ind_X_begin)) || ...
+            ~isempty(ind_X_end) && (~isscalar(ind_X_end) || ~isnumeric(ind_X_end)) || ...
+            ~isempty(ind_Y_begin) && (~isscalar(ind_Y_begin) || ~isnumeric(ind_Y_begin)) || ...
+            ~isempty(ind_Y_end) && (~isscalar(ind_Y_end) || ~isnumeric(ind_Y_end)) || ...
+            ~isempty(ind_Graph_begin) && (~isscalar(ind_Graph_begin) || ~isnumeric(ind_Graph_begin)) || ...
+            ~isempty(ind_Graph_end) && (~isscalar(ind_Graph_end) || ~isnumeric(ind_Graph_end)) || ...
+            ~isempty(ind_Z_begin) && (~isscalar(ind_Z_begin) || ~isnumeric(ind_Z_begin)) || ...
+            ~isempty(ind_Z_end) && (~isscalar(ind_Z_end) || ~isnumeric(ind_Z_end)),
+        error('Only empty or scalar numeric indices are allowed!');
+    end
+    
+    % Test boolean
+    if ~isscalar(isDataCropped) || ~(islogical(isDataCropped) || isnumeric(isDataCropped)),
+        error('Only scalar logical or numeric value for isDataCropped is allowed!');
+    end
+    
     % Copy the object if permitted
     if isempty(obj.Project) || obj.Project.AutoCopyObj,
         obj = obj.copy();
@@ -51,12 +77,16 @@ function [obj, Data_cropped, X_cropped, Y_cropped, Graph_cropped, Z_cropped] = c
     Y_cropped = Info.Y(ind_Y_begin:ind_Y_end);
     Graph_cropped = Info.Graph(ind_Graph_begin:ind_Graph_end);
     Z_cropped = Info.Z(ind_Z_begin:ind_Z_end);
-    Data_cropped = obj.Data(ind_X_begin:ind_X_end,ind_Y_begin:ind_Y_end,ind_Graph_begin:ind_Graph_end,ind_Z_begin:ind_Z_end);
+    
+    if isDataCropped, Data_cropped = obj.Data;
+    else, Data_cropped = obj.Data(ind_X_begin:ind_X_end,ind_Y_begin:ind_Y_end,ind_Graph_begin:ind_Graph_end,ind_Z_begin:ind_Z_end); end
     
     % Modify the object (or its copy) if permitted
     if isempty(obj.Project) || obj.Project.AutoModifyObj,
         % Update the object
-        obj.Data = Data_cropped; % Update the data accordingly
+        if ~isDataCropped,
+            obj.Data = Data_cropped; % Update the data accordingly
+        end
 
         T = Info.XTransformation; % Get the x transformation object
         if ~isempty(T), % Continue only if there is transformation
