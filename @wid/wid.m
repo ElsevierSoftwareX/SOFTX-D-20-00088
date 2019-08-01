@@ -300,6 +300,9 @@ classdef wid < handle, % Since R2008a
         % Spectral stitching
         [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin); % Add '-debug' as input to see debug plots
         
+        % Unpattern Video Stitching images
+        [obj, N_bests, Datas] = unpattern_video_stitching(obj, varargin); % Add '-debug' as input to see debug plots
+        
         % Masking tools
         [obj, Data_NaN_masked] = image_mask(obj, varargin);
         [new_obj, image_mask] = image_mask_editor(obj, image_mask);
@@ -352,6 +355,7 @@ classdef wid < handle, % Since R2008a
         [Data_range, Graph_range, Data_range_bg, range] = crop_Graph_with_bg_helper(Data, Graph, range, bg_avg_lower, bg_avg_upper);
         [Data_range, Graph_range, Data_range_bg, range] = reduce_Graph_with_bg_helper(Data, Graph, range, bg_avg_lower, bg_avg_upper); % DEPRECATED! USE ABOVE INSTEAD!
         [Graph, Data, W, D] = spectral_stitch_helper(Graphs_nm, Datas, isdebug);
+        [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, S_P_grid, varargin); % Add '-debug' as input to see debug plots
     end
     
     %% PRIVATE METHODS
