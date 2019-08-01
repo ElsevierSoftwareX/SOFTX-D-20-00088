@@ -106,7 +106,7 @@ function O_wid = manager(obj, varargin),
         end
     end
     for ii = 1:numel(O_wid),
-        if show_indices, list{ii} = strrep(list{ii}, '&nbsp;', sprintf('&nbsp;<b>%d</b>: ', ii)); end
+        if show_indices, list{ii} = strrep(list{ii}, '&nbsp;', sprintf('&nbsp;<b>%d</b>. ', ii)); end
         if isempty(files{ii}), continue; end
         [pathstr, name, ext] = fileparts(files{ii});
         list{ii} = strrep(list{ii}, '<html>', ['<html>&#x25BE; <b>' name ext '</b> (v' sprintf('%d', O_wid(ii).Version) ') @ ' pathstr ':<br>']);
