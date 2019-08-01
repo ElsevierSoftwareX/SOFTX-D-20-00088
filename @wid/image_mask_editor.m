@@ -34,7 +34,7 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask)
     end
     
     % Create new object if permitted
-    if isempty(obj.Project) || obj.Project.AutoCreateObj,
+    if obj.Project.popAutoCreateObj, % Get the latest value (may be temporary or permanent or default)
         new_obj = wid.new_Image(obj.Tag.Root); % This does not add newly created object to Project yet!
         new_obj.Name = sprintf('Mask<%s', obj.Name); % Generate new name
         new_obj.Data = image_mask;

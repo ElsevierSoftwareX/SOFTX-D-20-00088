@@ -3,7 +3,7 @@
 % All rights reserved.
 
 function [obj, Data_NaN_masked] = image_mask(obj, varargin)
-    % Updated 5.3.2019 by Joonas T. Holmi
+    % Updated 1.8.2019 by Joonas T. Holmi
     
     % Abort if no mask input
     if numel(varargin) == 0, return; end
@@ -11,7 +11,7 @@ function [obj, Data_NaN_masked] = image_mask(obj, varargin)
     % Continue only if obj is valid
     if strcmp('TDBitmap', obj.Type) || (strcmp('TDGraph', obj.Type) && strcmp('Image', obj.SubType)) || strcmp('TDImage', obj.Type),
         % Copy the object if permitted
-        if isempty(obj.Project) || obj.Project.AutoCopyObj,
+        if obj.Project.popAutoCopyObj, % Get the latest value (may be temporary or permanent or default)
             obj = obj.copy();
         end
         
@@ -22,7 +22,7 @@ function [obj, Data_NaN_masked] = image_mask(obj, varargin)
         [~, Data_NaN_masked] = data_mask(obj.Data, Data_mask);
         
         % Modify the object (or its copy) if permitted
-        if isempty(obj.Project) || obj.Project.AutoModifyObj,
+        if obj.Project.popAutoModifyObj, % Get the latest value (may be temporary or permanent or default)
             obj.Name = sprintf('Masked<%s', obj.Name);
             obj.Data = Data_NaN_masked;
         end

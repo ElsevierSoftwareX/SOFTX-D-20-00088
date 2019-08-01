@@ -284,7 +284,7 @@ classdef wid < handle, % Since R2008a
         [obj, Data_range, Graph_range, Data_range_bg] = filter_bg(obj, varargin);
         
         % Filter object Data
-        % If obj.Project.AutoCreateObj == false, then isempty(new_obj) == true.
+        % If obj.Project.popAutoCreateObj == false, then isempty(new_obj) == true.
         [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin); % Generic (but not yet for 4-D TDGraph!)
         [new_obj, Sum] = filter_sum(obj, varargin);
         [new_obj, Min] = filter_min(obj, varargin);

@@ -44,7 +44,7 @@ function [obj, Data_cropped, X_cropped, Y_cropped, Graph_cropped, Z_cropped] = c
     end
     
     % Copy the object if permitted
-    if isempty(obj.Project) || obj.Project.AutoCopyObj,
+    if obj.Project.popAutoCopyObj, % Get the latest value (may be temporary or permanent or default)
         obj = obj.copy();
     end
     
@@ -82,7 +82,7 @@ function [obj, Data_cropped, X_cropped, Y_cropped, Graph_cropped, Z_cropped] = c
     else, Data_cropped = obj.Data(ind_X_begin:ind_X_end,ind_Y_begin:ind_Y_end,ind_Graph_begin:ind_Graph_end,ind_Z_begin:ind_Z_end); end
     
     % Modify the object (or its copy) if permitted
-    if isempty(obj.Project) || obj.Project.AutoModifyObj,
+    if obj.Project.popAutoModifyObj, % Get the latest value (may be temporary or permanent or default)
         % Update the object
         if ~isDataCropped,
             obj.Data = Data_cropped; % Update the data accordingly

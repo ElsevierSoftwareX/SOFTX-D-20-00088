@@ -21,7 +21,7 @@ function out = wid_Data_get_Graph(obj)
         else,
             out = permute(reshape(obj.wid_get_DataType(in), [SizeGraph SizeY SizeX]), [3 2 1]);
         end
-        if isempty(obj.Project) || obj.Project.UseLineValid,
+        if obj.Project.popUseLineValid, % Get the latest value (may be temporary or permanent or default)
             out = obj.wid_get_LineValid(out);
         end
     elseif Version == 6, % WITec Project 4.x
@@ -35,7 +35,7 @@ function out = wid_Data_get_Graph(obj)
         SizeGraph = TDGraph.regexp('^SizeGraph<', true).Data;
         % Reshape to user format
         out = permute(reshape(obj.wid_get_DataType(in), [SizeGraph SizeY SizeX]), [3 2 1]);
-        if isempty(obj.Project) || obj.Project.UseLineValid,
+        if obj.Project.popUseLineValid, % Get the latest value (may be temporary or permanent or default)
             out = obj.wid_get_LineValid(out);
         end
     elseif Version == 5, % WITec Project 2.x
@@ -49,7 +49,7 @@ function out = wid_Data_get_Graph(obj)
         SizeGraph = TDGraph.regexp('^SizeGraph<', true).Data;
         % Reshape to user format
         out = permute(reshape(obj.wid_get_DataType(in), [SizeGraph SizeY SizeX]), [3 2 1]);
-        if isempty(obj.Project) || obj.Project.UseLineValid,
+        if obj.Project.popUseLineValid, % Get the latest value (may be temporary or permanent or default)
             out = obj.wid_get_LineValid(out);
         end
     else, error('Unimplemented Version (%d)!', Version); end

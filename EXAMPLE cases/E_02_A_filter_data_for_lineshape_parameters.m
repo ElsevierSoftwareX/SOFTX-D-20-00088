@@ -63,10 +63,12 @@ h = helpdlg({'!!! (E2A i.) Applying filters on the Raman D-, G- and 2D-peaks:' .
 %-------------------------------------------------------------------------%
 % Determine project parameters (but not needed because AutoCreateObj,
 % AutoCopyObj and AutoModifyObj are true by default).
-% oldState = O_wip.storeState(); % Store the original Project state
-% O_wip.AutoCreateObj = true; % If wid-class functions should create new object
-% O_wip.AutoCopyObj = true; % If wid-class functions should copy object
-% O_wip.AutoModifyObj = true; % If wid-class functions should modify object
+% O_wip.AutoCreateObj = true; % If wid-class functions should ALWAYS create new object
+% O_wip.AutoCopyObj = true; % If wid-class functions should ALWAYS copy object
+% O_wip.AutoModifyObj = true; % If wid-class functions should ALWAYS modify object
+% O_wip.pushAutoCreateObj(true); % If wid-class functions should ONLY ONCE create new object
+% O_wip.pushAutoCopyObj(true); % If wid-class functions should ONLY ONCE copy object
+% O_wip.pushAutoModifyObj(true); % If wid-class functions should ONLY ONCE modify object
 
 % Specify the spectral ranges for the Raman D, G and 2D-peaks of graphene
 Range_D = [1300 1400]; % Filtering range for the D-peak

@@ -15,14 +15,13 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin)
     % Get obj Project (even if it does not exist)
     Project = obj.Project;
     
-	oldState = Project.storeState(); % Store the original Project state
-    Project.AutoCopyObj = false; % Don't allow filter_bg to copy
-    Project.AutoModifyObj = false; % Don't allow filter_bg to modify
+	Project.pushAutoCopyObj(false); % Temporarily don't allow filter_bg to copy
+    Project.pushAutoModifyObj(false); % Temporarily don't allow filter_bg to modify
     
     % Limit the 3rd dimension range and apply linear background removal (if set)
     [~, Data_range, Graph_range, Data_range_bg] = obj.filter_bg(varargin{:});
-    
-    Project.restoreState(oldState); % Restore the original Project state
+	
+	AutoCreateObj = Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
     
     % If a scalar or vector Graph_range, then force it to the dim'th dimension
     if sum(size(Graph_range) ~= 1) <= 1, 
@@ -46,7 +45,7 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin)
     Version = wip.get_Root_Version(obj);
     Root = obj.Tag.Root;
     
-    % Get transformations and interpretations (but do not copy them even if AutoCopyObj == true)
+    % Get transformations and interpretations (but do not copy them even if popAutoCopyObj == true)
     SpaceT = [obj.Tag.Data.regexp('^SpaceTransformationID<TDGraph<', true).Data 0];
     if Version == 7,
         SpaceST = [obj.Tag.Data.regexp('^SecondaryTransformationID<TDGraph<', true).Data 0]; %v7
@@ -60,7 +59,7 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin)
         varargout{ii} = result_ii; % Store this result as (ii+1)'th output
         
         % Create new object if permitted
-        if isempty(Project) || Project.AutoCreateObj,
+        if AutoCreateObj,
             new_obj(ii) = wid.new_Image(Root); % This does not add newly created object to Project yet!
             new_obj(ii).Name = sprintf('%s[%g-%g]<%s', str_fun{ii}, varargin{1}(1), varargin{1}(2), Name); % Generate new name
             new_obj(ii).Data = result_ii; % Save result-variable content as Data
@@ -85,17 +84,14 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin)
         varargout{end+1} = Data_range_new; % Store this result as last output
         
         % Create new object if permitted
-        if isempty(Project) || Project.AutoCreateObj, 
-            oldState = Project.storeState(); % Store the original Project state
-            Project.AutoCopyObj = true;
-            Project.AutoModifyObj = true;
+        if AutoCreateObj, 
+	        Project.pushAutoCopyObj(true); % Temporarily allow crop_Graph to copy
+            Project.pushAutoModifyObj(true); % Temporarily allow crop_Graph to modify
 
             new_TDGraph = obj.crop_Graph([], Data_range_new, Graph_range); % Which uses wid.copy-function that automatically appends new copy (and its Links) to the Project
             new_TDGraph.Name = sprintf('%s[%g-%g]<%s', str_fun{end}, varargin{1}(1), varargin{1}(2), Name); % Generate new name
 
             new_obj = [new_obj new_TDGraph]; % Also return new_TDGraph
-
-            Project.restoreState(oldState); % Restore the original Project state
         end
     end
 end

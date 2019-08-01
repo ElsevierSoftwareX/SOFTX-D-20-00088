@@ -7,7 +7,7 @@
 % the given object and pixel indices are valid.
 function [obj, Data_cropped, Graph_cropped] = crop_Graph(obj, ind_range, Data_cropped, Graph_cropped)
     % Copy the object if permitted
-    if isempty(obj.Project) || obj.Project.AutoCopyObj,
+    if obj.Project.popAutoCopyObj, % Get the latest value (may be temporary or permanent or default)
         obj = obj.copy();
     end
     
@@ -35,7 +35,7 @@ function [obj, Data_cropped, Graph_cropped] = crop_Graph(obj, ind_range, Data_cr
     end
     
     % Modify the object (or its copy) if permitted
-    if isempty(obj.Project) || obj.Project.AutoModifyObj,
+    if obj.Project.popAutoModifyObj, % Get the latest value (may be temporary or permanent or default)
         % Update the object
         obj.Data = Data_cropped; % Updating this affects Info.Graph calculus. Correct order is to do this last.
         GT = Info.GraphTransformation; % Get the graph transformation object

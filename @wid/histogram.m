@@ -54,7 +54,7 @@ function [new_obj, Bin_Counts, Bin_Centers] = histogram(obj, N_bins, lower_quant
     % Create a new TDGraph object for histogram
     
     % Create new object if permitted
-    if isempty(obj.Project) || obj.Project.AutoCreateObj,
+    if obj.Project.popAutoCreateObj, % Get the latest value (may be temporary or permanent or default)
         new_obj = wid.new_Graph(obj.Tag.Root); % This does not add newly created object to Project yet!
         new_obj.Name = sprintf('Histogram[%s%d bins]<%s', Method_bins, N_bins, obj.Name); % Generate new name
         new_obj.Data = reshape(Bin_Counts, 1, 1, []);

@@ -45,7 +45,7 @@ function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin)
     
     % Create new object if permitted
     obj = O_wid(1);
-    if isempty(obj.Project) || obj.Project.AutoCreateObj,
+    if obj.Project.popAutoCreateObj, % Get the latest value (may be temporary or permanent or default)
         new_obj = obj.copy(); % Copy first object, because all of them must be of same spatial size
         new_obj.Links.XTransformationID.destroy(); % But destroy copied TDSpectralTransformation
         

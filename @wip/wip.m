@@ -42,6 +42,8 @@ classdef wip < handle, % Since R2008a
         ForceSpaceUnit = '';
         ForceSpectralUnit = '';
         ForceTimeUnit = '';
+        % Below LIFO (last in, first out) arrays with their default values.
+        % Update the default values (if changed) in their pop-functions.
         UseLineValid = true; % A feature of TDGraph and TDImage. If used, shows NaN where invalid.
         AutoCreateObj = true; % Automatically create a new object (whenever applicable). If false, then new_obj output should be empty.
         AutoCopyObj = true; % Automatically make a copy of the original object (whenever applicable). If false, then obj output should be originals.
@@ -137,6 +139,8 @@ classdef wip < handle, % Since R2008a
         % Call storeState-function in order to save previous state and
         % temporarily alter any of the wip-class parameters and finally use
         % restoreState-function to reload previous state.
+        % NOTE (1.8.2019): Prefer pop- and push- functions below instead as
+        % these two may be removed in the future releases.
         function storedState = storeState(obj),
             storedState = {obj.ForceDataUnit, obj.ForceSpaceUnit, obj.ForceSpectralUnit, obj.ForceTimeUnit, obj.UseLineValid, obj.AutoCreateObj, obj.AutoCopyObj, obj.AutoModifyObj};
         end
@@ -145,6 +149,40 @@ classdef wip < handle, % Since R2008a
                 [obj.ForceDataUnit, obj.ForceSpaceUnit, obj.ForceSpectralUnit, obj.ForceTimeUnit, obj.UseLineValid, obj.AutoCreateObj, obj.AutoCopyObj, obj.AutoModifyObj] = deal(storedState{:});
             end
         end
+        
+        % LIFO (last in, first out) concept for UseLineValid
+        function latest = popUseLineValid(obj),
+            latest = obj.popBoolean('UseLineValid', true); % With default
+        end
+        function pushUseLineValid(obj, latest),
+            obj.pushBoolean('UseLineValid', latest);
+        end
+        
+        % LIFO (last in, first out) concept for AutoCreateObj
+        function latest = popAutoCreateObj(obj),
+            latest = obj.popBoolean('AutoCreateObj', true); % With default
+        end
+        function pushAutoCreateObj(obj, latest),
+            obj.pushBoolean('AutoCreateObj', latest);
+        end
+        
+        % LIFO (last in, first out) concept for AutoCopyObj
+        function latest = popAutoCopyObj(obj),
+            latest = obj.popBoolean('AutoCopyObj', true); % With default
+        end
+        function pushAutoCopyObj(obj, latest),
+            obj.pushBoolean('AutoCopyObj', latest);
+        end
+        
+        % LIFO (last in, first out) concept for AutoModifyObj
+        function latest = popAutoModifyObj(obj),
+            latest = obj.popBoolean('AutoModifyObj', true); % With default
+        end
+        function pushAutoModifyObj(obj, latest),
+            obj.pushBoolean('AutoModifyObj', latest);
+        end
+        
+        
         
         % Open Project Manager with the given parameters
         O_wid = manager(obj, varargin);
@@ -166,6 +204,30 @@ classdef wip < handle, % Since R2008a
         % Transformations and interpretations (project version)
         [ValueUnit, varargout] = transform_forced(obj, S, varargin);
         [ValueUnit, varargout] = interpret_forced(obj, S, Unit_new, Unit_old, varargin);
+    end
+    
+    %% PRIVATE METHODS
+    methods (Access = private)
+        % GENERIC BOOLEAN LIFO (last in, first out) concept
+        function latest = popBoolean(obj, field, default),
+            if isempty(obj),
+                latest = default; % Return default value if an empty wip
+            else,
+                lifo_array = obj.(field);
+                latest = lifo_array(end);
+                if numel(lifo_array) > 1, % Pop element if not first
+                    obj.(field) = lifo_array(1:end-1);
+                end
+            end
+        end
+        function pushBoolean(obj, field, latest),
+            if ~isscalar(latest) || ~(islogical(latest) || isnumeric(latest)),
+                error('Accepting only a scalar logical or numeric value!');
+            end
+            if ~isempty(obj), % Continue only if non-empty wip
+                obj.(field)(end+1) = logical(latest); % Push element
+            end
+        end
     end
     
     methods (Static)
