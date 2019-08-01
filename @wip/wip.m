@@ -221,11 +221,13 @@ classdef wip < handle, % Since R2008a
             end
         end
         function pushBoolean(obj, field, latest),
-            if ~isscalar(latest) || ~(islogical(latest) || isnumeric(latest)),
-                error('Accepting only a scalar logical or numeric value!');
+            if ~islogical(latest) && ~isnumeric(latest),
+                error('Accepting only logical or numeric arrays!');
             end
             if ~isempty(obj), % Continue only if non-empty wip
-                obj.(field)(end+1) = logical(latest); % Push element
+                latest = logical(latest(:)); % Force to logical column vector
+                ind_latest = 1:numel(latest);
+                obj.(field)(end+ind_latest) = latest; % Push elements in the given order
             end
         end
     end
