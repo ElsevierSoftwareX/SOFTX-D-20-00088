@@ -10,25 +10,26 @@
 % * Assumes that fun uses bsxfun-functionality, because I and X do not need
 % to be same size and only size(I, dim) == size(X, dim) is quaranteed!
 function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin)
+    % Pop states (even if not used to avoid push-pop bugs)
+    AutoCreateObj = Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
+    
     new_obj = wid.Empty;
     
     % Get obj Project (even if it does not exist)
     Project = obj.Project;
     
-	Project.pushAutoCopyObj(false); % Temporarily don't allow copying
+    Project.pushAutoCopyObj(false); % Temporarily don't allow copying
     Project.pushAutoModifyObj(false); % Temporarily don't allow modifying
     
     % Limit the 3rd dimension range and apply linear background removal (if set)
     [~, Data_range, Graph_range, Data_range_bg] = obj.filter_bg(varargin{:});
-	
-	AutoCreateObj = Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
     
     % If a scalar or vector Graph_range, then force it to the dim'th dimension
     if sum(size(Graph_range) ~= 1) <= 1, 
         Graph_range = ipermute(Graph_range(:), [3 1 2]); % Most of the time Graph_range is a vector
     end
     
-	% Evaluate the result
+    % Evaluate the result
     N_outputs = abs(nargout(fun));
     if N_outputs == 1,
         result = fun(Data_range, Graph_range, 3);
@@ -85,7 +86,7 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin)
         
         % Create new object if permitted
         if AutoCreateObj, 
-	        Project.pushAutoCopyObj(true); % Temporarily allow copying
+            Project.pushAutoCopyObj(true); % Temporarily allow copying
             Project.pushAutoModifyObj(true); % Temporarily allow modifying
 
             new_TDGraph = obj.crop_Graph([], Data_range_new, Graph_range); % Which uses wid.copy-function that automatically appends new copy (and its Links) to the Project
