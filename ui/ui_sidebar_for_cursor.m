@@ -3,7 +3,6 @@
 % All rights reserved.
 
 function [h_label, h_label_1, h_edit_1, h_label_2, h_edit_2, h_label_3, h_edit_3, h_label_4, h_edit_4] = ui_sidebar_for_cursor(Fig, fun_down, fun_up, fun_image_transform)
-    % Updated 18.3.2019 by Joonas T. Holmi
     if nargin < 1 || isempty(Fig), Fig = gcf; end % By default, update gcf
     if nargin < 2, fun_down = []; end % By default, no function to call on down
     if nargin < 3, fun_up = []; end % By default, no function to call on up

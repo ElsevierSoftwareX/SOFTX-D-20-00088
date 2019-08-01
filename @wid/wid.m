@@ -35,9 +35,9 @@ classdef wid < handle, % Since R2008a
         Empty = wid.empty; % Call wid.empty only once
     end
     
-	properties (Dependent) % Everything rely on the underlying wit-classes
+    properties (Dependent) % Everything rely on the underlying wit-classes
         Type;
-		Name;
+        Name;
         Data;
         Info;
         DataTree;
@@ -49,7 +49,7 @@ classdef wid < handle, % Since R2008a
         Links;
         AllLinks;
     end
-	
+    
     properties (SetAccess = private)
         Tag = struct.empty; % Either empty OR contains all the fields defined in wid-constructor
     end

@@ -3,7 +3,6 @@
 % All rights reserved.
 
 function [h_edit_1, h_edit_2, h_label] = ui_sidebar_for_sum_filter(Fig, varargin)
-    % Updated 8.1.2019 by Joonas T. Holmi
     persistent currentRange; % Remember this always
     if isempty(currentRange), currentRange = [-inf inf]; end % By default, sum over all data
     

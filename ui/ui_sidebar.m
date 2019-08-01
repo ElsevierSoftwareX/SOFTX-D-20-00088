@@ -28,7 +28,6 @@
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 function [h_mainbar, h_sidebar, h_button, h_button_2, h_button_3] = ui_sidebar(Fig, sidebar_Width)
-    % Updated 8.1.2019 by Joonas T. Holmi
     if nargin < 1 || isempty(Fig), Fig = gcf; end % By default, update gcf
     if nargin < 2 || isempty(sidebar_Width), sidebar_Width = 100; end % By default, 100 pixels width
     

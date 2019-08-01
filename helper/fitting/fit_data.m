@@ -11,7 +11,6 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_data(x, Y, x_Data, y
     % *Concerning fitMany:
     % true: Many Datas are fitted (one per dataset in Y). (DEFAULT)
     % false: One Data is fitted (using all datasets in Y).
-    % Updated 10.8.2016
     if nargin < 5, order = 1; end
     if nargin < 6, dim = 1; end
     if nargin < 7, fitMany = true; end

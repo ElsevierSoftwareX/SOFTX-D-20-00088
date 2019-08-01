@@ -3,7 +3,6 @@
 % All rights reserved.
 
 function [hcomponent, hcontainer, h_edit, h_label] = ui_sidebar_for_index_slider(Fig, Maximum, fun)
-    % Updated 8.1.2019 by Joonas T. Holmi
     if isempty(Fig), Fig = gcf; end % By default, update gcf
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
     if isempty(Parent), [~, Parent] = ui_sidebar(Fig); end % Create one if it does not exist

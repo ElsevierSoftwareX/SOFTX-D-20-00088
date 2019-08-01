@@ -3,7 +3,6 @@
 % All rights reserved.
 
 function [h_popup, h_label] = ui_sidebar_for_popup(Fig, str_Label, str_Popup, fun, initialValue, isPersistent, isMargins)
-    % Updated 8.1.2019 by Joonas T. Holmi
     if nargin < 6, isPersistent = true; end
     if nargin < 5, initialValue = 1; end
     if isPersistent,

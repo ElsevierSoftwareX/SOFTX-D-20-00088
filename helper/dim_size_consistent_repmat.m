@@ -27,7 +27,7 @@ function [ varargout ] = dim_size_consistent_repmat( varargin )
     % OR 2) all nonsingleton input dimension sizes are equivalent.
     % If inconsistency is found, then function returns error.
     
-    % Updated 3.11.2015
+    % Updated 3.11.2015 by Joonas T. Holmi
     
     %% EXAMPLE 1: Equivalent case with meshgrid
     % Inputs with sizes [1 10], [70 1] produce outputs with size [70 10].

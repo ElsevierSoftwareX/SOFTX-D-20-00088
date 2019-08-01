@@ -80,7 +80,7 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % This was written, tested and optimized for MATLAB R2010b-R2018b using
     % the built-in functions and does not require any toolboxes to be used.
     
-    % Updated 30.7.2019
+    % Updated 1.8.2019 by Joonas T. Holmi
     
     % ---------------------------------------------------------------------
     

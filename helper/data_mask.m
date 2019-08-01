@@ -3,7 +3,6 @@
 % All rights reserved.
 
 function [Data_masked, Data_NaN_masked] = data_mask(Data, Mask),
-    % Updated 29.7.2016 by Joonas T. Holmi
     [D, M] = dim_size_consistent_repmat(Data, Mask); % Repmat consistently to permit masking
     Size_Diff = size(M) - [size(Mask) ones(1, ndims(M)-ndims(Mask))] + 1; % Find changes in mask dimensions
     ind_1st_singleton = find(Size_Diff == 1, 1, 'first'); % Find 1st singleton change

@@ -3,7 +3,6 @@
 % All rights reserved.
 
 function [fun_refresh, h_edit_1, h_edit_2, h_button_1, h_button_2, h_button_3, h_button_4, h_label_1, h_label_2] = ui_sidebar_for_clim(Fig)
-    % Updated 8.1.2019 by Joonas T. Holmi
     if nargin < 1 || isempty(Fig), Fig = gcf; end % By default, update gcf
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
     if isempty(Parent), [~, Parent] = ui_sidebar(Fig); end % Create one if it does not exist

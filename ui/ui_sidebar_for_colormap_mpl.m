@@ -3,7 +3,6 @@
 % All rights reserved.
 
 function [h_popup, h_label] = ui_sidebar_for_colormap_mpl(Fig)
-    % Updated 8.1.2019 by Joonas T. Holmi
     persistent currentValue; % Remember this always
     if isempty(currentValue), currentValue = 2; end % Default: inferno
     
