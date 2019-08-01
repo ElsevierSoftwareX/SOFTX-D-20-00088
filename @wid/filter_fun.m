@@ -15,8 +15,8 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin)
     % Get obj Project (even if it does not exist)
     Project = obj.Project;
     
-	Project.pushAutoCopyObj(false); % Temporarily don't allow filter_bg to copy
-    Project.pushAutoModifyObj(false); % Temporarily don't allow filter_bg to modify
+	Project.pushAutoCopyObj(false); % Temporarily don't allow copying
+    Project.pushAutoModifyObj(false); % Temporarily don't allow modifying
     
     % Limit the 3rd dimension range and apply linear background removal (if set)
     [~, Data_range, Graph_range, Data_range_bg] = obj.filter_bg(varargin{:});
@@ -85,8 +85,8 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin)
         
         % Create new object if permitted
         if AutoCreateObj, 
-	        Project.pushAutoCopyObj(true); % Temporarily allow crop_Graph to copy
-            Project.pushAutoModifyObj(true); % Temporarily allow crop_Graph to modify
+	        Project.pushAutoCopyObj(true); % Temporarily allow copying
+            Project.pushAutoModifyObj(true); % Temporarily allow modifying
 
             new_TDGraph = obj.crop_Graph([], Data_range_new, Graph_range); % Which uses wid.copy-function that automatically appends new copy (and its Links) to the Project
             new_TDGraph.Name = sprintf('%s[%g-%g]<%s', str_fun{end}, varargin{1}(1), varargin{1}(2), Name); % Generate new name
