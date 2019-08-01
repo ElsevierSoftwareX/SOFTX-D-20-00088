@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [varargout] = anyfun2cell(FUN, varargin)
+function varargout = anyfun2cell(FUN, varargin),
 %ANYFUN2CELL Uses anyfun with 'UniformOutput' == false -flag. NOTE: The
 %function is flexible. Inputs may be of any type and size as long as they
 %may consistently be repmat'd to exactly the same size. Dimension size

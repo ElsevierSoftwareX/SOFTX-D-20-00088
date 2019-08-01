@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [new_obj, Bin_Counts, Bin_Centers] = histogram(obj, N_bins, lower_quantile, upper_quantile, range_scaling)
+function [new_obj, Bin_Counts, Bin_Centers] = histogram(obj, N_bins, lower_quantile, upper_quantile, range_scaling),
     % Pop states (even if not used to avoid push-pop bugs)
     AutoCreateObj = obj.Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
     

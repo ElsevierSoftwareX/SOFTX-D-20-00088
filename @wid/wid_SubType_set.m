@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function wid_SubType_set(obj, in)
+function wid_SubType_set(obj, in),
     switch(obj.Type),
         case 'TDGraph',
             switch(in), % VERIFIED 25.7.2016 TO BE THE COMPLETE LIST!

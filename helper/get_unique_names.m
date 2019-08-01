@@ -3,7 +3,7 @@
 % All rights reserved.
 
 % Mimics matlab.lang.makeUniqueStrings(strs, true(size(strs)), maxStringLength) behaviour, missing before R2014a
-function strs = get_unique_names(strs, maxStringLength)
+function strs = get_unique_names(strs, maxStringLength),
     if nargin < 2, maxStringLength = namelengthmax; end
     if iscell(strs) && ~isempty(strs),
         S = size(strs); % Store the original shape

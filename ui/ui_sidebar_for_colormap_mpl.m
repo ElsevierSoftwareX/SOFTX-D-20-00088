@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [h_popup, h_label] = ui_sidebar_for_colormap_mpl(Fig)
+function [h_popup, h_label] = ui_sidebar_for_colormap_mpl(Fig),
     persistent currentValue; % Remember this always
     if isempty(currentValue), currentValue = 2; end % Default: inferno
     
@@ -49,7 +49,7 @@ function [h_popup, h_label] = ui_sidebar_for_colormap_mpl(Fig)
     update();
     
     % Proper changing of the colormap
-    function [] = update(varargin),
+    function update(varargin),
         currentValue = get(h_popup, 'Value'); % Store as global option
         set(0, 'DefaultFigureColormap', colormap_mpl([], C_options{currentValue})); % Set new default! Backward compatible!
         set(Fig, 'Colormap', 'default'); % Reset to new default! Backward compatible!

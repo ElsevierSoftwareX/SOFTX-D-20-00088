@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function wid_Data_set(obj, in)
+function wid_Data_set(obj, in),
     switch(obj.Type),
         case 'TDBitmap', obj.wid_Data_set_Bitmap(in);
         case 'TDGraph', obj.wid_Data_set_Graph(in);

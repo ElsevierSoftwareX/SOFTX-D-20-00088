@@ -3,7 +3,7 @@
 % All rights reserved.
 
 % Used by @wid\plot.m
-function [] = add_ticks_to_image( SizeX, SizeY, LengthX, LengthY, LengthUnit, N_ticks )
+function add_ticks_to_image(SizeX, SizeY, LengthX, LengthY, LengthUnit, N_ticks),
         if nargin < 6, N_ticks = 3; end
         
         XTick = linspace(0.5, double(SizeX)+0.5, N_ticks);

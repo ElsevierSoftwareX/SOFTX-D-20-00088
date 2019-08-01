@@ -20,7 +20,7 @@
 % OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 % SOFTWARE.
 
-function [ varargout ] = dim_size_consistent_repmat( varargin )
+function varargout = dim_size_consistent_repmat(varargin),
     % Function repmats all inputs so that they all are equivalent in size.
     % First it tests if input sizes are consistent with each other.
     % For each input, each dimension is consistent if 1) it is singleton

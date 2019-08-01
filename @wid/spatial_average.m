@@ -4,7 +4,7 @@
 
 % Calculates spatial average for the given object (be it TDBitmap, TDGraph
 % or TDImage).
-function [obj, Average] = spatial_average(obj)
+function [obj, Average] = spatial_average(obj),
     % Pop states (even if not used to avoid push-pop bugs)
     AutoCopyObj = obj.Project.popAutoCopyObj; % Get the latest value (may be temporary or permanent or default)
     AutoModifyObj = obj.Project.popAutoModifyObj; % Get the latest value (may be temporary or permanent or default)

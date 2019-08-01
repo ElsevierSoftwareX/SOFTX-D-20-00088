@@ -2,6 +2,6 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function wid_Info_set(obj, in)
+function wid_Info_set(obj, in),
     warning('Unimplemented!');
 end

@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function O_wit = new_TData(Version, Caption)
+function O_wit = new_TData(Version, Caption),
     if nargin < 2 || isempty(Version) || Version == 7,
         Tag_TData = wit('TData', [ ...
             wit('Version', int32(0)) ...

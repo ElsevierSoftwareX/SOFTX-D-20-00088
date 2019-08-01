@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function format = wid_Data_format_TDSpaceInterpretation(obj)
+function format = wid_Data_format_TDSpaceInterpretation(obj),
     % Each row: wit-tag name, {subformat}
     format_TDSpaceInterpretation_v5 = ...
         [obj.wid_Data_format_TData(); ...

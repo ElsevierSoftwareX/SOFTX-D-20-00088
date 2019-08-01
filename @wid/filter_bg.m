@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [obj, Data_range, Graph_range, Data_range_bg] = filter_bg(obj, varargin)
+function [obj, Data_range, Graph_range, Data_range_bg] = filter_bg(obj, varargin),
     % Pop states (even if not used to avoid push-pop bugs)
     AutoModifyObj = obj.Project.popAutoModifyObj; % Get the latest value (may be temporary or permanent or default)
     

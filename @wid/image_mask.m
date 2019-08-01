@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [obj, Data_NaN_masked] = image_mask(obj, varargin)
+function [obj, Data_NaN_masked] = image_mask(obj, varargin),
     % Pop states (even if not used to avoid push-pop bugs)
     AutoCopyObj = obj.Project.popAutoCopyObj; % Get the latest value (may be temporary or permanent or default)
     AutoModifyObj = obj.Project.popAutoModifyObj; % Get the latest value (may be temporary or permanent or default)

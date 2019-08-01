@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function out = wid_Data_get_Text(obj)
+function out = wid_Data_get_Text(obj),
     Data = obj.Tag.Data.regexp('^StreamData<TDStream<', true);
     if isempty(Data.Data), Data.reload(); end
     in = Data.Data;

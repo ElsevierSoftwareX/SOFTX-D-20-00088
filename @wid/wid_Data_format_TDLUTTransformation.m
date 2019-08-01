@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function format = wid_Data_format_TDLUTTransformation(obj)
+function format = wid_Data_format_TDLUTTransformation(obj),
     % Each row: wit-tag name, {isVisible; write-parser; read-parser}
     subformat_TDLUTTransformation_v5 = ... % Excluding the Version-tag
         { ...

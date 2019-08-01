@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [Data_range, Graph_range, Data_range_bg, range] = crop_Graph_with_bg_helper(Data, Graph, range, bg_avg_lower, bg_avg_upper)
+function [Data_range, Graph_range, Data_range_bg, range] = crop_Graph_with_bg_helper(Data, Graph, range, bg_avg_lower, bg_avg_upper),
     % This function is based on WITEC 2.10.3.3 User Manual pp. 134-138.
     % Data can be arbitrarily-sized 4-D matrix. Graph must be either same-
     % sized 4-D matrix OR a vector with length of size(Data, 3). Graph is

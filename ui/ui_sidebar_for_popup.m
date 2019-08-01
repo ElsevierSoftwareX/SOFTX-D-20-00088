@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [h_popup, h_label] = ui_sidebar_for_popup(Fig, str_Label, str_Popup, fun, initialValue, isPersistent, isMargins)
+function [h_popup, h_label] = ui_sidebar_for_popup(Fig, str_Label, str_Popup, fun, initialValue, isPersistent, isMargins),
     if nargin < 6, isPersistent = true; end
     if nargin < 5, initialValue = 1; end
     if isPersistent,
@@ -54,7 +54,7 @@ function [h_popup, h_label] = ui_sidebar_for_popup(Fig, str_Label, str_Popup, fu
     
     fun(currentValue);
     
-    function [] = update(varargin),
+    function update(varargin),
         currentValue = get(h_popup, 'Value');
         fun(currentValue);
     end

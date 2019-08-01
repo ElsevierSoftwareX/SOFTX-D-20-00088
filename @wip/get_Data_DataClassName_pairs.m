@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function Pairs = get_Data_DataClassName_pairs(O_wit)
+function Pairs = get_Data_DataClassName_pairs(O_wit),
     % Test the given input and gather valid tags to be added
     Pairs = wit.Empty;
     for ii = 1:numel(O_wit),

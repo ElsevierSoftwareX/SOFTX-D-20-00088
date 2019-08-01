@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [Info_Graph_merged] = merge_Info_Graph(obj, dim)
+function Info_Graph_merged = merge_Info_Graph(obj, dim),
     Infos = [obj.Info];
     Graphs = {Infos.Graph};
     Graph_classes = cellfun(@class, Graphs, 'UniformOutput', false);

@@ -28,7 +28,7 @@
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 % Used by fit_lineshape_automatic_guess.m
-function [ line_length, line_label ] = bw2lines( bw_lines )
+function [line_length, line_label] = bw2lines(bw_lines),
     % Function converts the 2nd dimension of a boolean map to lines.
     % Returns maps for length and label of lines.
     

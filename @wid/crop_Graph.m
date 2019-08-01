@@ -5,7 +5,7 @@
 % Use this function to crop the TDGraph object Data and its Graph ranges to
 % the given pixel indices [ind_range(1), ind_range(2)]. It is assumed that
 % the given object and pixel indices are valid.
-function [obj, Data_cropped, Graph_cropped] = crop_Graph(obj, ind_range, Data_cropped, Graph_cropped)
+function [obj, Data_cropped, Graph_cropped] = crop_Graph(obj, ind_range, Data_cropped, Graph_cropped),
     % Pop states (even if not used to avoid push-pop bugs)
     AutoCopyObj = obj.Project.popAutoCopyObj; % Get the latest value (may be temporary or permanent or default)
     AutoModifyObj = obj.Project.popAutoModifyObj; % Get the latest value (may be temporary or permanent or default)

@@ -3,7 +3,7 @@
 % All rights reserved.
 
 % Sorts ID, keeps unique, and finds Project Data (wid) with matching Id. 
-function O_wid = find_Data(obj, ID)
+function O_wid = find_Data(obj, ID),
     O_wid = wid.Empty;
     if isempty(obj), return; end % Return nothing if empty Project.
     if nargin < 2 || isempty(ID), return; end % Return nothing if no ID or empty ID.

@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function O_wid = manager(obj, varargin)
+function O_wid = manager(obj, varargin),
     if isempty(obj), error('No project given!'); end
     
     % START OF VARARGIN PARSING
@@ -150,7 +150,7 @@ function O_wid = manager(obj, varargin)
     end
     
     % To handle main window closing (and '-closepreview'-option)
-    function [] = CloseRequestFcn(varargin),
+    function CloseRequestFcn(varargin),
         if isBusy, % Test if there are other unfinished duties
             needClosing = true; % And expect a close-call elsewhere
         else,
@@ -165,7 +165,7 @@ function O_wid = manager(obj, varargin)
     end
     
     % For KeyReleasedCallback and MouseReleasedCallback
-    function [] = ReleasedCallback(h, varargin),
+    function ReleasedCallback(h, varargin),
         if ~isBusy, % Proceed only if NOT busy
             isBusy = true;
             h_Waitbar = waitbar(0, 'Please wait...');
@@ -215,7 +215,7 @@ function O_wid = manager(obj, varargin)
     end
     
     % Proper resizing of the uitable (topbar, bottombar)
-    function [] = update(varargin),
+    function update(varargin),
         % Store previous Units
         fig_Units = get(fig, 'Units');
         hcontainer_Units = get(hcontainer, 'Units');
@@ -262,7 +262,7 @@ function O_wid = manager(obj, varargin)
 
     % MouseMovedCallback, which sets JList-item name as tooltip string
     % https://undocumentedmatlab.com/blog/setting-listbox-mouse-actions/
-    function MouseMovedCallback(jListbox, jEventData)
+    function MouseMovedCallback(jListbox, jEventData),
         % Get the current mouse position
         mousePosition = java.awt.Point(jEventData.getX, jEventData.getY);
         % Get the currently-hovered JList-item

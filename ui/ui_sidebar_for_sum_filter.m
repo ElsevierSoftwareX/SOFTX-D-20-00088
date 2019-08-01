@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [h_edit_1, h_edit_2, h_label] = ui_sidebar_for_sum_filter(Fig, varargin)
+function [h_edit_1, h_edit_2, h_label] = ui_sidebar_for_sum_filter(Fig, varargin),
     persistent currentRange; % Remember this always
     if isempty(currentRange), currentRange = [-inf inf]; end % By default, sum over all data
     
@@ -37,7 +37,7 @@ function [h_edit_1, h_edit_2, h_label] = ui_sidebar_for_sum_filter(Fig, varargin
     cellfun(@(f) f(currentRange), funs);
     
     % Allow lower and upper values to exceed each other (24.10.2017)
-    function [] = update(varargin),
+    function update(varargin),
         Value_1 = str2double(get(h_edit_1, 'String'));
         Value_2 = str2double(get(h_edit_2, 'String'));
         if ~isnan(Value_1) && ~isnan(Value_2) && ~imag(Value_1) && ~imag(Value_2),
@@ -52,7 +52,7 @@ function [h_edit_1, h_edit_2, h_label] = ui_sidebar_for_sum_filter(Fig, varargin
     end
     
     % Dont allow lower and upper values to exceed each other
-%     function [] = update(varargin),
+%     function update(varargin),
 %         Value_1 = sscanf(get(h_edit_1, 'String'), '%g');
 %         Value_2 = sscanf(get(h_edit_2, 'String'), '%g');
 %         if ~isempty(Value_1),

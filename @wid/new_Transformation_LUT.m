@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function obj = new_Transformation_LUT(O_wit, LUTSize)
+function obj = new_Transformation_LUT(O_wit, LUTSize),
     if nargin == 0 || isempty(O_wit), O_wit = wid.new(); end % Create O_wit
     if nargin < 2, LUTSize = 1600; end
     Version = wip.get_Root_Version(O_wit);

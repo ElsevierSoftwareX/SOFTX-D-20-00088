@@ -11,7 +11,7 @@
 % WARNING! The related instrumental errors, if NOT corrected for, can lead
 % to UNPHYSICAL stitching result in the overlapping regions, even if their
 % apparent stitching result looks smooth!
-function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin)
+function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin),
     % Pop states (even if not used to avoid push-pop bugs)
     AutoCreateObj = obj.Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
     

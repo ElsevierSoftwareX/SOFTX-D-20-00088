@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_polynomial(x, Y, order, dim, fitMany)
+function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_polynomial(x, Y, order, dim, fitMany),
     % Fitting of the N'th order polynomial(s) to the data in Y, for which
     % the dim'th dimension is interpreted as the data dimension. Other
     % dimensions are interpreted as datasets. By default, dim == 1. Outputs

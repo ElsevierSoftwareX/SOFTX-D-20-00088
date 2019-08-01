@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_data(x, Y, x_Data, y_Data, order, dim, fitMany)
+function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_data(x, Y, x_Data, y_Data, order, dim, fitMany),
     % N'th order fitting of Data to the data in Y, for which the dim'th
     % dimension is interpreted as the data dimension. Other dimensions are
     % interpreted as datasets. By default, order == 1 and dim == 1. Outputs

@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function out = wid_Info_get(obj)
+function out = wid_Info_get(obj),
     out = struct.empty; % If not TDBitmap, TDGraph or TDImage
     
     SpaceTransformation = wid.Empty;

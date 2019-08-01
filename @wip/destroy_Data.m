@@ -3,7 +3,7 @@
 % All rights reserved.
 
 % Destroys the specified BUT MATCHING wid-input objects from the Project.
-function destroy_Data(obj, varargin)
+function destroy_Data(obj, varargin),
     if isempty(obj), return; end % Do nothing if empty Project given
     % First, discard all non-wid objects
     bw_valid = cellfun(@(x) isa(x, 'wid'), varargin);

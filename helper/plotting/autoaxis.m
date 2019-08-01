@@ -3,7 +3,7 @@
 % All rights reserved.
 
 % Used by @wid\plot.m
-function [] = autoaxis(hax, X, Y, limit_x, limit_y)
+function autoaxis(hax, X, Y, limit_x, limit_y),
     % Automatically adjust the axis to the inputs X and Y and leave a tiny
     % margin around the data points.
     %ASSUMING INPUT IS VALID!

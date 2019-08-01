@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function obj = new_Bitmap(O_wit)
+function obj = new_Bitmap(O_wit),
     if nargin == 0 || isempty(O_wit), O_wit = wid.new(); end % Create O_wit
     Version = wip.get_Root_Version(O_wit);
     

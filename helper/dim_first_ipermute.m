@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [ A, order_B_to_A ] = dim_first_ipermute( B, dim )
+function [A, order_B_to_A] = dim_first_ipermute(B, dim),
     % BENEFIT 1: Code can be made to always operate on first dimension.
     % BENEFIT 2: Code can be made to exploit linear indices.
     

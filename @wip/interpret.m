@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [ValueUnit, varargout] = interpret(I, Unit_new, Unit_old, varargin)
+function [ValueUnit, varargout] = interpret(I, Unit_new, Unit_old, varargin),
     % * If Unit_old is empty, then default interpretation is assumed.
     % * Both Unit_new and Unit_old can either be UnitIndex (number input)
     % or ValueUnit (character input). Any mixture of those is accepted.

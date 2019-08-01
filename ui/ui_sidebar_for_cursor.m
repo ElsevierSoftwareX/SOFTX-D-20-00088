@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [h_label, h_label_1, h_edit_1, h_label_2, h_edit_2, h_label_3, h_edit_3, h_label_4, h_edit_4] = ui_sidebar_for_cursor(Fig, fun_down, fun_up, fun_image_transform)
+function [h_label, h_label_1, h_edit_1, h_label_2, h_edit_2, h_label_3, h_edit_3, h_label_4, h_edit_4] = ui_sidebar_for_cursor(Fig, fun_down, fun_up, fun_image_transform),
     if nargin < 1 || isempty(Fig), Fig = gcf; end % By default, update gcf
     if nargin < 2, fun_down = []; end % By default, no function to call on down
     if nargin < 3, fun_up = []; end % By default, no function to call on up
@@ -52,7 +52,7 @@ function [h_label, h_label_1, h_edit_1, h_label_2, h_edit_2, h_label_3, h_edit_3
     set(Fig, 'WindowButtonDownFcn', @WindowButtonDownFcn, 'WindowButtonUpFcn', @WindowButtonUpFcn, ... % Enable mouse tracking when pressed down!
         'WindowKeyReleaseFcn', @WindowKeyReleaseFcn, 'WindowKeyPressFcn', @WindowKeyPressFcn);
     
-    function [] = refresh(fun, dCP),
+    function refresh(fun, dCP),
         if ~ishandle(Parent), return; end % Abort if Parent does not exist! (For instance, due to deletion)
         if ~isempty(Ax),
             if nargin == 1, % Get mouse point if no difference, dCP given
@@ -118,27 +118,27 @@ function [h_label, h_label_1, h_edit_1, h_label_2, h_edit_2, h_label_3, h_edit_3
     end
     
     % Mouse tracking callbacks
-    function [] = WindowButtonUpFcn(varargin),
+    function WindowButtonUpFcn(varargin),
         set(Fig, 'WindowButtonMotionFcn', ''); % Disable mouse tracking
         refresh(fun_up);
     end
-    function [] = WindowButtonDownFcn(varargin),
+    function WindowButtonDownFcn(varargin),
         set(Fig, 'WindowButtonMotionFcn', @WindowButtonMotionFcn); % Enable mouse tracking
         refresh(fun_down);
     end
-    function [] = WindowButtonMotionFcn(varargin),
+    function WindowButtonMotionFcn(varargin),
         refresh(fun_down);
     end
     
     % Key tracking callbacks
-    function [] = WindowKeyReleaseFcn(varargin),
+    function WindowKeyReleaseFcn(varargin),
         ImageObject = findobj(Ax, 'Type', 'image');
         if ~isempty(ImageObject), % Proceed only if an image
 %             isWindowKeyReleased = true;
             refresh(fun_up, [0 0 0]);
         end
     end
-    function [] = WindowKeyPressFcn(src,event),
+    function WindowKeyPressFcn(src, event),
         ImageObject = findobj(Ax, 'Type', 'image');
         if ~isempty(ImageObject), % Proceed only if an image
             if isWindowKeyReleased,

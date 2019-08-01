@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_voigtian(x, Y, P0, dim, varargin)
+function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_voigtian(x, Y, P0, dim, varargin),
     % Parse extra arguments
     
     % Check if Fwhm_G was specified (in order to lock that parameter)

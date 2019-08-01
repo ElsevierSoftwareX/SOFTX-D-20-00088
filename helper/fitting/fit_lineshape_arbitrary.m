@@ -27,7 +27,7 @@
 % OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(fun, X, Y, P0, dim, varargin)
+function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(fun, X, Y, P0, dim, varargin),
     %% DESCRIPTION
     % Fits arbitrary lineshape function using the Levenberg–Marquardt
     % algorithm (LMA) with the Gauss-Newton (GN) approximation, which

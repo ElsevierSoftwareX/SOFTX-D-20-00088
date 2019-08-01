@@ -40,7 +40,7 @@
 % http://urn.fi/URN:NBN:fi:aalto-201605122027
 % The automated mask generation in this algorithm (and its data-transformed
 % version) heavily rely on the code in clever_statistics_and_outliers.m.
-function [out_2D, correction_2D, mask_2D] = apply_MRLCM(in_2D, dim, mask_2D)
+function [out_2D, correction_2D, mask_2D] = apply_MRLCM(in_2D, dim, mask_2D),
     % Median Ratio Line Correction by Multiplication. This MULTIPLICATIVE
     % method preserves RATIOS (but does NOT preserve DIFFERENCES)! In order
     % to preserve DIFFERENCES, use ADDITIVE method (MDLCA) instead!

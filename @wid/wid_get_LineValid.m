@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function Data = wid_get_LineValid(obj, Data)
+function Data = wid_get_LineValid(obj, Data),
     LineValid = obj.Tag.Data.regexp('^LineValid<', true).Data;
     if sum(~LineValid) > 0 && ~islogical(Data),
         if ~isa(Data, 'double') && ~isa(Data, 'single'),

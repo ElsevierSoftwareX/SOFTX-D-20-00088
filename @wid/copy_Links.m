@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function copy_Links(obj)
+function copy_Links(obj),
     % DANGER! Call this function only if obj and its obj.Tag are COPIES!
     % Handle transformations and interpretations
     Tag_Id = obj.Tag.Data.regexp('^[^<]+ID(<[^<]*)*$'); % Should not match with ID under TData!

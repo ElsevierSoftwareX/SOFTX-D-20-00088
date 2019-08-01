@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [hcomponent, hcontainer, h_edit, h_label] = ui_sidebar_for_index_slider(Fig, Maximum, fun)
+function [hcomponent, hcontainer, h_edit, h_label] = ui_sidebar_for_index_slider(Fig, Maximum, fun),
     if isempty(Fig), Fig = gcf; end % By default, update gcf
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
     if isempty(Parent), [~, Parent] = ui_sidebar(Fig); end % Create one if it does not exist
@@ -38,7 +38,7 @@ function [hcomponent, hcontainer, h_edit, h_label] = ui_sidebar_for_index_slider
     
     fun(1);
     
-    function [] = update_edit(varargin),
+    function update_edit(varargin),
         currentValue = sscanf(get(h_edit, 'String'), '%d'); % Read integers
         if isempty(currentValue), % Reset value on sscanf failure
             set(h_edit, 'String', sprintf('%g', get(handle(hcomponent), 'Value')));
@@ -49,7 +49,7 @@ function [hcomponent, hcontainer, h_edit, h_label] = ui_sidebar_for_index_slider
         set(handle(hcomponent), 'Value', currentValue); % Call update_slider if the slider state is changed
     end
     
-    function [] = update_slider(varargin),
+    function update_slider(varargin),
         currentValue = get(handle(hcomponent), 'Value');
         set(h_edit, 'String', sprintf('%g', currentValue)); % Update the edit string
         fun(currentValue);

@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function destroy(obj)
+function destroy(obj),
     for ii = 1:numel(obj),
         if ~obj(ii).isvalid, continue; end % Skip deleted
         ON_ii = obj(ii).OrdinalNumber;

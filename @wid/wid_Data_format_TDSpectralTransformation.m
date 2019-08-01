@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function format = wid_Data_format_TDSpectralTransformation(obj)
+function format = wid_Data_format_TDSpectralTransformation(obj),
     % Each row: wit-tag name, {isVisible; write-parser; read-parser}
     subformat_TDSpectralTransformation_v5 = ... % Excluding the Version-tag
         { ...

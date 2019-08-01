@@ -3,7 +3,7 @@
 % All rights reserved.
 
 % Adopts the given wit-class objects under the parent obj.
-function adopt(obj, varargin)
+function adopt(obj, varargin),
     if numel(obj) ~= 1, return; end % Do nothing if not a single parent!
     children = obj.Children;
     N_children = numel(children);

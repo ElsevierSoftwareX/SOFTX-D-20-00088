@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function O_wit = new(Version)
+function O_wit = new(Version),
     % 'README on WIT-tag formatting.txt'
     if nargin == 0 || isempty(Version) || Version == 7, % Default: latest version
         O_wit = wit('WITec Data', [ ...

@@ -27,7 +27,7 @@
 % OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-function [J, H] = jacobian_helper(tol_abs, tol_rel, F, Y, varargin)
+function [J, H] = jacobian_helper(tol_abs, tol_rel, F, Y, varargin),
     % Evaluate numerical sparse Jacobian matrix, J for 2-D matrix function
     % F(Y, varargin{:}), where size(Y) = [# of variables, # of samples] and
     % size(F) = [# of dimensions, # of samples]. Also, Hessian matrix, H is

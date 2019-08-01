@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function out = wid_Data_get(obj)
+function out = wid_Data_get(obj),
     switch(obj.Type),
         case 'TDBitmap', out = obj.wid_Data_get_Bitmap();
         case 'TDGraph', out = obj.wid_Data_get_Graph();

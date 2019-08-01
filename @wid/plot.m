@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function plot(obj, varargin)
+function plot(obj, varargin),
     % Supports following extra options, which can be followed by any number
     % of extra option inputs:
     % -compare: Shows comparison of S and all subsequent datas. Implemented
@@ -219,7 +219,7 @@ function plot(obj, varargin)
     end
     
     % Added feature on 8th November 2017
-    function [] = uitable_selection_to_clipboard(src, evt),
+    function uitable_selection_to_clipboard(src, evt),
         if ~isCopyingBusy,
             isCopyingBusy = true;
             Data = get(src, 'Data'); % Backward compatible
@@ -270,20 +270,20 @@ function plot(obj, varargin)
     
     % TDBitmap & TDGraph & TDImage
     % Transform the point
-    function [CP_in_space] = transform_CP(CP_in_pixels),
+    function CP_in_space = transform_CP(CP_in_pixels),
         if isempty(XTransformation), CP_in_space = [CP_in_pixels 1];
         else, [ ~, CP_in_space ] = obj.Project.transform_forced(XTransformation, permute(CP_in_pixels(:), [2 3 1])); end
     end
     
     % TDGraph
     % Update Graph Volume (CUSTOM TYPE)
-    function [] = updateGraphVolume(filter_range),
+    function updateGraphVolume(filter_range),
         set(0, 'CurrentFigure', Fig);
         Data_range = wid.crop_Graph_with_bg_helper(Data, Info.Graph, filter_range);
         data_plot_Volume(mynansum(Data_range, 3));
     end
     % Update Graph Image
-    function [] = updateGraphImage(filter_range),
+    function updateGraphImage(filter_range),
         set(0, 'CurrentFigure', Fig);
         Data_range = wid.crop_Graph_with_bg_helper(Data, Info.Graph, filter_range);
         bw_isnan_3rd_dim = all(isnan(Data_range), 3); % Test if all NaN in the same location
@@ -293,7 +293,7 @@ function plot(obj, varargin)
     end
     
     % Mouse tracking callback
-    function [] = subPreview(CP),
+    function subPreview(CP),
         if ~isBusy, % Proceed only if NOT busy
             isBusy = true; % Set busy flag true
             % Create figure on demand
@@ -325,7 +325,7 @@ function plot(obj, varargin)
         end
     end
 
-    function [] = plotSpectrum(indX, indY, fun_plot),
+    function plotSpectrum(indX, indY, fun_plot),
         % Handle first time
         if isempty(h_sub) || ~ishandle(h_sub(1)),
             if nargin < 3, fun_plot = []; end
@@ -382,7 +382,7 @@ function plot(obj, varargin)
     end
 
     % Plotting functions
-    function h = plot_Image(Data, DataUnit, SideUnit, SideWidth, SideHeight)
+    function h = plot_Image(Data, DataUnit, SideUnit, SideWidth, SideHeight),
         % Ensures consistent image formatting
         Data = permute(Data, [2 1 3]); % Permute to show image correctly!
         if size(Data, 3) == 1, % Plot grayscale data
@@ -407,7 +407,7 @@ function plot(obj, varargin)
         if nargin > 4, add_ticks_to_image( size(Data, 2), size(Data, 1), SideWidth, SideHeight, SideUnit ); end
     end
 
-    function h = plot_Spectrum(Fig, X, XUnit, Y, YUnit, fun, isAuto)
+    function h = plot_Spectrum(Fig, X, XUnit, Y, YUnit, fun, isAuto),
         % Ensures consistent plot formatting
         if isempty(Fig), Fig = gcf; end
         Ax = get(Fig, 'CurrentAxes');
