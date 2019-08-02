@@ -31,7 +31,7 @@ function plot(obj, varargin),
     showSidebar = ~varargin_dashed_str_exists('nosidebar', varargin); % By default, show sidebar
     showPreview = ~varargin_dashed_str_exists('nopreview', varargin); % By default, show preview
     showCursor = ~varargin_dashed_str_exists('nocursor', varargin); % By default, show cursor
-    out_compare = varargin_dashed_str_datas('compare', varargin);
+    CompareDatas = varargin_dashed_str_datas('compare', varargin);
     fun_auto = @(x) true; % By default, enable autoscaling
     
     Name = obj.Name;
@@ -58,8 +58,8 @@ function plot(obj, varargin),
     set(Fig, 'Units', Units); % Restore Units
     
     % Mask Data
-    out = varargin_dashed_str_datas('mask', varargin);
-    for ii = 1:numel(out), [~, Data] = data_mask(Data, out{ii}.Data); end
+    MaskDatas = varargin_dashed_str_datas('mask', varargin);
+    for ii = 1:numel(MaskDatas), [~, Data] = data_mask(Data, MaskDatas{ii}.Data); end
     
     if ~isempty(Data),
         switch(obj.Type),
@@ -330,14 +330,14 @@ function plot(obj, varargin),
         if isempty(h_sub) || ~ishandle(h_sub(1)),
             if nargin < 3, fun_plot = []; end
             h_sub = plot_Spectrum(Fig_sub, Info.Graph, Info.GraphUnit, Data(indX,indY,:), Info.DataUnit, fun_plot, fun_auto());
-            if numel(out_compare) > 0,
+            if numel(CompareDatas) > 0,
                 hold on;
                 Colors = get(get(h_sub(1), 'Parent'), 'ColorOrder');
                 set(h_sub(1), 'Color', Colors(1,:));
                 strs = {obj.Name};
                 counter = 0;
-                for ii = 1:numel(out_compare),
-                    C_compare = out_compare{ii};
+                for ii = 1:numel(CompareDatas),
+                    C_compare = CompareDatas{ii};
                     for jj = 1:numel(C_compare),
                         if ~strcmp(C_compare(jj).Type, 'TDGraph'), continue; end
                         Data_compare = C_compare(jj).Data;
@@ -364,8 +364,8 @@ function plot(obj, varargin),
             set(h_sub(1), 'YData', Data(indX,indY,:));
             if fun_auto(), autoaxis(get(h_sub(1), 'Parent'), Info.Graph, Data(indX,indY,:)); end
             counter = 0;
-            for ii = 1:numel(out_compare),
-                C_compare = out_compare{ii};
+            for ii = 1:numel(CompareDatas),
+                C_compare = CompareDatas{ii};
                 for jj = 1:numel(C_compare),
                     if ~strcmp(C_compare(jj).Type, 'TDGraph'), continue; end
                     Data_compare = C_compare(jj).Data;

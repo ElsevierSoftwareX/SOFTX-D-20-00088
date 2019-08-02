@@ -6,9 +6,9 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_voigtian(x
     % Parse extra arguments
     
     % Check if Fwhm_G was specified (in order to lock that parameter)
-    out = varargin_dashed_str_datas('Fwhm_G', varargin, -1);
-    if numel(out) > 0,
-        Fwhm_G = out{1};
+    datas = varargin_dashed_str_datas('Fwhm_G', varargin, -1);
+    if numel(datas) > 0,
+        Fwhm_G = datas{1};
         Fwhm_G = Fwhm_G(:).'; % Force a row vector
         P0(5,:) = Fwhm_G; % Works if Fwhm_G is a scalar or a same sized matrix
         P0(3,:) = max(P0(3,:)-Fwhm_G, 0); % Remove the Fwhm_G component from a width guess (but mimimum at zero)

@@ -55,21 +55,21 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     
     % Force DataUnit, SpaceUnit, SpectralUnit, TimeUnit:
     % Parse input arguments
-    out = varargin_dashed_str_datas('DataUnit', varargin, -1);
-    if numel(out) > 0, O_wip.ForceDataUnit = out{1}; end
+    datas = varargin_dashed_str_datas('DataUnit', varargin, -1);
+    if numel(datas) > 0, O_wip.ForceDataUnit = datas{1}; end
     
-    out = varargin_dashed_str_datas('SpectralUnit', varargin, -1);
-    if numel(out) > 0, O_wip.ForceSpectralUnit = out{1}; end
+    datas = varargin_dashed_str_datas('SpectralUnit', varargin, -1);
+    if numel(datas) > 0, O_wip.ForceSpectralUnit = datas{1}; end
     
-    out = varargin_dashed_str_datas('SpaceUnit', varargin, -1);
-    if numel(out) > 0, O_wip.ForceSpaceUnit = out{1}; end
+    datas = varargin_dashed_str_datas('SpaceUnit', varargin, -1);
+    if numel(datas) > 0, O_wip.ForceSpaceUnit = datas{1}; end
     
-    out = varargin_dashed_str_datas('TimeUnit', varargin, -1);
-    if numel(out) > 0, O_wip.ForceTimeUnit = out{1}; end
+    datas = varargin_dashed_str_datas('TimeUnit', varargin, -1);
+    if numel(datas) > 0, O_wip.ForceTimeUnit = datas{1}; end
     
-    out = varargin_dashed_str_datas('Manager', varargin, -1);
+    datas = varargin_dashed_str_datas('Manager', varargin, -1);
     ManagerVarargin = {};
-    if numel(out) > 0, ManagerVarargin = out{1}; end
+    if numel(datas) > 0, ManagerVarargin = datas{1}; end
     
     % Show project manager on demand
     if show_ui_ifall, showProjectManager = strncmp(questdlg('Would you like to 1) browse & select data OR 2) load all data?', 'How to proceed?', '1) Browse & select', '2) Load all', '1) Browse & select'), '1)', 2); end
