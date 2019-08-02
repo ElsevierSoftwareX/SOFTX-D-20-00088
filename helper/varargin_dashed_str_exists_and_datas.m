@@ -2,8 +2,8 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Helper function to parse and return the indices of the given dashed
-% string in the given cell array input.
+% Helper function to parse and return the datas of the given dashed string
+% from the given cell array input.
 
 % INPUTS:
 % (1) str_wo_dash: A char array for case-insensitive string-to-string
@@ -17,13 +17,11 @@
 %   IF NEGATIVE: It reverses order of the matches and keeps last N!
 
 % OUTPUTS:
-% (1) inds: The indices of the given dashed string.
-% (2) in_wo: Inputs without the given dashed string and its datas
+% (1) exists: Whether or not the given dashed string exists.
+% (2) datas: The cell array of the datas of the given dashed string.
+% (3) in_wo: Inputs without the given dashed string and its datas
 
-function varargout = varargin_dashed_str_inds(varargin),
-    if nargout == 1,
-        varargout{1} = varargin_dashed_str_inds_and_datas(varargin{:});
-    elseif nargout > 1,
-        [varargout{1}, ~, varargout{2:nargout}] = varargin_dashed_str_inds_and_datas(varargin{:});
-    end
+function varargout = varargin_dashed_str_exists_and_datas(varargin),
+    [varargout{1:nargout}] = varargin_dashed_str_inds_and_datas(str_wo_dash, in, N);
+    if nargout > 0, varargout{1} = ~isempty(varargout{1}); end % Test if exists
 end

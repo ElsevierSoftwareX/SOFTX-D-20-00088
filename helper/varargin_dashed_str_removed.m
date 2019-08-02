@@ -19,15 +19,8 @@
 % OUTPUTS:
 % (1) in_wo: The cell array without the given dashed string and its datas.
 
-function in_wo = varargin_dashed_str_removed(str_wo_dash, in, N),
-    if nargin < 3, [~, ind_dashed_begin, ind_dashed_end] = varargin_dashed_str(str_wo_dash, in);
-    else, [~, ind_dashed_begin, ind_dashed_end] = varargin_dashed_str(str_wo_dash, in, N); end
-    
-    % Then combine all data related to the given str
-    B_in = true(size(in));
-    for ii = 1:numel(ind_dashed_begin),
-        inds = ind_dashed_begin(ii):ind_dashed_end(ii);
-        B_in(inds) = false;
+function varargout = varargin_dashed_str_removed(varargin),
+    if nargout > 0,
+        [~, ~, varargout{1:nargout}] = varargin_dashed_str_inds_and_datas(varargin{:});
     end
-    in_wo = in(B_in);
 end

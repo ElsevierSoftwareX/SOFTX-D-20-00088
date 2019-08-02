@@ -17,23 +17,11 @@
 %   IF NEGATIVE: It reverses order of the matches and keeps last N!
 
 % OUTPUTS:
-% (1) out: The cell array of the datas of the given dashed string.
+% (1) datas: The cell array of the datas of the given dashed string.
 % (2) in_wo: Inputs without the given dashed string and its datas
 
-function [out, in_wo] = varargin_dashed_str_datas(str_wo_dash, in, N),
-    if nargin < 3,
-        [~, ind_dashed_begin, ind_dashed_end] = varargin_dashed_str(str_wo_dash, in);
-        if nargout > 1, in_wo = varargin_dashed_str_removed(str_wo_dash, in); end
-    else,
-        [~, ind_dashed_begin, ind_dashed_end] = varargin_dashed_str(str_wo_dash, in, N);
-        if nargout > 1, in_wo = varargin_dashed_str_removed(str_wo_dash, in, N); end
+function varargout = varargin_dashed_str_datas(varargin),
+    if nargout > 0,
+        [~, varargout{1:nargout}] = varargin_dashed_str_exists_and_datas(varargin{:});
     end
-    
-    % Then combine all data related to the given str
-    B_out = false(size(in));
-    for ii = 1:numel(ind_dashed_begin),
-        inds = ind_dashed_begin(ii)+1:ind_dashed_end(ii);
-        B_out(inds) = true;
-    end
-    out = in(B_out);
 end
