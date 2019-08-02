@@ -22,6 +22,8 @@
 % * The last char array input is taken as new class, overwriting 'double'.
 % * Any unspecified array dimension size is assumed to be 1.
 % * Any unspecified subindices are assumed to be empty.
+% * Any unspecified value for '-replace', '-truncate', '-circulate' and
+% '-matrix' are assumed to be false.
 function [ind, isAnyAtClassMax, isAtClassMax] = ndgrid_and_sub2ind_and_cast(arraySize, varargin),
     % Check if any of the special dashed strings were specified
     [doReplace, datas] = varargin_dashed_str_exists_and_datas('replace', varargin, -1);
@@ -54,16 +56,22 @@ function [ind, isAnyAtClassMax, isAtClassMax] = ndgrid_and_sub2ind_and_cast(arra
     B_numeric = cellfun(@isnumeric, varargin); % Find the numeric array inputs
     varargin = varargin(B_numeric); % Only the numeric array inputs
     
-    % Append the missing dimensions
-    D = max(numel(varargin), numel(arraySize)); % Maximum number of dimensions
-    [varargin{end+1:D}] = deal([]);
-    arraySize(end+1:D) = 1;
+    % Maximum number of dimensions
+    D = max(numel(varargin), numel(arraySize));
     
     % Convert scalar to array
     if numel(doReplace) == 1, doReplace = repmat(doReplace, 1, D); end
     if numel(doTruncate) == 1, doTruncate = repmat(doTruncate, 1, D); end
     if numel(doCirculate) == 1, doCirculate = repmat(doCirculate, 1, D); end
     if numel(isMatrix) == 1, isMatrix = repmat(isMatrix, 1, D); end
+    
+    % Append the missing dimensions
+    [varargin{end+1:D}] = deal([]);
+    arraySize(end+1:D) = 1;
+    doReplace(end+1:D) = false;
+    doTruncate(end+1:D) = false;
+    doCirculate(end+1:D) = false;
+    isMatrix(end+1:D) = false;
     
     % Generate indices
     arraySize = double(arraySize);
