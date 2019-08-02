@@ -18,8 +18,14 @@
 
 % OUTPUTS:
 % (1) ind_dashed: The indices of the given dashed string.
+% (2) in_wo: Inputs without the given dashed string and its datas
 
-function ind_dashed = varargin_dashed_str_inds(str_wo_dash, in, N),
-    if nargin < 3, [~, ind_dashed] = varargin_dashed_str(str_wo_dash, in);
-    else, [~, ind_dashed] = varargin_dashed_str(str_wo_dash, in, N); end
+function [ind_dashed, in_wo] = varargin_dashed_str_inds(str_wo_dash, in, N),
+    if nargin < 3,
+        [~, ind_dashed] = varargin_dashed_str(str_wo_dash, in);
+        if nargout > 1, in_wo = varargin_dashed_str_removed(str_wo_dash, in); end
+    else,
+        [~, ind_dashed] = varargin_dashed_str(str_wo_dash, in, N);
+        if nargout > 1, in_wo = varargin_dashed_str_removed(str_wo_dash, in, N); end
+    end
 end

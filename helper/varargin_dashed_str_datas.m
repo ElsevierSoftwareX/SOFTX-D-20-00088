@@ -18,10 +18,16 @@
 
 % OUTPUTS:
 % (1) out: The cell array of the datas of the given dashed string.
+% (2) in_wo: Inputs without the given dashed string and its datas
 
-function out = varargin_dashed_str_datas(str_wo_dash, in, N),
-    if nargin < 3, [~, ind_dashed_begin, ind_dashed_end] = varargin_dashed_str(str_wo_dash, in);
-    else, [~, ind_dashed_begin, ind_dashed_end] = varargin_dashed_str(str_wo_dash, in, N); end
+function [out, in_wo] = varargin_dashed_str_datas(str_wo_dash, in, N),
+    if nargin < 3,
+        [~, ind_dashed_begin, ind_dashed_end] = varargin_dashed_str(str_wo_dash, in);
+        if nargout > 1, in_wo = varargin_dashed_str_removed(str_wo_dash, in); end
+    else,
+        [~, ind_dashed_begin, ind_dashed_end] = varargin_dashed_str(str_wo_dash, in, N);
+        if nargout > 1, in_wo = varargin_dashed_str_removed(str_wo_dash, in, N); end
+    end
     
     % Then combine all data related to the given str
     B_out = false(size(in));

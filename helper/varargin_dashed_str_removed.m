@@ -17,9 +17,9 @@
 %   IF NEGATIVE: It reverses order of the matches and keeps last N!
 
 % OUTPUTS:
-% (1) in: The cell array without the given dashed string and its datas.
+% (1) in_wo: The cell array without the given dashed string and its datas.
 
-function in = varargin_dashed_str_removed(str_wo_dash, in, N),
+function in_wo = varargin_dashed_str_removed(str_wo_dash, in, N),
     if nargin < 3, [~, ind_dashed_begin, ind_dashed_end] = varargin_dashed_str(str_wo_dash, in);
     else, [~, ind_dashed_begin, ind_dashed_end] = varargin_dashed_str(str_wo_dash, in, N); end
     
@@ -29,5 +29,5 @@ function in = varargin_dashed_str_removed(str_wo_dash, in, N),
         inds = ind_dashed_begin(ii):ind_dashed_end(ii);
         B_in(inds) = false;
     end
-    in = in(B_in);
+    in_wo = in(B_in);
 end
