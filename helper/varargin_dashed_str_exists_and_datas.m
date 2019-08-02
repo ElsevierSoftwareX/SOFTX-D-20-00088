@@ -22,6 +22,6 @@
 % (3) in_wo: Inputs without the given dashed string and its datas
 
 function varargout = varargin_dashed_str_exists_and_datas(varargin),
-    [varargout{1:nargout}] = varargin_dashed_str_inds_and_datas(str_wo_dash, in, N);
+    [varargout{1:nargout}] = varargin_dashed_str_inds_and_datas(varargin{:});
     if nargout > 0, varargout{1} = ~isempty(varargout{1}); end % Test if exists
 end
