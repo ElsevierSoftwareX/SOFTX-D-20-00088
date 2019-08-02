@@ -9,6 +9,8 @@
 % 'double' by default.
 
 % * The numeric array inputs are taken as subindices.
+% * If '-isarray' is found, then do not force-to-column-and-permute all (or
+% the boolean array specified selection) of the subindices.
 % * If '-replace' is found, then replace all (or the boolean array
 % specified selection) of the out-of-bound subindices by nan (or zero).
 % * If '-value' is found, then the replacement value above is changed to
@@ -17,15 +19,16 @@
 % specified selection) of the out-of-bound subindices.
 % * If '-circulate' is found, then circulate all (or the boolean array
 % specified selection) of the out-of-bound subindices.
-% * If '-matrix' is found, then do not force-to-column-and-permute all (or
-% the boolean array specified selection) of the subindices.
 % * The last char array input is taken as new class, overwriting 'double'.
 % * Any unspecified array dimension size is assumed to be 1.
 % * Any unspecified subindices are assumed to be empty.
 % * Any unspecified value for '-replace', '-truncate', '-circulate' and
-% '-matrix' are assumed to be false.
-function [ind, isAnyAtClassMax, isAtClassMax] = ndgrid_and_sub2ind_and_cast(arraySize, varargin),
+% '-array' are assumed to be false.
+function [ind, isAnyAtClassMax, isAtClassMax] = generic_sub2ind(arraySize, varargin),
     % Check if any of the special dashed strings were specified
+    [isArray, datas] = varargin_dashed_str_exists_and_datas('isarray', varargin, -1);
+    if isArray && numel(datas) > 0, isArray = logical(datas{1}); end
+    
     [doReplace, datas] = varargin_dashed_str_exists_and_datas('replace', varargin, -1);
     if doReplace && numel(datas) > 0, doReplace = logical(datas{1}); end
     
@@ -38,9 +41,6 @@ function [ind, isAnyAtClassMax, isAtClassMax] = ndgrid_and_sub2ind_and_cast(arra
     
     [doCirculate, datas] = varargin_dashed_str_exists_and_datas('circulate', varargin, -1);
     if doCirculate && numel(datas) > 0, doCirculate = logical(datas{1}); end
-    
-    [isMatrix, datas] = varargin_dashed_str_exists_and_datas('matrix', varargin, -1);
-    if isMatrix && numel(datas) > 0, isMatrix = logical(datas{1}); end
     
     % Remove any dashed strings and their datas
     varargin = varargin_dashed_str_removed('', varargin);
@@ -63,7 +63,7 @@ function [ind, isAnyAtClassMax, isAtClassMax] = ndgrid_and_sub2ind_and_cast(arra
     if numel(doReplace) == 1, doReplace = repmat(doReplace, 1, D); end
     if numel(doTruncate) == 1, doTruncate = repmat(doTruncate, 1, D); end
     if numel(doCirculate) == 1, doCirculate = repmat(doCirculate, 1, D); end
-    if numel(isMatrix) == 1, isMatrix = repmat(isMatrix, 1, D); end
+    if numel(isArray) == 1, isArray = repmat(isArray, 1, D); end
     
     % Append the missing dimensions
     [varargin{end+1:D}] = deal([]);
@@ -71,7 +71,7 @@ function [ind, isAnyAtClassMax, isAtClassMax] = ndgrid_and_sub2ind_and_cast(arra
     doReplace(end+1:D) = false;
     doTruncate(end+1:D) = false;
     doCirculate(end+1:D) = false;
-    isMatrix(end+1:D) = false;
+    isArray(end+1:D) = false;
     
     % Generate indices
     arraySize = double(arraySize);
@@ -80,7 +80,7 @@ function [ind, isAnyAtClassMax, isAtClassMax] = ndgrid_and_sub2ind_and_cast(arra
     ind = cast(1, newclass); % Initial value and cast to <class>
     for ii = 1:D, % Loop each dimension
         subind_ii = double(varargin{ii}-1); % Get the ii'th dimension subindices as double and substract by 1
-        if ~isMatrix(ii), subind_ii = permute(subind_ii(:), [2:ii 1 ii+1]); end % Permute subind to its own dimension
+        if ~isArray(ii), subind_ii = permute(subind_ii(:), [2:ii 1 ii+1]); end % Permute subind to its own dimension
         if doReplace(ii), B_replace = bsxfun(@or, B_replace, subind_ii < 0 | subind_ii > arraySize(ii)-1); end
         if doTruncate(ii), subind_ii = min(max(0, subind_ii), arraySize(ii)-1); end
         if doCirculate(ii), subind_ii = mod(subind_ii, arraySize(ii)); end

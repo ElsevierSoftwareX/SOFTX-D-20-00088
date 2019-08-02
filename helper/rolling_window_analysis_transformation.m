@@ -72,7 +72,7 @@ function [X_RWA, ind_RWA] = rolling_window_analysis_transformation(X, W, isCircu
     end
     ind(B_nan) = 0; % Set non-circular to NaNs
     
-%     ind = ndgrid_and_sub2ind_and_cast(S, subinds{:}, 'uint32', '-circulate', isCircular, '-ismatrix');
+%     ind = generic_sub2ind(S, subinds{:}, 'uint32', '-circulate', isCircular, '-isarray');
     
     % Generate either NaN-padded or circularly-padded array (depending on
     % isCircular values)
@@ -92,7 +92,7 @@ function [X_RWA, ind_RWA] = rolling_window_analysis_transformation(X, W, isCircu
         ind_pad = bsxfun(@plus, ind_pad, (subind_pad_RW_ii-1).*dim_multiplier);
     end
     
-%     ind_pad = ndgrid_and_sub2ind_and_cast(S_pad, subinds_pad{:}, 'uint32', '-ismatrix');
+%     ind_pad = generic_sub2ind(S_pad, subinds_pad{:}, 'uint32', '-isarray');
     
     % Create a rolling window analysis dataset
     X_RWA = D_pad(ind_pad); % Generate a 2-D matrix
