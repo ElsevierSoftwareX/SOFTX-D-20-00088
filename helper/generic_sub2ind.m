@@ -110,28 +110,39 @@ function [ind, isAnyAtClassMax, isAtClassMax] = generic_sub2ind(arraySize, varar
     for ii = 1:D, % Loop each dimension
         % Get the ii'th dimension subindices as 'double' and substract by 1
         subind_ii = double(varargin{ii}-1);
+        
         % Force column and permute to its own dimension (unless an array)
         if ~isArray(ii), subind_ii = permute(subind_ii(:), [2:ii 1 ii+1]); end
+        
         % Separate the lower and upper out-of-bound subindices
         B_lower = subind_ii < 0;
         B_upper = subind_ii > arraySize(ii)-1;
         subind_ii_lower = subind_ii(B_lower);
         subind_ii_upper = subind_ii(B_upper);
+        
         % Treat the lower out-of-bound subindices
-        if doTruncate(1,ii), subind_ii_lower(:) = 0; subind_ii_upper(:) = arraySize(ii)-1;
-        elseif doReplace(1,ii), B_replace = bsxfun(@or, B_replace, B_lower);
-        elseif doMirror(1,ii), subind_ii_lower = mod(subind_ii_lower, 2.*arraySize(ii)) - 2.*mod(subind_ii_lower, arraySize(ii)).*(mod(subind_ii_lower, 2.*arraySize(ii))>=arraySize(ii));
-        elseif doCirculate(1,ii), subind_ii_lower = mod(subind_ii_lower, arraySize(ii)); end
+        if any(B_lower(:)),
+            if doTruncate(1,ii), subind_ii_lower(:) = 0;
+            elseif doReplace(1,ii), B_replace = bsxfun(@or, B_replace, B_lower);
+            elseif doMirror(1,ii), subind_ii_lower = mod(subind_ii_lower, 2.*arraySize(ii)) - 2.*mod(subind_ii_lower, arraySize(ii)).*(mod(subind_ii_lower, 2.*arraySize(ii))>=arraySize(ii));
+            elseif doCirculate(1,ii), subind_ii_lower = mod(subind_ii_lower, arraySize(ii)); end
+        end
+        
         % Treat the upper out-of-bound subindices
-        if doTruncate(2,ii), subind_ii_upper(:) = arraySize(ii)-1;
-        elseif doReplace(2,ii), B_replace = bsxfun(@or, B_replace, B_upper);
-        elseif doMirror(2,ii), subind_ii_upper = mod(subind_ii_upper, 2.*arraySize(ii)) - 2.*mod(subind_ii_upper, arraySize(ii)).*(mod(subind_ii_upper, 2.*arraySize(ii))>=arraySize(ii));
-        elseif doCirculate(2,ii), subind_ii_upper = mod(subind_ii_upper, arraySize(ii)); end
+        if any(B_upper(:)),
+            if doTruncate(2,ii), subind_ii_upper(:) = arraySize(ii)-1;
+            elseif doReplace(2,ii), B_replace = bsxfun(@or, B_replace, B_upper);
+            elseif doMirror(2,ii), subind_ii_upper = mod(subind_ii_upper, 2.*arraySize(ii)) - 2.*mod(subind_ii_upper, arraySize(ii)).*(mod(subind_ii_upper, 2.*arraySize(ii))>=arraySize(ii));
+            elseif doCirculate(2,ii), subind_ii_upper = mod(subind_ii_upper, arraySize(ii)); end
+        end
+        
         % Store the results for the lower and upper out-of-bound subindices
         subind_ii(B_lower) = subind_ii_lower;
         subind_ii(B_upper) = subind_ii_upper;
+        
         % Shift the subindices to the true indices
         ind_ii = subind_ii.*offset(ii); % Decided to utilize more generic 'double' although 'uint64' or 'int64' represent integers exactly beyond 2^53.
+        
         % Automatic casting to minimal class (in terms of the memory usage,
         % while still being numerically exact) may be achieved via use of
         % built-in real/int min/max and related comparisons, but due to the
