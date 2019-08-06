@@ -10,13 +10,13 @@
 % * Assumes that fun uses bsxfun-functionality, because I and X do not need
 % to be same size and only size(I, dim) == size(X, dim) is quaranteed!
 function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin),
+    % Get obj Project (even if it does not exist)
+    Project = obj.Project;
+    
     % Pop states (even if not used to avoid push-pop bugs)
     AutoCreateObj = Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
     
     new_obj = wid.Empty;
-    
-    % Get obj Project (even if it does not exist)
-    Project = obj.Project;
     
     Project.pushAutoCopyObj(false); % Temporarily don't allow copying
     Project.pushAutoModifyObj(false); % Temporarily don't allow modifying
