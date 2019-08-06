@@ -24,14 +24,12 @@ function O_wid = manager(obj, varargin),
     % Check if Type was specified
     datas = varargin_dashed_str_datas('Type', varargin, -1);
     Type = {'TDBitmap', 'TDGraph', 'TDImage', 'TDText'}; % Default
-    if numel(datas) > 0, Type = datas{1}; end
-    if ~iscell(Type), Type = {Type}; end
+    if numel(datas) > 0, Type = datas; end
     
     % Check if SubType was specified
     datas = varargin_dashed_str_datas('SubType', varargin, -1);
     SubType = repmat({''}, size(Type));
-    if numel(datas) > 0, SubType = datas{1}; end
-    if ~iscell(SubType), SubType = {SubType}; end
+    if numel(datas) > 0, SubType = datas; end
     
     % Check if Data was specified
     datas = varargin_dashed_str_datas('Data', varargin, -1);
