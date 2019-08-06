@@ -24,7 +24,7 @@ function O_wid = manager(obj, varargin),
     % Check if Type was specified
     datas = varargin_dashed_str_datas('Type', varargin, -1);
     Type = {'TDBitmap', 'TDGraph', 'TDImage', 'TDText'}; % Default
-    if numel(datas) > 0, Title = datas{1}; end
+    if numel(datas) > 0, Type = datas{1}; end
     if ~iscell(Type), Type = {Type}; end
     
     % Check if SubType was specified
