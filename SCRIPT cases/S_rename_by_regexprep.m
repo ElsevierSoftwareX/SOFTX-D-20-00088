@@ -21,13 +21,21 @@ makecopies = strncmp(questdlg('Would you like to 1) make copies OR 2) overwrite 
 
 % Renormalize
 h = waitbar(0, 'Please wait...');
+count = 0;
 for ii = 1:numel(O_wid),
     if ~ishandle(h), return; end % Abort if cancelled!
     waitbar((ii-1)/numel(O_wid), h, sprintf('Processing data %d/%d. Please wait...', ii, numel(O_wid)));
     if makecopies, O_wid_new = O_wid(ii).copy(); % Make a copy
     else, O_wid_new = O_wid(ii); end % Do not make a copy
-    O_wid_new.Name = regexprep(O_wid_new.Name, strs{1}, strs{2});
+    str_old = O_wid_new.Name;
+    str_new = regexprep(str_old, strs{1}, strs{2});
+    O_wid_new.Name = str_new;
+    if ~strcmp(str_old, str_new),
+        fprintf('Renamed ''%s'' to ''%s''\n', str_old, str_new);
+        count = count+1;
+    end
 end
+fprintf('Total number of renamed objects: %d\n', count);
 if ~ishandle(h), return; end % Abort if cancelled!
 waitbar(1, h, 'Completed! Writing...');
 
