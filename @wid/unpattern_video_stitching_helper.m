@@ -178,11 +178,14 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, S_P
         N_side_lower = min(N_sides);
         N_side_upper = max(N_sides);
     end
-    N_overlaps = round(N_sides.*S_P_grid_CF); % Rounded to nearest integer
-    N_full_sides = N_sides + N_overlaps;
+    N_stitch_overlaps = round(N_sides.*S_P_grid_CF); % Rounded to nearest integer
+    N_stitch_sides = N_sides + N_stitch_overlaps;
+    N_no_overlap_sides = N_sides - N_stitch_overlaps;
+    
+    S_P_grids = floor(bsxfun(@rdivide, bsxfun(@minus, S(1:2), N_stitch_overlaps(:)+N_stitch_sides(:)), N_sides(:)));
     
     % Construct widths of the edge patterns
-    W_edges = [N_overlaps(:) N_full_sides(:) N_overlaps(:) N_full_sides(:)]; % Left Right Top Bottom
+    W_edges = [N_stitch_overlaps(:) N_stitch_sides(:) N_stitch_overlaps(:) N_stitch_sides(:)]; % Left Right Top Bottom
     if ~EdgePatterns, W_edges(:,:) = 0; end % Disable edge patterns
     
     % Construct shared indices
@@ -213,40 +216,29 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, S_P
         inds2_shared_end(:,3) inds2_shared_end(:,3) inds2_shared_end(:,3) ... % Bottom-Left Bottom-Middle Bottom-Right
         ];
     
-    % Precalculate the truncated indices. Shift first row by N_overlaps.
-    % Truncate away minimum of N_full_sides from the last rows. Treat
-    % discarded regions differently due to their different patterns.
     inds_begin = [inds1_begin(:,5) inds2_begin(:,5)];
     inds_end = [inds1_end(:,5) inds2_end(:,5)];
     
-    S_P_grids = floor(bsxfun(@rdivide, inds_end-inds_begin+1, N_sides(:)));
     inds_end_underfull = inds_begin-1 + bsxfun(@times, S_P_grids, N_sides(:));
     inds_end_overfull = inds_begin-1 + bsxfun(@times, S_P_grids+1, N_sides(:));
     
-    expansion_offsets = inds_end_overfull-inds_end;
-    expansion_thresholds = bsxfun(@plus, inds_end, N_overlaps+1);
+    expansion_thresholds = inds_end;
+    expansion_offsets = bsxfun(@minus, inds_end_overfull-expansion_thresholds, N_stitch_overlaps(:));
     
     inds_2nd_begin = inds_end_overfull;
-    inds_2nd_end = bsxfun(@minus, [W H], N_overlaps(:));
+    inds_2nd_end = bsxfun(@minus, [W H], N_stitch_overlaps(:));
     
-%     I(inds_begin(1):inds_end(1),inds_begin(2):inds_end(2),1) = I(inds_begin(1):inds_end(1),inds_begin(2):inds_end(2),1) - 10;
-%     I(inds_2nd_begin(1):inds_2nd_end(1),inds_begin(2):inds_end(2),1) = I(inds_2nd_begin(1):inds_2nd_end(1),inds_begin(2):inds_end(2),1) - 10;
-%     I(inds_begin(1):inds_end(1),inds_2nd_begin(2):inds_2nd_end(2),1) = I(inds_begin(1):inds_end(1),inds_2nd_begin(2):inds_2nd_end(2),1) - 10;
-%     I(inds_2nd_begin(1):inds_2nd_end(1),inds_2nd_begin(2):inds_2nd_end(2),1) = I(inds_2nd_begin(1):inds_2nd_end(1),inds_2nd_begin(2):inds_2nd_end(2),1) - 10;
-    
-%     figure; imagesc(I(inds_begin(1):inds_end(1),inds_begin(2):inds_end(2),1).'); daspect([1 1 1]);
-%     figure; imagesc(I(inds_2nd_begin(1):inds_2nd_end(1),inds_begin(2):inds_end(2),1).'); daspect([1 1 1]);
-%     figure; imagesc(I(inds_begin(1):inds_end(1),inds_2nd_begin(2):inds_2nd_end(2),1).'); daspect([1 1 1]);
-%     figure; imagesc(I(inds_2nd_begin(1):inds_2nd_end(1),inds_2nd_begin(2):inds_2nd_end(2),1).'); daspect([1 1 1]);
-    
-    delta_2nd = inds_2nd_end-inds_2nd_begin;
     if min(S_P_grids(:)) <= 1, error('ERROR: Grid must be larger than 3-by-3!'); end
     
-    % Use precalculated indices to select a common test region
+    % Use precalculated indices to select a common test region (ignoring
+    % 2nd region)
     inds_begin_max = max(inds_begin,[],1);
     inds_end_min = min(inds_end,[],1);
     ind1_test = inds_begin_max(1):inds_end_min(1);
     ind2_test = inds_begin_max(2):inds_end_min(2);
+    
+    B_test = false(size(I));
+    B_test(ind1_test, ind2_test, :) = true;
     
     % Store all the local variances
     N_local = LocalWindowSize;
@@ -276,18 +268,16 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, S_P
 %     end
     
     fprintf('Testing all possible side lengths between %d and %d.\n', N_side_lower, N_side_upper);
-    B_invalid = test_pattern(1, B_too_bright); % To reduce cpu demand of clever_outliers_and_statistics-calls
+    B_invalid = test_pattern(1, I, B_too_bright); % To reduce cpu demand of clever_outliers_and_statistics-calls
     if numel(N_sides) > 1,
-        B_invalid_last = test_pattern(numel(N_sides), B_too_bright);
+        B_invalid_last = test_pattern(numel(N_sides), I, B_too_bright);
         B_invalid = B_invalid & B_invalid_last; % AND-operation to reduce cpu demand of clever_outliers_and_statistics-calls
         for ii = 2:numel(N_sides)-1,
-            test_pattern(ii, B_invalid);
+            test_pattern(ii, I, B_invalid);
         end
     end
     
-    B_best(inds_end(ii_best,1)+1:end,:,:) = false;
-    B_best(:,inds_end(ii_best,2)+2:end,:) = false;
-    B_best = B_best(1:S(1),1:S(2),:);
+    B_best(~get_valid(ii_best, 5)) = false;
     B_best = B_best | B_too_bright;
     fprintf('Best: %d -> PRIMARY variance of %g (smaller the better).\n', N_best, var_to_min_best);
     
@@ -295,65 +285,47 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, S_P
         figure; imagesc(B_best(:,:,1).'); daspect([1 1 1]);
     end
     
-    S_pad = [N_best+ceil((S(1:2)-N_overlaps(ii_best))./N_best).*N_best S(3)];
-    B_pad = false(S_pad); % Preallocate to pad with falses once and avoid padarray
-    I_pad = nan(S_pad); % Preallocate to pad with NaNs once and avoid padarray
-    ind1 = (N_best-N_overlaps(ii_best))+(1:S(1));
-    ind2 = (N_best-N_overlaps(ii_best))+(1:S(2));
-    B_pad(ind1,ind2,:) = B_best;
-    I_pad(ind1,ind2,:) = I;
-    I_pad(B_pad) = NaN;
-    % Reshape to reveal the squares
-    I_pad = permute(reshape(I_pad, [N_best S_pad(1)/N_best N_best S_pad(2)/N_best S_pad(3)]), [1 3 2 4 5]);
-    
-    if ~IsFlat,
-        [~, ~, ~, ~, offset] = clever_statistics_and_outliers(I_pad, [1 2], 3); % Extract blockwise average illumination levels
-        I_pad = bsxfun(@minus, I_pad, offset);
-    end
-    B_pad = clever_statistics_and_outliers(I_pad, [3 4], 3);
-    B_pad = reshape(permute(B_pad, [1 3 2 4 5]), S_pad);
-    B_pad = B_pad(ind1,ind2,:);
-    B_best = B_pad;
-    
-    % TODOOO
-    
-    if debug,
-        figure; imagesc(B_best(:,:,1).'); daspect([1 1 1]);
-    end
-    
-%     I = remove_pattern(I, P_best, [], [], [-N_overlaps(ii_best) -N_overlaps(ii_best)]);
-%     I_best = I;
-    
-    % Remove middle edge pattern from the original image
     I = I_before;
-    I_best = remove_pattern(I, P_best, inds_begin(ii_best,:), inds_end(ii_best,:));% Restore too bright regions if requested
-    I_bg = remove_pattern(ones(size(I), 'like', I).*128, P_best, [], [], [-N_overlaps(ii_best) -N_overlaps(ii_best)]);
-%     I_bg = remove_pattern(ones(size(I), 'like', I).*128, P_best, inds_begin(ii_best,:), inds_end(ii_best,:));
     
+    [I, B_5] = expand_images(ii_best, I, get_valid(ii_best, 5));
+
+    % Remove middle edge pattern from the original image
+    I_best = remove_pattern(I, P_best, B_5, inds_begin(ii_best,:));% Restore too bright regions if requested
+    I_bg = remove_pattern(ones(size(I), 'like', I).*128, P_best, B_5, inds_begin(ii_best,:));% Restore too bright regions if requested
+    
+    I = contract_images(ii_best, I);
+
     cropIndices = [];
     if CropEdgePatterns,
-        cropIndices = [inds1_begin(ii_best,5) inds1_end(ii_best,5) inds2_begin(ii_best,5) inds2_end(ii_best,5)];
-        ind1_mid = inds1_begin(ii_best,5):inds1_end(ii_best,5);
-        ind2_mid = inds2_begin(ii_best,5):inds2_end(ii_best,5);
-        I = I(ind1_mid,ind2_mid,:);
-        I_best = I_best(ind1_mid,ind2_mid,:);
-        I_bg = I_bg(ind1_mid,ind2_mid,:);
-        B_too_bright = B_too_bright(ind1_mid,ind2_mid,:);
+        ind1_middle = inds1_begin(ii_best,5):inds1_end(ii_best,5);
+        ind2_middle = inds2_begin(ii_best,5):inds2_end(ii_best,5);
+        cropIndices = [ind1_middle([1 end]) ind2_middle([1 end])];
+        I = I(ind1_middle,ind2_middle,:);
+        I_best = I_best(ind1_middle,ind2_middle,:);
+        I_bg = I_bg(ind1_middle,ind2_middle,:);
+        B_too_bright = B_too_bright(ind1_middle,ind2_middle,:);
     else,
         % Attempt to find edges as post-processing step
-        [P_left_edge, P_right_edge, P_top_edge, P_bottom_edge] = find_edge_patterns(ii_best, B_best);
+        [P_left_edge, P_right_edge, P_top_edge, P_bottom_edge] = find_edge_patterns(ii_best, I, B_best);
+        
+        [B_2, B_4, B_6, B_8] = expand_images(ii_best, get_valid(ii_best, 2), get_valid(ii_best, 4), get_valid(ii_best, 6), get_valid(ii_best, 8));
+        
+        inds1_begin = expand_indices(ii_best, 1, inds1_begin);
+        inds2_begin = expand_indices(ii_best, 2, inds2_begin);
         
         % Remove other edge patterns from the original image
-        I_best = remove_pattern(I_best, P_left_edge, [], [inds1_end(ii_best,4) H], [0 -N_overlaps(ii_best)]);
-        I_best = remove_pattern(I_best, P_right_edge, [inds1_begin(ii_best,6) 1], [], [0 -N_overlaps(ii_best)]);
-        I_best = remove_pattern(I_best, P_top_edge, [], [W inds2_end(ii_best,2)], [-N_overlaps(ii_best) 0]);
-        I_best = remove_pattern(I_best, P_bottom_edge, [1 inds2_begin(ii_best,8)], [], [-N_overlaps(ii_best) 0]);
-        
-        I_bg = remove_pattern(I_bg, P_left_edge, [], [inds1_end(ii_best,4) H], [0 -N_overlaps(ii_best)]);
-        I_bg = remove_pattern(I_bg, P_right_edge, [inds1_begin(ii_best,6) 1], [], [0 -N_overlaps(ii_best)]);
-        I_bg = remove_pattern(I_bg, P_top_edge, [], [W inds2_end(ii_best,2)], [-N_overlaps(ii_best) 0]);
-        I_bg = remove_pattern(I_bg, P_bottom_edge, [1 inds2_begin(ii_best,8)], [], [-N_overlaps(ii_best) 0]);
+        I_best = remove_pattern(I_best, P_left_edge, B_4, [inds1_begin(ii_best,4) inds2_begin(ii_best,4)]);
+        I_best = remove_pattern(I_best, P_right_edge, B_6, [inds1_begin(ii_best,6)-expansion_offsets(ii_best,1) inds2_begin(ii_best,6)]);
+        I_best = remove_pattern(I_best, P_top_edge, B_2, [inds1_begin(ii_best,2) inds2_begin(ii_best,2)]);
+        I_best = remove_pattern(I_best, P_bottom_edge, B_8, [inds1_begin(ii_best,8) inds2_begin(ii_best,8)-expansion_offsets(ii_best,2)]);
+
+        I_bg = remove_pattern(I_bg, P_left_edge, B_4, [inds1_begin(ii_best,4) inds2_begin(ii_best,4)]);
+        I_bg = remove_pattern(I_bg, P_right_edge, B_6, [inds1_begin(ii_best,6)-expansion_offsets(ii_best,1) inds2_begin(ii_best,6)]);
+        I_bg = remove_pattern(I_bg, P_top_edge, B_2, [inds1_begin(ii_best,2) inds2_begin(ii_best,2)]);
+        I_bg = remove_pattern(I_bg, P_bottom_edge, B_8, [inds1_begin(ii_best,8) inds2_begin(ii_best,8)-expansion_offsets(ii_best,2)]);
     end
+    
+    [I_best, I_bg] = contract_images(ii_best, I_best, I_bg);
     
     if RestoreTooBright,
         I_best(B_too_bright) = I(B_too_bright);
@@ -365,17 +337,51 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, S_P
         figure; imshow(permute(uint8(I_bg), [2 1 3])); daspect([1 1 1]); title('Pattern');
     end
     
+%     function B_valid = stitch_patterns(P, ind1, ind2),
+%         w_ii_on_jj = interp1([minmax_ii(1) minmax_jj(1) minmax_ii(2) minmax_jj(2)], [1 1 0 0], x_ii, 'linear');
+%         w_jj_on_ii = interp1([minmax_ii(1) minmax_jj(1) minmax_ii(2) minmax_jj(2)], [0 0 1 1], x_jj, 'linear');
+%     end
+    
     function B_valid = get_valid(ii, region),
         B_valid = false(W, H, D);
         inds1 = inds1_begin(ii,region):inds1_end(ii,region);
         inds2 = inds2_begin(ii,region):inds2_end(ii,region);
         B_valid(inds1,inds2,:) = true;
-        % Include (region == 5) or exclude (otherwise) the secondary region
+        % Include the secondary region
         inds1_2nd = inds_2nd_begin(ii,1):inds_2nd_end(ii,1);
         inds2_2nd = inds_2nd_begin(ii,2):inds_2nd_end(ii,2);
-        B_valid(inds1,inds2_2nd,:) = region == 5; % Middle-Right
-        B_valid(inds1_2nd,inds2,:) = region == 5; % Bottom-Middle
-        B_valid(inds1_2nd,inds2_2nd,:) = region == 5; % Bottom-Right
+        isMiddle = region == 5;
+        isMiddleHorizontal = region == 4 || isMiddle || region == 6; 
+        isMiddleVertical = region == 2 || isMiddle || region == 8;
+        B_valid(inds1,inds2_2nd,:) = isMiddleHorizontal;
+        B_valid(inds1_2nd,inds2,:) = isMiddleVertical;
+        B_valid(inds1_2nd,inds2_2nd,:) = isMiddle;
+    end
+    
+    function B_ref = get_ref(ii, region),
+        B_ref = false(W, H, D);
+        ind1_begin = inds1_begin(ii,5);
+        ind2_begin = inds2_begin(ii,5);
+        ind1_end = inds1_end(ii,5);
+        ind2_end = inds2_end(ii,5);
+        switch region,
+            case 2, % Top
+                inds1 = ind1_begin:ind1_end;
+                inds2 = ind2_begin:ind2_begin+N_sides(ii)-1;
+                B_ref(inds1,inds2,:) = true;
+            case 4, % Left
+                inds1 = ind1_begin:ind1_begin+N_sides(ii)-1;
+                inds2 = ind2_begin:ind2_end;
+                B_ref(inds1,inds2,:) = true;
+            case 6, % Right
+                inds1 = ind1_end-N_sides(ii):ind1_end;
+                inds2 = ind2_begin:ind2_end;
+                B_ref(inds1,inds2,:) = true;
+            case 8, % Bottom
+                inds1 = ind1_begin:ind1_end;
+                inds2 = ind2_end-N_sides(ii):ind2_end;
+                B_ref(inds1,inds2,:) = true;
+        end
     end
     
     function varargout = expand_indices(ii, dim, varargin),
@@ -384,7 +390,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, S_P
             ind_jj = varargin{jj};
             
             % Expand indices
-            B_expanded_jj = ind_jj >= expansion_thresholds(ii,dim);
+            B_expanded_jj = ind_jj > expansion_thresholds(ii,dim);
             ind_jj(B_expanded_jj) = ind_jj(B_expanded_jj) + expansion_offsets(ii,dim);
             
             varargout{jj} = ind_jj;
@@ -397,11 +403,11 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, S_P
             ind_jj = varargin{jj};
             
             % Contract expanded indices
-            B_expanded_jj = ind_jj >= expansion_thresholds(ii,dim) + expansion_offsets(ii,dim);
+            B_expanded_jj = ind_jj > expansion_thresholds(ii,dim) + expansion_offsets(ii,dim);
             ind_jj(B_expanded_jj) = ind_jj(B_expanded_jj) - expansion_offsets(ii,dim);
             
             % Destroy forbidden indices
-            B_forbidden_jj = ind_jj >= expansion_thresholds(ii,dim) & ~B_expanded_jj;
+            B_forbidden_jj = ind_jj > expansion_thresholds(ii,dim) & ~B_expanded_jj;
             ind_jj(B_forbidden_jj) = []; % Destroy forbidden indices
             
             varargout{jj} = ind_jj;
@@ -436,42 +442,32 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, S_P
         end
     end
     
-    function B_invalid = test_pattern(ii, B_invalid),
+    function B_invalid = test_pattern(ii, I, B_invalid),
         if nargin < 2, B_invalid = false(size(I)); end
         
         N_side_ii = N_sides(ii);
+        S_P_ii = [N_side_ii N_side_ii];
         fprintf('%d/%d: %d', ii, numel(N_sides), N_side_ii);
         
-%         inds_begin(ii,:) = expand_indices(ii, 1, inds_begin(ii,:));
-%         inds_end(ii,:) = expand_indices(ii, 2, inds_end(ii,:));
-%         inds_2nd_end(ii,:) = expand_indices(ii, 2, inds_2nd_end(ii,:));
-        [I2, B_invalid2] = expand_images(ii, I, B_invalid);
-        C = arrayfun(@(ee) expand_images(ii, get_valid(ii, ee)), 1:9, 'UniformOutput', false);
-        close all; figure; imagesc(I2(:,:,1).'); daspect([1 1 1]);
-        for kk = 1:numel(C),
-            figure;
-            I_kk = I2;
-            I_kk(~C{kk}) = 0;
-            imagesc(I_kk(:,:,1).');
-            daspect([1 1 1]);
-            title(sprintf('%d', kk));
-        end
+        B_valid = get_valid(ii, 5);
+        [inds_begin(ii,1), inds_end(ii,1), inds_2nd_end(ii,1)] = expand_indices(ii, 1, inds_begin(ii,1), inds_end(ii,1), inds_2nd_end(ii,1));
+        [inds_begin(ii,2), inds_end(ii,2), inds_2nd_end(ii,2)] = expand_indices(ii, 2, inds_begin(ii,2), inds_end(ii,2), inds_2nd_end(ii,2));
+        B_invalid = B_invalid | ~B_valid;
+        [I, B_invalid] = expand_images(ii, I, B_invalid);
         
-        [P_ii, B_invalid] = find_pattern([N_side_ii N_side_ii], inds_begin(ii,:), inds_2nd_end(ii,:), B_invalid);
-%         [P_ii, B_invalid] = find_pattern([N_side_ii N_side_ii], inds_begin(ii,:), inds_end(ii,:), B_invalid);
+        [P_ii, B_invalid] = find_pattern(I, S_P_ii, inds_begin(ii,:), inds_2nd_end(ii,:), B_invalid);
         
-%         inds_begin(ii,:) = contract_indices(ii, 1, inds_begin(ii,:));
-%         inds_end(ii,:) = contract_indices(ii, 2, inds_end(ii,:));
-%         inds_2nd_end(ii,:) = contract_indices(ii, 2, inds_2nd_end(ii,:));
-%         [I, B_invalid] = contract_images(ii, I, B_invalid);
+        [inds_begin(ii,1), inds_end(ii,1), inds_2nd_end(ii,1)] = contract_indices(ii, 1, inds_begin(ii,1), inds_end(ii,1), inds_2nd_end(ii,1));
+        [inds_begin(ii,2), inds_end(ii,2), inds_2nd_end(ii,2)] = contract_indices(ii, 2, inds_begin(ii,2), inds_end(ii,2), inds_2nd_end(ii,2));
+        [I, B_invalid] = contract_images(ii, I, B_invalid);
         
         % Remove pattern from test region
-        I_test = remove_pattern(I, P_ii, inds_begin_max, inds_end_min, inds_begin_max-inds_begin(ii,2));
+        I_test = remove_pattern(I, P_ii, B_test, inds_begin(ii,:));
         I_test = I_test(ind1_test,ind2_test,:);
-
+        
         % Evaluate local variance in the test area (same for all cases)
         vars_to_min(ii) = mynansum(reshape(stdfilt(I_test, kernel_local).^2, [], 1)); % Minimize this
-
+        
         fprintf(' -> PRIMARY variance of %g (smaller the better).\n', vars_to_min(ii));
         
         % Update the best if a new minimum
@@ -484,34 +480,44 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, S_P
         end
     end
 
-    function varargout = find_edge_patterns(ii, B_invalid),
+    function varargout = find_edge_patterns(ii, I, B_invalid),
+        [I, B_invalid] = expand_images(ii, I, B_invalid);
+        
         % [Left Right Top Bottom]
         % Indices to Video Stitching image
         ind1_begin = [inds1_begin(ii,4) inds1_begin(ii,6)-N_sides(ii) inds1_begin(ii,2) inds1_begin(ii,8)];
-        ind1_end = [inds1_end(ii,4)+N_sides(ii) inds1_end(ii,6) inds1_end(ii,2) inds1_end(ii,8)];
+        ind1_end = [inds1_end(ii,4)+N_sides(ii) inds1_end(ii,6) inds_2nd_end(ii,1) inds_2nd_end(ii,1)];
         ind2_begin = [inds2_begin(ii,4) inds2_begin(ii,6) inds2_begin(ii,2) inds2_begin(ii,8)-N_sides(ii)];
-        ind2_end = [inds2_end(ii,4) inds2_end(ii,6) inds2_end(ii,2)+N_sides(ii) inds2_end(ii,8)];
+        ind2_end = [inds_2nd_end(ii,2) inds_2nd_end(ii,2) inds2_end(ii,2)+N_sides(ii) inds2_end(ii,8)];
+        
+        [ind1_begin, ind1_end] = expand_indices(ii, 1, ind1_begin, ind1_end);
+        [ind2_begin, ind2_end] = expand_indices(ii, 2, ind2_begin, ind2_end);
+        
+        N_ref = N_sides(ii);
+        
         % Pattern side lengths
-        N1 = [W_edges(ii,1)+N_sides(ii) W_edges(ii,2)+N_sides(ii) N_sides(ii) N_sides(ii)];
-        N2 = [N_sides(ii) N_sides(ii) W_edges(ii,3)+N_sides(ii) W_edges(ii,4)+N_sides(ii)];
+        N1 = [ind1_end(1)-ind1_begin(1)+1 ind1_end(2)-ind1_begin(2)+1 N_ref N_ref];
+        N2 = [N_ref N_ref ind2_end(3)-ind2_begin(3)+1 ind2_end(4)-ind2_begin(4)+1];
         % Indices to the reference region in the pattern
-        ind1_ref = {N1(1)-N_sides(ii)+1:N1(1); 1:N_sides(ii); 1:N1(3); 1:N1(4)};
-        ind2_ref = {1:N2(1); 1:N2(2); N2(3)-N_sides(ii)+1:N2(3); 1:N_sides(ii)};
+        ind1_ref = {N1(1)-N_ref+1:N1(1); 1:N_ref; 1:N1(3); 1:N1(4)};
+        ind2_ref = {1:N2(1); 1:N2(2); N2(3)-N_ref+1:N2(3); 1:N_ref};
         % Indices to the pattern without the reference region
-        ind1_wo_ref = {1:N1(1)-N_sides(ii); N_sides(ii)+1:N1(2); 1:N1(3); 1:N1(4)};
-        ind2_wo_ref = {1:N2(1); 1:N2(2); 1:N2(3)-N_sides(ii); N_sides(ii)+1:N2(4)};
+        ind1_wo_ref = {1:N1(1)-N_ref; N_ref+1:N1(2); 1:N1(3); 1:N1(4)};
+        ind2_wo_ref = {1:N2(1); 1:N2(2); 1:N2(3)-N_ref; N_ref+1:N2(4)};
         % Offsets that shift indices to the reference
-        offset1 = [0 inds_end_underfull(ii,1)-inds_end(ii,1)+N_overlaps(ii) 0 0];
-        offset2 = [0 0 0 inds_end_underfull(ii,2)-inds_end(ii,2)+N_overlaps(ii)];
+        offset1 = [0 inds_end_underfull(ii,1)-inds_end(ii,1) 0 0];
+        offset2 = [0 0 0 inds_end_underfull(ii,2)-inds_end(ii,2)];
         % Loop through the edges
-        for ss = 4:-1:1,
+        regions = [4 6 2 8];
+        for ss = [4 2 3 1], % 4:-1:1,
+            B_valid = expand_images(ii, get_valid(ii, regions(ss)) | get_ref(ii, regions(ss)));
             S_P = [N1(ss) N2(ss)];
             Start = [ind1_begin(ss) ind2_begin(ss)];
             End = [ind1_end(ss) ind2_end(ss)];
-            P_ss = find_pattern(S_P, Start, End, B_invalid);
+            P_ss = find_pattern(I, S_P, Start, End, B_invalid | ~B_valid);
             % Preserve pattern-to-pattern continuity using the reference
             edge = P_ss(ind1_ref{ss},ind2_ref{ss},:);
-            edge_ref = P_best(mod((1:end)-offset1(ss)-1, end)+1,mod((1:end)-offset2(ss)-1, end)+1,:);
+            edge_ref = P_best(mod((1:N_ref)-offset1(ss)-1, end)+1,mod((1:N_ref)-offset2(ss)-1, end)+1,:);
 %             [~, cshift] = clever_statistics_and_outliers(- edge + 0, -3, 1); % Here -3 reads as NOT 3rd dimension
             [~, cshift] = clever_statistics_and_outliers(- edge + edge_ref, -3, 1); % Here -3 reads as NOT 3rd dimension
             P_ss = bsxfun(@plus, P_ss, cshift);
@@ -520,7 +526,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, S_P
         end
     end
 
-    function [P, B_invalid] = find_pattern(S_P, Start, End, B_invalid),
+    function [P, B_invalid] = find_pattern(I, S_P, Start, End, B_invalid),
         if nargin < 4, B_invalid = false(size(I)); end
         N_side_1 = S_P(1);
         N_side_2 = S_P(2);
@@ -536,7 +542,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, S_P
             if IgnoreChannels(cc), continue; end
             
             I_channel = double(I(:,:,cc));
-            if nargin == 4, I_channel(B_invalid(:,:,cc)) = NaN; end % Exclude common outliers!
+            if nargin == 5, I_channel(B_invalid(:,:,cc)) = NaN; end % Exclude common outliers!
             
             % Truncate and pad with NaNs
             I_truncated(ind1-Start(1)+1,ind2-Start(2)+1) = I_channel(ind1,ind2);
@@ -607,7 +613,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, S_P
     % first and last full rows and columns, because their pattern differ
     % from the middle region. Nor it can correctly produce edge pattern for
     % the aborted Video Stitching images.
-    function I_wo_P = remove_pattern(I, P, Start, End, ShiftFromStart), % Low memory usage via loops
+    function I_wo_P = remove_pattern(I, P, B_valid, P_TopLeft), % Low memory usage via loops
         I_wo_P = I; % Retain the original image data type!
         
         % Negate the P
@@ -619,48 +625,79 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, S_P
         % Get sizes
         S_I = size(I); % Size of an image
         S_P = size(P); % Size of a pattern (inverted)
+        S_G = ceil(S_I(1:2)./S_P(1:2)); % Size of pattern grid
+        
+        % Repmat either P or I_wo_P once
+        if S_P(3) == 1 && S_I(3) ~= 1,
+            P = repmat(P, [1 1 S_I(3)]);
+            S_P(3) = S_I(3);
+        end
+        if S_I(3) == 1 && S_P(3) ~= 1,
+            I_wo_P = repmat(I_wo_P, [1 1 S_P(3)]);
+            S_I(3) = S_P(3);
+        end
         
         % Set pattern range
-        if nargin < 3 || isempty(Start), Start = ones(1,2); end
-        if nargin < 4 || isempty(End), End = S_I(1:2); end
-        if nargin < 5 || isempty(ShiftFromStart), ShiftFromStart = zeros(1,2); end
-        End = min(End, S_I(1:2)); % Keep End within the image bounds
+        if nargin < 3 || isempty(B_valid), B_valid = true(size(I_wo_P)); end
+        if nargin < 4 || isempty(P_TopLeft), P_TopLeft = ones(1,2); end
         
-        % Get other sizes
-        S_G = ceil((End-Start+1)./S_P(1:2)); % Size of pattern grid
+        % Repmat TrueBlackColor once (only if used)
+        isBlack = all(TrueBlackColor) == 0;
+        if ~isBlack,
+            Black = bsxfun(@times, double(TrueBlackColor), ones(size(S_P)));
+        end
+        
+        % Shift P once
+        [x_P0, y_P0] = deal(1:S_P(1), 1:S_P(2));
+        x_P = mod(x_P0-P_TopLeft(1), S_P(1))+1; % Shift indices
+        y_P = mod(y_P0-P_TopLeft(2), S_P(2))+1; % Shift indices
+        P = P(x_P, y_P, :);
+        
+        % Preallocate boolean map once
+        B_valid_for_P_here = false(size(P));
+        B_valid_here = false(size(I_wo_P));
         
         % Remove pattern without memory-intensive repmat
         for x_G = 1:S_G(1),
             % Generate indices in x-direction
-            x_C = 1:S_P(1);
-            x_I = (x_G-1).*S_P(1)+x_C+Start(1)-1;
-            x_C = mod(x_C-1+ShiftFromStart(1), S_P(1))+1; % Shift indices
+            x_I = x_P0 + (x_G-1).*S_P(1);
             
             % Truncate (if partial) to valid indices in x-direction
-            bw_x = x_I >= 1 & x_I <= End(1);
-            if any(bw_x) == false, continue; end % Skip to next if no valid
-            x_C = x_C(bw_x);
-            x_I = x_I(bw_x);
+            B_x = x_I <= S_I(1);
+            if any(B_x) == false, continue; end % Skip to next if no valid
+            x_P0_valid = x_P0(B_x);
+            x_I_valid = x_I(B_x);
             
             for y_G = 1:S_G(2),
                 % Generate indices in y-direction
-                y_C = 1:S_P(2);
-                y_I = (y_G-1).*S_P(2)+y_C+Start(2)-1;
-                y_C = mod(y_C-1+ShiftFromStart(2), S_P(2))+1; % Shift indices
+                y_I = y_P0 + (y_G-1).*S_P(2);
                 
                 % Truncate (if partial) to valid indices in y-direction
-                bw_y = y_I >= 1 & y_I <= End(2);
-                if any(bw_y) == false, continue; end % Skip to next if no valid
-                y_C = y_C(bw_y);
-                y_I = y_I(bw_y);
+                B_y = y_I <= S_I(2);
+                if any(B_y) == false, continue; end % Skip to next if no valid
+                y_P0_valid = y_P0(B_y);
+                y_I_valid = y_I(B_y);
+                
+                % Generate boolean maps
+                B_valid_for_P_here(x_P0_valid,y_P0_valid,:) = B_valid(x_I_valid,y_I_valid,:);
+                B_valid_here(x_I_valid,y_I_valid,:) = B_valid_for_P_here(x_P0_valid,y_P0_valid,:);
                 
                 % Remove pattern piece-by-piece
+                I_here = double(I(B_valid_here));
+                P_here = P(B_valid_for_P_here);
                 if AdditiveMode,
-                    I_wo_P(x_I,y_I,:) = bsxfun(@plus, double(I(x_I,y_I,:)), P(x_C,y_C,:));
+                    I_wo_P(B_valid_here) = I_here + P_here;
                 else, % Multiplicative mode
-                    if all(TrueBlackColor == 0), I_wo_P(x_I,y_I,:) = bsxfun(@times, double(I(x_I,y_I,:)), P(x_C,y_C,:));
-                    else, I_wo_P(x_I,y_I,:) = bsxfun(@plus, bsxfun(@times, bsxfun(@minus, double(I(x_I,y_I,:)), TrueBlackColor), P(x_C,y_C,:)), TrueBlackColor); end
+                    if isBlack, I_wo_P(B_valid_here) = I_here .* P_here;
+                    else,
+                        Black_here = Black(B_valid_for_P_here);
+                        I_wo_P(B_valid_here) = (I_here - Black_here) .* P_here + Black_here;
+                    end
                 end
+                
+                % Restore boolean maps
+                B_valid_for_P_here(B_valid_for_P_here) = false;
+                B_valid_here(B_valid_here) = false;
             end
         end
     end
