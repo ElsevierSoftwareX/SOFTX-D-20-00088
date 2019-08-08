@@ -25,9 +25,9 @@
 % * '-mirror': Mirrors periodically the out-of-bound subindices.
 % * '-circulate': Circulates periodically the out-of-bound subindices.
 % * They are applied to the subindices in the order specified above.
-% * ALSO, they can be provided with an extra input (= any scalar, vector or
-% 2-by-N matrix numeric values), which switches ON or OFF the behaviour for
-% each dimension and lower or upper out-of-bound subindices:
+% * ALSO, they can be provided with an extra input (= any numeric or
+% logical scalar, vector or 2-by-N matrix values), which set the behaviour
+% ON or OFF for each dimension and lower or upper out-of-bound subindices:
 % ** Any scalar is replicated to form a 2-by-N matrix.
 % ** Any vector of length N is made a 1-by-N row vector and is replicated
 % to form a 2-by-N matrix.
