@@ -57,11 +57,15 @@
 % '-Debug': Shows the debug plots that help to follow the procedure
 % '-Crop': Crop out the less reliable edge regions from the final result.
 % '-Flat': Used for visually flat images and involves less computing.
+% '-BestContinuity': Used for visually strongly varying images in order to
+% preserve the pattern-to-pattern continuity. However, this may not work if
+% the reference region is filled with outliers.
 % '-RestoreTooBright': Does not modify too bright (=max intensity) regions.
 % '-TrueBlackColor': Provide [R G B] if the camera has a known dark level.
 % '-MinSigmasThreshold' (= 2 by default): Try from 2 to 4. The smaller the
 % value, the more image data is interpreted as outliers and vice versa.
 % This free-parameter is used by 'clever_statistics_and_outliers.m'.
+% Increasing this will decrease the cpu time.
 % '-UseMedian': Uses (clever) median instead of (clever) mean.
 % '-RollingWindowAnalysis': Uses 3-by-3 kernel to improve the outlier
 % detection. Try only if the final result is not satisfying.
@@ -124,6 +128,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     GlobalRollingWindowAnalysis = varargin_dashed_str_exists('GlobalRollingWindowAnalysis', varargin); % By default, smoothen the image
     CropEdgePatterns = varargin_dashed_str_exists('Crop', varargin); % By default, do not crop the image
     AutoIgnoreChannels = ~varargin_dashed_str_exists('DisableAutoIgnoreChannels', varargin); % By default, automatically ignore channels that have 50% too dark or too bright in the image
+    NoReferences = ~varargin_dashed_str_exists('BestContinuity', varargin); % By default, do not use references to improve the pattern-to-pattern continuity
     Debug = varargin_dashed_str_exists('Debug', varargin); % By default, do not show Debug visuals
     
 %     EdgePatterns = ~varargin_dashed_str_exists('DisableEdgePatterns', varargin); % By default, enable edge patterns
@@ -165,8 +170,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     datas = varargin_dashed_str_datas('IgnoreChannels', varargin, -1);
     IgnoreChannels = [];
     if numel(datas) > 0, IgnoreChannels = datas{1}; end
-    if numel(IgnoreChannels) == 1, IgnoreChannels = repmat(IgnoreChannels, [1 D]);
-    elseif ~isempty(IgnoreChannels), IgnoreChannels = reshape(IgnoreChannels, [1 D]); end
+    if numel(IgnoreChannels) == 1, IgnoreChannels = repmat(IgnoreChannels, [1 D]); end
     
     %% Preparation
     
@@ -179,6 +183,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     % Automatically ignore all channels that have less than 50% useful data
     if AutoIgnoreChannels && isempty(IgnoreChannels),
         B_too_dark = I <= 0;
+        IgnoreChannels = [false false false];
         IgnoreChannels(sum(sum(B_too_dark | B_too_bright, 1), 2) > W.*H./2) = true;
     end
     
@@ -303,6 +308,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     local_var_best = inf;
     N_best = [];
     P_best = [];
+    P_offset_best = [];
     ii_best = [];
     B_best = [];
     
@@ -367,14 +373,25 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         
         % Remove other edge patterns from the original image
         I_best = remove_pattern(I_best, P_left_edge, B_4, [inds1_begin(ii_best,4) inds2_begin(ii_best,4)]);
-        I_best = remove_pattern(I_best, P_right_edge, B_6, [inds1_begin(ii_best,6)-expansion_offsets(ii_best,1) inds2_begin(ii_best,6)]);
         I_best = remove_pattern(I_best, P_top_edge, B_2, [inds1_begin(ii_best,2) inds2_begin(ii_best,2)]);
-        I_best = remove_pattern(I_best, P_bottom_edge, B_8, [inds1_begin(ii_best,8) inds2_begin(ii_best,8)-expansion_offsets(ii_best,2)]);
-
+        if NoReferences,
+            I_best = remove_pattern(I_best, P_right_edge, B_6, [inds1_begin(ii_best,6) inds2_begin(ii_best,6)]);
+            I_best = remove_pattern(I_best, P_bottom_edge, B_8, [inds1_begin(ii_best,8) inds2_begin(ii_best,8)]);
+        else, % Substract by the expansion offset if using references
+            I_best = remove_pattern(I_best, P_right_edge, B_6, [inds1_begin(ii_best,6)-expansion_offsets(ii_best,1) inds2_begin(ii_best,6)]);
+            I_best = remove_pattern(I_best, P_bottom_edge, B_8, [inds1_begin(ii_best,8) inds2_begin(ii_best,8)-expansion_offsets(ii_best,2)]);
+        end
+        
         I_pattern = remove_pattern(I_pattern, P_left_edge, B_4, [inds1_begin(ii_best,4) inds2_begin(ii_best,4)]);
-        I_pattern = remove_pattern(I_pattern, P_right_edge, B_6, [inds1_begin(ii_best,6)-expansion_offsets(ii_best,1) inds2_begin(ii_best,6)]);
         I_pattern = remove_pattern(I_pattern, P_top_edge, B_2, [inds1_begin(ii_best,2) inds2_begin(ii_best,2)]);
-        I_pattern = remove_pattern(I_pattern, P_bottom_edge, B_8, [inds1_begin(ii_best,8) inds2_begin(ii_best,8)-expansion_offsets(ii_best,2)]);
+        
+        if NoReferences,
+            I_pattern = remove_pattern(I_pattern, P_right_edge, B_6, [inds1_begin(ii_best,6) inds2_begin(ii_best,6)]);
+            I_pattern = remove_pattern(I_pattern, P_bottom_edge, B_8, [inds1_begin(ii_best,8) inds2_begin(ii_best,8)]);
+        else, % Substract by the expansion offset if using references
+            I_pattern = remove_pattern(I_pattern, P_right_edge, B_6, [inds1_begin(ii_best,6)-expansion_offsets(ii_best,1) inds2_begin(ii_best,6)]);
+            I_pattern = remove_pattern(I_pattern, P_bottom_edge, B_8, [inds1_begin(ii_best,8) inds2_begin(ii_best,8)-expansion_offsets(ii_best,2)]);
+        end
     end
     
     %% Generate the final result
@@ -532,7 +549,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         [varargout{1:nargout}] = contract_indices(ii_best, dim, varargin{:});
     end
     
-    function varargout = expand_images(ii, varargin),
+    function varargout = expand_images(ii, varargin), % A minor bottleneck. Reduce calls to this if possible. (8.8.2019)
         % Evaluate expanded size
         S_expanded = [W + expansion_offsets(ii,1) H + expansion_offsets(ii,2) D];
         
@@ -544,10 +561,15 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         % Generate expanded indices in memory conservative way (avoiding ndgrid and sub2ind and cast)
         ind_expanded = generic_sub2ind(S_expanded, inds1, inds2, inds3, 'uint32');
         
+%         % Perform linear indexing only once (but apparently slower)
+%         B_expanded = false(S_expanded);
+%         B_expanded(ind_expanded) = true;
+        
         % Loop through images
         for jj = nargin-1:-1:1,
             varargout{jj} = zeros(S_expanded, 'like', varargin{jj});
             varargout{jj}(ind_expanded) = varargin{jj}; % Linear indexing
+%             varargout{jj}(B_expanded) = varargin{jj}; % Logical indexing (but apparently slower)
         end
     end
     
@@ -583,7 +605,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         [I, B_invalid] = expand_images(ii, I, B_invalid);
         
         % Calculate the pattern
-        [P_ii, B_invalid] = find_pattern(I, [N_test(ii) N_test(ii)], inds_begin(ii,:), inds_2nd_end(ii,:), B_invalid);
+        [P_ii, B_invalid, P_ii_offset] = find_pattern(I, [N_test(ii) N_test(ii)], inds_begin(ii,:), inds_2nd_end(ii,:), B_invalid);
         
         % Restore by contracting
         [inds_begin(ii,1), inds_end(ii,1), inds_2nd_end(ii,1)] = contract_indices(ii, 1, inds_begin(ii,1), inds_end(ii,1), inds_2nd_end(ii,1));
@@ -605,6 +627,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
             local_var_best = local_var_test(ii);
             N_best = N_test(ii);
             P_best = P_ii;
+            P_offset_best = P_ii_offset;
             ii_best = ii;
             B_best = B_invalid;
             
@@ -614,7 +637,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         fprintf('%s.\n', str_best);
     end
 
-    function [P, B_invalid] = find_pattern(I, S_P, Start, End, B_invalid),
+    function [P, B_invalid, P_offset] = find_pattern(I, S_P, Start, End, B_invalid),
         if nargin < 5, B_invalid = false(size(I)); end % No known outliers by default
         
         % Create temporarily hidden figures (if not specified or closed)
@@ -635,9 +658,12 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         P = zeros(S_P(1), S_P(2), D);
         I_pad = nan(S_pad); % Preallocate to pad with NaNs once and avoid padarray
         
+        P_offset = zeros(1, 1, D);
+        
         % Loop through the color channels
         for cc = 1:D,
             if IgnoreChannels(cc), continue; end
+            if all(all(B_invalid(:,:,cc), 1), 2), continue; end % Skip if no data to use
             
             I_channel = double(I(:,:,cc)); % Force to double
             if nargin == 5, I_channel(B_invalid(:,:,cc)) = NaN; end % Exclude the known outliers!
@@ -676,7 +702,15 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
             end
             
             % Remove mean value to minimize changes to the original image
-            P_cc = P_cc - mynanmean(P_cc(:));
+            P_offset(cc) = mynanmean(P_cc(:));
+            P_cc = P_cc - P_offset(cc);
+            
+            % Take into account the blockwise averaging
+            if ~IsFlat,
+                P_cc_offset = repmat(P_cc_offset, [S_P(1) S_P(2)]);
+                P_cc_offset(B_cc) = NaN;
+                P_offset(cc) = mynanmean(P_cc_offset(:)) + P_offset(cc);
+            end
             
             % Replace NaNs with linearly interpolated values
             [X, Y] = ndgrid(1:size(P_cc, 1), 1:size(P_cc, 2));
@@ -731,11 +765,15 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         % [Left Right Top Bottom]
         regions = [4 6 2 8];
         
+        % Test if to use references (which are more cpu intensive)
+        if NoReferences, N_ref = 0;
+        else, N_ref = N_best; end
+        
         % Indices to Video Stitching image
-        ind1_begin = [inds1_begin(ii_best,4) inds1_begin(ii_best,6)-N_test(ii_best) inds1_begin(ii_best,2) inds1_begin(ii_best,8)];
-        ind1_end = [inds1_end(ii_best,4)+N_test(ii_best) inds1_end(ii_best,6) inds_2nd_end(ii_best,1) inds_2nd_end(ii_best,1)];
-        ind2_begin = [inds2_begin(ii_best,4) inds2_begin(ii_best,6) inds2_begin(ii_best,2) inds2_begin(ii_best,8)-N_test(ii_best)];
-        ind2_end = [inds_2nd_end(ii_best,2) inds_2nd_end(ii_best,2) inds2_end(ii_best,2)+N_test(ii_best) inds2_end(ii_best,8)];
+        ind1_begin = [inds1_begin(ii_best,4) inds1_begin(ii_best,6)-N_ref inds1_begin(ii_best,2) inds1_begin(ii_best,8)];
+        ind1_end = [inds1_end(ii_best,4)+N_ref inds1_end(ii_best,6) inds_2nd_end(ii_best,1) inds_2nd_end(ii_best,1)];
+        ind2_begin = [inds2_begin(ii_best,4) inds2_begin(ii_best,6) inds2_begin(ii_best,2) inds2_begin(ii_best,8)-N_ref];
+        ind2_end = [inds_2nd_end(ii_best,2) inds_2nd_end(ii_best,2) inds2_end(ii_best,2)+N_ref inds2_end(ii_best,8)];
         
         % Expand indices
         [ind1_begin, ind1_end] = expand_indices_best(1, ind1_begin, ind1_end);
@@ -746,30 +784,36 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         N2 = [N_best N_best ind2_end(3)-ind2_begin(3)+1 ind2_end(4)-ind2_begin(4)+1];
         
         % Indices to the needed reference region in the pattern
-        ind1_ref = {N1(1)-N_best+1:N1(1); 1:N_best; 1:N1(3); 1:N1(4)};
-        ind2_ref = {1:N2(1); 1:N2(2); N2(3)-N_best+1:N2(3); 1:N_best};
+        ind1_ref = {N1(1)-N_ref+1:N1(1); 1:N_ref; 1:N1(3); 1:N1(4)};
+        ind2_ref = {1:N2(1); 1:N2(2); N2(3)-N_ref+1:N2(3); 1:N_ref};
         
         % Indices to the pattern without the reference region
-        ind1_wo_ref = {1:N1(1)-N_best; N_best+1:N1(2); 1:N1(3); 1:N1(4)};
-        ind2_wo_ref = {1:N2(1); 1:N2(2); 1:N2(3)-N_best; N_best+1:N2(4)};
+        ind1_wo_ref = {1:N1(1)-N_ref; N_ref+1:N1(2); 1:N1(3); 1:N1(4)};
+        ind2_wo_ref = {1:N2(1); 1:N2(2); 1:N2(3)-N_ref; N_ref+1:N2(4)};
         
         % Loop through the edge regions
         for ss = 4:-1:1,
             % Get valid region for the pattern calculation (including the
             % reference region)
-            B_valid = expand_images_best(get_valid_best(regions(ss)) | get_ref_best(regions(ss)));
+            if NoReferences, B_valid = expand_images_best(get_valid_best(regions(ss)));
+            else, B_valid = expand_images_best(get_valid_best(regions(ss)) | get_ref_best(regions(ss))); end
             B_invalid = B_best | ~B_valid; % Append (negated) to the known outliers
             
             % Find the pattern
             S_P = [N1(ss) N2(ss)];
             Start = [ind1_begin(ss) ind2_begin(ss)];
             End = [ind1_end(ss) ind2_end(ss)];
-            P_ss = find_pattern(I_best, S_P, Start, End, B_invalid);
+            [P_ss, ~, P_ss_offset] = find_pattern(I_best, S_P, Start, End, B_invalid);
+            
+            % Remove best mean value to minimize changes to the original image
+            P_ss = P_ss + (P_ss_offset - P_offset_best);
             
             % Preserve pattern-to-pattern continuity using the reference
-            edge = P_ss(ind1_ref{ss},ind2_ref{ss},:);
-            [~, cshift] = clever_statistics_and_outliers(-edge, -3, 1); % Here -3 reads as NOT 3rd dimension
-            P_ss = bsxfun(@plus, P_ss, cshift); % Zero the reference region
+            if ~NoReferences,
+                edge = P_ss(ind1_ref{ss},ind2_ref{ss},:);
+                [~, cshift] = clever_statistics_and_outliers(-edge, -3, 1); % Here -3 reads as NOT 3rd dimension
+                P_ss = bsxfun(@plus, P_ss, cshift); % Zero the reference region
+            end
             
             % Discard the reference pixels
             varargout{ss} = P_ss(ind1_wo_ref{ss},ind2_wo_ref{ss},:);
@@ -783,6 +827,26 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     function I_wo_P = remove_pattern(I, P, B_valid, P_TopLeft), % Low memory usage via loops
         I_wo_P = I; % Retain the original image data type!
         
+        if nargin < 3 || isempty(B_valid), B_valid = true(size(I)); end
+        if nargin < 4 || isempty(P_TopLeft), P_TopLeft = ones(1,2); end
+        
+        % Determine valid bounding box to speed-up the process
+        B_valid_any_3 = any(B_valid, 3); % Once
+        ind1 = find(any(B_valid_any_3, 2));
+        if isempty(ind1), return; end
+        ind1 = min(ind1):max(ind1);
+        ind2 = find(any(B_valid_any_3, 1));
+        if isempty(ind2), return; end
+        ind2 = min(ind2):max(ind2);
+        
+        % Truncate to the bounding box
+        I = I(ind1, ind2, :);
+        B_valid = B_valid(ind1, ind2, :);
+        
+        % Shift P_TopLeft to the bounding box
+        offset = [ind1(1) ind2(1)]-1;
+        P_TopLeft = P_TopLeft(:).' - offset;
+        
         % Negate the P
         P = -P;
         
@@ -793,20 +857,17 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         S_I = size(I); % Size of an image
         S_P = size(P); % Size of a pattern (inverted)
         S_G = ceil(S_I(1:2)./S_P(1:2)); % Size of pattern grid
+        z = 1:S_I(3); % Preallocated constant vector
         
-        % Repmat either P or I_wo_P once
+        % Repmat either P or I once
         if S_P(3) == 1 && S_I(3) ~= 1,
             P = repmat(P, [1 1 S_I(3)]);
             S_P(3) = S_I(3);
         end
         if S_I(3) == 1 && S_P(3) ~= 1,
-            I_wo_P = repmat(I_wo_P, [1 1 S_P(3)]);
+            I = repmat(I, [1 1 S_P(3)]);
             S_I(3) = S_P(3);
         end
-        
-        % Set pattern range
-        if nargin < 3 || isempty(B_valid), B_valid = true(size(I_wo_P)); end
-        if nargin < 4 || isempty(P_TopLeft), P_TopLeft = ones(1,2); end
         
         % Repmat TrueBlackColor once (only if used)
         isBlack = all(TrueBlackColor) == 0;
@@ -814,59 +875,96 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
             Black = bsxfun(@times, double(TrueBlackColor), ones(size(S_P)));
         end
         
+        % Calculate once
+        [x_P0, y_P0, z] = ndgrid(1:S_P(1), 1:S_P(2), z);
+        ind_P0 = generic_sub2ind(S_P, x_P0, y_P0, z, '-nobsxfun'); % Call once
+        
         % Shift P once
-        [x_P0, y_P0] = deal(1:S_P(1), 1:S_P(2));
-        x_P = mod(x_P0-P_TopLeft(1), S_P(1))+1; % Shift indices
-        y_P = mod(y_P0-P_TopLeft(2), S_P(2))+1; % Shift indices
+        x_P = mod((1:S_P(1))-P_TopLeft(1), S_P(1))+1; % Shift indices
+        y_P = mod((1:S_P(2))-P_TopLeft(2), S_P(2))+1; % Shift indices
         P = P(x_P, y_P, :);
         
-        % Preallocate boolean map once
-        B_valid_for_P_here = false(size(P));
-        B_valid_here = false(size(I_wo_P));
+%         % Remove pattern via a simple loop
+%         for x_G = 1:S_G(1),
+%             % Generate indices in x-direction
+%             x_I = x_P0 + (x_G-1).*S_P(1);
+%             
+%             % Truncate (if partial) to valid indices in x-direction
+%             B_x = x_I <= S_I(1);
+%             if any(any(any(B_x, 1), 2), 3) == false, continue; end % Skip to next if no valid
+%             
+%             for y_G = 1:S_G(2),
+%                 % Generate indices in y-direction
+%                 y_I = y_P0 + (y_G-1).*S_P(2);
+%                 
+%                 % Truncate (if partial) to valid indices in y-direction
+%                 B_y = y_I <= S_I(2);
+%                 if any(any(any(B_y, 1), 2), 3) == false, continue; end % Skip to next if no valid
+%                 
+%                 B_xy = B_x & B_y;
+%                 ind_I_valid = sub2ind(S_I, x_I(B_xy), y_I(B_xy), z(B_xy)); % generic_sub2ind with '-nobsxfun' is twice as slow
+%                 ind_P_valid = ind_P0(B_xy);
+%                 
+%                 B_valid_here = B_valid(ind_I_valid);
+%                 ind_I_valid = ind_I_valid(B_valid_here);
+%                 ind_P_valid = ind_P_valid(B_valid_here);
+%                 
+%                 % Remove pattern piece-by-piece
+%                 I_here = double(I(ind_I_valid));
+%                 P_here = P(ind_P_valid);
+%                 if AdditiveMode,
+%                     I(ind_I_valid) = I_here + P_here;
+%                 else, % Multiplicative mode
+%                     if isBlack, I(ind_I_valid) = I_here .* P_here;
+%                     else,
+%                         Black_here = Black(ind_P_valid);
+%                         I(ind_I_valid) = (I_here - Black_here) .* P_here + Black_here;
+%                     end
+%                 end
+%             end
+%         end
         
-        % Remove pattern without memory-intensive repmat
-        for x_G = 1:S_G(1),
-            % Generate indices in x-direction
-            x_I = x_P0 + (x_G-1).*S_P(1);
+        % Remove pattern via repmat (apparently ~1.5x faster than the loop)
+        % The padded size (until the integer number of patterns fit in)
+        S_pad = ceil(S_I(1:2)./S_P(1:2)).*S_P(1:2);
+        
+        % Preallocate and avoid padarray
+        I_cc_pad = zeros(S_pad, 'like', I);
+        B_valid_pad = false(S_pad);
+        
+        % Do linear indexing only once
+        B_pad = false(S_pad);
+        B_pad(1:S_I(1),1:S_I(2)) = true;
+        
+        for cc = 1:S_I(3),
+            if IgnoreChannels(cc), continue; end
+            I_cc = I(:,:,cc);
+            I_here = double(I_cc(B_valid(:,:,cc)));
+            I_cc_pad(B_pad) = I(:,:,cc);
+            B_valid_pad(B_pad) = B_valid(:,:,cc);
             
-            % Truncate (if partial) to valid indices in x-direction
-            B_x = x_I <= S_I(1);
-            if any(B_x) == false, continue; end % Skip to next if no valid
-            x_P0_valid = x_P0(B_x);
-            x_I_valid = x_I(B_x);
+            % Use repmat because it was successfully used earlier
+            P_repmat = reshape(permute(repmat(P(:,:,cc), [1 1 S_G(1) S_G(2)]), [1 3 2 4]), S_pad);
+            P_here = P_repmat(B_valid_pad);
+            clear P_repmat;
             
-            for y_G = 1:S_G(2),
-                % Generate indices in y-direction
-                y_I = y_P0 + (y_G-1).*S_P(2);
-                
-                % Truncate (if partial) to valid indices in y-direction
-                B_y = y_I <= S_I(2);
-                if any(B_y) == false, continue; end % Skip to next if no valid
-                y_P0_valid = y_P0(B_y);
-                y_I_valid = y_I(B_y);
-                
-                % Generate boolean maps
-                B_valid_for_P_here(x_P0_valid,y_P0_valid,:) = B_valid(x_I_valid,y_I_valid,:);
-                B_valid_here(x_I_valid,y_I_valid,:) = B_valid_for_P_here(x_P0_valid,y_P0_valid,:);
-                
-                % Remove pattern piece-by-piece
-                I_here = double(I(B_valid_here));
-                P_here = P(B_valid_for_P_here);
-                if AdditiveMode,
-                    I_wo_P(B_valid_here) = I_here + P_here;
-                else, % Multiplicative mode
-                    if isBlack, I_wo_P(B_valid_here) = I_here .* P_here;
-                    else,
-                        Black_here = Black(B_valid_for_P_here);
-                        I_wo_P(B_valid_here) = (I_here - Black_here) .* P_here + Black_here;
-                    end
+            if AdditiveMode,
+                I_cc_pad(B_valid_pad) = I_here + P_here;
+            else, % Multiplicative mode
+                if isBlack, I_cc_pad(B_valid_pad) = I_here .* P_here;
+                else,
+                    Black_repmat = reshape(permute(repmat(double(Black(:,:,cc)), [1 1 S_G(1) S_G(2)]), [1 3 2 4]), S_pad);
+                    Black_here = Black_repmat(B_valid_pad);
+                    clear Black_repmat;
+                    I_cc_pad(B_valid_pad) = (I_here - Black_here) .* P_here + Black_here;
                 end
-                
-                % Restore boolean maps
-                B_valid_for_P_here(B_valid_for_P_here) = false;
-                B_valid_here(B_valid_here) = false;
             end
+            
+            I(:,:,cc) = reshape(I_cc_pad(B_pad), S_I(1:2));
         end
+        
+        % Restore the original shape
+        I_wo_P(ind1, ind2, :) = I;
     end
     
     % UNUSED EXPERIMENTAL FEATURE BEING DEVELOPED
