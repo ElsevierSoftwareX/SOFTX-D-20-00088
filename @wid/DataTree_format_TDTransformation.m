@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function format = DataTree_format_TDTransformation(Version_or_obj)
+function format = DataTree_format_TDTransformation(Version_or_obj),
     if nargin == 0, Version_or_obj = []; end
     
     % Parse Project from input

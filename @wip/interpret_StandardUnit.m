@@ -6,7 +6,7 @@
 % seen in the ()-brackets. Please note that this will automatically add
 % ()-brackets for the searching purposes! If StandardUnit is NOT found,
 % then this will return it without modifications.
-function ValueUnit = interpret_StandardUnit(StandardUnit)
+function ValueUnit = interpret_StandardUnit(StandardUnit),
     ValueUnit = StandardUnit; % Unmodified output for no match
     bw_match = ~cellfun(@isempty, strfind(wip.FullStandardUnits, ['(' StandardUnit ')']));
     if sum(bw_match) == 1, % Continue only if one match was found

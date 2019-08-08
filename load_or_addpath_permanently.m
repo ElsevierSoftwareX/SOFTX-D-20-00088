@@ -2,7 +2,8 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [] = load_or_addpath_permanently(toolbox_path, ispermanent),
+% Prefer toolbox installer (*.mltbx) instead!
+function load_or_addpath_permanently(toolbox_path, ispermanent),
     if nargin < 1 || isempty(toolbox_path),
         this_script = [mfilename('fullpath') '.m'];
         [root, ~, ~] = fileparts(this_script);

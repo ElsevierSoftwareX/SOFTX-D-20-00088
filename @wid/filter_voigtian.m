@@ -3,7 +3,7 @@
 % All rights reserved.
 
 % If varargin{1} is a cell, then it is treated as an input to the fitting algorithm!
-function [new_obj, I, Pos, Fwhm_L, I0, Fwhm_G, R2, Residuals, Fit] = filter_voigtian(obj, varargin)
+function [new_obj, I, Pos, Fwhm_L, I0, Fwhm_G, R2, Residuals, Fit] = filter_voigtian(obj, varargin),
     % Test if the first varargin element is a cell, which would be an input
     % to the underlying 'fit_lineshape_arbitrary.m' fitting algorithm!
     opts = {};

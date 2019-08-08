@@ -8,7 +8,7 @@
 % between it and the underlying wit-tree. In conflicts, wit-tree content is
 % ignored, resulting in formatted tree with empty values. This destroys any
 % overridden wit-objects.
-function DataTree_set(parent, in, format)
+function DataTree_set(parent, in, format),
     if numel(parent) > 1, error('Cannot have multiple parents!'); end
     if ~isstruct(in), error('Only a nested struct can be a data tree!'); end
     

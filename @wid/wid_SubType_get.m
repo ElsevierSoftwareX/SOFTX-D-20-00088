@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function out = wid_SubType_get(obj)
+function out = wid_SubType_get(obj),
     out = '';
     switch(obj.Type),
         case 'TDBitmap',

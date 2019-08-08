@@ -2,9 +2,9 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [new_obj, image_mask] = image_mask_editor(obj, image_mask)
-    % TOOLBOX REQUIREMENTS: Image Processing Toolbox
-    % Updated 5.3.2019 by Joonas T. Holmi
+function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
+    % Pop states (even if not used to avoid push-pop bugs)
+    AutoCreateObj = obj.Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
     
     new_obj = wid.Empty;
     
@@ -34,7 +34,7 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask)
     end
     
     % Create new object if permitted
-    if isempty(obj.Project) || obj.Project.AutoCreateObj,
+    if AutoCreateObj,
         new_obj = wid.new_Image(obj.Tag.Root); % This does not add newly created object to Project yet!
         new_obj.Name = sprintf('Mask<%s', obj.Name); % Generate new name
         new_obj.Data = image_mask;
@@ -51,7 +51,7 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask)
         obj.Project.Data = [obj.Project.Data; new_obj];
     end
     
-    function [isShown] = show_mask(),
+    function isShown = show_mask(),
         isShown = false;
         if ~ishandle(Ax), return; end % Stop if no Axes found
         Im = findobj(Ax, 'Type', 'image');
@@ -61,12 +61,12 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask)
         isShown = true;
     end
     
-    function [] = invert(varargin),
+    function invert(varargin),
         image_mask = ~image_mask;
         show_mask();
     end
     
-    function [] = update(currentValue, varargin),
+    function update(currentValue, varargin),
         persistent isBusy; % If busy in some other callback
         persistent Value; % Latest value
         persistent robot; % Keyboard robot

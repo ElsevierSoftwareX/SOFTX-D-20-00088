@@ -2,9 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [h_button, h_label] = ui_sidebar_for_button(Fig, str_Label, str_Button, fun, isMargins)
-    % Updated 8.1.2019 by Joonas T. Holmi
-    
+function [h_button, h_label] = ui_sidebar_for_button(Fig, str_Label, str_Button, fun, isMargins),
     if isempty(Fig), Fig = gcf; end % By default, update gcf
     if nargin < 5, isMargins = [1 1 1 1]; end % By default, add [left bottom right top] margins
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel

@@ -11,43 +11,44 @@
 % WARNING! The related instrumental errors, if NOT corrected for, can lead
 % to UNPHYSICAL stitching result in the overlapping regions, even if their
 % apparent stitching result looks smooth!
-function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin)
+function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin),
+    % Pop states (even if not used to avoid push-pop bugs)
+    AutoCreateObj = obj.Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
+    
     new_obj = wid.Empty;
     
     % Add obj(s) as varargin
     varargin = [{obj}; varargin(:)];
     
     % Test if '-debug' was given
-    bw_char = cellfun(@ischar, varargin);
-    isdebug = any(strcmp(varargin(bw_char), '-debug'));
-    varargin = varargin(~bw_char); % Ignore char
+    isdebug = varargin_dashed_str_exists('debug', varargin);
     
     % Parse the input and keep only TDGraph wid objects
     bw_valid_wid = cellfun(@(x) isa(x, 'wid'), varargin); % Test if wid
     varargin = varargin(bw_valid_wid); % Keep only wid
     varargin = cellfun(@(x) x(:), varargin, 'UniformOutput', false); % Force to column vectors
-    C_wid = cat(1, varargin{:}); % Merge column vectors to a single column vector
-    if ~isempty(C_wid),
-        bw_valid_TDGraph = strcmp({C_wid.Type}, 'TDGraph'); % Test if TDGraph
-        C_wid = C_wid(bw_valid_TDGraph); % Keep only TDGraph
+    O_wid = cat(1, varargin{:}); % Merge column vectors to a single column vector
+    if ~isempty(O_wid),
+        bw_valid_TDGraph = strcmp({O_wid.Type}, 'TDGraph'); % Test if TDGraph
+        O_wid = O_wid(bw_valid_TDGraph); % Keep only TDGraph
     end
     
-    N_TDGraph = numel(C_wid); % Number of TDGraph
+    N_TDGraph = numel(O_wid); % Number of TDGraph
     if N_TDGraph == 0, error('No TDGraph input!'); end % Test if TDGraphs OR ABORT
     
     % Store Datas and Graphs (in nm)
-    Datas = reshape({C_wid.Data}, [], 1);
+    Datas = reshape({O_wid.Data}, [], 1);
     Graphs_nm = cell(N_TDGraph, 1);
     for ii = 1:N_TDGraph,
-        Graphs_nm{ii} = reshape(C_wid(ii).interpret_Graph('nm'), [], 1);
+        Graphs_nm{ii} = reshape(O_wid(ii).interpret_Graph('nm'), [], 1);
     end
     
     % Call a helper function
     [Graph, Data, W, D] = wid.spectral_stitch_helper(Graphs_nm, Datas, isdebug);
     
     % Create new object if permitted
-    obj = C_wid(1);
-    if isempty(obj.Project) || obj.Project.AutoCreateObj,
+    obj = O_wid(1);
+    if AutoCreateObj,
         new_obj = obj.copy(); % Copy first object, because all of them must be of same spatial size
         new_obj.Links.XTransformationID.destroy(); % But destroy copied TDSpectralTransformation
         

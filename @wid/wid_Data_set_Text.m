@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function wid_Data_set_Text(obj, in)
+function wid_Data_set_Text(obj, in),
     % Due to get_Text lossiness, this cannot restore the original binary
     % (or style)! Rather this will restore the default Arial font style.
     out = sprintf('{\\rtf1\\ansi\\ansicpg1252\\deff0\\deflang1033{\\fonttbl{\\f0\\fnil Arial;}}\r\n{\\colortbl ;\\red0\\green0\\blue255;\\red0\\green0\\blue0;\\red0\\green128\\blue0;}\r\n\\viewkind4\\uc1\\pard\\tx2400');

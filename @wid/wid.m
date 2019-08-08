@@ -35,9 +35,9 @@ classdef wid < handle, % Since R2008a
         Empty = wid.empty; % Call wid.empty only once
     end
     
-	properties (Dependent) % Everything rely on the underlying wit-classes
+    properties (Dependent) % Everything rely on the underlying wit-classes
         Type;
-		Name;
+        Name;
         Data;
         Info;
         DataTree;
@@ -49,7 +49,7 @@ classdef wid < handle, % Since R2008a
         Links;
         AllLinks;
     end
-	
+    
     properties (SetAccess = private)
         Tag = struct.empty; % Either empty OR contains all the fields defined in wid-constructor
     end
@@ -61,8 +61,8 @@ classdef wid < handle, % Since R2008a
     %% PUBLIC METHODS
     methods
         % CONSTRUCTOR
-        function obj = wid(C_wit),
-            % Loops through each element in C_wit array. It checks whether
+        function obj = wid(O_wit),
+            % Loops through each element in O_wit array. It checks whether
             % the element points directly to a specific Data/DataClassName
             % (or its children) or not. If yes, then it only adds that as
             % new wid. If no, then it adds all found Data/DataClassName
@@ -75,7 +75,7 @@ classdef wid < handle, % Since R2008a
             end
             
             % Get valid tag pairs
-            Pairs = wip.get_Data_DataClassName_pairs(C_wit);
+            Pairs = wip.get_Data_DataClassName_pairs(O_wit);
             
             % Loop the found pairs to construct wids
             N_pairs = size(Pairs, 1);
@@ -260,6 +260,7 @@ classdef wid < handle, % Since R2008a
         %% OTHER PUBLIC METHODS
         % Object plotting
         plot(obj, varargin);
+        varargout = manager(obj, varargin); % A wrapper method that shows the given objects via Project Manager view.
         
         % Object copying, destroying, writing
         new = copy(obj); % Copy-method
@@ -272,18 +273,18 @@ classdef wid < handle, % Since R2008a
         Data_merged = merge_Data(obj, dim);
         Info_Graph_merged = merge_Info_Graph(obj);
         
-        % Get object Html-name, which includes the WITec software icon
+        % Get object Html-name, which includes the data type icon
         HtmlName = get_HtmlName(obj, isWorkspaceOptimized);
         
         % Reduce object Data
         [Data_cropped, Graph_cropped] = crop_Graph(obj, ind_range, Data_cropped, Graph_cropped);
         [Data_reduced, Graph_reduced] = reduce_Graph(obj, ind_range, Data_reduced, Graph_reduced); % DEPRECATED! USE ABOVE INSTEAD!
-        [obj, Data_cropped, X_cropped, Y_cropped, Graph_cropped, Z_cropped] = crop(obj, ind_X_begin, ind_X_end, ind_Y_begin, ind_Y_end, ind_Graph_begin, ind_Graph_end, ind_Z_begin, ind_Z_end);
+        [obj, Data_cropped, X_cropped, Y_cropped, Graph_cropped, Z_cropped] = crop(obj, ind_X_begin, ind_X_end, ind_Y_begin, ind_Y_end, ind_Graph_begin, ind_Graph_end, ind_Z_begin, ind_Z_end, isDataCropped);
         [obj, Data_reduced, X_reduced, Y_reduced, Graph_reduced, Z_reduced] = reduce(obj, ind_X_begin, ind_X_end, ind_Y_begin, ind_Y_end, ind_Graph_begin, ind_Graph_end, ind_Z_begin, ind_Z_end); % DEPRECATED! USE ABOVE INSTEAD!
         [obj, Data_range, Graph_range, Data_range_bg] = filter_bg(obj, varargin);
         
         % Filter object Data
-        % If obj.Project.AutoCreateObj == false, then isempty(new_obj) == true.
+        % If obj.Project.popAutoCreateObj == false, then isempty(new_obj) == true.
         [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin); % Generic (but not yet for 4-D TDGraph!)
         [new_obj, Sum] = filter_sum(obj, varargin);
         [new_obj, Min] = filter_min(obj, varargin);
@@ -298,6 +299,9 @@ classdef wid < handle, % Since R2008a
         
         % Spectral stitching
         [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin); % Add '-debug' as input to see debug plots
+        
+        % Unpattern Video Stitching images
+        [obj, N_bests, Datas] = unpattern_video_stitching(obj, varargin); % Add '-debug' as input to see debug plots
         
         % Masking tools
         [obj, Data_NaN_masked] = image_mask(obj, varargin);
@@ -316,21 +320,21 @@ classdef wid < handle, % Since R2008a
     %% STATIC PUBLIC METHODS
     methods (Static)
         % Constructor WID-formatted WIT-tree
-        C_wit = new(Version); % WITec Data WIT-tree
+        O_wit = new(Version); % WITec Data WIT-tree
         
         % Constructors for various types of objects
-        obj = new_Bitmap(C_wit);
-        obj = new_Graph(C_wit);
-        obj = new_Image(C_wit);
-        obj = new_Interpretation_Space(C_wit);
-        obj = new_Interpretation_Spectral(C_wit);
-        obj = new_Interpretation_Time(C_wit);
-        obj = new_Interpretation_Z(C_wit);
-        obj = new_Text(C_wit);
-        obj = new_Transformation_Linear(C_wit);
-        obj = new_Transformation_LUT(C_wit, LUTSize);
-        obj = new_Transformation_Space(C_wit);
-        obj = new_Transformation_Spectral(C_wit);
+        obj = new_Bitmap(O_wit);
+        obj = new_Graph(O_wit);
+        obj = new_Image(O_wit);
+        obj = new_Interpretation_Space(O_wit);
+        obj = new_Interpretation_Spectral(O_wit);
+        obj = new_Interpretation_Time(O_wit);
+        obj = new_Interpretation_Z(O_wit);
+        obj = new_Text(O_wit);
+        obj = new_Transformation_Linear(O_wit);
+        obj = new_Transformation_LUT(O_wit, LUTSize);
+        obj = new_Transformation_Space(O_wit);
+        obj = new_Transformation_Spectral(O_wit);
         
         % DataTree formats
         format = DataTree_format_TData(Version_or_obj);
@@ -351,6 +355,7 @@ classdef wid < handle, % Since R2008a
         [Data_range, Graph_range, Data_range_bg, range] = crop_Graph_with_bg_helper(Data, Graph, range, bg_avg_lower, bg_avg_upper);
         [Data_range, Graph_range, Data_range_bg, range] = reduce_Graph_with_bg_helper(Data, Graph, range, bg_avg_lower, bg_avg_upper); % DEPRECATED! USE ABOVE INSTEAD!
         [Graph, Data, W, D] = spectral_stitch_helper(Graphs_nm, Datas, isdebug);
+        [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_SI_XY, varargin); % Add '-debug' as input to see debug plots
     end
     
     %% PRIVATE METHODS

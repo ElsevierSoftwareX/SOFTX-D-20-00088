@@ -3,7 +3,7 @@
 % All rights reserved.
 
 % Mimics matlab.lang.makeValidName(strs) behaviour, missing before R2014a.
-function strs = get_valid_names(strs)
+function strs = get_valid_names(strs),
 %     strs = regexprep(strs, '\s+(.)', '${upper($1)}'); % Deletes any whitespace characters before replacing any characters. If a whitespace character is followed by a lowercase letter, converts the letter to the corresponding uppercase character.
     strs = regexprep(strs, '[^A-Za-z0-9_]', '_'); % A valid MATLAB identifier is a character vector of alphanumerics (AZ, az, 09) and underscores.
     strs = regexprep(strs, '^([^A-Za-z])', 'x$1'); % Such that the first character is a letter.

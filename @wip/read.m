@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [C_wid, C_wip, HtmlNames] = read(varargin),
+function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     % WITec Project/Data (*.WIP/*.WID) -file data reader. Returns the
     % selected data when the Project Manager -window (if opened) is CLOSED.
     % 0) Input is parsed into files and extra options:
@@ -18,23 +18,19 @@ function [C_wid, C_wip, HtmlNames] = read(varargin),
     % 4) The selected items in Project Manager -window are returned.
     
     % By default, empty output
-    C_wid = wid.Empty;
-    C_wip = wip.empty;
-    HtmlNames = cell.empty;
+    O_wid = wid.Empty;
+    O_wip = wip.empty;
+    O_wid_HtmlNames = cell.empty;
+    
+    % START OF VARARGIN PARSING
     
     % Parse input file and extra arguments
-    ind_extra_begin = find(strncmp(varargin, '-', 1));
-    ind_extra_end = [ind_extra_begin(2:end)-1 numel(varargin)];
-    showProjectManager = ~any(strcmpi(varargin(ind_extra_begin), '-all')); % By default, show Project Manager
-    show_ui_ifall = any(strcmpi(varargin(ind_extra_begin), '-ifall'));
-    ind_DataUnit = find(strcmpi(varargin(ind_extra_begin), '-DataUnit'), 1, 'first');
-    ind_SpectralUnit = find(strcmpi(varargin(ind_extra_begin), '-SpectralUnit'), 1, 'first');
-    ind_SpaceUnit = find(strcmpi(varargin(ind_extra_begin), '-SpaceUnit'), 1, 'first');
-    ind_TimeUnit = find(strcmpi(varargin(ind_extra_begin), '-TimeUnit'), 1, 'first');
-    ind_Manager = find(strcmpi(varargin(ind_extra_begin), '-Manager'), 1, 'first');
-    
+    ind_extra_begin = varargin_dashed_str_inds('', varargin);
     if isempty(ind_extra_begin), files = varargin;
     else, files = varargin(1:ind_extra_begin(1)-1); end
+    
+    showProjectManager = ~varargin_dashed_str_exists('all', varargin); % By default, show Project Manager
+    show_ui_ifall = varargin_dashed_str_exists('ifall', varargin);
     
     if isempty(files),
         [filename, folder] = uigetfile({'*.wip;*.wid;*.zip', 'WITec Project/Data Files (*.wip/*.wid)'}, 'Open Project', 'MultiSelect', 'on');
@@ -45,46 +41,45 @@ function [C_wid, C_wip, HtmlNames] = read(varargin),
     end
     
     % Read all files preferring limited read and append them together
-    C_wit = wit.Empty;
+    O_wit = wit.Empty;
     h = waitbar(0, 'Please wait...');
     for ii = 1:numel(files),
         if ~ishandle(h), return; end % Abort if cancelled!
         waitbar((ii-1)/numel(files), h, sprintf('Loading file %d/%d. Please wait...', ii, numel(files)));
-        C_wit = wip.append(C_wit, wit.read(files{ii}, 4096)); % Prefer 4KB limited read
+        O_wit = wip.append(O_wit, wit.read(files{ii}, 4096)); % Prefer 4KB limited read
     end
     if ~ishandle(h), return; end % Abort if cancelled!
     waitbar(1, h, 'Completed!');
     delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Avoids the closing issues with close-function!
-    C_wip = wip(C_wit);
+    O_wip = wip(O_wit);
     
     % Force DataUnit, SpaceUnit, SpectralUnit, TimeUnit:
     % Parse input arguments
-    if ~isempty(ind_DataUnit) && ind_extra_end(ind_DataUnit)-ind_extra_begin(ind_DataUnit) > 0,
-        C_wip.ForceDataUnit = varargin{ind_extra_end(ind_DataUnit)};
-    end
-    if ~isempty(ind_SpaceUnit) && ind_extra_end(ind_SpaceUnit)-ind_extra_begin(ind_SpaceUnit) > 0,
-        C_wip.ForceSpaceUnit = varargin{ind_extra_end(ind_SpaceUnit)};
-    end
-    if ~isempty(ind_SpectralUnit) && ind_extra_end(ind_SpectralUnit)-ind_extra_begin(ind_SpectralUnit) > 0,
-        C_wip.ForceSpectralUnit = varargin{ind_extra_end(ind_SpectralUnit)};
-    end
-    if ~isempty(ind_TimeUnit) && ind_extra_end(ind_TimeUnit)-ind_extra_begin(ind_TimeUnit) > 0,
-        C_wip.ForceTimeUnit = varargin{ind_extra_end(ind_TimeUnit)};
-    end
+    datas = varargin_dashed_str_datas('DataUnit', varargin, -1);
+    if numel(datas) > 0, O_wip.ForceDataUnit = datas{1}; end
+    
+    datas = varargin_dashed_str_datas('SpectralUnit', varargin, -1);
+    if numel(datas) > 0, O_wip.ForceSpectralUnit = datas{1}; end
+    
+    datas = varargin_dashed_str_datas('SpaceUnit', varargin, -1);
+    if numel(datas) > 0, O_wip.ForceSpaceUnit = datas{1}; end
+    
+    datas = varargin_dashed_str_datas('TimeUnit', varargin, -1);
+    if numel(datas) > 0, O_wip.ForceTimeUnit = datas{1}; end
+    
+    datas = varargin_dashed_str_datas('Manager', varargin, -1);
     ManagerVarargin = {};
-    if ~isempty(ind_Manager) && ind_extra_end(ind_Manager)-ind_extra_begin(ind_Manager) > 0,
-        ManagerVarargin = varargin{ind_extra_end(ind_Manager)};
-    end
+    if numel(datas) > 0, ManagerVarargin = datas{1}; end
     
     % Show project manager on demand
     if show_ui_ifall, showProjectManager = strncmp(questdlg('Would you like to 1) browse & select data OR 2) load all data?', 'How to proceed?', '1) Browse & select', '2) Load all', '1) Browse & select'), '1)', 2); end
     if ~showProjectManager, ManagerVarargin{end+1} = '-nomanager'; end
-    C_wid = C_wip.manager(ManagerVarargin{:});
+    O_wid = O_wip.manager(ManagerVarargin{:});
     
     % Get html names with icons
-    HtmlNames = C_wid.get_HtmlName();
+    O_wid_HtmlNames = O_wid.get_HtmlName();
     
     % Force output to column (More user-friendly!)
-    C_wid = C_wid(:);
-    HtmlNames = HtmlNames(:); % Much more user-friendly this way!
+    O_wid = O_wid(:);
+    O_wid_HtmlNames = O_wid_HtmlNames(:); % Much more user-friendly this way!
 end

@@ -2,12 +2,12 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function format = DataTree_format_TDZInterpretation(Version_or_obj)
+function format = DataTree_format_TDZInterpretation(Version_or_obj),
     if nargin == 0, Version_or_obj = []; end
     
     % Each row: wit-tag name, isVisible, {write-parser; read-parser}
     subformat_TDZInterpretation_v5_v6_v7 = ... % Excluding the Version-tag
-    	{ ...
+        { ...
         'Version' false {@int32; @int32}; ...
         'UnitName' true {@char; @char} ...
         };

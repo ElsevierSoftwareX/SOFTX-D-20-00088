@@ -27,7 +27,7 @@
 % OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-function [fun_Jf, fun_Hf, exception] = generate_Jacobian_and_Hessian_funs(fun_f, N_constants, N_steps)
+function [fun_Jf, fun_Hf, exception] = generate_Jacobian_and_Hessian_funs(fun_f, N_constants, N_steps),
     % Generates Jacobian and Hessian (if possible).
     % If not possible, return empty Jf and Hf, and generate exception.
     

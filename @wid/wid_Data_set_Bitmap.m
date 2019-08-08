@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function wid_Data_set_Bitmap(obj, in)
+function wid_Data_set_Bitmap(obj, in),
     Version = [obj.Version];
      % 'README on WIT-tag formatting.txt'
     if isempty(Version) || Version == 7, % WITec Suite FIVE 5.x

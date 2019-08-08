@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function destroy(obj, skipParent)
+function destroy(obj, skipParent),
     if nargin < 2, skipParent = false; end % Do not skip the first parents
     for ii = 1:numel(obj),
         if ~obj(ii).isvalid, continue; end % Skip deleted

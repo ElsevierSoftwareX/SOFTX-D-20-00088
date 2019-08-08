@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function F = fun_lineshape_lorentzian(P,X)
+function F = fun_lineshape_lorentzian(P, X),
     % Lorentzian lineshape
     % size(F) = [# of dimensions = 1, # of samples]
     % size(X) = [# of points per sample, # of samples]

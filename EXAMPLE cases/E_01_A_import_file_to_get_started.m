@@ -30,52 +30,53 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before
 
 %-------------------------------------------------------------------------%
 helpdlg({'!!! (E1A i.) Load and browse file contents in a GUI by executing:' ...
-    '[C_wid, C_wip, HtmlNames] = wip.read(file);' ...
+    '[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file);' ...
     '' ...
     '* It opens the file in a Project Manager -window, listing only the plottable data types (TDBitmap, TDGraph, TDImage, TDText). Non-plottable data types, such as TDInterpretation and TDTransformation, are hidden by default, but can be made visible by adding ''-Manager'', {''-all''} as an extra input pair.' ...
     '' ...
     '* A preview window is normally opened for each selected list item. Multiple items may be left-mouse selected one-by-one by holding Ctrl. Alternatively, a range of items may be selected by holding Shift.' ...
     '' ...
-    '* Upon closing the Project Manager -window, it will return the selected data and their Html-names as C_wid and HtmlNames, respectively. Project is returned as C_wip. Read comments in these examples for better understanding of these output variables.' ...
+    '* Upon closing the Project Manager -window, it will return the selected data and their Html-names as O_wid and O_wid_HtmlNames, respectively. Project is returned as O_wip. Read comments in these examples for better understanding of these output variables.' ...
     '' ...
     '* Click any item to open a preview window (by default). Also, clicking the opened preview window may open a subpreview window, when data has third dimension like a spectrum per pixel. For example, see ''Reduced<Image Scan 1 (Data)''. Please note that you may also use arrow keys to move in images.' ...
-	'' ...
-	'!!! Close the opened Project Manager -window to continue...'});
+    '' ...
+    '!!! Close the opened Project Manager -window to continue...'});
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
 % This opens the specified file in a Project Manager -window.
-[C_wid, C_wip, HtmlNames] = wip.read(file); % (1A) Browse the file contents
+[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file); % (1A) Browse the file contents
 
-% [C_wid, C_wip, HtmlNames] = wip.read(file, '-Manager', {'-all'}); % To show also the non-plottable data
-% [C_wid, C_wip, HtmlNames] = wip.read(file, '-Manager', {'-Type', 'TDGraph'}); % To show only TDGraphs
-% [C_wid, C_wip, HtmlNames] = wip.read(file, '-Manager', {'-Type', {'TDBitmap', 'TDGraph', 'TDImage'}}); % To show only TDBitmap, TDGraphs and TDImage
+% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', {'-all'}); % To show also the non-plottable data
+% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', {'-Type', 'TDGraph'}); % To show only TDGraphs
+% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', {'-Type', {'TDBitmap', 'TDGraph', 'TDImage'}}); % To show only TDBitmap, TDGraphs and TDImage
 % * Other possible '-Manager' options are '-singlesection', '-nopreview',
 % '-closepreview', '-nomanager', '-Title', '-Type' and '-SubType'.
 
 % !!! Meaning of the OUTPUT variables:
 %
-% * C_wid:
+% * O_wid:
 % Selected datas loaded as WID-class objects. Each object has the following
 % properties Type, Name, Data, Info, DataTree, Version, Id, ImageIndex,
 % OrdinalNumber, SubType, Links, AllLinks, Tag and Project. To see these,
-% double-click C_wid under Workspace to see each of these. Code interprets
+% double-click O_wid under Workspace to see each of these. Code interprets
 % these from the loaded file WIT-node tree structure.
 %
-% * C_wip:
+% * O_wip:
 % Resulting project loaded as WIP-class object. Its properties are File,
 % Version, Data, Tree, ForceDataUnit, ForceSpaceUnit, ForceSpectralUnit,
 % ForceTimeUnit, UseLineValid, AutoCreateObj, AutoCopyObj, AutoModifyObj,
 % FullStandardUnits, ArbitraryUnit, DefaultSpaceUnit, DefaultSpectralUnit
 % and DefaultTimeUnit.
 %
-% * HtmlNames:
-% The Html names of the selected datas. Double-click HtmlNames under
+% * O_wid_HtmlNames:
+% The Html names of the selected datas. Double-click O_wid_HtmlNames under
 % Workspace to see these (and rescale the 1st column by holding left-mouse
 % on the border between 1 and 2). This is useful feature, when loading a
-% lot of data at once.
+% lot of data at once. Alternatively, call 'O_wid.manager;' to open
+% selected WID-class objects in Project Manager view.
 %-------------------------------------------------------------------------%
 
 
@@ -104,9 +105,9 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before
 
 %-------------------------------------------------------------------------%
 % This opens the specified file. Then automatically loads all.
-% [C_wid, C_wip, HtmlNames] = wip.read(file, '-all'); % (1B) Load all file content
-% [C_wid, C_wip, HtmlNames] = wip.read(file, '-ifall'); % (1C) Ask whether to browse or load the file content
-% [C_wid, C_wip, HtmlNames] = wip.read(); % (1D) Browse the file system
+% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all'); % (1B) Load all file content
+% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-ifall'); % (1C) Ask whether to browse or load the file content
+% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(); % (1D) Browse the file system
 %-------------------------------------------------------------------------%
 
 

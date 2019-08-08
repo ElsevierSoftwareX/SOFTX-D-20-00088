@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [ValueUnit, varargout] = transform_forced(obj, T, varargin)
+function [ValueUnit, varargout] = transform_forced(obj, T, varargin),
     ValueUnit = wip.ArbitraryUnit; % Default ValueUnit
     varargout = cellfun(@double, varargin, 'UniformOutput', false); % Default Value
     

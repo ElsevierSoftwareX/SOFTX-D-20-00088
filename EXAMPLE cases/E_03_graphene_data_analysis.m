@@ -30,10 +30,10 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before
 
 %-------------------------------------------------------------------------%
 % This opens the specified file. Then automatically loads all.
-[C_wid, C_wip, HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)');
+[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)');
 
-C_ImageScan = C_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
-C_Point = C_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 17
+O_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
+O_Point = O_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 17
 %-------------------------------------------------------------------------%
 
 
@@ -53,18 +53,18 @@ h = helpdlg({'!!! (E3 i.) Recalibrating the Rayleigh-peak to zero position:' ...
 %-------------------------------------------------------------------------%
 % !!! (E3 i.) SINGLE GAUSS FITTING OF THE RAYLEIGH-PEAK and RECALIBRATION OF THE RAYLEIGH-PEAK
 Range_0 = [-25 25]; % Rayleigh-peak or 0-peak
-C_Point_old = C_Point.copy(); % Store the old data for comparison purposes
-C_0 = C_Point.filter_gaussian({'-silent'}, Range_0); % Gauss filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
-[~, Rayleigh_rel_invcm] = clever_statistics_and_outliers(C_0(2).Data, [], 4); % Calculate mean using clever 4-sigmas statistics (Robust against outliers)
-Rayleigh_nm = C_Point.interpret_Graph('(nm)', Rayleigh_rel_invcm); % Calculate mean excitation wavelength
-C_Point.Info.GraphInterpretation.Data.TDSpectralInterpretation.ExcitationWaveLength = Rayleigh_nm; % Permanently recalibrate the Rayleigh peak to zero!
-C_ImageScan.Info.GraphInterpretation.Data.TDSpectralInterpretation.ExcitationWaveLength = Rayleigh_nm; % Permanently recalibrate the Rayleigh peak to zero!
+O_Point_old = O_Point.copy(); % Store the old data for comparison purposes
+O_0 = O_Point.filter_gaussian({'-silent'}, Range_0); % Gauss filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
+[~, Rayleigh_rel_invcm] = clever_statistics_and_outliers(O_0(2).Data, [], 4); % Calculate mean using clever 4-sigmas statistics (Robust against outliers)
+Rayleigh_nm = O_Point.interpret_Graph('(nm)', Rayleigh_rel_invcm); % Calculate mean excitation wavelength
+O_Point.Info.GraphInterpretation.Data.TDSpectralInterpretation.ExcitationWaveLength = Rayleigh_nm; % Permanently recalibrate the Rayleigh peak to zero!
+O_ImageScan.Info.GraphInterpretation.Data.TDSpectralInterpretation.ExcitationWaveLength = Rayleigh_nm; % Permanently recalibrate the Rayleigh peak to zero!
 
 % Alternatively, try and run an semi-automated script under scripts-folder
 % on your file contents of interest: recalibrate_rayleigh_peak_to_zero.m
 
-C_Point.Name = sprintf('Zeroed<%s', C_Point.Name);
-figure; C_Point_old.plot('-compare', C_Point); % Show fitting results % Image<TDGraph with sidebar
+O_Point.Name = sprintf('Zeroed<%s', O_Point.Name);
+figure; O_Point_old.plot('-compare', O_Point); % Show fitting results % Image<TDGraph with sidebar
 xlim(Range_0); ylim('auto'); % Show only the region near the 0-peak
 
 if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before continuing.
@@ -89,12 +89,12 @@ h = helpdlg({'!!! (E3 ii.) Lorentzians are fitted to the D-, G- and 2D-peaks.' .
 Range_D = [1250 1450]; % D-peak
 Range_G = [1500 1650]; % G-peak
 Range_2D = [2550 2800]; % 2D-peak
-C_D = C_ImageScan.filter_lorentzian(Range_D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
-C_G = C_ImageScan.filter_lorentzian(Range_G); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
-C_2D = C_ImageScan.filter_lorentzian(Range_2D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
+O_D = O_ImageScan.filter_lorentzian(Range_D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
+O_G = O_ImageScan.filter_lorentzian(Range_G); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
+O_2D = O_ImageScan.filter_lorentzian(Range_2D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
 
 % SHOWING FITTING RESULTS OF THE RAYLEIGH-, D-, G- AND 2D-PEAKS
-figure; C_ImageScan.plot('-compare', C_0(end), C_D(end), C_G(end), C_2D(end)); % Show fitting results % Image<TDGraph with sidebar
+figure; O_ImageScan.plot('-compare', O_0(end), O_D(end), O_G(end), O_2D(end)); % Show fitting results % Image<TDGraph with sidebar
 
 if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before continuing.
 close all;
@@ -120,27 +120,27 @@ h = helpdlg({'!!! (E3 iii.) Clean-up of the fitted data:' ...
 % !!! (E3 iii.) CLEAN-UP OF THE LORENTZ FITTED DATA
 % Get invalid areas and modify I, Pos, Fwhm and I0
 R_2_threshold = 0.2; % A rough threshold for very poorly fitted data
-[bw_D_invalid, C_D(1).Data, C_D(2).Data, C_D(3).Data, C_D(4).Data] = ...
-    data_true_and_nan_collective_hole_reduction(C_D(5).Data<R_2_threshold, ...
-    C_D(1).Data, C_D(2).Data, C_D(3).Data, C_D(4).Data);
-C_D(7).Data(repmat(bw_D_invalid, [1 1 size(C_D(7).Data, 3)])) = NaN; % Set invalid Fit results to NaN
-[bw_G_invalid, C_G(1).Data, C_G(2).Data, C_G(3).Data, C_G(4).Data] = ...
-    data_true_and_nan_collective_hole_reduction(C_G(5).Data<R_2_threshold, ...
-    C_G(1).Data, C_G(2).Data, C_G(3).Data, C_G(4).Data);
-C_G(7).Data(repmat(bw_G_invalid, [1 1 size(C_G(7).Data, 3)])) = NaN; % Set invalid Fit results to NaN
-[bw_2D_invalid, C_2D(1).Data, C_2D(2).Data, C_2D(3).Data, C_2D(4).Data] = ...
-    data_true_and_nan_collective_hole_reduction(C_2D(5).Data<R_2_threshold, ...
-    C_2D(1).Data, C_2D(2).Data, C_2D(3).Data, C_2D(4).Data);
-C_2D(7).Data(repmat(bw_2D_invalid, [1 1 size(C_2D(7).Data, 3)])) = NaN; % Set invalid Fit results to NaN
+[bw_D_invalid, O_D(1).Data, O_D(2).Data, O_D(3).Data, O_D(4).Data] = ...
+    data_true_and_nan_collective_hole_reduction(O_D(5).Data<R_2_threshold, ...
+    O_D(1).Data, O_D(2).Data, O_D(3).Data, O_D(4).Data);
+O_D(7).Data(repmat(bw_D_invalid, [1 1 size(O_D(7).Data, 3)])) = NaN; % Set invalid Fit results to NaN
+[bw_G_invalid, O_G(1).Data, O_G(2).Data, O_G(3).Data, O_G(4).Data] = ...
+    data_true_and_nan_collective_hole_reduction(O_G(5).Data<R_2_threshold, ...
+    O_G(1).Data, O_G(2).Data, O_G(3).Data, O_G(4).Data);
+O_G(7).Data(repmat(bw_G_invalid, [1 1 size(O_G(7).Data, 3)])) = NaN; % Set invalid Fit results to NaN
+[bw_2D_invalid, O_2D(1).Data, O_2D(2).Data, O_2D(3).Data, O_2D(4).Data] = ...
+    data_true_and_nan_collective_hole_reduction(O_2D(5).Data<R_2_threshold, ...
+    O_2D(1).Data, O_2D(2).Data, O_2D(3).Data, O_2D(4).Data);
+O_2D(7).Data(repmat(bw_2D_invalid, [1 1 size(O_2D(7).Data, 3)])) = NaN; % Set invalid Fit results to NaN
 
 % Evaluate and show 2D/G AND D/G intensity ratios.
-C_I_DperG = C_D(1).copy();
-C_I_DperG.Data = C_D(1).Data ./ C_G(1).Data;
-C_I_DperG.Name = 'Cleaned<I(D)/I(G)';
+O_I_DperG = O_D(1).copy();
+O_I_DperG.Data = O_D(1).Data ./ O_G(1).Data;
+O_I_DperG.Name = 'Cleaned<I(D)/I(G)';
 
-C_I_2DperG = C_2D(1).copy();
-C_I_2DperG.Data = C_2D(1).Data ./ C_G(1).Data;
-C_I_2DperG.Name = 'Cleaned<I(2D)/I(G)';
+O_I_2DperG = O_2D(1).copy();
+O_I_2DperG.Data = O_2D(1).Data ./ O_G(1).Data;
+O_I_2DperG.Name = 'Cleaned<I(2D)/I(G)';
 
 % Similar area-ratios can be evaluated using the areas of Gaussian and
 % Lorentzian, Area_G = P(1,:).*P(3,:).*sqrt(pi./log(2))./2) and 
@@ -148,8 +148,8 @@ C_I_2DperG.Name = 'Cleaned<I(2D)/I(G)';
 % of of filter_sum to estimate areas under the Raman peaks.
 
 figure;
-subplot(1, 2, 1); nanimagesc(C_I_DperG.Data.'); daspect([1 1 1]); title(C_I_DperG.Name);
-subplot(1, 2, 2); nanimagesc(C_I_2DperG.Data.'); daspect([1 1 1]); title(C_I_2DperG.Name);
+subplot(1, 2, 1); nanimagesc(O_I_DperG.Data.'); daspect([1 1 1]); title(O_I_DperG.Name);
+subplot(1, 2, 2); nanimagesc(O_I_2DperG.Data.'); daspect([1 1 1]); title(O_I_2DperG.Name);
 
 if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before continuing.
 close all;
@@ -169,10 +169,10 @@ h = helpdlg({'!!! (E3 iv.) Histograms of the previously cleaned intensity ratios
 
 %-------------------------------------------------------------------------%
 % !!! (E3 iv.) CALCULATE AND SHOW HISTOGRAMS
-C_hist_I_DperG = C_I_DperG.histogram();
-C_hist_I_2DperG = C_I_2DperG.histogram();
-figure; C_hist_I_DperG.plot();
-figure; C_hist_I_2DperG.plot();
+O_hist_I_DperG = O_I_DperG.histogram();
+O_hist_I_2DperG = O_I_2DperG.histogram();
+figure; O_hist_I_DperG.plot();
+figure; O_hist_I_2DperG.plot();
 
 if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before continuing.
 close all;

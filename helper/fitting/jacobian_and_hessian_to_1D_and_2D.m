@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [J, H] = jacobian_and_hessian_to_1D_and_2D(bw, J, H)
+function [J, H] = jacobian_and_hessian_to_1D_and_2D(bw, J, H),
     % This function converts problem with SD datasets and SP unknowns to
     % one (1) dataset and SD*SP unknowns, what is useful for lineshape fitting.
     % Implemented 21.8.2018 by Joonas T. Holmi

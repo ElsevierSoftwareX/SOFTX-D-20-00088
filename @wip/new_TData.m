@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function C_wit = new_TData(Version, Caption)
+function O_wit = new_TData(Version, Caption),
     if nargin < 2 || isempty(Version) || Version == 7,
         Tag_TData = wit('TData', [ ...
             wit('Version', int32(0)) ...
@@ -30,5 +30,5 @@ function C_wit = new_TData(Version, Caption)
             wit('HistoryList', [wit('Number Of History Entries', int32(0)) wit('Dates', uint32.empty) wit('Histories', '') wit('Types', int32.empty)]) ...
             ]);
     else, error('Unimplemented Version (%d)!', Version); end
-    C_wit = Tag_TData;
+    O_wit = Tag_TData;
 end

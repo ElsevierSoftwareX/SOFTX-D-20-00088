@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function X = interpret_X(obj, Unit_new, X)
+function X = interpret_X(obj, Unit_new, X),
     if nargin < 2, Unit_new = []; end % Do not change unit
     Info = obj.Info; % Load only once
     if nargin < 3, X = Info.X; end % Instead of custom input, use Info.X

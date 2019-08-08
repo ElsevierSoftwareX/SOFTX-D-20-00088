@@ -3,7 +3,7 @@
 % All rights reserved.
 
 % Used by @wid\plot.m and @wip\manager.m
-function [ h ] = invisible_figure( varargin )
+function h = invisible_figure(varargin),
     % Equivalent to figure-method but creates it as invisible!
     DefaultFigureVisible = get(0, 'DefaultFigureVisible'); % Store visibility
     set(0, 'DefaultFigureVisible', 'off'); % Set invisibility

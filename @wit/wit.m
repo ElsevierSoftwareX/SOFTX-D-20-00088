@@ -189,7 +189,7 @@ classdef wit < handle, % Since R2008a
             if ~isempty(obj.Magic), Magic = obj.Magic; % If available, obtain it from this
             else, Magic = obj.Root.Magic; end % Otherwise, obtain it from the root
         end
-		
+        
         
         
         %% OTHER METHODS
@@ -198,7 +198,7 @@ classdef wit < handle, % Since R2008a
         destroy(obj, skipParent); % Delete obj
         write(obj, File); % Write obj to file
         update(obj); % Update file format header information
-		reload(obj); % Reload obj.Data from file
+        reload(obj); % Reload obj.Data from file
         
         % Add new children
         adopt(obj, varargin);

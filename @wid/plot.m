@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function plot(obj, varargin)
+function plot(obj, varargin),
     % Supports following extra options, which can be followed by any number
     % of extra option inputs:
     % -compare: Shows comparison of S and all subsequent datas. Implemented
@@ -28,13 +28,10 @@ function plot(obj, varargin)
     srcCopyingQueue = [];
     evtCopyingQueue = [];
     
-    ind_extra_begin = find(strncmp(varargin, '-', 1));
-    ind_extra_end = [ind_extra_begin(2:end)-1 numel(varargin)];
-    showSidebar = ~any(strcmpi(varargin(ind_extra_begin), '-nosidebar')); % By default, show sidebar
-    showPreview = ~any(strcmpi(varargin(ind_extra_begin), '-nopreview')); % By default, show preview
-    showCursor = ~any(strcmpi(varargin(ind_extra_begin), '-nocursor')); % By default, show cursor
-    ind_compare = find(strcmpi(varargin(ind_extra_begin), '-compare'), 1, 'first');
-    ind_mask = find(strcmpi(varargin(ind_extra_begin), '-mask'), 1, 'first');
+    showSidebar = ~varargin_dashed_str_exists('nosidebar', varargin); % By default, show sidebar
+    showPreview = ~varargin_dashed_str_exists('nopreview', varargin); % By default, show preview
+    showCursor = ~varargin_dashed_str_exists('nocursor', varargin); % By default, show cursor
+    CompareDatas = varargin_dashed_str_datas('compare', varargin);
     fun_auto = @(x) true; % By default, enable autoscaling
     
     Name = obj.Name;
@@ -61,12 +58,8 @@ function plot(obj, varargin)
     set(Fig, 'Units', Units); % Restore Units
     
     % Mask Data
-    if ~isempty(ind_mask),
-        ind_begin = ind_extra_begin(ind_mask);
-        ind_end = ind_extra_end(ind_mask);
-        N = ind_end-ind_begin;
-        for ii = 1:N, [~, Data] = data_mask(Data, varargin{ind_begin+ii}.Data); end
-    end
+    MaskDatas = varargin_dashed_str_datas('mask', varargin);
+    for ii = 1:numel(MaskDatas), [~, Data] = data_mask(Data, MaskDatas{ii}.Data); end
     
     if ~isempty(Data),
         switch(obj.Type),
@@ -226,7 +219,7 @@ function plot(obj, varargin)
     end
     
     % Added feature on 8th November 2017
-    function [] = uitable_selection_to_clipboard(src, evt),
+    function uitable_selection_to_clipboard(src, evt),
         if ~isCopyingBusy,
             isCopyingBusy = true;
             Data = get(src, 'Data'); % Backward compatible
@@ -249,7 +242,7 @@ function plot(obj, varargin)
                     str((1:lens(jj,kk))+kk-1+sum(lens_max(1:(kk-1))),jj) = strs{jj, kk};
                 end
             end
-            str = str(:)';
+            str = str(:).';
             % \t as column-separator and \n as row-separator
 %             str = '';
 %             for jj = 1:size(strs, 1),
@@ -260,6 +253,7 @@ function plot(obj, varargin)
 %                     else, str = sprintf('%s\t%s', str, strs{jj, kk}); end
 %                 end
 %             end
+            str = str(1:end-1); % Remove last \n
             clipboard('copy', str); % This line can cause error if called too often!
             pause(0.5); % And sleep for 500 ms. Strangely works better than java.lang.Thread.sleep(500);
             isCopyingBusy = false;
@@ -276,20 +270,20 @@ function plot(obj, varargin)
     
     % TDBitmap & TDGraph & TDImage
     % Transform the point
-    function [CP_in_space] = transform_CP(CP_in_pixels),
+    function CP_in_space = transform_CP(CP_in_pixels),
         if isempty(XTransformation), CP_in_space = [CP_in_pixels 1];
         else, [ ~, CP_in_space ] = obj.Project.transform_forced(XTransformation, permute(CP_in_pixels(:), [2 3 1])); end
     end
     
     % TDGraph
     % Update Graph Volume (CUSTOM TYPE)
-    function [] = updateGraphVolume(filter_range),
+    function updateGraphVolume(filter_range),
         set(0, 'CurrentFigure', Fig);
         Data_range = wid.crop_Graph_with_bg_helper(Data, Info.Graph, filter_range);
         data_plot_Volume(mynansum(Data_range, 3));
     end
     % Update Graph Image
-    function [] = updateGraphImage(filter_range),
+    function updateGraphImage(filter_range),
         set(0, 'CurrentFigure', Fig);
         Data_range = wid.crop_Graph_with_bg_helper(Data, Info.Graph, filter_range);
         bw_isnan_3rd_dim = all(isnan(Data_range), 3); % Test if all NaN in the same location
@@ -299,7 +293,7 @@ function plot(obj, varargin)
     end
     
     % Mouse tracking callback
-    function [] = subPreview(CP),
+    function subPreview(CP),
         if ~isBusy, % Proceed only if NOT busy
             isBusy = true; % Set busy flag true
             % Create figure on demand
@@ -331,21 +325,19 @@ function plot(obj, varargin)
         end
     end
 
-    function [] = plotSpectrum(indX, indY, fun_plot),
+    function plotSpectrum(indX, indY, fun_plot),
         % Handle first time
         if isempty(h_sub) || ~ishandle(h_sub(1)),
             if nargin < 3, fun_plot = []; end
             h_sub = plot_Spectrum(Fig_sub, Info.Graph, Info.GraphUnit, Data(indX,indY,:), Info.DataUnit, fun_plot, fun_auto());
-            if ~isempty(ind_compare),
+            if numel(CompareDatas) > 0,
                 hold on;
-                ind_begin = ind_extra_begin(ind_compare);
-                N = ind_extra_end(ind_compare)-ind_extra_begin(ind_compare);
                 Colors = get(get(h_sub(1), 'Parent'), 'ColorOrder');
                 set(h_sub(1), 'Color', Colors(1,:));
                 strs = {obj.Name};
                 counter = 0;
-                for ii = 1:N,
-                    C_compare = varargin{ind_begin+ii};
+                for ii = 1:numel(CompareDatas),
+                    C_compare = CompareDatas{ii};
                     for jj = 1:numel(C_compare),
                         if ~strcmp(C_compare(jj).Type, 'TDGraph'), continue; end
                         Data_compare = C_compare(jj).Data;
@@ -371,22 +363,18 @@ function plot(obj, varargin)
         else,
             set(h_sub(1), 'YData', Data(indX,indY,:));
             if fun_auto(), autoaxis(get(h_sub(1), 'Parent'), Info.Graph, Data(indX,indY,:)); end
-            if ~isempty(ind_compare),
-                ind_begin = ind_extra_begin(ind_compare);
-                N = ind_extra_end(ind_compare)-ind_extra_begin(ind_compare);
-                counter = 0;
-                for ii = 1:N,
-                    C_compare = varargin{ind_begin+ii};
-                    for jj = 1:numel(C_compare),
-                        if ~strcmp(C_compare(jj).Type, 'TDGraph'), continue; end
-                        Data_compare = C_compare(jj).Data;
-                        S_Data_latest = size(Data_compare);
-                        S_Data_latest(end+1:numel(S_Data)) = 1;
-                        if all(S_Data_latest(1:2) == S_Data(1:2) | S_Data_latest(1:2) == 1),
-                            counter = counter+1;
-                            Data_compare = bsxfun(@plus, Data_compare, zeros(S_Data(1:2)));
-                            set(h_sub(1+counter), 'YData', Data_compare(indX,indY,:));
-                        end
+            counter = 0;
+            for ii = 1:numel(CompareDatas),
+                C_compare = CompareDatas{ii};
+                for jj = 1:numel(C_compare),
+                    if ~strcmp(C_compare(jj).Type, 'TDGraph'), continue; end
+                    Data_compare = C_compare(jj).Data;
+                    S_Data_latest = size(Data_compare);
+                    S_Data_latest(end+1:numel(S_Data)) = 1;
+                    if all(S_Data_latest(1:2) == S_Data(1:2) | S_Data_latest(1:2) == 1),
+                        counter = counter+1;
+                        Data_compare = bsxfun(@plus, Data_compare, zeros(S_Data(1:2)));
+                        set(h_sub(1+counter), 'YData', Data_compare(indX,indY,:));
                     end
                 end
             end
@@ -394,7 +382,7 @@ function plot(obj, varargin)
     end
 
     % Plotting functions
-    function h = plot_Image(Data, DataUnit, SideUnit, SideWidth, SideHeight)
+    function h = plot_Image(Data, DataUnit, SideUnit, SideWidth, SideHeight),
         % Ensures consistent image formatting
         Data = permute(Data, [2 1 3]); % Permute to show image correctly!
         if size(Data, 3) == 1, % Plot grayscale data
@@ -419,7 +407,7 @@ function plot(obj, varargin)
         if nargin > 4, add_ticks_to_image( size(Data, 2), size(Data, 1), SideWidth, SideHeight, SideUnit ); end
     end
 
-    function h = plot_Spectrum(Fig, X, XUnit, Y, YUnit, fun, isAuto)
+    function h = plot_Spectrum(Fig, X, XUnit, Y, YUnit, fun, isAuto),
         % Ensures consistent plot formatting
         if isempty(Fig), Fig = gcf; end
         Ax = get(Fig, 'CurrentAxes');

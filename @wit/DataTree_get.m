@@ -11,7 +11,7 @@
 % wit-tree content is ignored, resulting in formatted tree with empty
 % structs. The generated field names obey first the sorted format names,
 % then the sorted unformatted wit-tree node names.
-function out = DataTree_get(parent, format)
+function out = DataTree_get(parent, format),
     if numel(parent) > 1, error('Cannot have multiple parents!'); end
     
     % Initialize empty format properly

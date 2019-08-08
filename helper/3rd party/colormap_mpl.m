@@ -6,7 +6,7 @@
 % under CC0 License as stated below.
 
 % Used by @wid\plot.m and ui\ui_sidebar_for_colormap_mpl.m
-function [map] = colormap_mpl(m, option)
+function map = colormap_mpl(m, option),
     if nargin < 1, m = []; end % empty by default
     if nargin < 2, option = 'viridis'; end % 'viridis' by default
 

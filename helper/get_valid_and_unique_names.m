@@ -8,7 +8,7 @@
 % specified. This utilizes built-in makeValidName and makeUniqueStrings.
 
 % This is needed when i.e. generating valid field names to structs!
-function strs = get_valid_and_unique_names(strs, prefix)
+function strs = get_valid_and_unique_names(strs, prefix),
     strs = regexprep(strs, '\s', '_'); % Replace any whitespace with _
     if nargin > 1, % Always add prefix if specified
         strs = regexprep(strs, '^(.*)$', sprintf('%s$1', prefix));
