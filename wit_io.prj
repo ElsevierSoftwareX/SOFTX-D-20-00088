@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="2687712708" file="\\home.org.aalto.fi\jtmakin1\data\Documents\MATLAB\WITec\wit_io\wit_io.prj" location="\\home.org.aalto.fi\jtmakin1\data\Documents\MATLAB\WITec\wit_io" name="wit_io" target="target.toolbox" target-name="Package Toolbox">
+  <configuration build-checksum="483153407" file="\\home.org.aalto.fi\jtmakin1\data\Documents\MATLAB\WITec\wit_io\wit_io.prj" location="\\home.org.aalto.fi\jtmakin1\data\Documents\MATLAB\WITec\wit_io" name="wit_io" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>wit_io</param.appname>
     <param.authnamewatermark>Joonas T. Holmi</param.authnamewatermark>
     <param.email>jtholmi@gmail.com</param.email>
@@ -11,7 +11,7 @@ For installation and usage details or more information, go to: https://gitlab.co
 
 Please report any bugs in https://gitlab.com/jtholmi/wit_io/issues.</param.description>
     <param.screenshot>${PROJECT_ROOT}\example.png</param.screenshot>
-    <param.version>1.1.1</param.version>
+    <param.version>1.1.2</param.version>
     <param.output>${PROJECT_ROOT}\wit_io.mltbx</param.output>
     <param.products.name>
       <item>MATLAB</item>
