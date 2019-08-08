@@ -355,7 +355,7 @@ classdef wid < handle, % Since R2008a
         [Data_range, Graph_range, Data_range_bg, range] = crop_Graph_with_bg_helper(Data, Graph, range, bg_avg_lower, bg_avg_upper);
         [Data_range, Graph_range, Data_range_bg, range] = reduce_Graph_with_bg_helper(Data, Graph, range, bg_avg_lower, bg_avg_upper); % DEPRECATED! USE ABOVE INSTEAD!
         [Graph, Data, W, D] = spectral_stitch_helper(Graphs_nm, Datas, isdebug);
-        [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, S_P_grid, varargin); % Add '-debug' as input to see debug plots
+        [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_SI_XY, varargin); % Add '-debug' as input to see debug plots
     end
     
     %% PRIVATE METHODS
