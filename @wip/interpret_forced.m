@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [ValueUnit, varargout] = interpret_forced(obj, I, Unit_new, Unit_old, varargin)
+function [ValueUnit, varargout] = interpret_forced(obj, I, Unit_new, Unit_old, varargin),
     ValueUnit = wip.ArbitraryUnit; % Default ValueUnit
     varargout = cellfun(@double, varargin, 'UniformOutput', false); % Default Value
     

@@ -20,7 +20,7 @@
 % OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 % SOFTWARE.
 
-function [ varargout ] = anyfun( FUN, varargin )
+function varargout = anyfun(FUN, varargin),
 %ANYFUN Uses arrayfun/cellfun with whatever Name-Value Pairs are found.
 %NOTE: The function is flexible. Inputs may be of any type and size as long
 %as they may consistently be repmat'd to exactly the same size. Dimension
@@ -74,7 +74,7 @@ function [ varargout ] = anyfun( FUN, varargin )
     end
     
     %% MEMBER FUNCTIONS
-    function [mat_cell] = fast_num2cell(mat) % == num2cell(mat)
+    function mat_cell = fast_num2cell(mat), % == num2cell(mat)
         mat_cell = cell(size(mat));
         for jj = 1:numel(mat), mat_cell{jj} = mat(jj); end
     end

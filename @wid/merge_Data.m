@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [Data_merged] = merge_Data(obj, dim)
+function Data_merged = merge_Data(obj, dim),
     Datas = {obj.Data};
     Data_classes = cellfun(@class, Datas, 'UniformOutput', false);
     Data_classes = unique(Data_classes);

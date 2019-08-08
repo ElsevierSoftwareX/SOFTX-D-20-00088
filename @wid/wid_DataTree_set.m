@@ -3,6 +3,6 @@
 % All rights reserved.
 
 % Helper function to SET (un)formatted struct-content to wit-tree.
-function wid_DataTree_set(obj, in, varargin)
+function wid_DataTree_set(obj, in, varargin),
     wit.DataTree_set(obj.Tag.Data, in, varargin{:});
 end

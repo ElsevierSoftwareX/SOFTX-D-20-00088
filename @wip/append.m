@@ -6,7 +6,7 @@
 % The FIRST wit-class is then MODIFIED (NOT COPIED) accordingly. This works
 % for WITec Project (*.WIP) and WITec Data (*.WID) WIT-structures.
 % CAUTION: THIS CAN MERGE WIT-TREES WITH INCOMPATIBLE VERSIONS!
-function [C_wit, varargout] = append(varargin),
+function [O_wit, varargout] = append(varargin),
     % Construct a 'only TData IDs'-flag array
     bw = cellfun(@iscell, varargin);
     varargin(bw) = cellfun(@(x) x{1}, varargin(bw), 'UniformOutput', false); % Remove cell-containers
@@ -19,26 +19,26 @@ function [C_wit, varargout] = append(varargin),
     varargin = varargin(~cellfun(@isempty, varargin));
     
     % Exit if no non-empty input remaining
-    C_wit = wit.Empty;
+    O_wit = wit.Empty;
     if numel(varargin) == 0, return; end % Exit here if no inputs
     
     % Append everything to the first non-empty object
-    C_wit = varargin{1}.Root; % Get the root
+    O_wit = varargin{1}.Root; % Get the root
     varargin = varargin(2:end); % Exclude the first
     bw = bw(2:end); % Exclude the first
     if numel(varargin) == 0, return; end % Exit here if no more inputs
     
     % Load the counters
-    Tag_ID = C_wit.regexp('^NextDataID', true);
+    Tag_ID = O_wit.regexp('^NextDataID', true);
     if isempty(Tag_ID), % Does not exist for WITec Data
-        offset = max([C_wit.regexp('^ID<TData<Data \d+(<Data(<WITec (Project|Data))?)?$').Data])+1;
+        offset = max([O_wit.regexp('^ID<TData<Data \d+(<Data(<WITec (Project|Data))?)?$').Data])+1;
         if isempty(offset), offset = 1; end % No data yet
     else, offset = Tag_ID.Data; end
     if isempty(offset), offset = 1; end % In case of empty NextDataId
-    Tag_Data = C_wit.regexp('^Data(<WITec (Project|Data))?$', true);
+    Tag_Data = O_wit.regexp('^Data(<WITec (Project|Data))?$', true);
     Tag_ND = Tag_Data.search('NumberOfData', 'Data'); % Tag_ND = Tag_Data.regexp('^NumberOfData<', true); % MAJOR bottleneck
     ND = Tag_ND.Data;
-    Tag_Viewer = C_wit.regexp('^Viewer(<WITec (Project|Data))?$', true);
+    Tag_Viewer = O_wit.regexp('^Viewer(<WITec (Project|Data))?$', true);
     if ~isempty(Tag_Viewer), % Does not exist for WITec Data
         Tag_NV = Tag_Viewer.regexp('^NumberOfViewer<', true);
         NV = Tag_NV.Data;
@@ -48,12 +48,12 @@ function [C_wit, varargout] = append(varargin),
     DataOrDataClassNames = wit.Empty;
     ViewerOrViewerClassNames = wit.Empty;
     for ii = 1:numel(varargin),
-        C_wit_ii = varargin{ii}.copy(); % Get copy of the given wit-tree
-        varargout{ii} = C_wit_ii; % Save copies also as output
+        O_wit_ii = varargin{ii}.copy(); % Get copy of the given wit-tree
+        varargout{ii} = O_wit_ii; % Save copies also as output
         
         % Repopulate all TData IDs first (TO ENSURE THAT INT32 IS ENOUGH!)
-        Tags_with_TData_ID = C_wit_ii.regexp('^ID<TData<Data \d+(<Data(<WITec (Project|Data))?)?$'); % Only TData IDs
-        Tags_with_ID = C_wit_ii.regexp('^(?!NextDataID)([^<]+ID(List)?(<[^<]*)*(<(Data|Viewer)(<WITec (Project|Data))?)?$)'); % List all other the IDs (except NextDataID) under Data and Viewer
+        Tags_with_TData_ID = O_wit_ii.regexp('^ID<TData<Data \d+(<Data(<WITec (Project|Data))?)?$'); % Only TData IDs
+        Tags_with_ID = O_wit_ii.regexp('^(?!NextDataID)([^<]+ID(List)?(<[^<]*)*(<(Data|Viewer)(<WITec (Project|Data))?)?$)'); % List all other the IDs (except NextDataID) under Data and Viewer
 %         fprintf('REPOPULATE\n');
         for jj = 1:numel(Tags_with_TData_ID),
             old = Tags_with_TData_ID(jj).Data;
@@ -89,8 +89,8 @@ function [C_wit, varargout] = append(varargin),
         end
         
         % Update the Data/DataClassName-pair numbering and append them
-        DataClassNames = C_wit_ii.regexp('^DataClassName \d+(<Data(<WITec (Project|Data))?)?$');
-        Datas = C_wit_ii.regexp('^Data \d+(<Data(<WITec (Project|Data))?)?$');
+        DataClassNames = O_wit_ii.regexp('^DataClassName \d+(<Data(<WITec (Project|Data))?)?$');
+        Datas = O_wit_ii.regexp('^Data \d+(<Data(<WITec (Project|Data))?)?$');
         str_DataClassNames = {DataClassNames.Name}; % Store names before the update to avoid dynamic bugs!
         str_Datas = {Datas.Name}; % Store names before the update to avoid dynamic bugs!
         for jj = 1:numel(str_DataClassNames),
@@ -104,8 +104,8 @@ function [C_wit, varargout] = append(varargin),
         
         if ~isempty(Tag_Viewer), % Does not exist for WITec Data
             % Update the Viewer/ViewerClassName-pair numbering and append them
-            ViewerClassNames = C_wit_ii.regexp('^ViewerClassName \d+(<Viewer(<WITec (Project|Data))?)?$');
-            Viewers = C_wit_ii.regexp('^Viewer \d+(<Viewer(<WITec (Project|Data))?)?$');
+            ViewerClassNames = O_wit_ii.regexp('^ViewerClassName \d+(<Viewer(<WITec (Project|Data))?)?$');
+            Viewers = O_wit_ii.regexp('^Viewer \d+(<Viewer(<WITec (Project|Data))?)?$');
             str_ViewerClassNames = {ViewerClassNames.Name}; % Store names before the update to avoid dynamic bugs!
             str_Viewers = {Viewers.Name}; % Store names before the update to avoid dynamic bugs!
             for jj = 1:numel(str_ViewerClassNames),

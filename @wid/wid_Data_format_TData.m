@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function format = wid_Data_format_TData(obj)
+function format = wid_Data_format_TData(obj),
     if isempty(obj.Version) || obj.Version == 7 || obj.Version == 6,
         % Define the file format fields
         % Each row: wit-tag name, {write-parser; read-parser}

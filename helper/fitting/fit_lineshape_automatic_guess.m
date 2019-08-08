@@ -16,7 +16,7 @@
 % If it uses a simplified lineshape (i.e. Lorentzian), then it should warn
 % the user. If it does not, then it should take function as input fun.
 % The peaks are then guessed gradually based on the lineshape. (25.6.2019)
-function [P0] = fit_lineshape_automatic_guess(x, Y, dim)
+function P0 = fit_lineshape_automatic_guess(x, Y, dim),
     % Written by Joonas T. Holmi
     if nargin < 3, dim = 3; end % By default, operate 3rd or spectral dimension
     

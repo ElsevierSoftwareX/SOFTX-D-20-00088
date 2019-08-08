@@ -27,7 +27,7 @@ uiwait(h); % Wait for helpdlg to be closed before continuing.
 
 %-------------------------------------------------------------------------%
 % Load all TDGraphs and set their SpectralUnits to '(nm)'.
-[C_wid, C_wip, n] = wip.read(file, '-all', '-Manager', {'-Type', 'TDGraph'}, '-SpectralUnit', '(nm)');
+[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-Manager', {'-Type', 'TDGraph'}, '-SpectralUnit', '(nm)');
 %-------------------------------------------------------------------------%
 
 
@@ -51,7 +51,7 @@ if ishandle(h), figure(h); uiwait(h); end
 % WARNING! The related instrumental errors, if NOT corrected for, can lead
 % to UNPHYSICAL stitching result in the overlapping regions, even if their
 % apparent stitching result looks smooth!
-[obj, X, Y] = C_wid.spectral_stitch('-debug'); % Here debug-mode is used to visualize the progress to the user. It can be used for double-checking. Remove '-debug' to disable such demonstration.
+[O_result, X, Y] = O_wid.spectral_stitch('-debug'); % Here debug-mode is used to visualize the progress to the user. It can be used for double-checking. Remove '-debug' to disable such demonstration.
 %-------------------------------------------------------------------------%
 
 
@@ -59,9 +59,9 @@ if ishandle(h), figure(h); uiwait(h); end
 %-------------------------------------------------------------------------%
 h = helpdlg({'!!! Spectral stitching has completed:' ...
     '' ...
-    'Here the 1st figure illustrates how each neighbouring datas were weighted. See the opened figures for the total-weighted datas, the original datas and the total-weights.' ...
+    '* Here the 1st figure illustrates how each neighbouring datas were weighted. See the opened figures for the total-weighted datas, the original datas and the total-weights.' ...
     '' ...
-    'Close this dialog to END and see the final result.'});
+    '* Close this dialog to END and see the final result.'});
 if ishandle(h), figure(h); uiwait(h); end
 %-------------------------------------------------------------------------%
 
@@ -69,7 +69,7 @@ if ishandle(h), figure(h); uiwait(h); end
 
 %-------------------------------------------------------------------------%
 close all;
-figure; obj.plot;
+figure; O_result.plot;
 %-------------------------------------------------------------------------%
 
 

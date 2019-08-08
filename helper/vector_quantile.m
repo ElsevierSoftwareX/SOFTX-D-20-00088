@@ -9,7 +9,6 @@ function Y = vector_quantile(x, P),
     % forcing it a column vector. Output will be same shape as P. Input can
     % be empty or contain NaN values. Invalid quantiles are treated as NaN
     % values. Input values are converted to a double type.
-    % Updated 22.8.2016
     x = double(x(:)); % Force a column vector and a double type
     x = sort(x); % Sort (NaNs will end up last)
     n = sum(~isnan(x)); % Number of non-NaN values

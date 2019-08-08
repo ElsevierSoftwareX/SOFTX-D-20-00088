@@ -32,21 +32,21 @@ uiwait(h); % Wait for helpdlg to be closed before continuing.
 %-------------------------------------------------------------------------%
 % Create new Project objects
 Version = 5; % Use version 5 here for forward-compability. For instance, WITec Project 2.1.
-C_wit = wip.new(Version); % Create new Project (*.WIP-format) WIT-tree root
-% C_wit = wid.new(Version); % Create new Project (*.WID-format) WIT-tree root
-C_wip = wip(C_wit); % Create its Project object
+O_wit = wip.new(Version); % Create new Project (*.WIP-format) WIT-tree root
+% O_wit = wid.new(Version); % Create new Project (*.WID-format) WIT-tree root
+O_wip = wip(O_wit); % Create its Project object
 
 % Or uncomment below to alternatively append to old Project objects
-% [~, C_wip, ~] = wip.read(file, '-all'); % Load all
-% C_wit = C_wip.Tree; % Get its underlying WIT-tree
-% Version = C_wip.Version; % Get file WIT-tree version
+% [~, O_wip, ~] = wip.read(file, '-all'); % Load all
+% O_wit = O_wip.Tree; % Get its underlying WIT-tree
+% Version = O_wip.Version; % Get file WIT-tree version
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
 % Create new TDBitmap with random content
-new_TDBitmap = wid.new_Bitmap(C_wit); % Create empty TDBitmap
+new_TDBitmap = wid.new_Bitmap(O_wit); % Create empty TDBitmap
 new_TDBitmap.Name = 'Customized TDBitmap';
 
 % Create customized Data
@@ -59,7 +59,7 @@ Data = randi(256, [SizeX_TDBitmap SizeY_TDBitmap SizeGraph_TDBitmap])-1; % Unifo
 new_TDBitmap.Data = Data;
 
 % Create customized transformations and interpretations
-new_TDBitmap_TSpace = wid.new_Transformation_Space(C_wit);
+new_TDBitmap_TSpace = wid.new_Transformation_Space(O_wit);
 % Read TDSpaceTransformation details in 'README on WIT-tag formatting.txt'.
 
 % Add links to transformations and interpretations
@@ -68,14 +68,14 @@ new_TDBitmap_Tag_Data.regexp('^SpaceTransformationID<TDBitmap<', true).Data = ne
 % new_TDBitmap_Tag_Data.regexp('^SecondaryTransformationID<TDBitmap<', true).Data = int32(0); % (v7) % Must be int32!
 
 % Append all new objects to Project
-C_wip.add_Data(new_TDBitmap, new_TDBitmap_TSpace); % Make new objects visible in Project-object
+O_wip.add_Data(new_TDBitmap, new_TDBitmap_TSpace); % Make new objects visible in Project-object
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
 % Create new Image<TDGraph with random content
-new_TDGraph = wid.new_Graph(C_wit); % Create empty Image<TDGraph
+new_TDGraph = wid.new_Graph(O_wit); % Create empty Image<TDGraph
 % new_TDGraph.SubType = 'Image'; % Set its ImageIndex
 % SubTypes are listed in @wid\wid_SubType_set.m and are as follows:
 % 'Image', 'Line', 'Point', 'Array', 'Histogram', 'Time' and 'Mask'
@@ -116,10 +116,10 @@ Graph_nm = Graph_nm + randn(size(Graph_nm)); % Add gaussian noise to spectral ax
 % [~, Graph_nm] = wip.interpret({'Spectral', ExcitationWavelength}, '(nm)', '(meV)', Graph_meV); % Direct conversion from meV to nm. Here ExcitationWavelength's extra input is only used when converting from relative units.
 
 % Create customized transformations and interpretations
-new_TDGraph_TSpace = wid.new_Transformation_Space(C_wit);
+new_TDGraph_TSpace = wid.new_Transformation_Space(O_wit);
 % Read TDSpaceTransformation details in 'README on WIT-tag formatting.txt'.
 
-new_TDGraph_TSpectral = wid.new_Transformation_LUT(C_wit);
+new_TDGraph_TSpectral = wid.new_Transformation_LUT(O_wit);
 new_TDGraph_TSpectral_Data = new_TDGraph_TSpectral.Data; % Get formatted struct once to speed-up
 new_TDGraph_TSpectral_Data.TDLUTTransformation.LUT = Graph_nm; % Its SpectralUnit is always (nm) under the hood until interpreted to other kind!
 new_TDGraph_TSpectral_Data.TDLUTTransformation.LUTSize = numel(Graph_nm); % Ignored by wit_io, but used in WITec software
@@ -128,7 +128,7 @@ new_TDGraph_TSpectral.Data = new_TDGraph_TSpectral_Data; % Save all changes once
 % Read TDLUTTransformation details in 'README on WIT-tag formatting.txt'.
 
 % Interpret Graph-variable (nm) as (rel. 1/cm)
-new_TDGraph_ISpectral = wid.new_Interpretation_Spectral(C_wit);
+new_TDGraph_ISpectral = wid.new_Interpretation_Spectral(O_wit);
 new_TDGraph_ISpectral.Data.TDSpectralInterpretation.ExcitationWaveLength = ExcitationWavelength; % Green laser
 new_TDGraph_ISpectral.Data.TDInterpretation.UnitIndex = 3; % (rel. 1/cm)
 % UnitIndex (TDInterpretation<TDSpectralInterpretation)
@@ -137,11 +137,11 @@ new_TDGraph_ISpectral.Data.TDInterpretation.UnitIndex = 3; % (rel. 1/cm)
 
 % Or interpret it as customized unit
 % GraphUnit = 'Randomized spectral axis unit'; % Custom spectral axis unit name
-% new_TDGraph_ISpectral = wid.new_Interpretation_Z(C_wit);
+% new_TDGraph_ISpectral = wid.new_Interpretation_Z(O_wit);
 % new_TDGraph_ISpectral.Data.TDZInterpretation.UnitName = GraphUnit;
 % Read TDZInterpretation details in 'README on WIT-tag formatting.txt'.
 
-new_TDGraph_IData = wid.new_Interpretation_Z(C_wit);
+new_TDGraph_IData = wid.new_Interpretation_Z(O_wit);
 new_TDGraph_IData.Data.TDZInterpretation.UnitName = DataUnit;
 % Read TDZInterpretation details in 'README on WIT-tag formatting.txt'.
 
@@ -154,14 +154,14 @@ new_TDGraph_Tag_Data.regexp('^XInterpretationID<TDGraph<', true).Data = new_TDGr
 new_TDGraph_Tag_Data.regexp('^ZInterpretationID<TDGraph<', true).Data = new_TDGraph_IData.Id; % Must be int32!
 
 % Append all new objects to Project
-C_wip.add_Data(new_TDGraph, new_TDGraph_TSpace, new_TDGraph_TSpectral, new_TDGraph_ISpectral, new_TDGraph_IData); % Make new objects visible in Project-object
+O_wip.add_Data(new_TDGraph, new_TDGraph_TSpace, new_TDGraph_TSpectral, new_TDGraph_ISpectral, new_TDGraph_IData); % Make new objects visible in Project-object
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
 % Create new TDImage with random content
-new_TDImage = wid.new_Image(C_wit); % Create empty TDImage
+new_TDImage = wid.new_Image(O_wit); % Create empty TDImage
 new_TDImage.Name = 'Customized TDImage';
 
 % Create customized Data
@@ -174,10 +174,10 @@ Data_TDImage = randn(SizeX_TDImage, SizeY_TDImage); % Double
 new_TDImage.Data = Data_TDImage;
 
 % Create customized transformations and interpretations
-new_TDImage_TSpace = wid.new_Transformation_Space(C_wit);
+new_TDImage_TSpace = wid.new_Transformation_Space(O_wit);
 % Read TDSpaceTransformation details in 'README on WIT-tag formatting.txt'.
 
-new_TDImage_IData = wid.new_Interpretation_Z(C_wit);
+new_TDImage_IData = wid.new_Interpretation_Z(O_wit);
 new_TDImage_IData.Data.TDZInterpretation.UnitName = DataUnit_TDImage;
 % Read TDZInterpretation details in 'README on WIT-tag formatting.txt'.
 
@@ -188,14 +188,14 @@ new_TDImage_Tag_Data.regexp('^PositionTransformationID<TDImage<', true).Data = n
 new_TDImage_Tag_Data.regexp('^ZInterpretationID<TDImage<', true).Data = new_TDImage_IData.Id; % Must be int32!
 
 % Append all new objects to Project
-C_wip.add_Data(new_TDImage, new_TDImage_TSpace, new_TDImage_IData); % Make new objects visible in Project-object
+O_wip.add_Data(new_TDImage, new_TDImage_TSpace, new_TDImage_IData); % Make new objects visible in Project-object
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
 % Create new TDText
-new_TDText = wid.new_Text(C_wit); % Create empty TDText
+new_TDText = wid.new_Text(O_wit); % Create empty TDText
 new_TDText.Name = 'Customized TDText';
 new_TDText.Data = {'Customized TDText example:', ''; ...
     '', ''; ...
@@ -204,18 +204,18 @@ new_TDText.Data = {'Customized TDText example:', ''; ...
     'Property 1:', 'Value 2.'; ...
     'Property 2:', 'Value 4.'};
 % Append all new objects to Project
-C_wip.add_Data(new_TDText); % Make new object visible in Project-object
+O_wip.add_Data(new_TDText); % Make new object visible in Project-object
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-% C_wip.write(); % Overwrite the original
+% O_wip.write(); % Overwrite the original
 
 new_file = [mfilename('fullpath') '.wip']; % Generate a new filename
-C_wip.write(new_file); % Write Project to the specified file
+O_wip.write(new_file); % Write Project to the specified file
 
-C_wip.manager('-all', '-closepreview'); % Show the newly created Project
+O_wip.manager('-all', '-closepreview'); % Show the newly created Project
 %-------------------------------------------------------------------------%
 
 

@@ -10,7 +10,7 @@
 
 % Here isWorkspaceOptimized is true by default, but is set only false when
 % used by Project Manager, which needs larger icons and vertical centering.
-function HtmlName = get_HtmlName(obj, isWorkspaceOptimized)
+function HtmlName = get_HtmlName(obj, isWorkspaceOptimized),
     if nargin < 2, isWorkspaceOptimized = true; end
     HtmlName = reshape({obj.Name}, size(obj));
     % Convert predefined characters to their Html-versions as defined in

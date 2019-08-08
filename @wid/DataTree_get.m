@@ -7,7 +7,7 @@
 % field ordering is that of the given wit tree, where available. If not
 % available, then it is appended and the ordering of format tree is
 % followed.
-function out = DataTree_get(parent, format)
+function out = DataTree_get(parent, format),
     out = struct();
     
     % Initialize empty format properly

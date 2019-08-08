@@ -27,14 +27,14 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before
 
 
 %-------------------------------------------------------------------------%
-[C_wid, C_wip, HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)'); % Load all the file plottable content
+[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)'); % Load all the file plottable content
 
 % Get handles to some specific data
-C_Text = C_wid(1); % Get object of "Global (Calibration Information)" at index 1
-C_Bitmap = C_wid(2); % Get object of "Exfoliated graphene (Gr) on SiO2/Si-substrate<Video Image (Data)" at index 2
-C_ImageScan = C_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
-C_Mask = C_wid(6); % Get object of "1-layer Gr<Mask 2" at index 6
-% To see these names, double-click HtmlNames-variable under your Workspace!
+O_Text = O_wid(1); % Get object of "Global (Calibration Information)" at index 1
+O_Bitmap = O_wid(2); % Get object of "Exfoliated graphene (Gr) on SiO2/Si-substrate<Video Image (Data)" at index 2
+O_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
+O_Mask = O_wid(6); % Get object of "1-layer Gr<Mask 2" at index 6
+% To see these names, double-click O_wid_HtmlNames-variable under your Workspace!
 
 
 
@@ -53,13 +53,13 @@ h = helpdlg({'!!! (E1C) Plotting demonstration of plottables (TDBitmap, TDGraph,
 
 %-------------------------------------------------------------------------%
 % Plottable objects
-figure; C_Bitmap.plot(); % TDBitmap with sidebar
-figure; C_ImageScan.plot(); % TDGraph with sidebar
-figure; C_Mask.plot('-nosidebar'); % TDImage WITHOUT SIDEBAR
-figure; C_Text.plot(); % TDText with sidebar'
+figure; O_Bitmap.plot(); % TDBitmap with sidebar
+figure; O_ImageScan.plot(); % TDGraph with sidebar
+figure; O_Mask.plot('-nosidebar'); % TDImage WITHOUT SIDEBAR
+figure; O_Text.plot(); % TDText with sidebar'
 
 % Non-plottable objects like TDSpaceTransformation
-figure; C_Bitmap.Info.XTransformation.plot(); % TDBitmap's TDSpaceTransformation with sidebar
+figure; O_Bitmap.Info.XTransformation.plot(); % TDBitmap's TDSpaceTransformation with sidebar
 
 if ishandle(h), figure(h); uiwait(h); end
 close all; % Close the plot

@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [ValueUnit, varargout] = transform(T, varargin)
+function [ValueUnit, varargout] = transform(T, varargin),
     ValueUnit = wip.ArbitraryUnit; % Default ValueUnit
     varargout = cellfun(@double, varargin, 'UniformOutput', false); % Default Value
     
@@ -10,12 +10,12 @@ function [ValueUnit, varargout] = transform(T, varargin)
     T_Data = T.Data; % Load Data-structure only once (to save CPU time)
     
     % Try to recognize StandardUnit or revert back to ArbitraryUnit
-	SU = T_Data.TDTransformation.StandardUnit; % Get transformation StandardUnit
+    SU = T_Data.TDTransformation.StandardUnit; % Get transformation StandardUnit
     ValueUnit = wip.interpret_StandardUnit(SU); % Unit after transformation
-	if strcmp(ValueUnit, SU), % Test whether StardardUnit was recognized or not
-		ValueUnit = wip.ArbitraryUnit; % If not, then revert back to ArbitraryUnit
-	end
-	
+    if strcmp(ValueUnit, SU), % Test whether StardardUnit was recognized or not
+        ValueUnit = wip.ArbitraryUnit; % If not, then revert back to ArbitraryUnit
+    end
+    
     % Specified transformations were reverse engineered to achieve interoperability (13.7.2016)
     switch(T.Type),
         case 'TDLinearTransformation',

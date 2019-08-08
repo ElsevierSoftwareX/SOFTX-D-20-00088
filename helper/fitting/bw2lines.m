@@ -28,11 +28,11 @@
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 % Used by fit_lineshape_automatic_guess.m
-function [ line_length, line_label ] = bw2lines( bw_lines )
+function [line_length, line_label] = bw2lines(bw_lines),
     % Function converts the 2nd dimension of a boolean map to lines.
     % Returns maps for length and label of lines.
     
-    % Updated 27.7.2016
+    % Updated 27.7.2016 by Joonas T. Holmi
     
     % Preparation
     line_cumsum = padarray(cumsum(bw_lines, 2), [0 1], 0, 'pre')'; % Cumsum when on line

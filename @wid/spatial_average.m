@@ -4,11 +4,13 @@
 
 % Calculates spatial average for the given object (be it TDBitmap, TDGraph
 % or TDImage).
-function [obj, Average] = spatial_average(obj)
+function [obj, Average] = spatial_average(obj),
+    % Pop states (even if not used to avoid push-pop bugs)
+    AutoCopyObj = obj.Project.popAutoCopyObj; % Get the latest value (may be temporary or permanent or default)
+    AutoModifyObj = obj.Project.popAutoModifyObj; % Get the latest value (may be temporary or permanent or default)
+    
     % Copy the object if permitted
-    if isempty(obj.Project) || obj.Project.AutoCopyObj,
-        obj = obj.copy();
-    end
+    if AutoCopyObj, obj = obj.copy(); end
     
     % Calculate spatial average, mimicing nanmean behaviour
     Data = obj.Data;
@@ -17,7 +19,7 @@ function [obj, Average] = spatial_average(obj)
     Average = sum(sum(Data, 1), 2)./sum(sum(~bw_nan, 1), 2); % Same as nanmean applied to both dimensions
     
     % Modify the object (or its copy) if permitted
-    if isempty(obj.Project) || obj.Project.AutoModifyObj,
+    if AutoModifyObj,
         obj.Data = Average;
         obj.Name = sprintf('Spatial Average<%s', obj.Name);
         obj.SubType = 'Point'; % Only relevant if Type == TDGraph

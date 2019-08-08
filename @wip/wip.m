@@ -42,6 +42,8 @@ classdef wip < handle, % Since R2008a
         ForceSpaceUnit = '';
         ForceSpectralUnit = '';
         ForceTimeUnit = '';
+        % Below LIFO (last in, first out) arrays with their default values.
+        % Update the default values (if changed) in their pop-functions.
         UseLineValid = true; % A feature of TDGraph and TDImage. If used, shows NaN where invalid.
         AutoCreateObj = true; % Automatically create a new object (whenever applicable). If false, then new_obj output should be empty.
         AutoCopyObj = true; % Automatically make a copy of the original object (whenever applicable). If false, then obj output should be originals.
@@ -67,11 +69,11 @@ classdef wip < handle, % Since R2008a
     %% PUBLIC METHODS
     methods
         % CONSTRUCTOR
-        function obj = wip(C_wit),
-            if nargin == 0, C_wit = wip.new(); end % Create minimal project
-            if ~isempty(C_wit),
-                obj.Tree = C_wit;
-                obj.Data = wid(C_wit);
+        function obj = wip(O_wit),
+            if nargin == 0, O_wit = wip.new(); end % Create minimal project
+            if ~isempty(O_wit),
+                obj.Tree = O_wit;
+                obj.Data = wid(O_wit);
             end
             obj.storeState(); % Store this state
         end
@@ -137,6 +139,8 @@ classdef wip < handle, % Since R2008a
         % Call storeState-function in order to save previous state and
         % temporarily alter any of the wip-class parameters and finally use
         % restoreState-function to reload previous state.
+        % NOTE (1.8.2019): Prefer pop- and push- functions below instead as
+        % these two may be removed in the future releases.
         function storedState = storeState(obj),
             storedState = {obj.ForceDataUnit, obj.ForceSpaceUnit, obj.ForceSpectralUnit, obj.ForceTimeUnit, obj.UseLineValid, obj.AutoCreateObj, obj.AutoCopyObj, obj.AutoModifyObj};
         end
@@ -146,8 +150,42 @@ classdef wip < handle, % Since R2008a
             end
         end
         
+        % LIFO (last in, first out) concept for UseLineValid
+        function latest = popUseLineValid(obj),
+            latest = obj.popBoolean('UseLineValid', true); % With default
+        end
+        function pushUseLineValid(obj, latest),
+            obj.pushBoolean('UseLineValid', latest);
+        end
+        
+        % LIFO (last in, first out) concept for AutoCreateObj
+        function latest = popAutoCreateObj(obj),
+            latest = obj.popBoolean('AutoCreateObj', true); % With default
+        end
+        function pushAutoCreateObj(obj, latest),
+            obj.pushBoolean('AutoCreateObj', latest);
+        end
+        
+        % LIFO (last in, first out) concept for AutoCopyObj
+        function latest = popAutoCopyObj(obj),
+            latest = obj.popBoolean('AutoCopyObj', true); % With default
+        end
+        function pushAutoCopyObj(obj, latest),
+            obj.pushBoolean('AutoCopyObj', latest);
+        end
+        
+        % LIFO (last in, first out) concept for AutoModifyObj
+        function latest = popAutoModifyObj(obj),
+            latest = obj.popBoolean('AutoModifyObj', true); % With default
+        end
+        function pushAutoModifyObj(obj, latest),
+            obj.pushBoolean('AutoModifyObj', latest);
+        end
+        
+        
+        
         % Open Project Manager with the given parameters
-        C_wid = manager(obj, varargin);
+        O_wid = manager(obj, varargin);
         
         % File writer
         write(obj, File);
@@ -161,26 +199,52 @@ classdef wip < handle, % Since R2008a
         % Helper functions for adding, removing and finding wid-objects
         add_Data(obj, varargin);
         destroy_Data(obj, varargin);
-        C_wid = find_Data(obj, ID);
+        O_wid = find_Data(obj, ID);
         
         % Transformations and interpretations (project version)
         [ValueUnit, varargout] = transform_forced(obj, S, varargin);
         [ValueUnit, varargout] = interpret_forced(obj, S, Unit_new, Unit_old, varargin);
     end
     
+    %% PRIVATE METHODS
+    methods (Access = private)
+        % GENERIC BOOLEAN LIFO (last in, first out) concept
+        function latest = popBoolean(obj, field, default),
+            if isempty(obj),
+                latest = default; % Return default value if an empty wip
+            else,
+                lifo_array = obj.(field);
+                latest = lifo_array(end);
+                if numel(lifo_array) > 1, % Pop element if not first
+                    obj.(field) = lifo_array(1:end-1);
+                end
+            end
+        end
+        function pushBoolean(obj, field, latest),
+            if ~islogical(latest) && ~isnumeric(latest),
+                error('Accepting only logical or numeric arrays!');
+            end
+            if ~isempty(obj), % Continue only if non-empty wip
+                latest = logical(latest(:)); % Force to logical column vector
+                ind_latest = 1:numel(latest);
+                obj.(field)(end+ind_latest) = latest; % Push elements in the given order
+            end
+        end
+    end
+    
     methods (Static)
         % Constructor WIP-formatted WIT-tree
-        C_wit = new(Version); % WITec Project WIT-tree
-        C_wit = new_TData(Version, Caption); % Only TData WIT-tree
+        O_wit = new(Version); % WITec Project WIT-tree
+        O_wit = new_TData(Version, Caption); % Only TData WIT-tree
         
         % Get valid DataClassName-Data pairs from the given WIT-tree
-        Pairs = get_Data_DataClassName_pairs(C_wit);
+        Pairs = get_Data_DataClassName_pairs(O_wit);
         
         % Appender of multiple WIT-trees (or Projects)
-        [C_wit, varargout] = append(varargin);
+        [O_wit, varargout] = append(varargin);
         
         % File reader
-        [C_wid, C_wip, HtmlNames] = read(varargin);
+        [O_wid, O_wip, O_wid_HtmlNames] = read(varargin);
         
         % File version
         Version = get_Root_Version(obj); % Can be wid-, wip- or wit-class

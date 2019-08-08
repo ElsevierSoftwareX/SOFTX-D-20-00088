@@ -2,8 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [fun_refresh, h_edit_1, h_edit_2, h_button_1, h_button_2, h_button_3, h_button_4, h_label_1, h_label_2] = ui_sidebar_for_clim(Fig)
-    % Updated 8.1.2019 by Joonas T. Holmi
+function [fun_refresh, h_edit_1, h_edit_2, h_button_1, h_button_2, h_button_3, h_button_4, h_label_1, h_label_2] = ui_sidebar_for_clim(Fig),
     if nargin < 1 || isempty(Fig), Fig = gcf; end % By default, update gcf
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
     if isempty(Parent), [~, Parent] = ui_sidebar(Fig); end % Create one if it does not exist
@@ -53,7 +52,7 @@ function [fun_refresh, h_edit_1, h_edit_2, h_button_1, h_button_2, h_button_3, h
     update_clever();
     fun_refresh = @refresh;
     
-    function [] = update_MRLCM(varargin),
+    function update_MRLCM(varargin),
         h_image = findobj(Ax, 'Type', 'image');
         CData = get(h_image, 'CData');
         if ~isempty(CData),
@@ -61,7 +60,7 @@ function [fun_refresh, h_edit_1, h_edit_2, h_button_1, h_button_2, h_button_3, h
         end
     end
     
-    function [] = update_MDLCA(varargin),
+    function update_MDLCA(varargin),
         h_image = findobj(Ax, 'Type', 'image');
         CData = get(h_image, 'CData');
         if ~isempty(CData),
@@ -69,7 +68,7 @@ function [fun_refresh, h_edit_1, h_edit_2, h_button_1, h_button_2, h_button_3, h
         end
     end
     
-    function [] = update_clever(varargin),
+    function update_clever(varargin),
         % Get smart 4-sigmas range for best visibility using clever statistics
         CData = get(findobj(Ax, 'Type', 'image'), 'CData');
         if ~isempty(CData),
@@ -81,7 +80,7 @@ function [fun_refresh, h_edit_1, h_edit_2, h_button_1, h_button_2, h_button_3, h
         end
     end
     
-    function [] = update_minmax(varargin),
+    function update_minmax(varargin),
         CData = get(findobj(Ax, 'Type', 'image'), 'CData');
         if ~isempty(CData),
             cmin = min(CData(:));
@@ -93,7 +92,7 @@ function [fun_refresh, h_edit_1, h_edit_2, h_button_1, h_button_2, h_button_3, h
         end
     end
     
-    function [] = update(varargin),
+    function update(varargin),
         CLim = get(Ax, 'CLim');
         if ~isempty(CLim),
             String_1 = sscanf(get(h_edit_1, 'String'), '%g');
@@ -106,7 +105,7 @@ function [fun_refresh, h_edit_1, h_edit_2, h_button_1, h_button_2, h_button_3, h
         end
     end
 
-    function [] = refresh(varargin),
+    function refresh(varargin),
         CLim = get(Ax, 'CLim');
         if ~isempty(CLim),
             set(h_edit_1, 'String', sprintf('%g', CLim(1)));

@@ -27,8 +27,7 @@
 % OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-function [h_mainbar, h_sidebar, h_button, h_button_2, h_button_3] = ui_sidebar(Fig, sidebar_Width)
-    % Updated 8.1.2019 by Joonas T. Holmi
+function [h_mainbar, h_sidebar, h_button, h_button_2, h_button_3] = ui_sidebar(Fig, sidebar_Width),
     if nargin < 1 || isempty(Fig), Fig = gcf; end % By default, update gcf
     if nargin < 2 || isempty(sidebar_Width), sidebar_Width = 100; end % By default, 100 pixels width
     
@@ -57,19 +56,19 @@ function [h_mainbar, h_sidebar, h_button, h_button_2, h_button_3] = ui_sidebar(F
     set(Fig, 'Visible', Visible); % Restore visibility
     
     % Close callback
-    function [] = callback_1(varargin), delete_uipanels(Fig); end
+    function callback_1(varargin), delete_uipanels(Fig); end
     
     % Close + Export callback
-    function [] = callback_2(varargin),
+    function callback_2(varargin),
         callback_1(varargin{:});
         callback_3(varargin{:});
     end
     
     % Export callback
-    function [] = callback_3(varargin), export_ui_figure(Fig); end
+    function callback_3(varargin), export_ui_figure(Fig); end
     
     % Proper resizing of the uipanels (mainbar, sidebar)
-    function [] = update(varargin),
+    function update(varargin),
         % Store previous Units
         fig_Units = get(Fig, 'Units');
         mainbar_Units = get(h_mainbar, 'Units');

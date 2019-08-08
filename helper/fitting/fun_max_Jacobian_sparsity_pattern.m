@@ -28,7 +28,7 @@
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 % Used by "debug and testing\testing.m"
-function J_pattern = fun_max_Jacobian_sparsity_pattern(F, Y, varargin)
+function J_pattern = fun_max_Jacobian_sparsity_pattern(F, Y, varargin),
     % Find the maximal Jacobian sparsity pattern by NaN-value probing. This
     % function accepts a 2-D matrix function F(Y, varargin{:}) with a
     % working 2-D input example, where size(F, 2) == size(Y, 2). Here

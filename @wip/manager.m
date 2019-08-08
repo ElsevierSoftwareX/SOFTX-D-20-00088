@@ -2,64 +2,66 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function C_wid = manager(obj, varargin)
+function O_wid = manager(obj, varargin),
     if isempty(obj), error('No project given!'); end
     
+    % START OF VARARGIN PARSING
+    
     % Parse extra arguments
-    plottable_types = {'TDBitmap', 'TDGraph', 'TDImage', 'TDText'}; % Default
-    ind_extra_begin = find(strncmp(varargin, '-', 1));
-    ind_extra_end = [ind_extra_begin(2:end)-1 numel(varargin)];
-    show_all = any(strcmpi(varargin(ind_extra_begin), '-all')); % By default, show only all plottable
-    is_multiple_selection = ~any(strcmpi(varargin(ind_extra_begin), '-singlesection')); % By default, multiple selection
-    show_manager = ~any(strcmpi(varargin(ind_extra_begin), '-nomanager')); % By default, show manager
-    show_preview = ~any(strcmpi(varargin(ind_extra_begin), '-nopreview')); % By default, show preview
-    close_preview = any(strcmpi(varargin(ind_extra_begin), '-closepreview')); % By default, keep preview figures opened
-    ind_Title = find(strcmpi(varargin(ind_extra_begin), '-Title'), 1, 'first');
+    show_all = varargin_dashed_str_exists('all', varargin); % By default, show only all plottable
+    is_multiple_selection = ~varargin_dashed_str_exists('singlesection', varargin); % By default, multiple selection
+    show_indices = varargin_dashed_str_exists('indices', varargin); % By default, do not show indices
+    show_sorted = ~varargin_dashed_str_exists('nosort', varargin); % By default, show sorted
+    show_manager = ~varargin_dashed_str_exists('nomanager', varargin); % By default, show manager
+    show_preview = ~varargin_dashed_str_exists('nopreview', varargin); % By default, show preview
+    close_preview = varargin_dashed_str_exists('closepreview', varargin); % By default, keep preview figures opened
+    
     % Check if Title was specified
+    datas = varargin_dashed_str_datas('Title', varargin, -1);
     Title = '';
-    if ~isempty(ind_Title) && ind_extra_end(ind_Title)-ind_extra_begin(ind_Title) > 0,
-        Title = varargin{ind_extra_end(ind_Title)};
-    end
-    ind_Type = find(strcmpi(varargin(ind_extra_begin), '-Type'), 1, 'first');
+    if numel(datas) > 0, Title = datas{1}; end
+    
     % Check if Type was specified
-    Type = plottable_types;
-    if ~isempty(ind_Type) && ind_extra_end(ind_Type)-ind_extra_begin(ind_Type) > 0,
-        Type = varargin{ind_extra_end(ind_Type)};
-        if ~iscell(Type), Type = {Type}; end
-    end
+    datas = varargin_dashed_str_datas('Type', varargin, -1);
+    Type = {'TDBitmap', 'TDGraph', 'TDImage', 'TDText'}; % Default
+    if numel(datas) > 0, Type = datas; end
+    
     % Check if SubType was specified
-    ind_SubType = find(strcmpi(varargin(ind_extra_begin), '-SubType'), 1, 'first');
+    datas = varargin_dashed_str_datas('SubType', varargin, -1);
     SubType = repmat({''}, size(Type));
-    if ~isempty(ind_SubType) && ind_extra_end(ind_SubType)-ind_extra_begin(ind_SubType) > 0,
-        SubType = varargin{ind_extra_end(ind_SubType)};
-        if ~iscell(SubType), SubType = {SubType}; end
-    end
+    if numel(datas) > 0, SubType = datas; end
+    
+    % Check if Data was specified
+    datas = varargin_dashed_str_datas('Data', varargin, -1);
+    O_wid = obj.Data; % Get all the objects in the project % ASSUMING THAT PROJECT HAS SELF-CONSISTENT WID-DATA!
+    if numel(datas) > 0, O_wid = datas{1}; end
+    if isempty(O_wid), return; end % Exit if no project data
+    
+    % END OF VARARGIN PARSING
     
     %http://undocumentedmatlab.com/blog/matlab-java-memory-leaks-performance
     %http://undocumentedmatlab.com/blog/setting-status-bar-components
     %http://undocumentedmatlab.com/blog/matlab-callbacks-for-java-events
     
-    % Get all the objects in the project
-    C_wid = obj.Data; % ASSUMING THAT PROJECT HAS SELF-CONSISTENT WID-DATA!
-    if isempty(C_wid), return; end % Exit if no project data
-    
     % Keep only the plottable types
     if ~show_all,
-        bw = false(size(C_wid));
+        bw = false(size(O_wid));
         for ii = 1:numel(Type),
             type_ii = Type{ii};
-            bw1 = strncmp({C_wid.Type}, type_ii, numel(type_ii));
+            bw1 = strncmp({O_wid.Type}, type_ii, numel(type_ii));
             subtype_ii = SubType{ii};
-            bw2 = strncmp({C_wid.SubType}, subtype_ii, numel(subtype_ii));
+            bw2 = strncmp({O_wid.SubType}, subtype_ii, numel(subtype_ii));
             bw(bw1 & bw2) = true; % Keep only specified types and subtypes
         end
-        C_wid = C_wid(bw);
-        if isempty(C_wid), return; end % Exit if no project data
+        O_wid = O_wid(bw);
+        if isempty(O_wid), return; end % Exit if no project data
     end
     
     % Sort by ID
-    [~, idx_sorted] = sort([C_wid.Id]);
-    C_wid = C_wid(idx_sorted);
+    if show_sorted,
+        [~, idx_sorted] = sort([O_wid.Id]);
+        O_wid = O_wid(idx_sorted);
+    end
     
     % Do not show manager if specified so, and exit
     if ~show_manager, return; end
@@ -90,21 +92,22 @@ function C_wid = manager(obj, varargin)
     height_table = 60;
     
     % First create simple list
-    list = C_wid.get_HtmlName(false); % Get ProjectManager-optimized names
+    list = O_wid.get_HtmlName(false); % Get ProjectManager-optimized names
     % Then modify the created list by adding filenames whenever needed (6.11.2017)
     files = cell(size(list));
     prev = ''; % Keep track of the previous filename
-    for ii = 1:numel(C_wid), % Add only the first filename and omit immediately subsequent duplicates
-        this = C_wid(ii).Tag.Data.File;
+    for ii = 1:numel(O_wid), % Add only the first filename and omit immediately subsequent duplicates
+        this = O_wid(ii).Tag.Data.File;
         if isempty(prev) || ~strcmp(this, prev);
             files{ii} = this;
             prev = this;
         end
     end
-    for ii = 1:numel(C_wid),
+    for ii = 1:numel(O_wid),
+        if show_indices, list{ii} = strrep(list{ii}, '&nbsp;', sprintf('&nbsp;<b>%d</b>. ', ii)); end
         if isempty(files{ii}), continue; end
         [pathstr, name, ext] = fileparts(files{ii});
-        list{ii} = strrep(list{ii}, '<html>', ['<html>&#x25BE; <b>' name ext '</b> (v' sprintf('%d', C_wid(ii).Version) ') @ ' pathstr ':<br>']);
+        list{ii} = strrep(list{ii}, '<html>', ['<html>&#x25BE; <b>' name ext '</b> (v' sprintf('%d', O_wid(ii).Version) ') @ ' pathstr ':<br>']);
     end
     
     % Create list using Java
@@ -141,11 +144,11 @@ function C_wid = manager(obj, varargin)
     indices = []; % Store old indices (to be updated by MouseReleasedCallback)
     if nargout > 0,
         waitfor(fig); % If output is expected, then wait until the manager is closed!
-        C_wid = C_wid(indices(~isnan(indices))); % ~isnan removes NaN's due to deselecting indices
+        O_wid = O_wid(indices(~isnan(indices))); % ~isnan removes NaN's due to deselecting indices
     end
     
     % To handle main window closing (and '-closepreview'-option)
-    function [] = CloseRequestFcn(varargin),
+    function CloseRequestFcn(varargin),
         if isBusy, % Test if there are other unfinished duties
             needClosing = true; % And expect a close-call elsewhere
         else,
@@ -160,7 +163,7 @@ function C_wid = manager(obj, varargin)
     end
     
     % For KeyReleasedCallback and MouseReleasedCallback
-    function [] = ReleasedCallback(h, varargin),
+    function ReleasedCallback(h, varargin),
         if ~isBusy, % Proceed only if NOT busy
             isBusy = true;
             h_Waitbar = waitbar(0, 'Please wait...');
@@ -190,7 +193,7 @@ function C_wid = manager(obj, varargin)
                 indices(idx) = next_indices(jj); % Store current truly new index
                 if isPreview, 
                     invisible_figure(idx+fig_offset); % Create new invisible figure
-                    plot(C_wid(next_indices(jj))); % Show data
+                    plot(O_wid(next_indices(jj))); % Show data
                 end
                 waitbar(jj / N_new);
             end
@@ -210,7 +213,7 @@ function C_wid = manager(obj, varargin)
     end
     
     % Proper resizing of the uitable (topbar, bottombar)
-    function [] = update(varargin),
+    function update(varargin),
         % Store previous Units
         fig_Units = get(fig, 'Units');
         hcontainer_Units = get(hcontainer, 'Units');
@@ -257,7 +260,7 @@ function C_wid = manager(obj, varargin)
 
     % MouseMovedCallback, which sets JList-item name as tooltip string
     % https://undocumentedmatlab.com/blog/setting-listbox-mouse-actions/
-    function MouseMovedCallback(jListbox, jEventData)
+    function MouseMovedCallback(jListbox, jEventData),
         % Get the current mouse position
         mousePosition = java.awt.Point(jEventData.getX, jEventData.getY);
         % Get the currently-hovered JList-item

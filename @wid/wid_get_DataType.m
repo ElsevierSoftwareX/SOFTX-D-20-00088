@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function Data = wid_get_DataType(obj, Data)
+function Data = wid_get_DataType(obj, Data),
     % Assuming that the given data is binary stream in uint8 format!
     Data = Data(:); % Force vector!
     DataType = obj.Tag.Data.regexp('^DataType<', true).Data;

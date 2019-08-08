@@ -11,7 +11,7 @@
 % WARNING! The related instrumental errors, if NOT corrected for, can lead
 % to UNPHYSICAL stitching result in the overlapping regions, even if their
 % apparent stitching result looks smooth!
-function [Graph, Data, W, D] = spectral_stitch_helper(Graphs_nm, Datas, isdebug)
+function [Graph, Data, W, D] = spectral_stitch_helper(Graphs_nm, Datas, isdebug),
     % Test if '-debug' was given
     if nargin < 3, isdebug = false; end % By default, hide debug plots
     

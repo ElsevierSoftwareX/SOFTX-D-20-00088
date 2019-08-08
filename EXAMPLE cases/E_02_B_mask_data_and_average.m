@@ -28,12 +28,12 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before
 
 
 %-------------------------------------------------------------------------%
-[C_wid, C_wip, HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)'); % Load all the file plottable content
+[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)'); % Load all the file plottable content
 
 % Get handles to some specific data
-C_ImageScan = C_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
-C_Mask = C_wid(6); % Get object of "1-layer Gr<Mask 2" at index 6
-% To see these names, double-click HtmlNames-variable under your Workspace!
+O_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
+O_Mask = O_wid(6); % Get object of "1-layer Gr<Mask 2" at index 6
+% To see these names, double-click O_wid_HtmlNames-variable under your Workspace!
 
 
 
@@ -55,17 +55,16 @@ h = helpdlg({'!!! (E2B i.) Masking of the ImageScan data:' ...
 
 %-------------------------------------------------------------------------%
 % CASE (E2B i. A.):
-% figure; C_ImageScan.plot('-mask', C_Mask); % Show NaN-masked Image<TDGraph with sidebar
+% figure; O_ImageScan.plot('-mask', O_Mask); % Show NaN-masked Image<TDGraph with sidebar
 
 % CASE (E2B i. B.):
-C_masked = C_ImageScan.image_mask(C_Mask); % Mask data (second input is mask)
-% figure; C_masked.plot(); % GraphLine with sidebar
+O_masked = O_ImageScan.image_mask(O_Mask); % Mask data (second input is mask)
+% figure; O_masked.plot(); % GraphLine with sidebar
 
 % CASE (E2B i. C.):
-% C_mask = C_ImageScan.image_mask_editor(); % Create a new mask using C_ImageScan as background!
-obj.Project.AutoCreateObj = false; % Avoid creating a new mask object
-[~, C_Mask.Data] = C_ImageScan.image_mask_editor(C_Mask.Data); % Edit mask C_mask using C_ImageScan as background!
-obj.Project.AutoCreateObj = true;
+% O_mask = O_ImageScan.image_mask_editor(); % Create a new mask using O_ImageScan as background!
+obj.Project.pushAutoCreateObj(false); % Avoid TEMPORARILY creating a new mask object
+[~, O_Mask.Data] = O_ImageScan.image_mask_editor(O_Mask.Data); % Edit mask O_mask using O_ImageScan as background!
 close all; % Close the plot
 %-------------------------------------------------------------------------%
 
@@ -80,8 +79,8 @@ h = helpdlg({'!!! (E2B ii.) Getting spatial average of the previously masked dat
 
 
 %-------------------------------------------------------------------------%
-C_avg = C_masked.spatial_average();
-figure; C_avg.plot; % Point<TDGraph with sidebar
+O_avg = O_masked.spatial_average();
+figure; O_avg.plot; % Point<TDGraph with sidebar
 if ishandle(h), figure(h); uiwait(h); end
 close all; % Close the plot
 %-------------------------------------------------------------------------%

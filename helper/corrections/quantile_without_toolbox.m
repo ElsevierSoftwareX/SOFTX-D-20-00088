@@ -6,7 +6,6 @@
 function Y = quantile_without_toolbox(X, p, dim),
     % Mimics built-in quantile, which requires Statistics and Machine
     % Learning Toolbox. Input values are converted to double-type.
-    % Updated 12.3.2019
     if ~isscalar(p) || p < 0 || p > 1,
         error('Cumulative probability value, p must be a scalar [0, 1]!');
     end

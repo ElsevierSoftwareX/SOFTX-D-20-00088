@@ -4,7 +4,7 @@
 
 % Helper function to SET (un)formatted struct-content to wit-tree. This may
 % also be useful for debugging purposes.
-function DataTree_set(parent, in, format)
+function DataTree_set(parent, in, format),
     % Initialize empty format properly
     if nargin < 3 || isempty(format), format = cell(0,2); end
     

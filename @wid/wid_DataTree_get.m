@@ -3,6 +3,6 @@
 % All rights reserved.
 
 % Helper function to GET (un)formatted struct-content to wit-tree.
-function out = wid_DataTree_get(obj, varargin)
+function out = wid_DataTree_get(obj, varargin),
     out = wit.DataTree_get(obj.Tag.Data, varargin{:});
 end

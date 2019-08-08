@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function Graph = interpret_Graph(obj, Unit_new, Graph)
+function Graph = interpret_Graph(obj, Unit_new, Graph),
     if nargin < 2, Unit_new = []; end % Do not change unit
     Info = obj.Info; % Load only once
     if nargin < 3, Graph = Info.Graph; end % Instead of custom input, use Info.Graph
