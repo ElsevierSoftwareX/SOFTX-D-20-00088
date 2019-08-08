@@ -72,10 +72,10 @@ if ishandle(h), figure(h); uiwait(h); end
 
 
 
-% Also, ask the algorithm to NOT crop the edge patterns away, which it is
+% Also, ask the algorithm to crop the edge patterns away, which it is
 % not often good at resolving due to lack of information at those regions.
 
-O_new_Bitmap_nocrop = O_Bitmap.unpattern_video_stitching(N_best, '-nocrop'); % Use known optimal solution instead of asking for the code to scan through the options
+O_new_Bitmap_crop = O_Bitmap.unpattern_video_stitching(N_best, '-crop'); % Use known optimal solution instead of asking for the code to scan through the options
 
 
 
@@ -101,7 +101,7 @@ if ishandle(h), figure(h); uiwait(h); end
 
 %-------------------------------------------------------------------------%
 figure; O_new_Bitmap.plot;
-figure; O_new_Bitmap_nocrop.plot;
+figure; O_new_Bitmap_crop.plot;
 
 % O_wip.write(); % Save the results by overwriting the original file
 %-------------------------------------------------------------------------%
