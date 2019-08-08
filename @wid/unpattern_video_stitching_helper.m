@@ -55,8 +55,7 @@
 
 % OPTIONAL EXTRA ARGUMENTS (case-insensitive):
 % '-Debug': Shows the debug plots that help to follow the procedure
-% '-NoCrop': The less reliable edge regions of the final result will not be
-% automatically cropped down to the best region.
+% '-Crop': Crop out the less reliable edge regions from the final result.
 % '-Flat': Used for visually flat images and involves less computing.
 % '-RestoreTooBright': Does not modify too bright (=max intensity) regions.
 % '-TrueBlackColor': Provide [R G B] if the camera has a known dark level.
@@ -123,7 +122,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     UseMedian = varargin_dashed_str_exists('UseMedian', varargin); % By default, use mean values
     RollingWindowAnalysis = varargin_dashed_str_exists('RollingWindowAnalysis', varargin); % By default, smoothen the image
     GlobalRollingWindowAnalysis = varargin_dashed_str_exists('GlobalRollingWindowAnalysis', varargin); % By default, smoothen the image
-    CropEdgePatterns = ~varargin_dashed_str_exists('NoCrop', varargin); % By default, crop the image
+    CropEdgePatterns = varargin_dashed_str_exists('Crop', varargin); % By default, do not crop the image
     AutoIgnoreChannels = ~varargin_dashed_str_exists('DisableAutoIgnoreChannels', varargin); % By default, automatically ignore channels that have 50% too dark or too bright in the image
     Debug = varargin_dashed_str_exists('Debug', varargin); % By default, do not show Debug visuals
     
