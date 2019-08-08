@@ -17,8 +17,9 @@
 % * The last char array input is taken as new class, overwriting 'double'.
 % * If '-isarray' is found, then do not force-to-column-and-permute all (or
 % the boolean array specified selection) of the subindices.
+% * If '-nobsxfun' is found, then skip using bsxfun.
 
-% Other special dashed string inputs and their interpretations:
+% Possible dashed string inputs (case-insensitive) and their functionality:
 % * '-truncate': Truncates the out-of-bound subindices to the bound limits.
 % * '-replace': Replaces the out-of-bound subindices by nan (= zero if
 % integer) or by the '-value' specified replacement value.
@@ -39,49 +40,75 @@
 
 % OPTIMIZATIONS: The execution performance has been optimized for multiple
 % consecutive calls, for instance, due to loops (although it will greatly
-% degrade when using the dashed string inputs). The performance drawback of
-% using the dashed string inputs may be fixed if requested.
+% degrade when using the dashed string inputs except '-isarray' and
+% '-nobsxfun'). The performance drawback of using the dashed string inputs
+% may be fixed if requested.
 function [ind, isAnyAtClassMax, isAtClassMax] = generic_sub2ind(arraySize, varargin),
+    % Defaults
+    noBsxfun = false;
+    isArray = false;
+    doTruncate = false;
+    doReplace = false;
+    value = NaN;
+    doMirror = false;
+    doCirculate = false;
+    
     % Check if any of the special dashed strings were specified
-    if any(strncmp(varargin, '-', 1)), % Parse ONLY IF exists (for speed-up!) % Call to varargin_dashed_str_any_exists(varargin) avoided for slight speed-up
-        [isArray, datas] = varargin_dashed_str_exists_and_datas('isarray', varargin, -1);
-        if isArray && numel(datas) > 0, isArray = logical(datas{1}); end
+    B_dashed = strncmp(varargin, '-', 1); % Call to varargin_dashed_str_any_exists(varargin) avoided for slight speed-up
+    if any(B_dashed), % Parse ONLY IF exists (for speed-up!)
+        N_dashed = sum(B_dashed);
+        ind_dashed = find(B_dashed);
+        strs_dashed = varargin(B_dashed);
+        B_continue = false; % Valid flag only when sum(B_dashed) == 1
+        
+        % Look for '-noBsxfun' (speed optimized i.e. due to use in loops),
+        noBsxfun = any(strcmpi(strs_dashed, '-nobsxfun'));
+        if noBsxfun, isArray = true; % By default assume that the arrays are all of proper size! This can be overridden by '-isarray'.
+        else, B_continue = true; end
+        
+        % Look for '-isarray' (speed optimized i.e. due to use in loops),
+        if N_dashed > 1 || (N_dashed == 1 && B_continue),
+            B_isArray = strcmpi(strs_dashed, '-isarray');
+            ind_isArray = find(B_isArray, 1, 'last');
+            isArray = ~isempty(ind_isArray);
+            if isArray,
+                ind_next = ind_dashed(ind_isArray)+1;
+                if ind_next < numel(varargin) && ind_isArray < numel(ind_dashed) && ind_next ~= ind_dashed(ind_isArray+1), % Test if next element after '-isarray' is not a dashed string
+                    isArray = logical(varargin{ind_next});
+                end
+            else, B_continue = true; end % Then '-isarray' does not exist and search should go on
+        end
+        
+        % Look for other dashed strings
+        if N_dashed > 1 || (N_dashed == 1 && B_continue),
+            [doTruncate, datas] = varargin_dashed_str_exists_and_datas('truncate', strs_dashed, -1);
+            if doTruncate && numel(datas) > 0, doTruncate = logical(datas{1}); end
 
-        [doTruncate, datas] = varargin_dashed_str_exists_and_datas('truncate', varargin, -1);
-        if doTruncate && numel(datas) > 0, doTruncate = logical(datas{1}); end
+            [doReplace, datas] = varargin_dashed_str_exists_and_datas('replace', strs_dashed, -1);
+            if doReplace && numel(datas) > 0, doReplace = logical(datas{1}); end
 
-        [doReplace, datas] = varargin_dashed_str_exists_and_datas('replace', varargin, -1);
-        if doReplace && numel(datas) > 0, doReplace = logical(datas{1}); end
+            datas = varargin_dashed_str_datas('value', strs_dashed, -1);
+            value = NaN; % Default replacement value
+            if numel(datas) > 0, value = datas{1}; end
 
-        datas = varargin_dashed_str_datas('value', varargin, -1);
-        value = NaN; % Default replacement value
-        if numel(datas) > 0, value = datas{1}; end
+            [doMirror, datas] = varargin_dashed_str_exists_and_datas('mirror', strs_dashed, -1);
+            if doMirror && numel(datas) > 0, doMirror = logical(datas{1}); end
 
-        [doMirror, datas] = varargin_dashed_str_exists_and_datas('mirror', varargin, -1);
-        if doMirror && numel(datas) > 0, doMirror = logical(datas{1}); end
-
-        [doCirculate, datas] = varargin_dashed_str_exists_and_datas('circulate', varargin, -1);
-        if doCirculate && numel(datas) > 0, doCirculate = logical(datas{1}); end
-
-        % Remove any dashed strings and their datas
-        varargin = varargin_dashed_str_removed('', varargin);
-    else,
-        isArray = false;
-        doTruncate = false;
-        doReplace = false;
-        value = NaN;
-        doMirror = false;
-        doCirculate = false;
+            [doCirculate, datas] = varargin_dashed_str_exists_and_datas('circulate', strs_dashed, -1);
+            if doCirculate && numel(datas) > 0, doCirculate = logical(datas{1}); end
+        end
     end
     
     % Parse the cast class and the subindices
     newclass = 'double'; % Default <class> if not specified
+    isDouble = true; % Detect if casting is required at all
     N_numeric = 0;
     B_numeric = false(size(varargin));
     for ii = 1:numel(varargin),
         entry_ii = varargin{ii};
         if isnumeric(entry_ii), B_numeric(ii) = true; N_numeric = N_numeric+1;
-        elseif ischar(entry_ii), newclass = entry_ii; end % Use the last char array input if given
+        elseif B_dashed(ii), break; % Stop if dashed string detected
+        elseif ischar(entry_ii), newclass = entry_ii; isDouble = false; end % Use the last char array input if given
     end
     ind_numeric = find(B_numeric); % Much faster than preallocating the varargin
     
@@ -126,7 +153,8 @@ function [ind, isAnyAtClassMax, isAtClassMax] = generic_sub2ind(arraySize, varar
     arraySize = double(arraySize);
     offset = 1; % Initial offset (to be updated)
     if any(doReplace), B_replace = false; end % Initial value
-    ind = cast(1, newclass); % Initial value and cast to <class>
+    if isDouble, ind = 1; % Initial value without casting
+    else, ind = cast(1, newclass); end % Initial value and cast to <class>
     for ii = 1:D, % Loop each dimension
         % Update the offset (except for the first)
         if ii > 1, offset = offset .* arraySize(ii-1); end
@@ -187,8 +215,11 @@ function [ind, isAnyAtClassMax, isAtClassMax] = generic_sub2ind(arraySize, varar
         % built-in real/int min/max and related comparisons, but due to the
         % apparent implementation complexity, this feature was not
         % implemented.
-        ind_ii = cast(ind_ii, newclass); % Cast to <class>
-        ind = bsxfun(@plus, ind, ind_ii); % Grow ind
+        if ~isDouble, ind_ii = cast(ind_ii, newclass); end % Cast to <class>
+        
+         % Grow ind
+        if ~noBsxfun, ind = bsxfun(@plus, ind, ind_ii);
+        else, ind = ind + ind_ii;
     end
     
     % Replace some out-of-bound values by the specified value
