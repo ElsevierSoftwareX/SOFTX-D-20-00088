@@ -36,53 +36,60 @@
 % ** For any 2-by-D matrix, the 1st and the 2nd row set the behaviour ON or
 % OFF for each dimension for the lower and upper out-of-bound subindices,
 % respectively.
+
+% OPTIMIZATIONS: The execution performance has been optimized for multiple
+% consecutive calls, for instance, due to loops (although it will greatly
+% degrade when using the dashed string inputs). The performance drawback of
+% using the dashed string inputs may be fixed if requested.
 function [ind, isAnyAtClassMax, isAtClassMax] = generic_sub2ind(arraySize, varargin),
     % Check if any of the special dashed strings were specified
-    [isArray, datas] = varargin_dashed_str_exists_and_datas('isarray', varargin, -1);
-    if isArray && numel(datas) > 0, isArray = logical(datas{1}); end
+    if any(strncmp(varargin, '-', 1)), % Parse ONLY IF exists (for speed-up!) % Call to varargin_dashed_str_any_exists(varargin) avoided for slight speed-up
+        [isArray, datas] = varargin_dashed_str_exists_and_datas('isarray', varargin, -1);
+        if isArray && numel(datas) > 0, isArray = logical(datas{1}); end
+
+        [doTruncate, datas] = varargin_dashed_str_exists_and_datas('truncate', varargin, -1);
+        if doTruncate && numel(datas) > 0, doTruncate = logical(datas{1}); end
+
+        [doReplace, datas] = varargin_dashed_str_exists_and_datas('replace', varargin, -1);
+        if doReplace && numel(datas) > 0, doReplace = logical(datas{1}); end
+
+        datas = varargin_dashed_str_datas('value', varargin, -1);
+        value = NaN; % Default replacement value
+        if numel(datas) > 0, value = datas{1}; end
+
+        [doMirror, datas] = varargin_dashed_str_exists_and_datas('mirror', varargin, -1);
+        if doMirror && numel(datas) > 0, doMirror = logical(datas{1}); end
+
+        [doCirculate, datas] = varargin_dashed_str_exists_and_datas('circulate', varargin, -1);
+        if doCirculate && numel(datas) > 0, doCirculate = logical(datas{1}); end
+
+        % Remove any dashed strings and their datas
+        varargin = varargin_dashed_str_removed('', varargin);
+    else,
+        isArray = false;
+        doTruncate = false;
+        doReplace = false;
+        value = NaN;
+        doMirror = false;
+        doCirculate = false;
+    end
     
-    [doTruncate, datas] = varargin_dashed_str_exists_and_datas('truncate', varargin, -1);
-    if doTruncate && numel(datas) > 0, doTruncate = logical(datas{1}); end
-    
-    [doReplace, datas] = varargin_dashed_str_exists_and_datas('replace', varargin, -1);
-    if doReplace && numel(datas) > 0, doReplace = logical(datas{1}); end
-    
-    datas = varargin_dashed_str_datas('value', varargin, -1);
-    value = NaN; % Default replacement value
-    if numel(datas) > 0, value = datas{1}; end
-    
-    [doMirror, datas] = varargin_dashed_str_exists_and_datas('mirror', varargin, -1);
-    if doMirror && numel(datas) > 0, doMirror = logical(datas{1}); end
-    
-    [doCirculate, datas] = varargin_dashed_str_exists_and_datas('circulate', varargin, -1);
-    if doCirculate && numel(datas) > 0, doCirculate = logical(datas{1}); end
-    
-    % Remove any dashed strings and their datas
-    varargin = varargin_dashed_str_removed('', varargin);
-    
-    % Parse the cast class
+    % Parse the cast class and the subindices
     newclass = 'double'; % Default <class> if not specified
-    B_char = cellfun(@ischar, varargin); % Find the char array inputs
-    newclasses = varargin(B_char); % Only the char array inputs
-    if numel(newclasses) > 0, newclass = newclasses{end}; end % Use the last char array input if given
-    varargin = varargin(~B_char); % Discard the char array inputs
-    
-    % Parse the subindices
-    B_numeric = cellfun(@isnumeric, varargin); % Find the numeric array inputs
-    varargin = varargin(B_numeric); % Only the numeric array inputs
+    N_numeric = 0;
+    B_numeric = false(size(varargin));
+    for ii = 1:numel(varargin),
+        entry_ii = varargin{ii};
+        if isnumeric(entry_ii), B_numeric(ii) = true; N_numeric = N_numeric+1;
+        elseif ischar(entry_ii), newclass = entry_ii; end % Use the last char array input if given
+    end
+    ind_numeric = find(B_numeric); % Much faster than preallocating the varargin
     
     % Maximum number of dimensions
-    D = max(numel(varargin), numel(arraySize));
-    
-    % Convert some scalars to 1-by-D arrays
-    if numel(arraySize) == 1, arraySize = repmat(arraySize, 1, D); end
-    if numel(isArray) == 1, isArray = repmat(isArray, 1, D); end
-    
-    % Convert some scalars to 2-by-D arrays
-    if numel(doTruncate) == 1, doTruncate = repmat(doTruncate, 2, D); end
-    if numel(doReplace) == 1, doReplace = repmat(doReplace, 2, D); end
-    if numel(doMirror) == 1, doMirror = repmat(doMirror, 2, D); end
-    if numel(doCirculate) == 1, doCirculate = repmat(doCirculate, 2, D); end
+    N_arraySize = numel(arraySize);
+    D = max(N_numeric, N_arraySize);
+    if N_arraySize == 1, arraySize = repmat(arraySize, 1, D);
+    else, arraySize(end+1:D) = 1; end
     
     % Convert vector of length N to 2-by-N matrix
     if sum(size(doTruncate) ~= 1) == 1, doTruncate = repmat(reshape(doTruncate, 1, []), 2, 1); end
@@ -90,29 +97,51 @@ function [ind, isAnyAtClassMax, isAtClassMax] = generic_sub2ind(arraySize, varar
     if sum(size(doMirror) ~= 1) == 1, doMirror = repmat(reshape(doMirror, 1, []), 2, 1); end
     if sum(size(doCirculate) ~= 1) == 1, doCirculate = repmat(reshape(doCirculate, 1, []), 2, 1); end
     
+    % Get numels
+    N_isArray = numel(isArray);
+    N_doTruncate = numel(doTruncate);
+    N_doReplace = numel(doReplace);
+    N_doMirror = numel(doMirror);
+    N_doCirculate = numel(doCirculate);
+    
     % Append the missing dimensions
-    [varargin{end+1:D}] = deal([]);
-    arraySize(end+1:D) = 1;
-    isArray(end+1:D) = false;
-    doTruncate(:,end+1:D) = false;
-    doReplace(:,end+1:D) = false;
-    doMirror(:,end+1:D) = false;
-    doCirculate(:,end+1:D) = false;
+    if N_isArray > 1, isArray(end+1:D) = false; end
+    if N_doTruncate > 1, doTruncate(:,end+1:D) = false; end
+    if N_doReplace > 1, doReplace(:,end+1:D) = false; end
+    if N_doMirror > 1, doMirror(:,end+1:D) = false; end
+    if N_doCirculate > 1, doCirculate(:,end+1:D) = false; end
     
     % Replace the ii'th nan in arraySize by ii'th dimension subindices max
-    for ii = 1:D, if isnan(arraySize(ii)), arraySize(ii) = max(varargin{ii}(:)); end; end
+    for ii = 1:D,
+        if isnan(arraySize(ii)),
+            if ii <= N_numeric,
+                arraySize(ii) = max(varargin{ind_numeric(ii)}(:));
+            else, % Or else zero
+                arraySize(ii) = 0;
+            end
+        end
+    end
     
     % Generate indices
     arraySize = double(arraySize);
-    offset = cumprod([1 arraySize(1:end-1)]);
+    offset = 1; % Initial offset (to be updated)
     if any(doReplace), B_replace = false; end % Initial value
     ind = cast(1, newclass); % Initial value and cast to <class>
     for ii = 1:D, % Loop each dimension
+        % Update the offset (except for the first)
+        if ii > 1, offset = offset .* arraySize(ii-1); end
+        
         % Get the ii'th dimension subindices as 'double' and substract by 1
-        subind_ii = double(varargin{ii}-1);
+        if ii <= N_numeric, % Use the remaining numeric varargin inputs
+            subind_ii = double(varargin{ind_numeric(ii)}-1);
+        else, % Or else empty
+            subind_ii = [];
+        end
         
         % Force column and permute to its own dimension (unless an array)
-        if ~isArray(ii), subind_ii = permute(subind_ii(:), [2:ii 1 ii+1]); end
+        if (N_isArray == 1 && ~isArray) || (N_isArray > 1 && ~isArray(ii)),
+            subind_ii = permute(subind_ii(:), [2:ii 1 ii+1]);
+        end
         
         % Separate the lower and upper out-of-bound subindices
         B_lower = subind_ii < 0;
@@ -122,18 +151,28 @@ function [ind, isAnyAtClassMax, isAtClassMax] = generic_sub2ind(arraySize, varar
         
         % Treat the lower out-of-bound subindices
         if any(B_lower(:)),
-            if doTruncate(1,ii), subind_ii_lower(:) = 0;
-            elseif doReplace(1,ii), B_replace = bsxfun(@or, B_replace, B_lower);
-            elseif doMirror(1,ii), subind_ii_lower = mod(subind_ii_lower, 2.*arraySize(ii)) - 2.*mod(subind_ii_lower, arraySize(ii)).*(mod(subind_ii_lower, 2.*arraySize(ii))>=arraySize(ii));
-            elseif doCirculate(1,ii), subind_ii_lower = mod(subind_ii_lower, arraySize(ii)); end
+            if (N_doTruncate == 1 && doTruncate) || (N_doTruncate > 1 && doTruncate(1,ii)),
+                subind_ii_lower(:) = 0;
+            elseif (N_doReplace == 1 && doReplace) || (N_doReplace > 1 && doReplace(1,ii)),
+                B_replace = bsxfun(@or, B_replace, B_lower);
+            elseif (N_doMirror == 1 && doMirror) || (N_doMirror > 1 && doMirror(1,ii)),
+                subind_ii_lower = mod(subind_ii_lower, 2.*arraySize(ii)) - 2.*mod(subind_ii_lower, arraySize(ii)).*(mod(subind_ii_lower, 2.*arraySize(ii))>=arraySize(ii));
+            elseif (N_doCirculate == 1 && doCirculate) || (N_doCirculate > 1 && doCirculate(1,ii)),
+                subind_ii_lower = mod(subind_ii_lower, arraySize(ii));
+            end
         end
         
         % Treat the upper out-of-bound subindices
         if any(B_upper(:)),
-            if doTruncate(2,ii), subind_ii_upper(:) = arraySize(ii)-1;
-            elseif doReplace(2,ii), B_replace = bsxfun(@or, B_replace, B_upper);
-            elseif doMirror(2,ii), subind_ii_upper = mod(subind_ii_upper, 2.*arraySize(ii)) - 2.*mod(subind_ii_upper, arraySize(ii)).*(mod(subind_ii_upper, 2.*arraySize(ii))>=arraySize(ii));
-            elseif doCirculate(2,ii), subind_ii_upper = mod(subind_ii_upper, arraySize(ii)); end
+            if (N_doTruncate == 1 && doTruncate) || (N_doTruncate > 1 && doTruncate(2,ii)),
+                subind_ii_upper(:) = arraySize(ii)-1;
+            elseif (N_doReplace == 1 && doReplace) || (N_doReplace > 1 && doReplace(2,ii)),
+                B_replace = bsxfun(@or, B_replace, B_upper);
+            elseif (N_doMirror == 1 && doMirror) || (N_doMirror > 1 && doMirror(2,ii)),
+                subind_ii_upper = mod(subind_ii_upper, 2.*arraySize(ii)) - 2.*mod(subind_ii_upper, arraySize(ii)).*(mod(subind_ii_upper, 2.*arraySize(ii))>=arraySize(ii));
+            elseif (N_doCirculate == 1 && doCirculate) || (N_doCirculate > 1 && doCirculate(2,ii)),
+                subind_ii_upper = mod(subind_ii_upper, arraySize(ii));
+            end
         end
         
         % Store the results for the lower and upper out-of-bound subindices
@@ -141,7 +180,7 @@ function [ind, isAnyAtClassMax, isAtClassMax] = generic_sub2ind(arraySize, varar
         subind_ii(B_upper) = subind_ii_upper;
         
         % Shift the subindices to the true indices
-        ind_ii = subind_ii.*offset(ii); % Decided to utilize more generic 'double' although 'uint64' or 'int64' represent integers exactly beyond 2^53.
+        ind_ii = subind_ii.*offset; % Decided to utilize more generic 'double' although 'uint64' or 'int64' represent integers exactly beyond 2^53.
         
         % Automatic casting to minimal class (in terms of the memory usage,
         % while still being numerically exact) may be achieved via use of
