@@ -8,6 +8,10 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     % 0) Input is parsed into files and extra options:
     % *Option '-all': Skip Project Manager and load all data in the files.
     % *Option '-ifall': Inquery the user whether or not to do '-all'.
+    % *Option '-LimitedRead': If given, then limit file content reading to
+    % the specified number of bytes per Data and skip any exceeding Data.
+    % The skipped Data is read from file later only if requested by a user.
+    % If given without a number, then the limit is set to 4096.
     % *Options '-DataUnit', '-SpaceUnit', '-SpectralUnit' and '-TimeUnit':
     % Force the output units. This is very useful for automated processing.
     % *Option '-Manager': Pass any varargin to Project Manager. For
@@ -32,6 +36,13 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     showProjectManager = ~varargin_dashed_str_exists('all', varargin); % By default, show Project Manager
     show_ui_ifall = varargin_dashed_str_exists('ifall', varargin);
     
+    [exists, datas] = varargin_dashed_str_exists_and_datas('LimitedRead', varargin, -1);
+    LimitedRead = Inf; % By default, unlimited read
+    if exists,
+        LimitedRead = 4096; % Default limited read in bytes
+        if numel(datas) > 0, LimitedRead = datas{1}; end % Customized limited read
+    end
+    
     if isempty(files),
         [filename, folder] = uigetfile({'*.wip;*.wid;*.zip', 'WITec Project/Data Files (*.wip/*.wid)'}, 'Open Project', 'MultiSelect', 'on');
 %         [filename, folder] = uigetfile({'*.wip;*.wid;*.zip', 'WITec Project/Data Files (*.wip/*.wid [or *.zip if compressed])'}, 'Open Project', 'MultiSelect', 'on'); % Considered implementing either indirect or direct unzipping scheme. It appears that WIT-formatted files can potentially be significantly compressed. (16.1.2019)
@@ -41,12 +52,12 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     end
     
     % Read all files preferring limited read and append them together
-    O_wit = wit.Empty;
+    O_wit = wit.empty;
     h = waitbar(0, 'Please wait...');
     for ii = 1:numel(files),
         if ~ishandle(h), return; end % Abort if cancelled!
         waitbar((ii-1)/numel(files), h, sprintf('Loading file %d/%d. Please wait...', ii, numel(files)));
-        O_wit = wip.append(O_wit, wit.read(files{ii}, 4096)); % Prefer 4KB limited read
+        O_wit = wip.append(O_wit, wit.read(files{ii}, LimitedRead));
     end
     if ~ishandle(h), return; end % Abort if cancelled!
     waitbar(1, h, 'Completed!');

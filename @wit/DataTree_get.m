@@ -68,7 +68,7 @@ function out = DataTree_get(parent, format),
         isVisible = predefined_isVisible_no_link{ii};
         value = predefined_values_no_link{ii};
         [out_default_names{ii}, out_default_values{ii}] = ...
-            DataTree_get_helper(wit.Empty, name, isVisible, value);
+            DataTree_get_helper(wit.empty, name, isVisible, value);
     end
     
     % Keep nonempty

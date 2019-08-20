@@ -36,7 +36,7 @@ classdef wip < handle, % Since R2008a
     
     properties % If field names are added or altered, then also update storeState and restoreState!
         Data = wid.Empty;
-        Tree = wit.Empty;
+        Tree = wit.empty;
         % DataUnit, SpaceUnit, SpectralUnit or TimeUnit
         ForceDataUnit = '';
         ForceSpaceUnit = '';

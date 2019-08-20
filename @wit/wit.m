@@ -29,18 +29,12 @@
 
 % Class for tree tags
 classdef wit < handle, % Since R2008a
-    % Hidden constant to reduce calls to a lot used wit.empty
-    properties (Constant, Hidden)
-        % Using wit.Empty is up to 60 times faster than wit.empty
-        Empty = wit.empty; % Call wit.empty only once
-    end
-    
     properties
         % Main file-format parameters
         Name = '';
-        Data = wit.Empty;
+        Data; % = wit.empty; % latter is Octave-incompatible!
         % References to other relevant tags
-        Parent = wit.Empty;
+        Parent; % = wit.empty; % latter is Octave-incompatible!
     end
 
     % Depend either on Data (for Children) or Parent (for the others)
@@ -71,12 +65,16 @@ classdef wit < handle, % Since R2008a
     
     properties
         Magic = 'WIT_TREE'; % Practically only the Magic string of Root matters
+        IsValid = true; % Used internally by fread and binaryread functions
     end
     
     %% PUBLIC METHODS
     methods
         % CONSTRUCTOR
         function obj = wit(ParentOrName, NameOrData, DataOrNone),
+            Empty = obj([]); % Avoids Octave-incompatible wit.empty!
+            obj.Data = Empty;
+            obj.Parent = Empty;
             if nargin > 0,
                 if isa(ParentOrName, 'wit'),
                     obj.Parent = ParentOrName;
@@ -121,7 +119,7 @@ classdef wit < handle, % Since R2008a
         
         %% READ-ONLY
         function Children = get.Children(obj),
-            Children = wit.Empty;
+            Children = wit.empty;
             if isa(obj.Data, 'wit'), Children = obj.Data; end
         end
         
@@ -131,7 +129,7 @@ classdef wit < handle, % Since R2008a
         end
         
         function Siblings = get.Siblings(obj),
-            Siblings = wit.Empty;
+            Siblings = wit.empty;
             if ~isempty(obj.Parent),
                 Siblings = obj.Parent.Data; % Including itself
                 Siblings = Siblings(Siblings ~= obj); % Exclude itself
@@ -139,7 +137,7 @@ classdef wit < handle, % Since R2008a
         end
         
         function Next = get.Next(obj),
-            Next = wit.Empty;
+            Next = wit.empty;
             if ~isempty(obj.Parent),
                 Siblings = obj.Parent.Data; % Including itself
                 ind_Next = find(Siblings == obj, 1) + 1;
@@ -148,7 +146,7 @@ classdef wit < handle, % Since R2008a
         end
         
         function Prev = get.Prev(obj),
-            Prev = wit.Empty;
+            Prev = wit.empty;
             if ~isempty(obj.Parent),
                 Siblings = obj.Parent.Data; % Including itself
                 ind_Prev = find(Siblings == obj, 1) - 1;
@@ -225,6 +223,13 @@ classdef wit < handle, % Since R2008a
         % Getters and setters for (un)formatted DataTree, also for debugging
         DataTree_set(parent, in, format); % For (un)formatted structs
         out = DataTree_get(parent, format); % For (un)formatted structs
+        
+        % Overload built-in empty for Octave-compatibility
+        function empty = empty(),
+            dummy = wit();
+            empty = dummy([]);
+            delete(dummy);
+        end
     end
     
     %% PRIVATE METHODS

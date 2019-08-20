@@ -36,9 +36,9 @@ S_differ_right = C_differ(:,2).collapse;
 
 function [C_only_left, C_only_right, C_differ] = helper(C_left, C_right, level),
     if nargin < 3, level = 0; end
-    C_only_left = wit.Empty;
-    C_only_right = wit.Empty;
-    C_differ = wit.Empty;
+    C_only_left = wit.empty;
+    C_only_right = wit.empty;
+    C_differ = wit.empty;
     str_offset = repmat(' ', [1 level]);
     
     % If left and right are not both wit, then do nothing
@@ -52,8 +52,8 @@ function [C_only_left, C_only_right, C_differ] = helper(C_left, C_right, level),
         unique_Name = unique_Names{ii};
         C_left_ii = C_left(strcmp(Names1, unique_Name));
         C_right_ii = C_right(strcmp(Names2, unique_Name));
-        C_left_ii_Data = wit.Empty;
-        C_right_ii_Data = wit.Empty;
+        C_left_ii_Data = wit.empty;
+        C_right_ii_Data = wit.empty;
         if ~isempty(C_left_ii), C_left_ii_Data = C_left_ii.Data; end
         if ~isempty(C_right_ii), C_right_ii_Data = C_right_ii.Data; end
         
@@ -74,7 +74,7 @@ function [C_only_left, C_only_right, C_differ] = helper(C_left, C_right, level),
             fprintf('%sONLY LEFT: %s\n', str_offset, unique_Name);
 %             if isa(C_left_ii_Data, 'wit'), % Left Data is wit
 %                 [C_only_left_new, C_only_right_new, C_differ_new] = ...
-%                     helper(C_left_ii_Data, wit.Empty, level+1);
+%                     helper(C_left_ii_Data, wit.empty, level+1);
 %                 C_only_left = [C_only_left; C_only_left_new];
 %                 C_only_right = [C_only_right; C_only_right_new];
 %                 C_differ = [C_differ; C_differ_new];
@@ -86,7 +86,7 @@ function [C_only_left, C_only_right, C_differ] = helper(C_left, C_right, level),
             fprintf('%sONLY RIGHT: %s\n', str_offset, unique_Name);
 %             if isa(C_right_ii_Data, 'wit'), % Right Data is wit
 %                 [C_only_left_new, C_only_right_new, C_differ_new] = ...
-%                     helper(wit.Empty, C_right_ii_Data, level+1);
+%                     helper(wit.empty, C_right_ii_Data, level+1);
 %                 C_only_left = [C_only_left; C_only_left_new];
 %                 C_only_right = [C_only_right; C_only_right_new];
 %                 C_differ = [C_differ; C_differ_new];

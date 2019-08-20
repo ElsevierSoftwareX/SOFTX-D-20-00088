@@ -5,7 +5,7 @@
 % Make hard copy of the wit-tree and its nodes. Please note that the links
 % to the root and the parents are destroyed to keep the trees consistent!
 function new = copy(obj),
-    new = wit.Empty; % Return empty if no obj given
+    new = wit.empty; % Return empty if no obj given
     if numel(obj) > 0,
         % Using constructor to automatically reset Root and Parent
         new(numel(obj)) = wit();

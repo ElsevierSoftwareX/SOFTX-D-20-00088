@@ -27,7 +27,7 @@ function write(obj, File) % For saving WIT-formatted WID-files!
         Version = wip.get_Root_Version(obj(1));
         if numel(obj) > 0, O_wit = wid.new(Version);
         else, O_wit = wid.new(); end % Create minimal data for all objects
-        O_wits = wit.Empty;
+        O_wits = wit.empty;
         for ii = 1:numel(obj),
             if wip.get_Root_Version(obj(ii)) ~= Version,
                 warning('Object with index ii has mismatching Version numbering.', ii);

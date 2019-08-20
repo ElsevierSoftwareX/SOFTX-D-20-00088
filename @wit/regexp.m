@@ -9,7 +9,7 @@ function tags = regexp(obj, pattern, FirstOnly, LayersFurther, PrevFullNames),
     % optional FirstOnly flag to true to stop the search! Another optional
     % PrevFullNames char-array is automatically used for the subsequent
     % calls for more speed-up.
-    if isempty(obj), tags = wit.Empty; return; end
+    if isempty(obj), tags = wit.empty; return; end
     if nargin < 3, FirstOnly = false; end % By default, return all matches!
     if nargin < 4, LayersFurther = Inf; end % By default, return all matches!
     if nargin < 5, FullNames = {obj.FullName}; % Call FullName only for the first level
