@@ -66,15 +66,28 @@ classdef wit < handle, % Since R2008a
     properties
         Magic = 'WIT_TREE'; % Practically only the Magic string of Root matters
         IsValid = true; % Used internally by fread and binaryread functions
+		Id = uint64(0); % Used internally enable handle-like comparison in Octave
     end
+    
+    % Due to incompatibility with Octave, cannot use hidden constant like
+    % previously to reduce calls to a lot used wit.empty via wit.Empty,
+    % which was up to 60 times faster than wit.empty.
     
     %% PUBLIC METHODS
     methods
         % CONSTRUCTOR
         function obj = wit(ParentOrName, NameOrData, DataOrNone),
+            % Octave-compatible code
+			persistent NextId; % Needed for handle-like eq-implementation
+			if isempty(NextId), NextId = uint64(1);
+			else, NextId = NextId + 1; end
+			obj.Id = NextId;
+            
+            % Octave-compatible code
             Empty = obj([]); % Avoids Octave-incompatible wit.empty!
             obj.Data = Empty;
             obj.Parent = Empty;
+            
             if nargin > 0,
                 if isa(ParentOrName, 'wit'),
                     obj.Parent = ParentOrName;
@@ -187,6 +200,18 @@ classdef wit < handle, % Since R2008a
             if ~isempty(obj.Magic), Magic = obj.Magic; % If available, obtain it from this
             else, Magic = obj.Root.Magic; end % Otherwise, obtain it from the root
         end
+		
+		
+		
+%         % Define Octave-compatible handle-like eq, ne, lt, le, gt and ge:
+%         % https://se.mathworks.com/help/matlab/ref/handle.relationaloperators.html
+%         % But somehow breaks builtin unique function?
+%         function tf = eq(O1,O2), if isa(O2, 'wit'), tf = [O1.Id] == [O2.Id]; else, tf = false(size(O1)); end; end % Equal
+%         function tf = ne(O1,O2), if isa(O2, 'wit'), tf = [O1.Id] ~= [O2.Id]; else, tf = true(size(O1)); end; end % Not equal
+%         function tf = lt(O1,O2), if isa(O2, 'wit'), tf = [O1.Id] < [O2.Id]; else, tf = false(size(O1)); end; end % Less than
+%         function tf = le(O1,O2), if isa(O2, 'wit'), tf = [O1.Id] <= [O2.Id]; else, tf = false(size(O1)); end; end % Less than or equal
+%         function tf = gt(O1,O2), if isa(O2, 'wit'), tf = [O1.Id] > [O2.Id]; else, tf = false(size(O1)); end; end % Greater than
+%         function tf = ge(O1,O2), if isa(O2, 'wit'), tf = [O1.Id] >= [O2.Id]; else, tf = false(size(O1)); end; end % Greater than or equal
         
         
         
@@ -224,7 +249,7 @@ classdef wit < handle, % Since R2008a
         DataTree_set(parent, in, format); % For (un)formatted structs
         out = DataTree_get(parent, format); % For (un)formatted structs
         
-        % Overload built-in empty for Octave-compatibility
+        % Define Octave-compatible empty-function
         function empty = empty(),
             dummy = wit();
             empty = dummy([]);
