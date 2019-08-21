@@ -215,6 +215,44 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         function tf = gt(O1, O2), tf = O1.compare(O2, @gt, false); end % Greater than
         function tf = ge(O1, O2), tf = O1.compare(O2, @ge, false); end % Greater than or equal
         
+        % Define horzcat, vertcat, reshape missing in Octave
+        function obj = horzcat(obj, varargin), % [O1 O2 ...]
+            if ~is_octave(), obj = builtin('horzcat', obj, varargin{:}); % MATLAB-way
+            else, % Octave-way
+                D = max(ndims(obj), max([cellfun(@ndims, varargin) 2]));
+                [S{1:D}] = size(obj);
+                for ii = 1:numel(varargin),
+                    obj_ii = varargin{ii};
+                    [S_ii{1:D}] = size(obj_ii);
+                    if any([S{[1 3:D]}] ~= [S_ii{[1 3:D]}]),
+                        error('Dimensions of arrays being concatenated are not consistent.');
+                    end
+                    obj(end+1:end+numel(obj_ii)) = obj_ii;
+                end
+                obj = reshape(obj, S{1}, [], S{3:D});
+            end
+        end
+        function obj = vertcat(obj, varargin), % [O1; O2; ...]
+            if ~is_octave(), obj = builtin('vertcat', obj, varargin{:}); % MATLAB-way
+            else, % Octave-way
+                D = max(ndims(obj), max([cellfun(@ndims, varargin) 2]));
+                [S{1:D}] = size(obj);
+                for ii = 1:numel(varargin),
+                    obj_ii = varargin{ii};
+                    [S_ii{1:D}] = size(obj_ii);
+                    if any([S{2:D}] ~= [S_ii{2:D}]),
+                        error('Dimensions of arrays being concatenated are not consistent.');
+                    end
+                    obj(end+1:end+numel(obj_ii)) = obj_ii;
+                end
+                obj = reshape(obj, [], S{2:D});
+            end
+        end
+        function obj = reshape(obj, varargin),
+            if ~is_octave(), obj = builtin('reshape', obj, varargin{:}); % MATLAB-way
+            else, obj = obj(reshape(1:numel(obj), varargin{:})); end % Octave-way
+        end
+        
         
         
         %% OTHER METHODS
