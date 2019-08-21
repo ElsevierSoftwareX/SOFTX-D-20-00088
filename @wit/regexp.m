@@ -24,6 +24,6 @@ function tags = regexp(obj, pattern, FirstOnly, LayersFurther, PrevFullNames),
         n = cellfun(@numel, subobj); % Collect the number of children
         ind = cumsum(accumarray(cumsum([1; reshape(n, [], 1)]), 1)); % Simulate repelem of indices for backward compability!
         PrevFullNames = FullNames(ind(1:end-1)); % Collect PrevFullNames for the children
-        tags = [reshape(obj(match), 1, []) regexp(cat(2, subobj{:}), pattern, FirstOnly, LayersFurther-1, reshape(PrevFullNames, 1, []))]; % Returns always a row vector
+        tags = [reshape(obj(match), 1, []) regexp(horzcat(subobj{:}), pattern, FirstOnly, LayersFurther-1, reshape(PrevFullNames, 1, []))]; % Returns always a row vector
     end
 end
