@@ -42,8 +42,7 @@ function write(obj, File),
     
     try, % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
         % Avoid call to builtin 'memory', which is Octave-incompatible!
-        buffer = ones(FileSize, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
-        clear buffer; % ON SUCCESS, clear the preallocated array!
+        buffer = zeros(FileSize, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
         buffer = obj.binary(swapEndianess);
         fwrite(fid, buffer, 'uint8');
     catch, % OTHERWISE USE LOW-ON MEMORY SCHEME!

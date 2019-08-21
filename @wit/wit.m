@@ -28,7 +28,7 @@
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 % Class for tree tags
-classdef wit < handle, % Since R2008a
+classdef wit < handle, % Since R2008a and Octave-compatible
     properties
         % Main file-format parameters
         Name = '';
@@ -77,32 +77,39 @@ classdef wit < handle, % Since R2008a
     methods
         % CONSTRUCTOR
         function obj = wit(ParentOrName, NameOrData, DataOrNone),
-            % Octave-compatible code
-			persistent NextId; % Needed for handle-like eq-implementation
+            % SPECIAL CASE: Generate empty object for i.e. wit([])-call
+            if nargin == 1 && isempty(ParentOrName),
+                delete(obj); % Delete the automatically constructed object
+                obj = obj([]); % Get empty in Octave-compatible way
+                return;
+            end
+            
+            % Store object Id in order to enable handle-like comparisons
+			persistent NextId;
 			if isempty(NextId), NextId = uint64(1);
 			else, NextId = NextId + 1; end
 			obj.Id = NextId;
             
-            % Octave-compatible code
-            Empty = obj([]); % Avoids Octave-incompatible wit.empty!
-            obj.Data = Empty;
-            obj.Parent = Empty;
+            % Set empty objects to Data and Parent in Octave-compatible way
+            obj.Data = wit.empty;
+            obj.Parent = wit.empty;
             
+            % Parse input
             if nargin > 0,
-                if isa(ParentOrName, 'wit'),
+                if isa(ParentOrName, 'wit'), % Set new Parent
                     obj.Parent = ParentOrName;
-                elseif isa(ParentOrName, 'char'),
+                elseif isa(ParentOrName, 'char'), % Set new Name
                     if nargin > 2, error('Too many input arguments.'); end
                     obj.Name = ParentOrName;
                 else, error('First input must be either wit-class or char!'); end
             end
             if nargin > 1,
-                if isa(ParentOrName, 'wit'),
-                    if isa(NameOrData, 'char'),
+                if isa(ParentOrName, 'wit'), % After new Parent
+                    if isa(NameOrData, 'char'), % Set new Name
                         obj.Name = NameOrData;
-                        if nargin > 2, obj.Data = DataOrNone; end
+                        if nargin > 2, obj.Data = DataOrNone; end % Set new Data
                     else, error('If first input is wit-class, then second must be char!'); end
-                else, obj.Data = NameOrData; end
+                else, obj.Data = NameOrData; end % After new Name set new Data
             end
         end
         
@@ -203,15 +210,20 @@ classdef wit < handle, % Since R2008a
 		
 		
 		
-%         % Define Octave-compatible handle-like eq, ne, lt, le, gt and ge:
-%         % https://se.mathworks.com/help/matlab/ref/handle.relationaloperators.html
-%         % But somehow breaks builtin unique function?
-%         function tf = eq(O1,O2), if isa(O2, 'wit'), tf = [O1.Id] == [O2.Id]; else, tf = false(size(O1)); end; end % Equal
-%         function tf = ne(O1,O2), if isa(O2, 'wit'), tf = [O1.Id] ~= [O2.Id]; else, tf = true(size(O1)); end; end % Not equal
-%         function tf = lt(O1,O2), if isa(O2, 'wit'), tf = [O1.Id] < [O2.Id]; else, tf = false(size(O1)); end; end % Less than
-%         function tf = le(O1,O2), if isa(O2, 'wit'), tf = [O1.Id] <= [O2.Id]; else, tf = false(size(O1)); end; end % Less than or equal
-%         function tf = gt(O1,O2), if isa(O2, 'wit'), tf = [O1.Id] > [O2.Id]; else, tf = false(size(O1)); end; end % Greater than
-%         function tf = ge(O1,O2), if isa(O2, 'wit'), tf = [O1.Id] >= [O2.Id]; else, tf = false(size(O1)); end; end % Greater than or equal
+        % Define Octave-compatible handle-like eq, ne, lt, le, gt and ge:
+        % https://se.mathworks.com/help/matlab/ref/handle.relationaloperators.html
+        function tf = compare(O1, O2, fun, default),
+            if isa(O2, 'wit'), tf = fun(reshape([O1.Id], size(O1)), reshape([O2.Id], size(O2)));
+            elseif numel(O1) == 1, tf = repmat(default, size(O2));
+            elseif numel(O2) == 1 || ndims(O1) == ndims(O2) && all(size(O1) == size(O2)), tf = repmat(default, size(O1));
+            else, error('Matrix dimensions must agree.'); end
+        end
+        function tf = eq(O1, O2), tf = O1.compare(O2, @eq, false); end % Equal
+        function tf = ne(O1, O2), tf = O1.compare(O2, @ne, true); end % Not equal
+        function tf = lt(O1, O2), tf = O1.compare(O2, @lt, false); end % Less than
+        function tf = le(O1, O2), tf = O1.compare(O2, @le, false); end % Less than or equal
+        function tf = gt(O1, O2), tf = O1.compare(O2, @gt, false); end % Greater than
+        function tf = ge(O1, O2), tf = O1.compare(O2, @ge, false); end % Greater than or equal
         
         
         
@@ -251,9 +263,9 @@ classdef wit < handle, % Since R2008a
         
         % Define Octave-compatible empty-function
         function empty = empty(),
-            dummy = wit();
-            empty = dummy([]);
-            delete(dummy);
+            persistent empty_obj;
+            if ~isa(empty_obj, 'wit'), empty_obj = wit([]); end % Do only once to achieve best performance
+            empty = empty_obj;
         end
     end
     

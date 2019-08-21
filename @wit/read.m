@@ -43,8 +43,7 @@ function obj = read(File, N_bytes_max),
     
     try, % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
         % Avoid call to builtin 'memory', which is Octave-incompatible!
-        buffer = ones(FileSize, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
-        clear buffer; % ON SUCCESS, clear the preallocated array!
+        buffer = zeros(FileSize, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
         buffer = fread(fid, Inf, 'uint8=>uint8'); % Read the file content to the buffer
         obj.binaryread(buffer, [], N_bytes_max, swapEndianess); % Parse the file content in the buffer
     catch, % OTHERWISE USE LOW-ON MEMORY SCHEME!
