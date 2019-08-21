@@ -66,33 +66,23 @@ classdef wit < handle, % Since R2008a and Octave-compatible
     properties
         Magic = 'WIT_TREE'; % Practically only the Magic string of Root matters
         IsValid = true; % Used internally by fread and binaryread functions
-		Id = uint64(0); % Used internally enable handle-like comparison in Octave
+        Id = uint64(0); % Used internally enable handle-like comparison in Octave
     end
-    
-    % Due to incompatibility with Octave, cannot use hidden constant like
-    % previously to reduce calls to a lot used wit.empty via wit.Empty,
-    % which was up to 60 times faster than wit.empty.
     
     %% PUBLIC METHODS
     methods
         % CONSTRUCTOR
         function obj = wit(ParentOrName, NameOrData, DataOrNone),
-            % SPECIAL CASE: Generate empty object for i.e. wit([])-call
-            if nargin == 1 && isempty(ParentOrName),
-                delete(obj); % Delete the automatically constructed object
-                obj = obj([]); % Get empty in Octave-compatible way
-                return;
-            end
-            
             % Store object Id in order to enable handle-like comparisons
-			persistent NextId;
-			if isempty(NextId), NextId = uint64(1);
-			else, NextId = NextId + 1; end
-			obj.Id = NextId;
+            persistent NextId;
+            if isempty(NextId), NextId = uint64(1);
+            else, NextId = NextId + 1; end
+            obj.Id = NextId;
             
             % Set empty objects to Data and Parent in Octave-compatible way
-            obj.Data = wit.empty;
-            obj.Parent = wit.empty;
+            empty_obj = obj([]); % Octave-compatible way to construct empty array of objects
+            obj.Data = empty_obj; % Avoiding wit.empty due to infinite loop
+            obj.Parent = empty_obj; % Avoiding wit.empty due to infinite loop
             
             % Parse input
             if nargin > 0,
@@ -207,9 +197,9 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             if ~isempty(obj.Magic), Magic = obj.Magic; % If available, obtain it from this
             else, Magic = obj.Root.Magic; end % Otherwise, obtain it from the root
         end
-		
-		
-		
+        
+        
+        
         % Define Octave-compatible handle-like eq, ne, lt, le, gt and ge:
         % https://se.mathworks.com/help/matlab/ref/handle.relationaloperators.html
         function tf = compare(O1, O2, fun, default),
@@ -264,7 +254,11 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         % Define Octave-compatible empty-function
         function empty = empty(),
             persistent empty_obj;
-            if ~isa(empty_obj, 'wit'), empty_obj = wit([]); end % Do only once to achieve best performance
+            if ~isa(empty_obj, 'wit'), % Do only once to achieve best performance
+                dummy_obj = wit(); % Create a dummy wit-class
+                empty_obj = dummy_obj([]); % Octave-compatible way to construct empty array of objects
+                delete(dummy_obj); % Delete the dummy wit-class
+            end
             empty = empty_obj;
         end
     end
