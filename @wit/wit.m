@@ -217,7 +217,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         
         % Define horzcat, vertcat, reshape missing in Octave
         function obj = horzcat(varargin), % Enables [O1 O2 ...]
-            if is_octave(), obj = builtin('horzcat', varargin{:}); % MATLAB-way
+            if ~is_octave(), obj = builtin('horzcat', varargin{:}); % MATLAB-way
             else, % Octave-way
                 obj = wit.empty;
                 varargin = varargin(~cellfun(@isempty, varargin)); % Skip empty
@@ -238,7 +238,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             end
         end
         function obj = vertcat(varargin), % Enables [O1; O2; ...]
-            if is_octave(), obj = builtin('vertcat', varargin{:}); % MATLAB-way
+            if ~is_octave(), obj = builtin('vertcat', varargin{:}); % MATLAB-way
             else, % Octave-way
                 obj = wit.empty;
                 varargin = varargin(~cellfun(@isempty, varargin)); % Skip empty
