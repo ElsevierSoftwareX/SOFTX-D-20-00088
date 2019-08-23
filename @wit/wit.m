@@ -216,39 +216,49 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         function tf = ge(O1, O2), tf = O1.compare(O2, @ge, false); end % Greater than or equal
         
         % Define horzcat, vertcat, reshape missing in Octave
-        function obj = horzcat(obj, varargin), % [O1 O2 ...]
-            if ~is_octave(), obj = builtin('horzcat', obj, varargin{:}); % MATLAB-way
+        function obj = horzcat(varargin), % Enables [O1 O2 ...]
+            if is_octave(), obj = builtin('horzcat', varargin{:}); % MATLAB-way
             else, % Octave-way
-                D = max(ndims(obj), max([cellfun(@ndims, varargin) 2]));
-                [S{1:D}] = size(obj);
-                for ii = 1:numel(varargin),
-                    obj_ii = varargin{ii};
-                    [S_ii{1:D}] = size(obj_ii);
-                    if any([S{[1 3:D]}] ~= [S_ii{[1 3:D]}]),
-                        error('Dimensions of arrays being concatenated are not consistent.');
+                obj = wit.empty;
+                varargin = varargin(~cellfun(@isempty, varargin)); % Skip empty
+                if ~isempty(varargin),
+                    D = max(cellfun(@ndims, varargin)); % Number of dimensions
+                    obj = varargin{1}; % Get the 1st non-empty object array
+                    [S{1:D}] = size(obj); % and its size
+                    for ii = 2:numel(varargin),
+                        obj_ii = varargin{ii}; % Get the ii'th non-empty object array
+                        [S_ii{1:D}] = size(obj_ii); % and its size
+                        if any([S{[1 3:D]}] ~= [S_ii{[1 3:D]}]), % Test if the sizes are compatible
+                            error('Dimensions of arrays being concatenated are not consistent.');
+                        end
+                        obj(end+1:end+numel(obj_ii)) = obj_ii; % Append to the 1st non-empty object array
                     end
-                    obj(end+1:end+numel(obj_ii)) = obj_ii;
+                    obj = reshape(obj, S{1}, [], S{3:D}); % Restore the shape accordingly
                 end
-                obj = reshape(obj, S{1}, [], S{3:D});
             end
         end
-        function obj = vertcat(obj, varargin), % [O1; O2; ...]
-            if ~is_octave(), obj = builtin('vertcat', obj, varargin{:}); % MATLAB-way
+        function obj = vertcat(varargin), % Enables [O1; O2; ...]
+            if is_octave(), obj = builtin('vertcat', varargin{:}); % MATLAB-way
             else, % Octave-way
-                D = max(ndims(obj), max([cellfun(@ndims, varargin) 2]));
-                [S{1:D}] = size(obj);
-                for ii = 1:numel(varargin),
-                    obj_ii = varargin{ii};
-                    [S_ii{1:D}] = size(obj_ii);
-                    if any([S{2:D}] ~= [S_ii{2:D}]),
-                        error('Dimensions of arrays being concatenated are not consistent.');
+                obj = wit.empty;
+                varargin = varargin(~cellfun(@isempty, varargin)); % Skip empty
+                if ~isempty(varargin),
+                    D = max(cellfun(@ndims, varargin)); % Number of dimensions
+                    obj = varargin{1}; % Get the 1st non-empty object array
+                    [S{1:D}] = size(obj); % and its size
+                    for ii = 2:numel(varargin),
+                        obj_ii = varargin{ii}; % Get the ii'th non-empty object array
+                        [S_ii{1:D}] = size(obj_ii); % and its size
+                        if any([S{2:D}] ~= [S_ii{2:D}]), % Test if the sizes are compatible
+                            error('Dimensions of arrays being concatenated are not consistent.');
+                        end
+                        obj(end+1:end+numel(obj_ii)) = obj_ii; % Append to the 1st non-empty object array
                     end
-                    obj(end+1:end+numel(obj_ii)) = obj_ii;
+                    obj = reshape(obj, [], S{2:D}); % Restore the shape accordingly
                 end
-                obj = reshape(obj, [], S{2:D});
             end
         end
-        function obj = reshape(obj, varargin),
+        function obj = reshape(obj, varargin), % Enables object array reshaping
             if ~is_octave(), obj = builtin('reshape', obj, varargin{:}); % MATLAB-way
             else, obj = obj(reshape(1:numel(obj), varargin{:})); end % Octave-way
         end
