@@ -203,9 +203,11 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         % Define Octave-compatible handle-like eq, ne, lt, le, gt and ge:
         % https://se.mathworks.com/help/matlab/ref/handle.relationaloperators.html
         function tf = compare(O1, O2, fun, default),
-            if isa(O2, 'wit'), tf = fun(reshape([O1.Id], size(O1)), reshape([O2.Id], size(O2)));
-            elseif numel(O1) == 1, tf = repmat(default, size(O2));
-            elseif numel(O2) == 1 || ndims(O1) == ndims(O2) && all(size(O1) == size(O2)), tf = repmat(default, size(O1));
+            if numel(O1) == 1 || numel(O2) == 1 || ... % Either O1 or O2 is scalar
+                    ndims(O1) == ndims(O2) && all(size(O1) == size(O2)), % Or size(O1) == size(O2)
+                if isa(O2, 'wit'), tf = fun(reshape([O1.Id], size(O1)), reshape([O2.Id], size(O2)));
+                elseif numel(O1) == 1, tf = repmat(default, size(O2));
+                else, tf = repmat(default, size(O1)); end
             else, error('Matrix dimensions must agree.'); end
         end
         function tf = eq(O1, O2), tf = O1.compare(O2, @eq, false); end % Equal
