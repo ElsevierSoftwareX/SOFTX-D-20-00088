@@ -8,8 +8,9 @@ function new = copy(obj),
     new = wit.empty; % Return empty if no obj given
     if numel(obj) > 0,
         % Using constructor to automatically reset Root and Parent
-        new(numel(obj)) = wit();
+%         new(numel(obj)) = wit(); % Causes same-Id-bug when using Octave-compatible NextId-scheme!
         for ii = 1:numel(obj),
+            new(ii) = wit(); % Avoids same-Id-bug when using Octave-compatible NextId-scheme!
             new(ii).Name = obj(ii).Name;
             new(ii).NameLength = obj(ii).NameLength;
             new(ii).Type = obj(ii).Type;
@@ -18,6 +19,7 @@ function new = copy(obj),
             new(ii).Magic = obj(ii).Magic; % Sufficient but not an exact copy
             new(ii).Header = obj(ii).Header;
             new(ii).File = obj(ii).File; % Sufficient but not an exact copy
+            new(ii).IsValid = obj(ii).IsValid;
             
             % But do not copy Parent in order to preserve the tree
             % consistency!
