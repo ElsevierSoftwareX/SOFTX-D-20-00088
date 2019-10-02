@@ -224,6 +224,15 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     end
     N_test = N_test(:); % Force to column vector
     
+    % Abort if no working solution can exist
+    if isempty(N_test),
+        warning('No working solution can exist!');
+        I_best = I;
+        N_best = NaN;
+        cropIndices = [];
+        return;
+    end
+    
     % Calculate the overlap, the stitch, and the no-stitch sizes
     N_overlap = round(N_test.*N_SI_XY_CF); % Rounded to nearest integer
     N_stitch = N_test + N_overlap;
