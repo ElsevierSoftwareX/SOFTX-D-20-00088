@@ -166,7 +166,7 @@ function O_wid = manager(obj, varargin),
     function ReleasedCallback(h, varargin),
         if ~isBusy, % Proceed only if NOT busy
             isBusy = true;
-            h_Waitbar = waitbar(0, 'Please wait...');
+            if isPreview, h_Waitbar = waitbar(0, 'Please wait...'); end
 %             isPreview = get(c, 'Value'); % State of preview checkbox
             next_indices = h.getSelectedIndices()+1; % New indices
             if ~isempty(indices), % Compare with old indices
@@ -194,8 +194,8 @@ function O_wid = manager(obj, varargin),
                 if isPreview, 
                     invisible_figure(idx+fig_offset); % Create new invisible figure
                     plot(O_wid(next_indices(jj))); % Show data
+                    waitbar(jj / N_new);
                 end
-                waitbar(jj / N_new);
             end
     %         if N_new > 0, set(hcontainer2, 'Visible', 'off'); drawnow; hcomponent2.setValue(0); end % Java waitbar
             delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Solves the closing issues with close(h_Waitbar);
