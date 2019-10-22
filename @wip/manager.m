@@ -22,14 +22,19 @@ function O_wid = manager(obj, varargin),
     if numel(datas) > 0, Title = datas{1}; end
     
     % Check if Type was specified
-    datas = varargin_dashed_str_datas('Type', varargin, -1);
+    datas = varargin_dashed_str_datas('Type', varargin);
     Type = {'TDBitmap', 'TDGraph', 'TDImage', 'TDText'}; % Default
     if numel(datas) > 0, Type = datas; end
     
     % Check if SubType was specified
-    datas = varargin_dashed_str_datas('SubType', varargin, -1);
-    SubType = repmat({''}, size(Type));
+    datas = varargin_dashed_str_datas('SubType', varargin);
+    SubType = {};
     if numel(datas) > 0, SubType = datas; end
+    
+    % Add empty char arrays for any missing elements so that the sizes of
+    % Type and SubType extend to the same size.
+    Type(end+1:numel(SubType)) = {''}; % Extend
+    SubType(end+1:numel(Type)) = {''}; % Extend
     
     % Check if Data was specified
     datas = varargin_dashed_str_datas('Data', varargin, -1);

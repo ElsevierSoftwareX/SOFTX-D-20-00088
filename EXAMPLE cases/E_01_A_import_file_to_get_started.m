@@ -51,9 +51,12 @@ helpdlg({'!!! (E1A i.) Load and browse file contents in a GUI by executing:' ...
 
 % [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', {'-all'}); % To show also the non-plottable data
 % [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', {'-Type', 'TDGraph'}); % To show only TDGraphs
-% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', {'-Type', {'TDBitmap', 'TDGraph', 'TDImage'}}); % To show only TDBitmap, TDGraphs and TDImage
+% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', {'-Type', 'TDGraph', '-SubType', 'Image'}); % To show only Image<TDGraphs
+% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', {'-Type', {'TDBitmap', 'TDGraph', 'TDImage', '-SubType', '', 'Image', ''}}); % To show only TDBitmap, Image<TDGraphs and TDImage
 % * Other possible '-Manager' options are '-singlesection', '-nopreview',
 % '-closepreview', '-nomanager', '-Title', '-Type' and '-SubType'.
+% It is noted that each input for '-Type' can have a corresponding input for
+% '-SubType' or vice versa! Any missing input is set to empty char array.
 
 % !!! Meaning of the OUTPUT variables:
 %
