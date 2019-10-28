@@ -35,15 +35,16 @@ function HtmlName = get_HtmlName(obj, isWorkspaceOptimized),
             end
             % Wrap icon and name in html-table and set their vertical alignment
             % to middle and add 1px cell spacing around the table.
-            HtmlName{ii} = sprintf('<html><img src="file:%s"/>&nbsp;%s</html>', ImageFile, HtmlName{ii});
+            HtmlName{ii} = sprintf('<html><img height="16" width="16" src="file:%s"/>&nbsp;%s</html>', ImageFile, HtmlName{ii}); % height and width are required by R2019b and onwards
         else, % isProjectManagerOptimized == true
             ImageFile = strrep(fullfile(folder_reader, 'icons', ImageFile), '\', '/'); % Construct its full path
             if exist(ImageFile, 'file') ~= 2, % Revert to Default.png if attempted ImageFile does NOT exist
                 ImageFile = strrep(fullfile(folder_reader, 'icons', 'Default.png'), '\', '/'); % Construct its full path
             end
+            info = imfinfo(ImageFile); % Get height and width, required by R2019b and onwards
             % Wrap icon and name in html-table and set their vertical alignment
             % to middle and add 1px cell spacing around the table.
-            HtmlName{ii} = sprintf('<html><table cellspacing="1" cellpadding="0"><tr valign="middle"><td><img src="file:%s"/></td><td>&nbsp;%s</td></tr></table></html>', ImageFile, HtmlName{ii});
+            HtmlName{ii} = sprintf('<html><table cellspacing="1" cellpadding="0"><tr valign="middle"><td><img height="%d" width="%d" src="file:%s"/></td><td>&nbsp;%s</td></tr></table></html>', info.Height, info.Width, ImageFile, HtmlName{ii}); % height and width are required by R2019b and onwards
         end
     end
 end
