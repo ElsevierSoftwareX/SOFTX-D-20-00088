@@ -32,8 +32,6 @@ function [line_length, line_label] = bw2lines(bw_lines),
     % Function converts the 2nd dimension of a boolean map to lines.
     % Returns maps for length and label of lines.
     
-    % Updated 27.7.2016 by Joonas T. Holmi
-    
     % Preparation
     line_cumsum = padarray(cumsum(bw_lines, 2), [0 1], 0, 'pre')'; % Cumsum when on line
     line_ends = diff(padarray(bw_lines, [0 1], 0, 'both'), [], 2)'; % Locate lines
@@ -47,16 +45,20 @@ function [line_length, line_label] = bw2lines(bw_lines),
 %     line_length = cumsum(line_with_cumsum_reset, 1, 'reverse')'; % Cumsum with 'reverse' does not work in 2012b! % Transpose 
     line_length = flipud(cumsum(flipud(line_with_cumsum_reset), 1))'; % Operate cumsum like 'reverse' % Transpose
     
-    % Line labels
-    label_with_cumsum_reset = zeros(size(line_cumsum));
-    label_number = reshape(cumsum(is_line_right_end(:)), size(line_cumsum));
-    label_number(~is_line_right_end) = 0;
-    label_with_cumsum_reset(is_line_right_end) = label_number(is_line_right_end);
-    label_with_cumsum_reset(is_line_left_end) = -label_number(is_line_right_end);
-%     line_label = cumsum(label_with_cumsum_reset, 1, 'reverse')'; % Cumsum with 'reverse' does not work in 2012b! % Transpose 
-    line_label = flipud(cumsum(flipud(label_with_cumsum_reset), 1))'; % Operate cumsum like 'reverse' % Transpose
-    
     % Restore the original shape
     line_length = line_length(:,2:end);
-    line_label = line_label(:,2:end);
+    
+    if nargout > 1,
+        % Line labels
+        label_with_cumsum_reset = zeros(size(line_cumsum));
+        label_number = reshape(cumsum(is_line_right_end(:)), size(line_cumsum));
+        label_number(~is_line_right_end) = 0;
+        label_with_cumsum_reset(is_line_right_end) = label_number(is_line_right_end);
+        label_with_cumsum_reset(is_line_left_end) = -label_number(is_line_right_end);
+%         line_label = cumsum(label_with_cumsum_reset, 1, 'reverse')'; % Cumsum with 'reverse' does not work in 2012b! % Transpose 
+        line_label = flipud(cumsum(flipud(label_with_cumsum_reset), 1))'; % Operate cumsum like 'reverse' % Transpose
+
+        % Restore the original shape
+        line_label = line_label(:,2:end);
+    end
 end
