@@ -35,8 +35,6 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     % simultaneously by using the sparse matrix technique. This utilizes
     % numerical Jacobian (and Hessian) matrices.
     
-    % Implemented 20.9.2018 by Joonas T. Holmi
-    
     % NOTES:
     % LMA seems to be most robust to initial guess using GN approximation.
     % Apparently, GN approximation is more robust to noise than NR and less
@@ -173,11 +171,12 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     SStot = sum(bsxfun(@minus, Y, mean(Y, 1)).^2, 1); % Total sum of squares
     SSres = nan(N_max_iterations+1, SD); % Sum of squared residuals
     R2 = nan(N_max_iterations+1, SD); % Coefficient of determination
-    bw = ~bw_converged & ~bw_diverged; % Consider only non-converged and non-diverged parameters.
     
     bw_dP_all_zero = false(1, SD);
-    bw_dP_any_nan = false(1, SD);
+    bw_dP_any_nan = all(isnan(Y), 1);
     bw_dP_any_inf = false(1, SD);
+    
+    bw = ~bw_converged & ~bw_diverged & ~bw_dP_any_nan; % Consider only non-converged and non-diverged (and initially non-nan) parameters.
     
     % DISABLE ALL WARNINGS (including the following two warnings):
     % 1) Warning: Matrix is singular to working precision.
@@ -312,12 +311,12 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
         
         % Evaluate Jacobian (and Hessian if requested)
         if evalHessian, % Newton-Raphson iteration step
-            [Jf, Hf] = jacobian_helper(df_tol_abs, df_tol_rel, @fun_with_locks, P(~locks,bw), X(:,bw), P(locks,bw));
+            [Jf, Hf] = jacobian_helper(df_tol_abs, df_tol_rel, @fun_with_locks, P(~locks,bw), ii > 1, X(:,bw), P(locks,bw));
             rHf = bsxfun(@times, r(:,bw), reshape(Hf, S(1), SD_reduced, SP_unlocked.^2)); % Product of r and Hf % Second term of Hr2
             rHf = bsxfun(@times, weights(:,bw), rHf); % Quadratic weight contribution
         else, % Gauss-Newton approximation (avoids Hf calculus).
             % Works only if rHf is an order of magnitude smaller than JfJf.
-            Jf = jacobian_helper(df_tol_abs, df_tol_rel, @fun_with_locks, P(~locks,bw), X(:,bw), P(locks,bw));
+            Jf = jacobian_helper(df_tol_abs, df_tol_rel, @fun_with_locks, P(~locks,bw), ii > 1, X(:,bw), P(locks,bw));
             rHf = 0; % Second term of Hr2
         end
 
