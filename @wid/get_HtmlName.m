@@ -42,9 +42,15 @@ function HtmlName = get_HtmlName(obj, isWorkspaceOptimized),
                 ImageFile = strrep(fullfile(folder_reader, 'icons', 'Default.png'), '\', '/'); % Construct its full path
             end
             info = imfinfo(ImageFile); % Get height and width, required by R2019b and onwards
-            % Wrap icon and name in html-table and set their vertical alignment
-            % to middle and add 1px cell spacing around the table.
-            HtmlName{ii} = sprintf('<html><table cellspacing="1" cellpadding="0"><tr valign="middle"><td><img height="%d" width="%d" src="file:%s"/></td><td>&nbsp;%s</td></tr></table></html>', info.Height, info.Width, ImageFile, HtmlName{ii}); % height and width are required by R2019b and onwards
+            if verLessThan('matlab', '9.7'), % If older than R2019b
+                % Wrap icon and name in html-table and set their vertical alignment
+                % to middle and add 1px cell spacing around the table.
+                HtmlName{ii} = sprintf('<html><table cellspacing="1" cellpadding="0"><tr valign="middle"><td><img height="%d" width="%d" src="file:%s"/></td><td>&nbsp;%s</td></tr></table></html>', info.Height, info.Width, ImageFile, HtmlName{ii}); % height and width are required by R2019b and onwards
+            else, % If R2019b or newer that use uihtml_JList.html via uihtml
+                [~, name, ext] = fileparts(ImageFile);
+                ImageFile = [name ext]; % Remove path, because uihtml_project_manager.html is located in the same folder as the icons
+                HtmlName{ii} = sprintf('<tr><td><img height="%d" width="%d" src="%s"/></td><td>&nbsp;%s</td></tr>', info.Height, info.Width, ImageFile, HtmlName{ii}); % height and width are required by R2019b and onwards
+            end
         end
     end
 end
