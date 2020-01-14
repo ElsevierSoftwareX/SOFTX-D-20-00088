@@ -158,12 +158,21 @@ function O_wid = manager(obj, varargin),
             'SelectionMode', selection_mode, ... % Whether single or multiple selection mode
             'KeyReleasedCallback', @ReleasedCallback, 'MouseReleasedCallback', @ReleasedCallback, 'MouseMovedCallback', @MouseMovedCallback); % Modify standard callbacks of JList: http://undocumentedmatlab.com/blog/uicontrol-callbacks
     else, % For R2019b or newer versions
+        % Construct a configuration struct for uihtml_JList.html
+        S = struct();
+        S.items = list;
+        S.allowScrollbarKeydownEvents = false;
+        S.allowMouseHoverHighlights = false;
+        % 0 = SINGLE_SELECTION, 1 = SINGLE_INTERVAL_SELECTION, 2 = MULTIPLE_INTERVAL_SELECTION
+        if is_multiple_selection, S.selectionMode = 2;
+        else, S.selectionMode = 0; end
+        
         % Create list using HTML5
         hcontainer = uihtml(fig);
         hcontainer.Position = [0 height_table Position(3) Position(4)-height_table];
         hcontainer.HTMLSource = 'uihtml_JList.html';
         drawnow;
-        hcontainer.Data = list;
+        hcontainer.Data = S;
         hcontainer.DataChangedFcn = @ReleasedCallback;
     end
     

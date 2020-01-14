@@ -6,8 +6,12 @@
 
 This creates an interactive HTML5 <table>-based list when used with MATLAB's uihtml-functionality. The resemblance and the mouse and keyboard behaviour intentionally mimic that of the Java's JList wrapped in Java's JScrollPane. This file should be provided to uihtml's HTMLSource.
 
-The list generation from uihtml's Data input:
-The list is constructed by providing a string array to uihtml's Data in MATLAB. Each string correspond to a list item and must include a row <tr>-tag and its cell <td>-tags, because they are used in the dynamic table construction. Also, any item consisting of <img>-tags much have relative src paths with respect to this file. The list will be reconstructed each time the code detects a MATLAB input to uihtml's Data.
+The list is generated and configured from uihtml's Data input. The following field names of a struct array are considered:
+* items: The list items are provided as a string array. Each string correspond to a list item and must include a row <tr>-tag and its cell <td>-tags, because they are used in the dynamic table construction. Also, any item consisting of <img>-tags much have relative src paths with respect to this file. The list will be reconstructed each time the code detects an 'items' field input to uihtml's Data struct array.
+* selection: Takes in a boolean array that determines whether or not each item is selected. It must have the same length as is the number of items.
+* selectionMode (= 2 by default): Here 0 = single selection, 1 = single interval selection and 2 = multiple interval selection, like in Java's JList implementation.
+* allowScrollbarKeydownEvents (= false by default): Enable/disable the keyboard space and arrow key events that move the uihtml's horizontal and vertical scrollbars. This is false by default in order to mimic JList (wrapped in JScrollPane) behaviour.
+* allowMouseHoverHighlights (= false by default): Enable/disable the highlights when hovering on items with a mouse cursor. This is false by default in order to mimic JList behaviour.
 
 The list interactions update uihtml's Data output and call uihtml's DataChangedFcn:
 User can interact with the list by mouse/keyboard-selecting the list items. A single item can be selected either by holding or clicking the left-mouse button on it. A range of items can be selected by combining the left-mouse and the Shift-key. Multiple items can be selected (or even deselected) by combining the left-mouse and the Ctrl-key. Also, the keyboard arrow up and down keys can be used to select items. Any described interactions with the list will update uihtml's Data with the selection indices. MATLAB is then automatically notified of such changes via uihtml's DataChangedFcn event listener interface.
@@ -112,9 +116,10 @@ tr td:last-of-type { /*Add the right-most border*/
 
 <script type="text/javascript"> // Javascript-code
 function setup(htmlComponent) {
-  // TODO: var only_JList_behavior = true; // Set false if you want to improve from JList behaviour
-  // TODO: var multiple_interval_selection = true; // Set false if you want to improve from JList behaviour
-  // 0 = SINGLE_SELECTION, 1 = SINGLE_INTERVAL_SELECTION, 2 = MULTIPLE_INTERVAL_SELECTION
+  // Default listbox configurations (that can be modified via the uihtml's Data input)
+  var selectionMode = 2; // Here 0 = single selection, 1 = single interval selection and 2 = multiple interval selection, like in Java's JList implementation.
+  var allowScrollbarKeydownEvents = false; // JList behavior
+  var allowMouseHoverHighlights = false; // JList behavior
   
   // Define variables for table and its rows
   var table = document.getElementById('dynamicTable');
@@ -148,20 +153,38 @@ function setup(htmlComponent) {
   
   // Dynamic table constructor / 'Data from MATLAB'-handler
   function fromMATLABEvent(event) {
-    var Data = htmlComponent.Data; // Get newest data from MATLAB
-    if (Array.isArray(Data) && Data.length > 0) { // Do something only if a non-empty array
-      table.innerHTML = Data.join('');
-      table_rows = table.rows; // Update table_rows variable
-      // Give each table row its own id
-      for (var i = 0; i < table_rows.length; i++) {
-        table_rows[i].id = i;
+    var obj = htmlComponent.Data; // Get latest data from MATLAB
+    if (Object.prototype.toString.call(obj) === '[object Object]') { // Do something only if an object
+      if ('items' in obj) {
+        items = obj['items'];
+        table.innerHTML = items.join('');
+        table_rows = table.rows; // Update table_rows variable
+        // Give each table row its own id
+        for (var i = 0; i < table_rows.length; i++) {
+          table_rows[i].id = i;
+        }
+        isSelected = Array(table_rows.length).fill(false);
       }
-      isSelected = Array(table_rows.length).fill(false);
+      if ('selection' in obj) {
+        isSelected = obj['selection'];
+		toMATLABEvent();
+      }
+      if ('selectionMode' in obj) {
+        selectionMode = obj['selectionMode'];
+      }
+      if ('allowScrollbarKeydownEvents' in obj) {
+        allowScrollbarKeydownEvents = obj['allowScrollbarKeydownEvents'];
+      }
+      if ('allowMouseHoverHighlights' in obj) {
+        allowMouseHoverHighlights = obj['allowMouseHoverHighlights'];
+      }
+    } else {
+      alert('ERROR! Expecting a MATLAB struct array as uihtml\'s Data input! See the documentation for the available field values.');
     }
   }
   
   // Dynamic table selection dispatcher / 'Data to MATLAB'-handler (via mouse or keyboard click events)
-  function toMATLABEvent(eventId) {
+  function toMATLABEvent() {
     if (isBusy) { // Do nothing if already busy
       isQueue = true;
       return;
@@ -210,6 +233,9 @@ function setup(htmlComponent) {
   }
   
   function select(eventId, isCtrl, isShift) {
+    // Override isCtrl and isShift values based on the current selection mode
+    isCtrl = selectionMode != 2 ? false : isCtrl; // Disable Ctrl when 'multiple interval selection'-mode is not set
+    isShift = selectionMode == 0 ? false : isShift; // Disable Shift when 'single selection'-mode is set
     // If NO Ctrl and NO Shift
     if (latestSingleSelectionId == -1 || (!isCtrl && !isShift)) {
       // Quickly update the selection
@@ -248,10 +274,10 @@ function setup(htmlComponent) {
   function mouseMoveEvent(event) { // Mimic that of JList behaviour
     var eventId = parseInt(event.target.closest('tr').id, 10);
     if (eventId != latestSelectionId) { // Continue only if new selection
-      // hover(eventId); // Better (although not JList behavior)
+      allowMouseHoverHighlights && hover(eventId);
       // Consider only the holding of the left-mouse button only if keyboard Ctrl and Shift are not pressed. This mimics behaviour of JList.
       if (isLeftMouse && !event.ctrlKey && !event.shiftKey) {
-        hover(eventId); // JList behavior
+        !allowMouseHoverHighlights && hover(eventId); // JList behavior
         select(eventId, false, false); // Ignore Ctrl- and Shift-keys
         // If no queue, then notify MATLAB
         !isQueue && toMATLABEvent();
@@ -295,7 +321,7 @@ function setup(htmlComponent) {
   function scrollbarKeyDownEventDisabler(event) {
     // Disable space and arrow keys
     if([32, 37, 38, 39, 40].indexOf(event.keyCode) > -1) {
-      event.preventDefault();
+      !allowScrollbarKeydownEvents && event.preventDefault();
     }
   }
 }
