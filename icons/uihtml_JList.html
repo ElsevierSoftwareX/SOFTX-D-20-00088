@@ -4,10 +4,10 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-This creates an interactive HTML5 <table>-based list when used with MATLAB's uihtml-functionality. The resemblance and the mouse and keyboard behaviour intentionally mimic that of the Java's JList wrapped in Java's JScrollPane. This file should be provided to uihtml's HTMLSource.
+This creates an interactive HTML5 <table>-based list when used with MATLAB's uihtml-functionality. The resemblance and the mouse and keyboard behaviour intentionally mimic that of the Java's JList wrapped in Java's JScrollPane. This file should be provided to uihtml's HTMLSource and drawnow called right after it.
 
-The list is generated and configured from uihtml's Data input. The following field names of a struct array are considered:
-* items: The list items are provided as a string array. Each string correspond to a list item and must include a row <tr>-tag and its cell <td>-tags, because they are used in the dynamic table construction. Also, any item consisting of <img>-tags much have relative src paths with respect to this file. The list will be reconstructed each time the code detects an 'items' field input to uihtml's Data struct array.
+The list is generated and configured from uihtml's Data input, which can be provided at any given time. The following field names of a struct array are considered:
+* items: The list items are provided as a string array. Each string correspond to a list item and must include a row <tr>-tag and its cell <td>-tags, because they are used to the dynamic table construction. Also, any item consisting of <img>-tags much have relative src paths with respect to this file. The list will be reconstructed each time the code detects an 'items' field input in uihtml's Data struct array.
 * selection: Takes in a boolean array that determines whether or not each item is selected. It must have the same length as is the number of items.
 * selectionMode (= 2 by default): Here 0 = single selection, 1 = single interval selection and 2 = multiple interval selection, like in Java's JList implementation.
 * allowScrollbarKeydownEvents (= false by default): Enable/disable the keyboard space and arrow key events that move the uihtml's horizontal and vertical scrollbars. This is false by default in order to mimic JList (wrapped in JScrollPane) behaviour.
@@ -128,9 +128,11 @@ function setup(htmlComponent) {
   // Add event listener for MATLAB data input
   htmlComponent.addEventListener('DataChanged', fromMATLABEvent);
   
-  // Variables to limit overuse of toMATLABEvent and to handle asynchronous events properly and swiftly
-  var isBusy = false;
+  // Variables to limit overuse of toMATLABEvent
+  var isBlocked = false;
   var isQueue = false;
+  var blockingTime = 20; // ms
+  var timeout_toMATLABEvent = null;
   
   // Disable scrollbar keyboard events to mimic JList behavior
   window.addEventListener('keydown', scrollbarKeyDownEventDisabler);
@@ -142,7 +144,7 @@ function setup(htmlComponent) {
   var isLeftMouse = false; // Left-mouse status
   table.addEventListener('mousemove', mouseMoveEvent);
   table.addEventListener('mousedown', mouseDownEvent);
-  table.addEventListener('mouseup', mouseUpEvent);
+  window.addEventListener('mouseup', mouseUpEvent); // Here window instead of table to always keep the left-mouse button status updated
   
   // Key variables used by the event listeners
   var isSelected = []; // For each row store whether it has been selected (=true) or not (=false)
@@ -155,6 +157,7 @@ function setup(htmlComponent) {
   function fromMATLABEvent(event) {
     var obj = htmlComponent.Data; // Get latest data from MATLAB
     if (Object.prototype.toString.call(obj) === '[object Object]') { // Do something only if an object
+      clearTimeout(timeout_toMATLABEvent); // Stop the timeouts before making changes to the list
       if ('items' in obj) {
         items = obj['items'];
         table.innerHTML = items.join('');
@@ -163,11 +166,14 @@ function setup(htmlComponent) {
         for (var i = 0; i < table_rows.length; i++) {
           table_rows[i].id = i;
         }
-        isSelected = Array(table_rows.length).fill(false);
+        if (!('selection' in obj)) {
+          isSelected = Array(table_rows.length).fill(false);
+          toMATLABEvent();
+        }
       }
       if ('selection' in obj) {
         isSelected = obj['selection'];
-		toMATLABEvent();
+        toMATLABEvent();
       }
       if ('selectionMode' in obj) {
         selectionMode = obj['selectionMode'];
@@ -185,12 +191,14 @@ function setup(htmlComponent) {
   
   // Dynamic table selection dispatcher / 'Data to MATLAB'-handler (via mouse or keyboard click events)
   function toMATLABEvent() {
-    if (isBusy) { // Do nothing if already busy
+    if (isBlocked) { // Do nothing if the blocking period has not ended
       isQueue = true;
-      return;
+      return; // Stop here to clean up the JS Callback Queue faster
+    } else {
+      isBlocked = true; // Block the consequtive function calls until the timer has ran out
+      isQueue = false; // Clear the queue status
+      timeout_toMATLABEvent = setTimeout(unblock_toMATLABEvent, blockingTime); // Unblock this function after the timer has ran out (and release the queue if present)
     }
-    isBusy = true; // Set busy
-    isQueue = false; // Clear queue status
     
     // Select/deselect each table row by the boolean array
     var indices_length = 0; // Needed later for Array preallocation
@@ -216,12 +224,11 @@ function setup(htmlComponent) {
     
     // Send indices to MATLAB
     htmlComponent.Data = indices;
-    
-    // Clear busy status
-    isBusy = false;
-    
-    // If queue, then call itself
-    isQueue && toMATLABEvent();
+  }
+  
+  function unblock_toMATLABEvent() { // Called only using setTimeout
+    isBlocked = false;
+    isQueue && toMATLABEvent(); // If queue, then call itself
   }
   
   function hover(eventId) {
@@ -272,15 +279,15 @@ function setup(htmlComponent) {
   }
   
   function mouseMoveEvent(event) { // Mimic that of JList behaviour
-    var eventId = parseInt(event.target.closest('tr').id, 10);
-    if (eventId != latestSelectionId) { // Continue only if new selection
+    var closest_tr = event.target.closest('tr');
+    var eventId = closest_tr ? parseInt(closest_tr.id, 10) : -1;
+    if (eventId != -1 && eventId != latestSelectionId) { // Continue only if new selection
       allowMouseHoverHighlights && hover(eventId);
       // Consider only the holding of the left-mouse button only if keyboard Ctrl and Shift are not pressed. This mimics behaviour of JList.
       if (isLeftMouse && !event.ctrlKey && !event.shiftKey) {
         !allowMouseHoverHighlights && hover(eventId); // JList behavior
         select(eventId, false, false); // Ignore Ctrl- and Shift-keys
-        // If no queue, then notify MATLAB
-        !isQueue && toMATLABEvent();
+        toMATLABEvent(); // Notify MATLAB (when unblocked)
       }
     }
   }
@@ -288,12 +295,14 @@ function setup(htmlComponent) {
   function mouseDownEvent(event) { // Mimic that of JList behaviour
     if (event.button == 0) { // Consider only the left-mouse button
       isLeftMouse = true; // Update left-mouse status
-      var eventId = parseInt(event.target.closest('tr').id, 10);
-      if (eventId != latestSelectionId || event.ctrlKey && !event.shiftKey || !latestSingleSelectionResult) { // Continue only if new selection or YES Ctrl and NO Shift or latest single selection result was false
-        hover(eventId); // JList behavior
-        select(eventId, event.ctrlKey, event.shiftKey);
-        // If no queue, then notify MATLAB
-        !isQueue && toMATLABEvent();
+      var closest_tr = event.target.closest('tr');
+      var eventId = closest_tr ? parseInt(closest_tr.id, 10) : -1;
+      if (eventId != -1) {
+        if (eventId != latestSelectionId || event.ctrlKey && !event.shiftKey || !latestSingleSelectionResult) { // Continue only if new selection or YES Ctrl and NO Shift or latest single selection result was false
+          hover(eventId); // JList behavior
+          select(eventId, event.ctrlKey, event.shiftKey);
+          toMATLABEvent(); // Notify MATLAB (when unblocked)
+        }
       }
     }
   }
@@ -310,8 +319,7 @@ function setup(htmlComponent) {
       hover(eventId);
       if (!event.ctrlKey || event.shiftKey) { // Skip for YES Ctrl and NO Shift combo
         select(eventId, false, event.shiftKey); // Ignore Ctrl-key like in JList
-        // If no queue, then notify MATLAB
-        !isQueue && toMATLABEvent();
+        toMATLABEvent(); // Notify MATLAB (when unblocked)
       } else {
         latestSelectionId = eventId; // Update this
       }
