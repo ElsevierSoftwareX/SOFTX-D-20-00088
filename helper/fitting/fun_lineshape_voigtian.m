@@ -27,61 +27,54 @@ function F = fun_lineshape_voigtian(P, X),
     Z = 2.*sqrt(log(2)).*bsxfun(@rdivide, bsxfun(@plus, X0, 0.5i.*Fwhm_L), Fwhm_G);
     z = 1i.*sqrt(log(2)).*Fwhm_L./Fwhm_G; % When X0 is zero
     
-    % Determine whether or not to use alternative approach
-    B_A = Fwhm_G < Fwhm_L;
-    B_B = ~B_A;
-    
-    % Separate the position variables into two cases
-    Z_A = Z(:,B_A); % For approach A (= simple-ratio approach)
-    Z_B = Z(:,B_B); % For approach B (= modified-ratio approach)
-    ratio = zeros(size(Z)); % Preallocate
+    % Stability considerations:
+    % imag(Z) >= 0, for which reason fadf operates in the stable region
+    % imag(z) >= 0, for which reason fadf operates in the stable region
     
     % Evaluate the real part of the Faddeeva function
-    nominator = real(fadf(Z_A)); % Voigtian lineshape profile
+    nominator = real(fadf(Z)); % Voigtian lineshape profile
     divisor = real(fadf(z)); % Maximum of the Voigtian lineshape profile % = exp(imag(z_max).^2).*erfc(imag(z_max));
     
     % Normalize the Voigtian lineshape profile to [0, 1]
-    ratio(:,B_A) = bsxfun(@rdivide, nominator, divisor);
+    ratio = bsxfun(@rdivide, nominator, divisor);
     
-    % Utilize sign inversion relation (w(z) = 2.*exp(-z.^2) - w(-z)) to
-    % evaluate the case B with better numerical stability.
-    nominator_1 = real(2.*exp(-Z_B.^2));
-    nominator_2 = real(-fadf(-Z_B));
-    
-    % Essential derivation:
-    % ratio = nominator ./ divisor; % Utilize sign inversion relation here
-    % ratio = (nominator_1 + nominator_2) ./ divisor; % Divide by nominator_1
-    % ratio = (1 + nominator_2./nominator_1) .* (nominator_1 ./ divisor);
-    % ratio = (1 + nominator_2./nominator_1) .* subratio;
-    % 
-    % subratio = nominator_1 ./ divisor; % Then simplify this relation
-    % 
-    % nominator_1 = real(2.*exp(-Z.^2)) ...
-    % = real(2.*exp(-real(Z).^2+imag(Z).^2-2i.*real(Z).*imag(Z))) ...
-    % = 2.*exp(imag(Z).^2-real(Z).^2).*cos(-2.*real(Z).*imag(Z));
-    % 
-    % divisor = real(fadf(z)) ...
-    % = exp(imag(z).^2).*erfc(imag(z));
-    % 
-    % imag(z) == imag(Z)
-    % real(z) == 0
-    % 
-    % subratio = 2.*exp(imag(Z).^2-real(Z).^2).*cos(-2.*real(Z).*imag(Z)) ./ exp(imag(z).^2)./erfc(imag(z)) ...
-    %  = 2.*exp(-real(Z).^2).*cos(-2.*real(Z).*imag(Z))./erfc(imag(z));
-    % 
-    % Robustness analysis:
-    % exp(-real(Z).^2) is always [0, 1]
-    % cos(-2.*real(Z).*imag(Z)) is always [-1, 1]
-    % erfc(imag(z)) is always [0, 2]
-    % 
-    % This approach can fail if both nominator_2 and nominator_1 are zeros.
-    
-    % Use the rewritten robust form of the ratio calculus to avoid nan values
-    subratio = bsxfun(@rdivide, 2.*exp(-real(Z_B).^2).*cos(-2.*real(Z_B).*imag(Z_B)), erfc(imag(z)));
-    ratio(:,B_B) = bsxfun(@plus, 1, nominator_2./nominator_1) .* subratio;
-    
-    % Fix all the remaining all-nan cases with zeros
-    ratio(repmat(all(isnan(ratio), 1), [size(ratio, 1) 1])) = 0;
+    %% COMMENTED SECONDARY APPROACH due to its numerical instabilities
+%     % Utilize sign inversion relation (w(z) = 2.*exp(-z.^2) - w(-z)) to
+%     % evaluate the case B with better numerical stability.
+%     nominator_1 = real(2.*exp(-Z.^2));
+%     nominator_2 = real(-fadf(-Z)); % Shoots quickly to infinity when Z > 26
+%     
+%     % Essential derivation:
+%     % ratio = nominator ./ divisor; % Utilize sign inversion relation here
+%     % ratio = (nominator_1 + nominator_2) ./ divisor; % Divide by nominator_1
+%     % ratio = (1 + nominator_2./nominator_1) .* (nominator_1 ./ divisor);
+%     % ratio = (1 + nominator_2./nominator_1) .* subratio;
+%     % 
+%     % subratio = nominator_1 ./ divisor; % Then simplify this relation
+%     % 
+%     % nominator_1 = real(2.*exp(-Z.^2)) ...
+%     % = real(2.*exp(-real(Z).^2+imag(Z).^2-2i.*real(Z).*imag(Z))) ...
+%     % = 2.*exp(imag(Z).^2-real(Z).^2).*cos(-2.*real(Z).*imag(Z));
+%     % 
+%     % divisor = real(fadf(z)) ...
+%     % = exp(imag(z).^2).*erfc(imag(z));
+%     % 
+%     % imag(z) == imag(Z)
+%     % real(z) == 0
+%     % 
+%     % subratio = 2.*exp(imag(Z).^2-real(Z).^2).*cos(-2.*real(Z).*imag(Z)) ./ exp(imag(z).^2)./erfc(imag(z)) ...
+%     %  = 2.*exp(-real(Z).^2).*cos(-2.*real(Z).*imag(Z))./erfc(imag(z));
+%     % 
+%     % Robustness analysis:
+%     % exp(-real(Z).^2) is always [0, 1], but truncates to 0 if Z > 26
+%     % cos(-2.*real(Z).*imag(Z)) is always [-1, 1]
+%     % erfc(imag(z)) is always [0, 2], but truncates to 0 if z > 26
+%     % 
+%     % This approach can also fail if both nominator_2 and nominator_1 are zeros.
+%     
+%     % Use the rewritten form of the ratio calculus
+%     subratio = bsxfun(@rdivide, 2.*exp(-real(Z_B).^2).*cos(-2.*real(Z_B).*imag(Z_B)), erfc(imag(z(:,B_B))));
+%     ratio = bsxfun(@plus, 1, nominator_2./nominator_1) .* subratio;
     
     % Calculate Voigtian, Lorentzian and Gaussian lineshape profiles
     F = zeros(size(X));
