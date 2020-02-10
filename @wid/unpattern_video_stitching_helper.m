@@ -60,6 +60,7 @@
 % '-BestContinuity': Used for visually strongly varying images in order to
 % preserve the pattern-to-pattern continuity. However, this may not work if
 % the reference region is filled with outliers.
+% '-Outliers': Boolean map to mark outliers in the image.
 % '-RestoreTooBright': Does not modify too bright (=max intensity) regions.
 % '-TrueBlackColor': Provide [R G B] if the camera has a known dark level.
 % '-MinSigmasThreshold' (= 2 by default): Try from 2 to 4. The smaller the
@@ -134,6 +135,11 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
 %     EdgePatterns = ~varargin_dashed_str_exists('DisableEdgePatterns', varargin); % By default, enable edge patterns
 % '-DisableEdgePatterns': Disables the edge pattern calculations. Can be
 % provided with [left, right, top, bottom] input for customization.
+
+    % Check if Outliers was specified
+    datas = varargin_dashed_str_datas('Outliers', varargin, -1);
+    B_Outliers = false(W, H);
+    if numel(datas) > 0, B_Outliers = datas{1}; end
 
     % Check if MinSigmasThreshold was specified
     datas = varargin_dashed_str_datas('MinSigmasThreshold', varargin, -1);
@@ -342,9 +348,9 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     
     fprintf('Testing all side lengths between %d and %d.\n', N_lower, N_upper);
     
-    B_invalid = test_pattern(1, I, B_too_bright); % Store invalid to reduce cpu demand of clever_outliers_and_statistics-calls
+    B_invalid = test_pattern(1, I, B_Outliers | B_too_bright); % Store invalid to reduce cpu demand of clever_outliers_and_statistics-calls
     if numel(N_test) > 1,
-        B_invalid_last = test_pattern(numel(N_test), I, B_too_bright); % Store invalid to reduce cpu demand of clever_outliers_and_statistics-calls
+        B_invalid_last = test_pattern(numel(N_test), I, B_Outliers | B_too_bright); % Store invalid to reduce cpu demand of clever_outliers_and_statistics-calls
         B_invalid = B_invalid & B_invalid_last; % AND-operation to reduce cpu demand of clever_outliers_and_statistics-calls
         for ii = 2:numel(N_test)-1,
             test_pattern(ii, I, B_invalid);
