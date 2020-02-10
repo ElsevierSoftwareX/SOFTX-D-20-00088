@@ -154,9 +154,12 @@ function O_wid = manager(obj, varargin),
         if show_indices, list{ii} = strrep(list{ii}, '&nbsp;', sprintf('&nbsp;<b>%d</b>. ', ii)); end
         if isempty(files{ii}), continue; end
         [pathstr, name, ext] = fileparts(files{ii});
-        list{ii} = strrep(list{ii}, '<html>', ['<html>&#x25BE; <b>' name ext '</b> (v' sprintf('%d', O_wid(ii).Version) ') @ ' pathstr ':<br>']);
+        if ~preferHTML5overJAVACOMPONENT, % For versions older than R2019b
+            list{ii} = strrep(list{ii}, '<html>', ['<html>&#x25BE; <b>' name ext '</b> (v' sprintf('%d', O_wid(ii).Version) ') @ ' pathstr ':<br>']);
+        else, % For R2019b or newer versions
+            list{ii} = strrep(list{ii}, '<tr>', ['<tr class="noid"><td colspan="2">&#x25BE; <b>' name ext '</b> (v' sprintf('%d', O_wid(ii).Version) ') @ ' pathstr ':<br></td></tr><tr>']);
+        end
     end
-    list = O_wid.get_HtmlName(false);
     
     if ~preferHTML5overJAVACOMPONENT, % For versions older than R2019b
         % Create list using Java
@@ -188,7 +191,6 @@ function O_wid = manager(obj, varargin),
     end
     
     % Create preview checkbox
-%     c = uicontrol(fig, 'Style', 'checkbox', 'String', 'Preview', 'Value', 1, 'Units', 'normalized', 'Position', [0 0 1 0.03]);
     isPreview = show_preview;
     h_table = uitable(fig, ...
         'Data', {isPreview obj.ForceDataUnit obj.ForceSpaceUnit obj.ForceSpectralUnit obj.ForceTimeUnit}, ...
@@ -205,10 +207,6 @@ function O_wid = manager(obj, varargin),
         if isprop(fig, 'SizeChangedFcn'), set(fig, 'SizeChangedFcn', @update);
         else, set(fig, 'ResizeFcn', @update); end % Added for backward compability
     end
-    
-    % Create Java waitbar
-%     [hcomponent2, hcontainer2] = javacomponent(javax.swing.JProgressBar(0, 1000), [], fig); % From 0.0% to 100.0%
-%     set(hcontainer2, 'Units', 'normalized', 'Position', [0 0 1 0.03], 'Visible', 'off');
     
     indices = []; % Store old indices (to be updated by MouseReleasedCallback)
     if nargout > 0,
