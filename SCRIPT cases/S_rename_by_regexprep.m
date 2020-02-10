@@ -9,7 +9,7 @@
 
 % Load and select the datas of interest
 [O_wid, O_wip, O_wid_HtmlNames] = wip.read('-ifall', '-Manager', ...
-    {'-all', '-nopreview', '-Title', 'SELECT DATA TO RENAME'});
+    '--all', '--nopreview', '--Title', 'SELECT DATA TO RENAME');
 if isempty(O_wid), return; end
 
 O_wid.manager('-nopreview', '-Title', 'SELECTED DATA', '-closepreview');

@@ -16,7 +16,7 @@
 
 % Load and select the dark current
 [O_wid_dark, O_wip, ~] = wip.read('-Manager', ...
-    {'-closepreview', '-singlesection', '-Title', 'SELECT ONE DARK', '-Type', 'TDGraph'});
+    '--closepreview', '--singlesection', '--Title', 'SELECT ONE DARK', '--Type', 'TDGraph');
 if isempty(O_wid_dark), return; end
 
 % Remove the cosmic rays from the dark current (can be 0-D, 1-D, 2-D and
@@ -25,7 +25,7 @@ if isempty(O_wid_dark), return; end
 
 % Load and select the datas of interest
 [O_wid, O_wip, O_wid_HtmlNames] = wip.read(O_wip.File, '-ifall', '-Manager', ...
-    {'-nopreview', '-Title', 'SELECT NON-DARK', '-Type', 'TDGraph'});
+    '--nopreview', '--Title', 'SELECT NON-DARK', '--Type', 'TDGraph');
 if isempty(O_wid), return; end
 
 % Remove the selected dark current from the selection

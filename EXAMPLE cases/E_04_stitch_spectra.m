@@ -27,7 +27,7 @@ uiwait(h); % Wait for helpdlg to be closed before continuing.
 
 %-------------------------------------------------------------------------%
 % Load all TDGraphs and set their SpectralUnits to '(nm)'.
-[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-Manager', {'-Type', 'TDGraph'}, '-SpectralUnit', '(nm)');
+[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-Manager', '--Type', 'TDGraph', '-SpectralUnit', '(nm)');
 %-------------------------------------------------------------------------%
 
 

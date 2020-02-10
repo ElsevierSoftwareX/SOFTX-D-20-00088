@@ -32,7 +32,7 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before
 helpdlg({'!!! (E1A i.) Load and browse file contents in a GUI by executing:' ...
     '[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file);' ...
     '' ...
-    '* It opens the file in a Project Manager -window, listing only the plottable data types (TDBitmap, TDGraph, TDImage, TDText). Non-plottable data types, such as TDInterpretation and TDTransformation, are hidden by default, but can be made visible by adding ''-Manager'', {''-all''} as an extra input pair.' ...
+    '* It opens the file in a Project Manager -window, listing only the plottable data types (TDBitmap, TDGraph, TDImage, TDText). Non-plottable data types, such as TDInterpretation and TDTransformation, are hidden by default, but can be made visible by adding ''-Manager'', ''--all'' as an extra input pair.' ...
     '' ...
     '* A preview window is normally opened for each selected list item. Multiple items may be left-mouse selected one-by-one by holding Ctrl. Alternatively, a range of items may be selected by holding Shift.' ...
     '' ...
@@ -49,12 +49,20 @@ helpdlg({'!!! (E1A i.) Load and browse file contents in a GUI by executing:' ...
 % This opens the specified file in a Project Manager -window.
 [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file); % (1A) Browse the file contents
 
+% '-Manager'-option with single-dashed options require enclosing by
+% {}-brackets:
 % [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', {'-all'}); % To show also the non-plottable data
-% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', {'-Type', 'TDGraph'}); % To show only TDGraphs
-% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', {'-Type', 'TDGraph', '-SubType', 'Image'}); % To show only Image<TDGraphs
-% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', {'-Type', {'TDBitmap', 'TDGraph', 'TDImage', '-SubType', '', 'Image', ''}}); % To show only TDBitmap, Image<TDGraphs and TDImage
+
+% The single-dashed options can be replaced by double-dashed options and
+% passed on via '-Manager'-option without {}-brackets:
+% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', '--all'); % To show also the non-plottable data
+% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', '--Type', 'TDGraph'); % To show only TDGraphs
+% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', '--Type', 'TDGraph', '--SubType', 'Image'); % To show only Image<TDGraphs
+% [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-Manager', '--Type', 'TDBitmap', 'TDGraph', 'TDImage', '--SubType', '', 'Image', ''); % To show only TDBitmap, Image<TDGraphs and TDImage
+
 % * Other possible '-Manager' options are '-singlesection', '-nopreview',
-% '-closepreview', '-nomanager', '-Title', '-Type' and '-SubType'.
+% '-closepreview', '-nomanager', '-Title', '-Type' and '-SubType'. Make
+% them double-dashed like above if passing on without {}-brackets!
 % It is noted that each input for '-Type' can have a corresponding input for
 % '-SubType' or vice versa! Any missing input is set to empty char array.
 

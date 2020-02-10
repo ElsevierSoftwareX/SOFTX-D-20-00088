@@ -5,7 +5,7 @@
 function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     % WITec Project/Data (*.WIP/*.WID) -file data reader. Returns the
     % selected data when the Project Manager -window (if opened) is CLOSED.
-    % 0) Input is parsed into files and extra options:
+    % 0) Input is parsed into files and extra case-insensitive options:
     % *Option '-all': Skip Project Manager and load all data in the files.
     % *Option '-ifall': Inquery the user whether or not to do '-all'.
     % *Option '-LimitedRead': If given, then limit file content reading to
@@ -14,8 +14,11 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     % If given without a number, then the limit is set to 4096.
     % *Options '-DataUnit', '-SpaceUnit', '-SpectralUnit' and '-TimeUnit':
     % Force the output units. This is very useful for automated processing.
-    % *Option '-Manager': Pass any varargin to Project Manager. For
-    % instance, can be used to load all data with specified Type / SubType.
+    % *Option '-Manager': Passes the given inputs to Project Manager:
+    % (1) by providing the inputs in a single cell, i.e. {'-all'}, OR
+    % (2) by writing the related single-dashed strings as double-dashed,
+    % i.e. '-all' becomes '--all'. For instance, it can be used to load all
+    % data with specified Type / SubType.
     % 1) If the file input is omitted, then a file browsing GUI is opened.
     % 2) The specified file is loaded, processed and shown in a new window.
     % 3) Project Manager -window allows preview of all data in the project.
@@ -83,9 +86,10 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     datas = varargin_dashed_str_datas('TimeUnit', varargin, -1);
     if numel(datas) > 0, O_wip.ForceTimeUnit = datas{1}; end
     
-    datas = varargin_dashed_str_datas('Manager', varargin, -1);
+    datas = varargin_dashed_str_datas('Manager', varargin);
     ManagerVarargin = {};
-    if numel(datas) > 0, ManagerVarargin = datas{1}; end
+    if numel(datas) == 1 && iscell(datas{1}), ManagerVarargin = datas{1}; % Special case of {}-enclosed inputs
+    elseif numel(datas) > 0, ManagerVarargin = datas; end
     
     % Show project manager on demand
     if show_ui_ifall, showProjectManager = strncmp(questdlg('Would you like to 1) browse & select data OR 2) load all data?', 'How to proceed?', '1) Browse & select', '2) Load all', '1) Browse & select'), '1)', 2); end
