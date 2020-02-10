@@ -5,7 +5,7 @@
 % Renames the selected data names using regexprep-syntax [1].
 % [1] https://se.mathworks.com/help/matlab/ref/regexprep.html
 
-% This interactive script was implemented 3.10.2019 by Joonas Holmi
+% This interactive script was implemented 7.2.2020 by Joonas Holmi
 
 % Load and select the datas of interest
 [O_wid, O_wip, O_wid_HtmlNames] = wip.read('-ifall', '-Manager', ...
@@ -13,13 +13,17 @@
 if isempty(O_wid), return; end
 
 O_wid.manager('-nopreview', '-Title', 'SELECTED DATA', '-closepreview');
-h = gcf; % Get figure of Project Manager
+fig = findall(0, 'tag', 'wit_io_project_manager_gcf'); % Works with both figures and uifigures
+
 options = struct();
 options.WindowStyle = 'normal'; % Allow interaction with the Project Manager
+% Unfortunately, R2019b deactivates Project Manager -window due to a bug in 
+% inputdlg's WindowStyle behaviour for uifigures! A bug report (and its
+% solution has been filed to MathWorks in 7th February 2020.
 
 % Set regexprep parameters
 strs = inputdlg({sprintf('Regexprep ''expression'':'), 'Regexprep ''replace'':'}, 'Input', [1 35; 1 35], {'', ''}, options);
-if ishandle(h), close(h); end % Close Project Manager if not closed
+if ishandle(fig), close(fig); end % Close Project Manager if not closed
 if isempty(strs), return; end % Stop if cancelled
 
 % Ask if to make copies
