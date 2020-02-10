@@ -3,6 +3,7 @@
 % All rights reserved.
 
 function O_wid = manager(obj, varargin),
+    persistent latest_fig;
     if isempty(obj), error('No project given!'); end
     
     % START OF VARARGIN PARSING
@@ -109,6 +110,11 @@ function O_wid = manager(obj, varargin),
         set(fig, 'Units', 'pixels'); % Pixels
         Position = get(fig, 'Position'); % Get Position
         set(fig, 'Units', Units); % Restore Units
+        set(fig, 'Tag', 'wit_io_project_manager_gcf'); % Set tag in order to find this with findall
+        if ~isempty(latest_fig),
+            set(latest_fig, 'Tag', ''); % Remove tag duplicates
+            latest_fig = fig; % Update latest figure
+        end
     else, % For R2019b or newer versions
         % Prepare uifigure for HTML5 uihtml_JList.html via uihtml
         % (introduced in R2019b).
@@ -125,6 +131,11 @@ function O_wid = manager(obj, varargin),
         XYWH = get(0, 'ScreenSize');
         fig.Position = XYWH([3:4 3:4]).*[0.075 0.1 0.225 0.8];
         Position = fig.Position; % Get Position
+        fig.Tag = 'wit_io_project_manager_gcf'; % Set tag in order to find this later with findall
+        if ~isempty(latest_fig),
+            latest_fig.Tag = ''; % Remove tag duplicates
+            latest_fig = fig; % Update latest figure
+        end
     end
     
     % First create simple list
