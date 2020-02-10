@@ -13,11 +13,11 @@
 % XYZ-coordinate array and 'color' is an 1-by-3 RGB-channel vector. Here N
 % is 4, 2 and 1 for Image, Line and Point wid objects, respectively.
 function h = show_Position(obj, Fig, varargin),
-    % Test main object
-    if ~strcmp(obj.SubType, 'Image'), return; end % Exit if not an Image
-    
     % Empty output by default
     h = [];
+    
+    % Test main object
+    if ~strcmp(obj.SubType, 'Image'), return; end % Exit if not an Image
     
     % Check if markImageFun was specified
     datas = varargin_dashed_str_datas('markImageFun', varargin, -1);

@@ -163,13 +163,15 @@ function h = plot(obj, varargin),
         end
     end
     
-    % Show positions of the given objects
-    h_positions = obj.show_Position(Fig, obj_showPosition{:});
-    
     % Get handles of Axes children
     Ax = get(Fig, 'CurrentAxes');
     h = Ax.Children;
-    h = [h; h_positions];
+    
+    % Show positions of the given objects
+    if ~isempty(obj_showPosition),
+        h_positions = obj.show_Position(Fig, obj_showPosition{:});
+        h = [h; h_positions];
+    end
     
     % Set visible
     set(Fig, 'Visible', 'on');
