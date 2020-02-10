@@ -23,5 +23,17 @@ function [obj, Average] = spatial_average(obj),
         obj.Data = Average;
         obj.Name = sprintf('Spatial Average<%s', obj.Name);
         obj.SubType = 'Point'; % Only relevant if Type == TDGraph
+        
+        % Load the object info once
+        Info = obj.Info;
+        
+        T = Info.XTransformation; % Get the space transformation object
+        if ~isempty(T) && strcmp(T.Type, 'TDSpaceTransformation'), % Continue only if there is transformation
+            T_Data = T.Data; % Get its data
+            T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(1) = T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(1) - (Info.XSize-1)/2;
+            T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(2) = T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(2) - (Info.YSize-1)/2;
+            T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(3) = T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(3) - (Info.ZSize-1)/2;
+            T.Data = T_Data; % Write all changes at once
+        end
     end
 end
