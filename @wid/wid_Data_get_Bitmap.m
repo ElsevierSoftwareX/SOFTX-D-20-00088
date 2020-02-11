@@ -35,12 +35,12 @@ function out = wid_Data_get_Bitmap(obj),
         Data = obj.Tag.Data.regexp('^StreamData<TDStream<', true);
         if isempty(Data.Data), Data.reload(); end
         in = Data.Data;
-
+        
         % Test if this is correctly formatted bitmap
         if ~strcmp(reshape(char(in(1:2)), 1, []), 'BM'),
             error('Unsupported TDBitmap format detected!');
         end
-
+        
 %             BmpFileSize = typecast(uint8(in(3:6)), 'uint32'); % The size of the BMP file in bytes
 %             Reserved1 = typecast(uint8(in(7:8)), 'uint16'); % Reserved; actual value depends on the application that creates the image
 %             Reserved2 = typecast(uint8(in(9:10)), 'uint16'); % Reserved; actual value depends on the application that creates the image
@@ -56,10 +56,15 @@ function out = wid_Data_get_Bitmap(obj),
 %             ResolutionY = typecast(uint8(in(43:46)), 'int32'); % The vertical resolution of the image. (pixel per meter, signed integer)
 %             NColorsInPalette = typecast(uint8(in(47:50)), 'uint32'); % The number of colors in the color palette, or 0 to default to 2n
 %             NImportantColors = typecast(uint8(in(51:54)), 'uint32'); % The number of important colors used, or 0 when every color is important; generally ignored
-
+        
+        % Process the image for reading
+        SizeX = double(SizeX);
+        SizeY = double(SizeY);
+        BytesPerPixel = double(BitsPerPixel)./8;
         out = in(Offset+1:Offset+BitmapSize); % Actual data (Suboptimal for low memory systems)
-
-        out = permute(reshape(uint8(out), [int32(BitsPerPixel/8) SizeX SizeY]), [2 3 1]); % Reshape to easier format % int32 added for backward compability! Avoids 'Warning: Concatenation with dominant (left-most) integer class may overflow other operands on conversion to return class.'
+        out = reshape(uint8(out), [], SizeY); % Reshape to easier format
+        out = out(1:BytesPerPixel.*SizeX,:); % Remove padding to nearest 4-byte boundary
+        out = permute(reshape(out, [BytesPerPixel SizeX SizeY]), [2 3 1]); % Reshape and permute to easier format
         out = out(:,end:-1:1,end:-1:1); % Restructure data (to be shown correctly)
     else, error('Unimplemented Version (%d)!', Version); end
 end
