@@ -241,9 +241,9 @@ classdef wid < handle, % Since R2008a
         
         % Same as LinksToOthers but includes also the LinksToOthers of LinksToOthers and so on.
         function AllLinksToOthers = get.AllLinksToOthers(obj),
-            LinksToOthers = obj.LinksToOthers;
-            N = fieldnames(LinksToOthers);
-            C = struct2cell(LinksToOthers);
+            NewLinksToOthers = obj.LinksToOthers;
+            N = fieldnames(NewLinksToOthers);
+            C = struct2cell(NewLinksToOthers);
             ii = 1;
             while ii <= numel(C),
                 if isempty(C{ii}), NewLinksToOthers = struct();
