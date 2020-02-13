@@ -286,6 +286,8 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         % Object search
         tags = regexp(obj, pattern, FirstOnly, LayersFurther, PrevFullNames);
         tags = search(obj, varargin);
+        tags = regexp_ancestors(obj, pattern, FirstOnly, LayersFurther);
+        tags = search_ancestors(obj, varargin);
         tags = match_by_Data_criteria(obj, test_fun);
         
         % Object debugging
