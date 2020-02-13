@@ -46,8 +46,10 @@ classdef wid < handle, % Since R2008a
         ImageIndex;
         OrdinalNumber;
         SubType;
-        Links;
-        AllLinks;
+        LinksToOthers;
+        AllLinksToOthers;
+        LinksToThis;
+        AllLinksToThis;
     end
     
     properties (SetAccess = private)
@@ -224,35 +226,89 @@ classdef wid < handle, % Since R2008a
         end
         
         % Struct of linked wid-classes
-        function Links = get.Links(obj),
-            Links = struct.empty;
+        function LinksToOthers = get.LinksToOthers(obj),
+            LinksToOthers = struct.empty;
             if isfield(obj.Tag, 'Data'),
                 Tag_Id = obj.Tag.Data.regexp('^[^<]+ID(<[^<]*)*$'); % Should not match with ID under TData!
                 strs = get_valid_and_unique_names({Tag_Id.Name}); % Convert all wit Names to struct-compatible versions
                 for ii = 1:numel(Tag_Id),
                     if Tag_Id(ii).Data ~= 0, % Ignore if zero
-                        Links(1).(strs{ii}) = obj.Project.find_Data(Tag_Id(ii).Data);
+                        LinksToOthers(1).(strs{ii}) = obj.Project.find_Data(Tag_Id(ii).Data);
                     end
                 end
             end
         end
         
-        % Same as Links but includes also the Links of Links and so on.
-        function AllLinks = get.AllLinks(obj),
-            Links = obj.Links;
-            N = fieldnames(Links);
-            C = struct2cell(Links);
+        % Same as LinksToOthers but includes also the LinksToOthers of LinksToOthers and so on.
+        function AllLinksToOthers = get.AllLinksToOthers(obj),
+            LinksToOthers = obj.LinksToOthers;
+            N = fieldnames(LinksToOthers);
+            C = struct2cell(LinksToOthers);
             ii = 1;
             while ii <= numel(C),
-                if isempty(C{ii}), NewLinks = struct();
-                else, NewLinks = C{ii}.Links; end
-                NewN = cellfun(@(x) [N{ii} '_' x], fieldnames(NewLinks), 'UniformOutput', false);
-                NewC = struct2cell(NewLinks);
+                if isempty(C{ii}), NewLinksToOthers = struct();
+                else, NewLinksToOthers = C{ii}.LinksToOthers; end
+                NewN = cellfun(@(x) [N{ii} '_' x], fieldnames(NewLinksToOthers), 'UniformOutput', false);
+                NewC = struct2cell(NewLinksToOthers);
                 if ~isempty(NewN), N = [N; NewN]; end
                 if ~isempty(NewC), C = [C; NewC]; end
                 ii = ii + 1;
             end
-            AllLinks = cell2struct(C, N, 1);
+            AllLinksToOthers = cell2struct(C, N, 1);
+        end
+        
+        % Array of linked wid-classes
+        function LinksToThis = get.LinksToThis(obj),
+            LinksToThis = wid.Empty;
+            if isfield(obj.Tag, 'Data'),
+                % First get the object's wit-tree parent tag
+                tags = obj.Tag.Data.Parent;
+                % List all the project's ID-tags (except NextDataID and
+                % ID<TData) under the Data tree tag
+                tags = tags.regexp('^(?!NextDataID)([^<]+ID(List)?(<[^<]*)*(<Data(<WITec (Project|Data))?)?$)');
+                % Keep only those ID-tags, which point to this object
+                tags = tags.match_by_Data_criteria(@(x) any(x == obj.Id));
+                % Get their owner object wit-trees
+                tags = tags.regexp_ancestors('^Data \d+<');
+                % Get the ID-tags of the owners object wit-trees
+                tags = tags.search('ID', 'TData', {'^Data \d+$'});
+                ids = [tags.Data];
+                % Get the wid-objects of the tags
+                LinksToThis = obj.Project.find_Data(ids);
+            end
+        end
+        
+        % Same as LinksToThis but includes also the LinksToThis of LinksToThis and so on.
+        function AllLinksToThis = get.AllLinksToThis(obj),
+            AllLinksToThis = wid.Empty;
+            if isfield(obj.Tag, 'Data'),
+                % First get the object's wit-tree parent tag
+                tags = obj.Tag.Data.Parent;
+                % List all the project's ID-tags (except NextDataID and
+                % ID<TData) under the Data tree tag
+                tags = tags.regexp('^(?!NextDataID)([^<]+ID(List)?(<[^<]*)*(<Data(<WITec (Project|Data))?)?$)');
+                ids = obj.Id;
+                ii = 1;
+                while ii <= numel(ids),
+                    % Keep only those ID-tags, which point to this object
+                    subtags = tags.match_by_Data_criteria(@(x) any(x == ids(ii)));
+                    % Get their owner object wit-trees
+                    subtags = subtags.regexp_ancestors('^Data \d+<');
+                    % Get the ID-tags of the owners object wit-trees
+                    subtags = subtags.search('ID', 'TData', {'^Data \d+$'});
+                    subids = [subtags.Data];
+                    % Detect duplicates (to avoid circular loops) and
+                    % append without them
+                    B_duplicates = any(bsxfun(@eq, ids, subids(:)), 2);
+                    ids = [ids subids(~B_duplicates)];
+                    % Proceed to next id
+                    ii = ii + 1;
+                end
+                % Exclude this object
+                ids = ids(2:end);
+                % Get the wid-objects of the tags
+                AllLinksToThis = obj.Project.find_Data(ids);
+            end
         end
         
         
@@ -265,9 +321,11 @@ classdef wid < handle, % Since R2008a
         
         % Object copying, destroying, writing
         new = copy(obj); % Copy-method
-        copy_Links(obj); % Copy linked objects (i.e. transformations and interpretations) and relink
+        copy_LinksToOthers(obj); % Copy linked objects (i.e. transformations and interpretations) and relink
+        copy_Links(obj); % Deprecated version! Use copy_LinksToOthers
         destroy(obj); % Destructor-method
-        destroy_Links(obj); % Destroy links to objects (i.e. transformations and interpretations)
+        destroy_LinksToOthers(obj); % Destroy links to objects (i.e. transformations and interpretations)
+        destroy_Links(obj); % Deprecated version! Use destroy_LinksToOthers
         write(obj, File); % Ability to write selected objects to *.WID-format
         
         % Merge multiple object Data or Graph together (if possible)

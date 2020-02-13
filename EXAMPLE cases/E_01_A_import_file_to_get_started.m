@@ -71,9 +71,10 @@ helpdlg({'!!! (E1A i.) Load and browse file contents in a GUI by executing:' ...
 % * O_wid:
 % Selected datas loaded as WID-class objects. Each object has the following
 % properties Type, Name, Data, Info, DataTree, Version, Id, ImageIndex,
-% OrdinalNumber, SubType, Links, AllLinks, Tag and Project. To see these,
-% double-click O_wid under Workspace to see each of these. Code interprets
-% these from the loaded file WIT-node tree structure.
+% OrdinalNumber, SubType, LinksToOthers, AllLinksToOthers, LinksToThis,
+% AllLinksToThis, Tag and Project. To see these, double-click O_wid under
+% Workspace to see each of these. Code interprets these from the loaded
+% file WIT-node tree structure.
 %
 % * O_wip:
 % Resulting project loaded as WIP-class object. Its properties are File,
