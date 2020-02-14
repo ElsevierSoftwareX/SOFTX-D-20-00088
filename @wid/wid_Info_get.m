@@ -82,7 +82,8 @@ function out = wid_Info_get(obj),
         SecondaryZ = interp1([1 SecondarySizeZ+1], SecondaryCorners([1 4],:,3), SecondaryZ);
     end
     
-    Unit = obj.Project.interpret_forced(DataInterpretation);
+    if isempty(DataInterpretation), Unit = obj.Project.interpret_forced('TDZInterpretation');
+    else, Unit = obj.Project.interpret_forced(DataInterpretation); end
     
     % Construct S_out
     out = struct();
