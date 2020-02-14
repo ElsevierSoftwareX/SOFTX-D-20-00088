@@ -193,6 +193,9 @@ classdef wip < handle, % Since R2008a
         % Update Data-property according to Tree-property contents
         update(obj);
         
+        % Destroy duplicate transformations 
+        destroy_duplicate_Transformations(obj);
+        
         % Remove saved Viewer-settings
         reset_Viewers(obj);
         

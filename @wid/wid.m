@@ -259,23 +259,9 @@ classdef wid < handle, % Since R2008a
         
         % Array of linked wid-classes
         function LinksToThis = get.LinksToThis(obj),
-            LinksToThis = wid.Empty;
-            if isfield(obj.Tag, 'Data'),
-                % First get the object's wit-tree parent tag
-                tags = obj.Tag.Data.Parent;
-                % List all the project's ID-tags (except NextDataID and
-                % ID<TData) under the Data tree tag
-                tags = tags.regexp('^(?!NextDataID)([^<]+ID(List)?(<[^<]*)*(<Data(<WITec (Project|Data))?)?$)');
-                % Keep only those ID-tags, which point to this object
-                tags = tags.match_by_Data_criteria(@(x) any(x == obj.Id));
-                % Get their owner object wit-trees
-                tags = tags.regexp_ancestors('^Data \d+<');
-                % Get the ID-tags of the owners object wit-trees
-                tags = tags.search('ID', 'TData', {'^Data \d+$'});
-                ids = [tags.Data];
-                % Get the wid-objects of the tags
-                LinksToThis = obj.Project.find_Data(ids);
-            end
+            linked_tags = obj.find_linked_wits_to_this_wid;
+        	owner_ids = wid.find_owner_id_to_this_wit(linked_tags);
+            LinksToThis = obj.Project.find_Data(owner_ids);
         end
         
         % Same as LinksToThis but includes also the LinksToThis of LinksToThis and so on.
@@ -292,11 +278,8 @@ classdef wid < handle, % Since R2008a
                 while ii <= numel(ids),
                     % Keep only those ID-tags, which point to this object
                     subtags = tags.match_by_Data_criteria(@(x) any(x == ids(ii)));
-                    % Get their owner object wit-trees
-                    subtags = subtags.regexp_ancestors('^Data \d+<');
-                    % Get the ID-tags of the owners object wit-trees
-                    subtags = subtags.search('ID', 'TData', {'^Data \d+$'});
-                    subids = [subtags.Data];
+                    % Get their owner wid-objects' IDs
+                    subids = wid.find_owner_id_to_this_wit(subtags);
                     % Detect duplicates (to avoid circular loops) and
                     % append without them
                     B_duplicates = any(bsxfun(@eq, ids, subids(:)), 2);
@@ -394,6 +377,10 @@ classdef wid < handle, % Since R2008a
         obj = new_Transformation_LUT(O_wit, LUTSize);
         obj = new_Transformation_Space(O_wit);
         obj = new_Transformation_Spectral(O_wit);
+        
+        % Other wit-tree related helper functions
+        Id = find_owner_id_to_this_wit(O_wit);
+        O_wit = find_linked_wits_to_this_wid(obj);
         
         % DataTree formats
         format = DataTree_format_TData(Version_or_obj);
