@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [hcomponent, hcontainer, h_edit, h_label] = ui_sidebar_for_index_slider(Fig, Maximum, fun),
+function [h_slider, h_edit, h_label] = ui_sidebar_for_index_slider(Fig, Maximum, fun),
     if isempty(Fig), Fig = gcf; end % By default, update gcf
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
     if isempty(Parent), [~, Parent] = ui_sidebar(Fig); end % Create one if it does not exist
@@ -29,28 +29,28 @@ function [hcomponent, hcontainer, h_edit, h_label] = ui_sidebar_for_index_slider
     h_label = uicontrol('Parent', Parent, 'Style', 'text', 'String', 'Index:', 'Units', 'pixels', 'Position', Position_label);
     h_edit = uicontrol('Parent', Parent, 'Style', 'edit', 'String', 1, 'Units', 'pixels', 'Position', Position_edit, 'Callback', @update_edit);
     
-    % Slider of uicontrol is too limited for real-time read-out. Use Java.
-    [hcomponent, hcontainer] = javacomponent(javax.swing.JSlider(1, Maximum, 1), [], Parent);
-    set(hcontainer, 'Units', 'pixels', 'Position', Position_slider);
-    set(handle(hcomponent), 'StateChangedCallback', @update_slider); % Using handle to reduce memory leaks % http://undocumentedmatlab.com/blog/matlab-java-memory-leaks-performance
-    
-    set(gcf, 'DeleteFcn', 'delete(setdiff(findobj(gcbo), gcbo)); delete(gcbo);'); % Deletes all (including Java) and the figure % http://undocumentedmatlab.com/blog/couple-of-bugs-and-workarounds
+    % Due to the upcoming removal of JAVACOMPONENT after R2019b (and
+    % the related warning messages), JSlider is no longer used. Decided to
+    % revert back to uicontrol's slider, what appears to be supported
+    % beyond the removal of JAVACOMPONENT.
+    h_slider = uicontrol('Parent', Parent, 'Style', 'slider', 'Min', 1, 'Max', Maximum, 'Value', 1, 'SliderStep', [1/(Maximum-1) 5/(Maximum-1)], 'Units', 'pixels', 'Position', Position_slider);
+    addlistener(h_slider, 'Value', 'PostSet', @update_slider); % Allow real-time updates
     
     fun(1);
     
     function update_edit(varargin),
         currentValue = sscanf(get(h_edit, 'String'), '%d'); % Read integers
         if isempty(currentValue), % Reset value on sscanf failure
-            set(h_edit, 'String', sprintf('%g', get(handle(hcomponent), 'Value')));
+            set(h_edit, 'String', sprintf('%g', round(get(h_slider, 'Value'))));
             return; % Exit
         end
         if currentValue < 1 || currentValue > Maximum, currentValue = max(1, min(Maximum, currentValue)); end % Limit the integer
         set(h_edit, 'String', sprintf('%g', currentValue)); % Update the edit string
-        set(handle(hcomponent), 'Value', currentValue); % Call update_slider if the slider state is changed
+        set(h_slider, 'Value', currentValue); % Call update_slider if the slider state is changed
     end
     
     function update_slider(varargin),
-        currentValue = get(handle(hcomponent), 'Value');
+        currentValue = round(get(h_slider, 'Value'));
         set(h_edit, 'String', sprintf('%g', currentValue)); % Update the edit string
         fun(currentValue);
     end
