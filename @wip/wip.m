@@ -248,6 +248,7 @@ classdef wip < handle, % Since R2008a
         
         % File reader
         [O_wid, O_wip, O_wid_HtmlNames] = read(varargin);
+        Version = read_Version(File);
         
         % File version
         Version = get_Root_Version(obj); % Can be wid-, wip- or wit-class
