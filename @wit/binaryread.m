@@ -7,12 +7,13 @@
 % once. Due to variations between PC's, this allows swapping endianess. As
 % far as the author knows, the WIT-formatted files are always LITTLE-ENDIAN
 % ORDERED.
-function ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndianess),
+function ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndianess, error_by_obj_criteria),
     % Reads a WIT-formatted tag info from the given file stream.
     % Reading can be limited by N_bytes_max (if low on memory).
     if nargin < 3 || isempty(ind_begin), ind_begin = 1; end
     if nargin < 4, N_bytes_max = Inf; end % Default: no read limit!
     if nargin < 5, swapEndianess = false; end % By default: Read without swapping endianess
+    if nargin < 6, error_by_obj_criteria = []; end % By default: no criteria!
     
     % Test the data stream
     if isempty(buffer), obj.IsValid = false; return; end
@@ -67,10 +68,15 @@ function ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndiane
         children = wit.empty;
         while(ind_begin < obj.End), % Continue reading until DataEnd
             child = wit(obj);
-            ind_begin = child.binaryread(buffer, ind_begin, N_bytes_max, swapEndianess);
+            ind_begin = child.binaryread(buffer, ind_begin, N_bytes_max, swapEndianess, error_by_obj_criteria);
             if child.IsValid, children(end+1) = child; % Append only if valid
-            else, child.destroy(); end % Otherwise destroy the child
+            else, child.destroy(true); end % Otherwise destroy the child (and skip unnotified Parent)
         end
         obj.Data = children;
     else, ind_begin = obj.binaryread_Data(buffer, N_bytes_max, swapEndianess); end % Otherwise, read the Data
+    
+    % SPECIAL CASE: Abort if obj meets the given error criteria.
+    if isa(error_by_obj_criteria, 'function_handle'),
+        error_by_obj_criteria(obj); % EXPECTED TO ERROR if its criteria is met
+    end
 end

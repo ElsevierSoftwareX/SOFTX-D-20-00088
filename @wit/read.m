@@ -3,10 +3,11 @@
 % All rights reserved.
 
 % Reads files with LITTLE ENDIAN ORDERING
-function obj = read(File, N_bytes_max),
+function obj = read(File, N_bytes_max, error_by_obj_criteria),
     % Reads a WIP-formatted tag from the given file stream.
     % Reading can be limited by N_bytes_max (if low on memory).
     if nargin < 2, N_bytes_max = Inf; end % Default: no read limit!
+    if nargin < 3, error_by_obj_criteria = []; end % Default: no criteria!
     
     isLittleEndian = true; % By default: Read as little endian
     % Decide if endianess should be swapped
@@ -42,13 +43,14 @@ function obj = read(File, N_bytes_max),
     obj.File = File;
     
     try, % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
+        if FileSize > N_bytes_max, error('Skip to catch'); end
         % Avoid call to builtin 'memory', which is Octave-incompatible!
         buffer = zeros(FileSize, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
         buffer = fread(fid, Inf, 'uint8=>uint8'); % Read the file content to the buffer
-        obj.binaryread(buffer, [], N_bytes_max, swapEndianess); % Parse the file content in the buffer
+        obj.binaryread(buffer, [], N_bytes_max, swapEndianess, error_by_obj_criteria); % Parse the file content in the buffer
     catch, % OTHERWISE USE LOW-ON MEMORY SCHEME!
         if isinf(N_bytes_max), N_bytes_max = 4096; end % Do not obey infinite N_bytes_max here!
         warning('Low on memory... Reading file ''%s'' of %d bytes, but skipping over any Data of >%d bytes!', FileName, FileSize, N_bytes_max);
-        obj.fread(fid, N_bytes_max, swapEndianess);
+        obj.fread(fid, N_bytes_max, swapEndianess, error_by_obj_criteria);
     end
 end
