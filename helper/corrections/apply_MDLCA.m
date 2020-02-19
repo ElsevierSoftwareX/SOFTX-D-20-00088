@@ -41,8 +41,8 @@
 % The automated mask generation in this algorithm (and its data-transformed
 % version) heavily rely on the code in clever_statistics_and_outliers.m.
 
-% REQUIREMENTS: Image Processing Toolbox (due to usage of 'padarray',
-% 'bwdist' and 'ordfilt2').
+% REQUIREMENTS: Image Processing Toolbox (due to usage of 'bwdist' and
+% 'ordfilt2').
 function [out_2D, correction_2D, mask_2D] = apply_MDLCA(in_2D, dim, mask_2D),
     % Median Difference Line Correction by Addition. This ADDITIVE method
     % preserves DIFFERENCES (but does NOT preserve RATIOS)! In order to
@@ -53,7 +53,7 @@ function [out_2D, correction_2D, mask_2D] = apply_MDLCA(in_2D, dim, mask_2D),
     % it sees true median behind multiplicative and additive constants,
     % because median(B) = median(c*A+d) = c*median(A)+d.
     
-    % Updated 12.3.2019 by Joonas T. Holmi
+    % Updated 19.2.2020 by Joonas T. Holmi
     
     in_2D = double(in_2D); % Required for boolean and integer input
     if nargin < 3 || isempty(mask_2D),
@@ -80,7 +80,9 @@ function [out_2D, correction_2D, mask_2D] = apply_MDLCA(in_2D, dim, mask_2D),
     % neighbouring differences along PRIMARY scan direction, because it
     % often contains more information than single-pixel difference due to
     % pixel-to-pixel correlations.
-    d2 = padarray(in_2D(:,3:end)-in_2D(:,1:end-2), [0 1], NaN, 'both')./2;
+    d2_unpadded = (in_2D(:,3:end)-in_2D(:,1:end-2))./2;
+    d2 = nan(size(d2_unpadded, 1), size(d2_unpadded, 2)+2);
+    d2(:,2:end-1) = d2_unpadded; % d2 = padarray(d2_unpadded, [0 1], NaN, 'both');
     d2(~mask_2D) = NaN; % Honor original mask
     
     mask_2D = clever_statistics_and_outliers(d2, [], 2); % 2-sigma clever mean and variance (outlier detection included)
