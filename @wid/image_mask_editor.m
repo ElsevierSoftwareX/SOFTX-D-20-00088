@@ -2,6 +2,8 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
+% REQUIREMENTS: Image Processing Toolbox (due to usage of 'imellipse',
+% 'imfreehand', 'imline', 'impoint', 'impoly', 'imrect' and 'imroi').
 function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
     % Pop states (even if not used to avoid push-pop bugs)
     AutoCreateObj = obj.Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
