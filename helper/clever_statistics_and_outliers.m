@@ -80,7 +80,7 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % This was written, tested and optimized for MATLAB R2010b-R2018b using
     % the built-in functions and does not require any toolboxes to be used.
     
-    % Updated 1.8.2019 by Joonas T. Holmi
+    % Updated 19.2.2020 by Joonas T. Holmi
     
     % ---------------------------------------------------------------------
     
@@ -303,7 +303,9 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     S2 = CS2_neg(1, :) + CS2_pos(end, :); % S2 = nansum(X_sorted_2, 1);
     N0 = sum(~B_nan, 1); % Initial number of elements per column
     cmean = S./N0; % Regular mean
-    cvar = (S2-2.*S.*cmean+N0.*cmean.^2)./(N0-1); % Regular variance
+    cvar = (S2-S.*cmean)./(N0-1); % Regular variance
+%     cvar = (S2-S.^2./N0)./(N0-1); % Regular variance
+%     cvar = (S2-2.*S.*cmean+N0.*cmean.^2)./(N0-1); % Regular variance
     
     % Store boolean maps
     B_not_empty = N0 ~= 0; % Ability to ignore empty datasets
@@ -331,10 +333,16 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
         S_min = S+x_max; S_max = S+x_min; S2_min = S2+x_max.^2; S2_max = S2+x_min.^2;
 
         % Try the minimum removed
-        cmean_min = S_min./N; cvar_min = (S2_min-2.*S_min.*cmean_min+N.*cmean_min.^2)./(N-1);
+        cmean_min = S_min./N;
+        cvar_min = (S2_min-S_min.*cmean_min)./(N-1);
+%         cvar_min = (S2_min-S_min.^2./N)./(N-1);
+%         cvar_min = (S2_min-2.*S_min.*cmean_min+N.*cmean_min.^2)./(N-1);
 
         % Try the maximum removed
-        cmean_max = S_max./N; cvar_max = (S2_max-2.*S_max.*cmean_max+N.*cmean_max.^2)./(N-1);
+        cmean_max = S_max./N;
+        cvar_max = (S2_max-S_max.*cmean_max)./(N-1);
+%         cvar_max = (S2_max-S_max.^2./N)./(N-1);
+%         cvar_max = (S2_max-2.*S_max.*cmean_max+N.*cmean_max.^2)./(N-1);
 
         % Compare which removal results in smaller sample variance
         B_min = cvar_min < cvar_max & cvar_min <= cvar(B_loop) & (cmean_min-x_min).^2 > delta.^2.*cvar_min; % Test if the minimum is an outlier
