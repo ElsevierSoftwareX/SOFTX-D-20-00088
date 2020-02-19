@@ -2,6 +2,8 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
+% REQUIREMENTS: Image Processing Toolbox (due to usage of 'bwdist',
+% 'bwlabel', 'ordfilt2' and 'regionprops').
 function varargout = data_true_and_nan_collective_hole_reduction(varargin),
     % This collectively reduces holes in invalid regions (= true and NaN
     % input values). Inputs are assumed to be different maps of the same

@@ -40,6 +40,9 @@
 % http://urn.fi/URN:NBN:fi:aalto-201605122027
 % The automated mask generation in this algorithm (and its data-transformed
 % version) heavily rely on the code in clever_statistics_and_outliers.m.
+
+% REQUIREMENTS: Image Processing Toolbox (due to usage of 'padarray',
+% 'bwdist' and 'ordfilt2').
 function [out_2D, correction_2D, mask_2D] = apply_MDLCA(in_2D, dim, mask_2D),
     % Median Difference Line Correction by Addition. This ADDITIVE method
     % preserves DIFFERENCES (but does NOT preserve RATIOS)! In order to
