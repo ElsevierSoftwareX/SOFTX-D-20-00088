@@ -8,6 +8,9 @@
 % filtering. Here window size W can be a scalar or a vector and must be
 % odd-valued.
 
+% Implementation may be improved by utilizing memory of the previous
+% calculus on the matrix columns and rows.
+
 % Used by apply_MDLCA.m, apply_CMDLCA.m and
 % data_true_and_nan_collective_hole_reduction.m
 function B = mynanmaxfilt2(A, W),

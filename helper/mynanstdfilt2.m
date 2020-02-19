@@ -8,6 +8,9 @@
 % filtering. Here window size W can be a scalar or a vector and must be
 % odd-valued.
 
+% Implementation may be improved by utilizing memory of the previous
+% calculus on the matrix columns and rows.
+
 % Used by @wid/unpattern_video_stitching_helper.m
 function B = mynanstdfilt2(A, W),
     if numel(W) == 1, W = [W W]; end
