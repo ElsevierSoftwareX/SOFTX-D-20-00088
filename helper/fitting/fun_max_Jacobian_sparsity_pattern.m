@@ -27,7 +27,6 @@
 % OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-% Used by "debug and testing\testing.m"
 function J_pattern = fun_max_Jacobian_sparsity_pattern(F, Y, varargin),
     % Find the maximal Jacobian sparsity pattern by NaN-value probing. This
     % function accepts a 2-D matrix function F(Y, varargin{:}) with a
