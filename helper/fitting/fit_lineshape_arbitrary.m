@@ -289,7 +289,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
             Ns = sum(bw_dP_any_nan);
             Is = sum(bw_dP_any_inf);
             Zs = sum(bw_dP_all_zero);
-            fprintf_if_permitted('ii = %d: U = %d, D = %d, C = %d, N = %d, I = %d, Z = %d -> TSSres = %.5g (DSSres = %.5g)\n', ii, Undone, Diverged, Converged, Ns, Is, Zs, nansum(SSres(ii+1,:)), nansum(SSres(ii+1,:)-SSres(ii,:)));
+            fprintf_if_permitted('ii = %d: U = %d, D = %d, C = %d, N = %d, I = %d, Z = %d -> TSSres = %.5g (DSSres = %.5g)\n', ii, Undone, Diverged, Converged, Ns, Is, Zs, mynansum(SSres(ii+1,:)), mynansum(SSres(ii+1,:)-SSres(ii,:)));
             
             % TEST IF TO EXIT THE MAIN LOOP
             if all(~bw) || ii >= N_max_iterations,
