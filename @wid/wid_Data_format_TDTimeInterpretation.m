@@ -4,9 +4,9 @@
 
 function format = wid_Data_format_TDTimeInterpretation(obj),
     % Each row: wit-tag name, {subformat}
-    format_TDTimeInterpretation_v5 = ...
+    format_TDTimeInterpretation = ...
         [obj.wid_Data_format_TData(); ...
         obj.wid_Data_format_TDInterpretation()];
     
-    format = format_TDTimeInterpretation_v5;
+    format = format_TDTimeInterpretation;
 end

@@ -50,7 +50,7 @@ function wid_Data_set_Image(obj, in),
         % Reset the LineChanged and LineValid states because new Data was set
         TDImage.regexp('^LineChanged<', true).Data = false(1, size(in, 2));
         TDImage.regexp('^LineValid<', true).Data = true(1, size(in, 2));
-    elseif Version == 5, % WITec Project 2.x
+    elseif Version >= 0 && Version <= 5, % WITec Project 2.x
 %         if size(in, 1) < 2 || size(in, 2) < 2, warning('WITec Project 2.10.3.3 cannot read this!'); end
         TDImage = obj.Tag.Data.regexp('^TDImage<', true);
         TDImage.regexp('^SizeX<', true).Data = int32(size(in, 1)); % SizeX % int32 required by WITec Project 2.10.3.3

@@ -27,7 +27,7 @@ function wid_Data_set_Bitmap(obj, in),
         out = ipermute(out, [2 3 1]); % Permute the color channel to 1st
         out = typecast(out(:), 'int32'); % From uint8 to int32
         TDBitmap.regexp('^Data<BitmapData<', true).Data = obj.wid_set_DataType(out);
-    elseif Version == 5, % WITec Project 2.x
+    elseif Version >= 0 && Version <= 5, % WITec Project 2.x
         if isempty(in), warning('WITec Project 2.10.3.3 cannot read this!'); end
         
         % Process the image for writing

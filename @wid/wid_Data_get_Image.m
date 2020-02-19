@@ -41,7 +41,7 @@ function out = wid_Data_get_Image(obj),
         if obj.Project.popUseLineValid, % Get the latest value (may be temporary or permanent or default)
             out = obj.wid_get_LineValid(out);
         end
-    elseif Version == 5, % WITec Project 2.x
+    elseif Version >= 0 && Version <= 5, % WITec Project 2.x
         TDImage = obj.Tag.Data.regexp('^TDImage<', true);
         Data = TDImage.regexp('^Data<ImageData<', true);
         if isempty(Data.Data), Data.reload(); end

@@ -31,7 +31,7 @@ function out = wid_Data_get_Bitmap(obj),
         out = reshape(out, 4, SizeX, SizeY); % Reshape back to a matrix
         out = permute(out, [2 3 1]); % Permute the matrix so that the color channels go to the end
         out = out(:,:,1:3); % Ignore the 4th channel (= alpha)
-    elseif Version == 5, % WITec Project 2.x
+    elseif Version >= 0 && Version <= 5, % WITec Project 2.x
         Data = obj.Tag.Data.regexp('^StreamData<TDStream<', true);
         if isempty(Data.Data), Data.reload(); end
         in = Data.Data;

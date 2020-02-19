@@ -1,17 +1,17 @@
 ===========================================================================
-%% Formatting of WIP/WID-files for versions 5-7. Listing is NOT exhaustive!
+%% Formatting of WIP/WID-files for versions 0-7. Listing is NOT exhaustive!
 %% This represents a WIT tree structure consisting of many WIT-branches.
-%% v5 = i.e. WITec Control 1.60.3.3 and Project 2.10.3.3
+%% v0-v5 = legacy WITec software, i.e. WITec Control 1.60.3.3 and Project 2.10.3.3
 %% v6 = i.e. WITec Project FOUR 4.1.12
 %% v7 = i.e. WITec Suite (Control + Project) FIVE 5.1.8.64
 ===========================================================================
 
 ***************************************************************************
-%% Last updated 8.1.2019 by Joonas T. Holmi
+%% Last updated 18.2.2020 by Joonas T. Holmi
 ***************************************************************************
 
 MAGIC string (1x8 char) in the beginning of the WIP/WID-files:
-	= 'WIT_PRCT'/'WIT_DATA' (v5)
+	= 'WIT_PRCT'/'WIT_DATA' (v0-v5)
 	= 'WIT_PR06'/'WIT_DA06' (v6,v7)
 
 As far as the author knows, the file format is always LITTLE ENDIAN ORDERED
@@ -21,12 +21,12 @@ As far as the author knows, the file format is always LITTLE ENDIAN ORDERED
 ===========================================================================
 
 WITec Project (wit)
-    Version (int32) = 5 (v5), = 6 (v6), = 7 (v7)
-    SystemInformation (wit)
+    Version (int32) = 0-7 (v0-v7)
+    SystemInformation (wit) (v5-v7)
         LastApplicationSessionIDs (wit)
             ...
-		ServiceID (char) (v6,v7)
-		LicenseID (char) (v6,v7)
+		ServiceID (char) (v6-v7)
+		LicenseID (char) (v6-v7)
 		SystemID (char) (v7)
         ApplicationVersions (wit)
             ...
@@ -58,12 +58,12 @@ WITec Project (wit)
 ===========================================================================
 
 WITec Data (wit)
-    Version (int32) = 5 (v5), = 6 (v6), = 7 (v7)
-    SystemInformation (wit)
+    Version (int32) = 0-7 (v0-v7)
+    SystemInformation (wit) (v5-v7)
         LastApplicationSessionIDs (wit)
             ...
-		ServiceID (char) (v6,v7)
-		LicenseID (char) (v6,v7)
+		ServiceID (char) (v6-v7)
+		LicenseID (char) (v6-v7)
 		SystemID (char) (v7)
         ApplicationVersions (wit)
             ...
@@ -86,7 +86,7 @@ WITec Data (wit)
 ===========================================================================
 
 TData (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	ID (int32)
 	ImageIndex (int32)
 	Caption (char)
@@ -104,19 +104,19 @@ TData (wit)
 %% Content of "Data <integer>"-tag with ClassName of "TDBitmap":
 ===========================================================================
 
-TDStream (wit) (v5)
-	Version (int32) = 0 (v5)
+TDStream (wit) (v0-v5)
+	Version (int32) = 0 (v0-v5)
 	StreamSize (int32)
 	StreamData (uint8) (has BMP-formatting)
 TDBitmap (wit)
-	Version (int32) = 0 (v5), = 1 (v6,v7)
-	SizeX (int32) (v6,v7)
-	SizeY (int32) (v6,v7)
+	Version (int32) = 0 (v0-v5), = 1 (v6-v7)
+	SizeX (int32) (v6-v7)
+	SizeY (int32) (v6-v7)
 	SpaceTransformationID (int32)
 	SecondaryTransformationID (int32) (v7)
-	BitmapData (wit) (v6,v7)
+	BitmapData (wit) (v6-v7)
 		Dimension (int32)
-		DataType (int32) = 2 (v6,v7), (means that Data is int32)
+		DataType (int32) = 2 (v6-v7), (means that Data is int32)
 		Ranges (int32)
 		Data (determined by DataType) (has 32 bits per pixel)
 
@@ -127,7 +127,7 @@ TDBitmap (wit)
 ===========================================================================
 
 TDGraph (wit)
-	Version (int32) = 0 (v5,v6), = 1 (v7)
+	Version (int32) = 0 (v0-v6), = 1 (v7)
 	SizeX (int32)
 	SizeY (int32)
 	SizeGraph (int32)
@@ -152,7 +152,7 @@ TDGraph (wit)
 ===========================================================================
 
 TDImage (wit)
-	Version (int32) = 0 (v5), = 1 (v6,v7)
+	Version (int32) = 0 (v0-v5), = 1 (v6-v7)
 	SizeX (int32)
 	SizeY (int32)
 	PositionTransformationID (int32)
@@ -167,7 +167,7 @@ TDImage (wit)
 	LineB (double)
 	LineChanged (logical)
 	LineValid (logical)
-	ImageDataIsInverted (logical) (v6,v7)
+	ImageDataIsInverted (logical) (v6-v7)
 	ImageData (wit)
 		Dimension (int32)
 		DataType (int32)
@@ -181,7 +181,7 @@ TDImage (wit)
 ===========================================================================
 
 TDStream (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	StreamSize (int32)
 	StreamData (uint8) (has RTF-formatting)
 
@@ -231,7 +231,7 @@ UnitIndex (TDInterpretation<TDZInterpretation)
 ===========================================================================
 
 TDInterpretation (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	UnitIndex (int32)
 
 
@@ -241,10 +241,10 @@ TDInterpretation (wit)
 ===========================================================================
 
 TDInterpretation (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	UnitIndex (int32)
 TDSpectralInterpretation (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	ExcitationWaveLength (double)
 
 
@@ -254,10 +254,10 @@ TDSpectralInterpretation (wit)
 ===========================================================================
 
 TDInterpretation (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	UnitIndex (int32)
 TDZInterpretation (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	UnitName (char)
 
 
@@ -267,10 +267,10 @@ TDZInterpretation (wit)
 ===========================================================================
 
 TDInterpretation (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	UnitIndex (int32)
 TDSpectralInterpretation (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	ExcitationWaveLength (double)
 
 
@@ -294,13 +294,13 @@ UnitKind
 ===========================================================================
 
 TDTransformation (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	StandardUnit (char)
 	UnitKind (int32)
-	InterpretationID (int32)
-	IsCalibrated (logical)
+	InterpretationID (int32) (v5-v7)
+	IsCalibrated (logical) (v5-v7)
 TDLinearTransformation (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	ModelOrigin_D (double)
 	WorldOrigin_D (double)
 	Scale_D (double)
@@ -315,13 +315,13 @@ TDLinearTransformation (wit)
 ===========================================================================
 
 TDTransformation (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	StandardUnit (char)
 	UnitKind (int32)
 	InterpretationID (int32)
 	IsCalibrated (logical)
 TDLUTTransformation (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	LUTSize (int32)
 	LUT (double)
 	LUTIsIncreasing (logical)
@@ -334,13 +334,13 @@ TDLUTTransformation (wit)
 ===========================================================================
 
 TDTransformation (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	StandardUnit (char)
 	UnitKind (int32)
 	InterpretationID (int32)
 	IsCalibrated (logical)
 TDSpaceTransformation (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	ViewPort3D (wit)
 		ModelOrigin (1x3 double)
 		WorldOrigin (1x3 double)
@@ -364,13 +364,13 @@ TData
 ===========================================================================
 
 TDTransformation (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	StandardUnit (char)
 	UnitKind (int32)
 	InterpretationID (int32)
 	IsCalibrated (logical)
 TDSpectralTransformation (wit)
-	Version (int32) = 0 (v5,v6,v7)
+	Version (int32) = 0
 	SpectralTransformationType (int32)
 	Polynom (1x3 double) (supports the 2nd order polynomial)
 	nC (double)
@@ -381,9 +381,9 @@ TDSpectralTransformation (wit)
 	d (double)
 	x (double)
 	f (double)
-	FreePolynomOrder (int32)
-	FreePolynomStartBin (double)
-	FreePolynomStopBin (double)
-	FreePolynom (double)
+	FreePolynomOrder (int32) (v5-v7)
+	FreePolynomStartBin (double) (v5-v7)
+	FreePolynomStopBin (double) (v5-v7)
+	FreePolynom (double) (v5-v7)
 
 

@@ -36,9 +36,13 @@ function [ValueUnit, varargout] = transform(T, varargin),
             return; % Do nothing
     end
     
+    T_Data_TDTransformation = T_Data.TDTransformation;
+    if ~isfield(T_Data_TDTransformation, 'InterpretationID'), Interpretation = []; % Legacy versions
+    else, Interpretation = T_Data_TDTransformation.InterpretationID; end % Prefer the found interpretation
+    
     % Interpret input
     varargout = cellfun(fun, varargout, 'UniformOutput', false);
-    [ValueUnit, varargout{1:numel(varargout)}] = wip.interpret(T_Data.TDTransformation.InterpretationID, [], ValueUnit, varargout{:});
+    [ValueUnit, varargout{1:numel(varargout)}] = wip.interpret(Interpretation, [], ValueUnit, varargout{:});
     
     function Value = LinearTransformation(Value), % Linear-transform pixel values
         TLinear = T_Data.TDLinearTransformation;
