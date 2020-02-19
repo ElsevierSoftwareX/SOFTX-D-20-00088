@@ -129,17 +129,48 @@ function h = show_Position(obj, Fig, varargin),
         Rotation = reshape(TSpace.ViewPort3D.Rotation, [3 3]);
     end
     
+    % Expects size(positions) = [4 3], where the 1st and the 2nd values
+    % represent the number of points and the number of point coordinate
+    % dimensions, respectively.
     function h_image = markImage_default(positions, color),
-        f = [1 2 3 4]; % How vertices are connected to each other
-        v_ii = positions(:,1:2); % Discard the Z-axis indices and reshape for patch
-        h_image = patch(Ax, 'Faces', f, 'Vertices', v_ii, 'EdgeColor', color, 'FaceColor', 'none', 'LineWidth', 1);
+        % Truncate if the image looks like a line (looking from the xy-plane)
+        if all(abs(positions(1,1:2)-positions(4,1:2)) <= 1) && all(abs(positions(2,1:2)-positions(3,1:2)) <= 1),
+            positions = (positions([1 2],:) + positions([4 3],:))./2;
+        elseif all(abs(positions(1,1:2)-positions(4,1:2)) <= 1) && all(abs(positions(4,1:2)-positions(3,1:2)) <= 1),
+            positions = (positions([1 4],:) + positions([2 3],:))./2;
+        end
+        
+        if size(positions, 1) == 4,
+            f = [1 2 3 4]; % How vertices are connected to each other
+            v_ii = positions(:,1:2); % Discard the Z-axis indices and reshape for patch
+            h_image = patch(Ax, 'Faces', f, 'Vertices', v_ii, 'EdgeColor', color, 'FaceColor', 'none', 'LineWidth', 1);
+        elseif size(positions, 1) == 2,
+            h_image = markLine_default(positions, Color_ii);
+        end
     end
     
+    % Expects size(positions) = [2 3], where the 1st and the 2nd values
+    % represent the number of points and the number of point coordinate
+    % dimensions, respectively.
     function h_line = markLine_default(positions, color),
-        h_line = line(Ax, positions(:,1), positions(:,2), 'Color', color, 'LineWidth', 1);
+        % Truncate if the line looks like a point (looking from the xy-plane)
+        if all(abs(positions(1,1:2)-positions(2,1:2)) <= 1),
+            positions = (positions(1,:) + positions(2,:))./2;
+        end
+        
+        if size(positions, 1) == 2,
+            h_line = line(Ax, positions(:,1), positions(:,2), 'Color', color, 'LineWidth', 1);
+        elseif size(positions, 1) == 1,
+            h_line = markPoint_default(positions, Color_ii);
+        end
     end
     
+    % Expects size(positions) = [1 3], where the 1st and the 2nd values
+    % represent the number of points and the number of point coordinate
+    % dimensions, respectively.
     function h_point = markPoint_default(positions, color),
-        h_point = line(Ax, positions(1), positions(2), 'Color', color, 'LineWidth', 1, 'Marker', 'o'); % Add marker which is same size regardless of the zoom level
+        if size(positions, 1) == 1,
+            h_point = line(Ax, positions(1), positions(2), 'Color', color, 'LineWidth', 1, 'Marker', 'o'); % Add marker which is same size regardless of the zoom level
+        end
     end
 end
