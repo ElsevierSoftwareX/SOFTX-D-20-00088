@@ -36,8 +36,6 @@
 % ERRORS:
 % (1) N_SI_XY must be a vector of length 2!
 % (2) Number of Stitching Images X and Y must both be >= 3!
-    
-% REQUIREMENTS: Image Processing Toolbox (due to usage of 'stdfilt')
 
 % INPUTS:
 % (1) I: Preferably the WITec software's Video Stitching image.
@@ -76,8 +74,9 @@
 % '-DisableAutoIgnoreChannels': Disables automatic color channel analysis,
 % whether they are mostly (>50%) black (= zero) or not.
 % '-IgnoreChannels': Ignores the specified color channels.
-% '-LocalWindowSize' (= 17 by default): Used by 'stdfilt' during the local
-% variance minimization procedure. The number should be an odd integer.
+% '-LocalWindowSize' (= 17 by default): Used to window-filtering of std
+% during the local variance minimization procedure. The number should be an
+% odd integer.
 % '-OverlapRatio' (= 0.05 by default): Overlap ratio for the stitching.
 % '-LowResMaxPixels' (= 1024^2 by default): Low resolution image max size.
 % '-HighResMaxPixels' (= 64e6 by default): High resolution image max size.
@@ -316,7 +315,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     B_test(ind1_test, ind2_test, :) = true;
     
     % Preallocations
-    local_var_kernel = ones(LocalWindowSize);
+%     local_var_kernel = ones(LocalWindowSize);
     local_var_test = zeros(size(N_test));
     
     % Store only the best
@@ -632,7 +631,8 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         I_test = I_test(ind1_test,ind2_test,:); % Keep the test area
         
         % Evaluate local variance in the test area
-        local_var_test(ii) = mynansum(reshape(stdfilt(I_test, local_var_kernel).^2, [], 1)); % Minimize this
+        local_var_test(ii) = mynansum(reshape(mynanstdfilt2(I_test, LocalWindowSize).^2, [], 1)); % Minimize this
+%         local_var_test(ii) = mynansum(reshape(stdfilt(I_test, local_var_kernel).^2, [], 1)); % Minimize this
         
         fprintf(' -> Local variance of %g', local_var_test(ii));
         
