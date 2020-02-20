@@ -12,9 +12,7 @@ function [ValueUnit, varargout] = transform_forced(obj, T, varargin),
     [ValueUnit, varargout{1:nargout-1}] = wip.transform(T, varargout{:});
     % Override units
     if ~isempty(obj),
-        T_Data_TDTransformation = T.Data.TDTransformation;
-        if ~isfield(T_Data_TDTransformation, 'InterpretationID'), Interpretation = []; % Legacy versions
-        else, Interpretation = T_Data_TDTransformation.InterpretationID; end % Prefer the found interpretation
+        Interpretation = T.Data.TDTransformation.InterpretationID; % Prefer the found interpretation
         if isempty(Interpretation), % But if it is not found, then use the known type
             switch(T.Type),
                 case 'TDLinearTransformation', % Do nothing

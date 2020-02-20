@@ -5,7 +5,7 @@
 function out = wid_Data_get_Bitmap(obj),
     Version = [obj.Version];
      % 'README on WIT-tag formatting.txt'
-    if isempty(Version) || Version == 7, % WITec Suite FIVE 5.x
+    if isempty(Version) || Version == 7 || Version == 6, % WITec Suite FIVE 5.x OR WITec Project 4.x
         TDBitmap = obj.Tag.Data.regexp('^TDBitmap<', true);
         Data = TDBitmap.regexp('^Data<BitmapData<', true);
         if isempty(Data.Data), Data.reload(); end
@@ -18,20 +18,7 @@ function out = wid_Data_get_Bitmap(obj),
         out = reshape(out, 4, SizeX, SizeY); % Reshape back to a matrix
         out = permute(out, [2 3 1]); % Permute the matrix so that the color channels go to the end
         out = out(:,:,1:3); % Ignore the 4th channel (= alpha)
-    elseif Version == 6, % WITec Project 4.x
-        TDBitmap = obj.Tag.Data.regexp('^TDBitmap<', true);
-        Data = TDBitmap.regexp('^Data<BitmapData<', true);
-        if isempty(Data.Data), Data.reload(); end
-        in = Data.Data;
-
-        SizeX = TDBitmap.regexp('^SizeX<', true).Data;
-        SizeY = TDBitmap.regexp('^SizeY<', true).Data;
-        % Reshape to user format
-        out = typecast(obj.wid_get_DataType(in), 'uint8'); % From int32 to uint8
-        out = reshape(out, 4, SizeX, SizeY); % Reshape back to a matrix
-        out = permute(out, [2 3 1]); % Permute the matrix so that the color channels go to the end
-        out = out(:,:,1:3); % Ignore the 4th channel (= alpha)
-    elseif Version >= 0 && Version <= 5, % WITec Project 2.x
+    elseif Version >= 0 && Version <= 5, % Legacy versions
         Data = obj.Tag.Data.regexp('^StreamData<TDStream<', true);
         if isempty(Data.Data), Data.reload(); end
         in = Data.Data;

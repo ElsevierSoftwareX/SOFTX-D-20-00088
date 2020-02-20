@@ -4,13 +4,14 @@
 
 function format = DataTree_format_TData(Version_or_obj),
     if nargin == 0, Version_or_obj = []; end
+    
     Version = Version_or_obj;
     if isa(Version_or_obj, 'wid') || isa(Version_or_obj, 'wip') || isa(Version_or_obj, 'wit'),
         Version = wip.get_Root_Version(Version_or_obj);
     end
     
     isVisible = false;
-    if isempty(Version) || Version == 7 || Version == 6,
+    if isempty(Version) || Version == 7,
         % Define the file format fields
         % Each row: wit-tag name, isVisible, {write-parser; read-parser}
         subformat_TData = ...
@@ -30,7 +31,7 @@ function format = DataTree_format_TData(Version_or_obj),
             'Types' isVisible {@int32; @int32} ...
             } ...
             };
-    elseif Version >= 0 && Version <= 5,
+    elseif Version >= 0 && Version <= 5 || Version == 6, % Legacy versions OR v6
         % Define the file format fields
         % Each row: wit-tag name, isVisible, {write-parser; read-parser}
         subformat_TData = ...

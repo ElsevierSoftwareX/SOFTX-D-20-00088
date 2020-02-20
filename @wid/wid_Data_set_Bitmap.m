@@ -5,7 +5,7 @@
 function wid_Data_set_Bitmap(obj, in),
     Version = [obj.Version];
      % 'README on WIT-tag formatting.txt'
-    if isempty(Version) || Version == 7, % WITec Suite FIVE 5.x
+    if isempty(Version) || Version == 7 || Version == 6, % WITec Suite FIVE 5.x OR WITec Project 4.x
         TDBitmap = obj.Tag.Data.regexp('^TDBitmap<', true);
         TDBitmap.regexp('^SizeX<', true).Data = int32(size(in, 1)); % SizeX
         TDBitmap.regexp('^SizeY<', true).Data = int32(size(in, 2)); % SizeY
@@ -16,18 +16,7 @@ function wid_Data_set_Bitmap(obj, in),
         out = ipermute(out, [2 3 1]); % Permute the color channel to 1st
         out = typecast(out(:), 'int32'); % From uint8 to int32
         TDBitmap.regexp('^Data<BitmapData<', true).Data = obj.wid_set_DataType(out);
-    elseif Version == 6, % WITec Project 4.x
-        TDBitmap = obj.Tag.Data.regexp('^TDBitmap<', true);
-        TDBitmap.regexp('^SizeX<', true).Data = int32(size(in, 1)); % SizeX
-        TDBitmap.regexp('^SizeY<', true).Data = int32(size(in, 2)); % SizeY
-        % Reshape to writing format
-        TDBitmap.regexp('^Ranges<BitmapData<', true).Data = int32([size(in, 2) size(in, 1)]); % Ranges
-        out = uint8(in);
-        out(:,:,end+1) = 0; % Restore the alpha channel as zeros
-        out = ipermute(out, [2 3 1]); % Permute the color channel to 1st
-        out = typecast(out(:), 'int32'); % From uint8 to int32
-        TDBitmap.regexp('^Data<BitmapData<', true).Data = obj.wid_set_DataType(out);
-    elseif Version >= 0 && Version <= 5, % WITec Project 2.x
+    elseif Version >= 0 && Version <= 5, % Legacy versions
         if isempty(in), warning('WITec Project 2.10.3.3 cannot read this!'); end
         
         % Process the image for writing

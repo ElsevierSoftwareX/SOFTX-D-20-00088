@@ -1,18 +1,41 @@
 ===========================================================================
 %% Formatting of WIP/WID-files for versions 0-7. Listing is NOT exhaustive!
 %% This represents a WIT tree structure consisting of many WIT-branches.
-%% v0-v5 = legacy WITec software, i.e. WITec Control 1.60.3.3 and Project 2.10.3.3
+%% v0-v5 = legacy WITec software versions, i.e. WITec Control 1.60.3.3 and Project 2.10.3.3
 %% v6 = i.e. WITec Project FOUR 4.1.12
 %% v7 = i.e. WITec Suite (Control + Project) FIVE 5.1.8.64
+
+v0	Only one file analyzed.				(Any file donations are welcomed.)
+v1	NO FILE ANALYSIS DONE.				(Any file donations are welcomed.)
+v2	Preliminary file analysis done.
+v3	NO FILE ANALYSIS DONE.				(Any file donations are welcomed.)
+v4	NO FILE ANALYSIS DONE.				(Any file donations are welcomed.)
+v5	Thorough file analysis done.
+v6	Thorough file analysis done.
+v7	Thorough file analysis done.
+v8-	Not known whether v8- exists yet.	(Any file donations are welcomed.)
+
+Please send the v0-v1, v3-v4, v8- file donations to jtholmi@gmail.com.
+
+More comments on v0 (20.2.2020):
+File formats of only TDBitmap, TDImage, TDText, TDZInterpretation,
+TDSpaceInterpretation and TDSpaceTransformation were available. Some of the
+details have been extrapolated.
+
+KEY ASSUMPTIONS FOR THE CODE IMPLEMENTATION:
+(1) File format content increase only monotonically for legacy versions v0-v5.
+(2) WITec software can handle (or ignore) any unused and unrelated WIT-tags.
+(3) WITec software cannot handle absence of the essential WIT-tags.
+(4) HENCE (from (1)-(3)), legacy WITec software (for v0-v5) can read v5 files.
 ===========================================================================
 
 ***************************************************************************
-%% Last updated 18.2.2020 by Joonas T. Holmi
+%% Last updated 20.2.2020 by Joonas T. Holmi
 ***************************************************************************
 
 MAGIC string (1x8 char) in the beginning of the WIP/WID-files:
 	= 'WIT_PRCT'/'WIT_DATA' (v0-v5)
-	= 'WIT_PR06'/'WIT_DA06' (v6,v7)
+	= 'WIT_PR06'/'WIT_DA06' (v6-v7)
 
 As far as the author knows, the file format is always LITTLE ENDIAN ORDERED
 
@@ -22,7 +45,7 @@ As far as the author knows, the file format is always LITTLE ENDIAN ORDERED
 
 WITec Project (wit)
     Version (int32) = 0-7 (v0-v7)
-    SystemInformation (wit) (v5-v7)
+    SystemInformation (wit) (not in v0,v2)
         LastApplicationSessionIDs (wit)
             ...
 		ServiceID (char) (v6-v7)
@@ -31,7 +54,7 @@ WITec Project (wit)
         ApplicationVersions (wit)
             ...
     NextDataID (int32)
-    ShellExtensionInfo (wit)
+    ShellExtensionInfo (wit) (not in v0)
         ThumbnailPreviewBitmap (wit)
             SizeX (int32)
             SizeY (int32)
@@ -59,7 +82,7 @@ WITec Project (wit)
 
 WITec Data (wit)
     Version (int32) = 0-7 (v0-v7)
-    SystemInformation (wit) (v5-v7)
+    SystemInformation (wit) (not in v0,v2)
         LastApplicationSessionIDs (wit)
             ...
 		ServiceID (char) (v6-v7)
@@ -107,7 +130,7 @@ TData (wit)
 TDStream (wit) (v0-v5)
 	Version (int32) = 0 (v0-v5)
 	StreamSize (int32)
-	StreamData (uint8) (has BMP-formatting)
+	StreamData (uint8) % has BMP-formatting
 TDBitmap (wit)
 	Version (int32) = 0 (v0-v5), = 1 (v6-v7)
 	SizeX (int32) (v6-v7)
@@ -116,9 +139,9 @@ TDBitmap (wit)
 	SecondaryTransformationID (int32) (v7)
 	BitmapData (wit) (v6-v7)
 		Dimension (int32)
-		DataType (int32) = 2 (v6-v7), (means that Data is int32)
+		DataType (int32) = 2 (v6-v7) % means that Data is int32
 		Ranges (int32)
-		Data (determined by DataType) (has 32 bits per pixel)
+		Data (determined by DataType) % has 32 bits per pixel
 
 
 
@@ -183,7 +206,7 @@ TDImage (wit)
 TDStream (wit)
 	Version (int32) = 0
 	StreamSize (int32)
-	StreamData (uint8) (has RTF-formatting)
+	StreamData (uint8) % has RTF-formatting
 
 
 
@@ -297,13 +320,13 @@ TDTransformation (wit)
 	Version (int32) = 0
 	StandardUnit (char)
 	UnitKind (int32)
-	InterpretationID (int32) (v5-v7)
-	IsCalibrated (logical) (v5-v7)
+	InterpretationID (int32) (not in v0,v2)
+	IsCalibrated (logical) (not in v0,v2)
 TDLinearTransformation (wit)
 	Version (int32) = 0
-	ModelOrigin_D (double)
-	WorldOrigin_D (double)
-	Scale_D (double)
+	ModelOrigin_D (double) (not in v0)
+	WorldOrigin_D (double) (not in v0)
+	Scale_D (double) (not in v0)
 	ModelOrigin (single)
 	WorldOrigin (single)
 	Scale (single)
@@ -347,11 +370,11 @@ TDSpaceTransformation (wit)
 		Scale (3x3 double)
 		Rotation (3x3 double)
 	LineInformationValid (logical)
-	LineStart_D (Nx3 double) (1st point == WorldOrigin<ViewPort3D)
+	LineStart_D (Nx3 double) (not in v0) % 1st point == WorldOrigin<ViewPort3D
 	LineStart (Nx3 single) (1st point)
-	LineStop_D (Nx3 double) (N+1'th point)
-	LineStop (Nx3 single) (N+1'th point)
-	NumberOfLinePoints (int32) (N points)
+	LineStop_D (Nx3 double) (not in v0) % N+1'th point
+	LineStop (Nx3 single) % N+1'th point
+	NumberOfLinePoints (int32) % N points
 
 %% MORE INFORMATION:
 TData
@@ -372,7 +395,7 @@ TDTransformation (wit)
 TDSpectralTransformation (wit)
 	Version (int32) = 0
 	SpectralTransformationType (int32)
-	Polynom (1x3 double) (supports the 2nd order polynomial)
+	Polynom (1x3 double) % supports the 2nd order polynomial
 	nC (double)
 	LambdaC (double)
 	Gamma (double)
@@ -381,9 +404,9 @@ TDSpectralTransformation (wit)
 	d (double)
 	x (double)
 	f (double)
-	FreePolynomOrder (int32) (v5-v7)
-	FreePolynomStartBin (double) (v5-v7)
-	FreePolynomStopBin (double) (v5-v7)
-	FreePolynom (double) (v5-v7)
+	FreePolynomOrder (int32) (not in v0,v2)
+	FreePolynomStartBin (double) (not in v0,v2)
+	FreePolynomStopBin (double) (not in v0,v2)
+	FreePolynom (double) (not in v0,v2)
 
 
