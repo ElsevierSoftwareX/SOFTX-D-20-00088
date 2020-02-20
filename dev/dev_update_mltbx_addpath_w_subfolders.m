@@ -13,9 +13,18 @@
 
 % THE FOLLOWING TWO LINES MAY NEED TO BE UPDATED!
 exe = 'C:\Program Files\7-Zip\7z.exe'; % Full path to 7z
-toolbox = 'wit_io.mltbx'; % Full path to the toolbox installer
+toolbox = 'wit_io.mltbx'; % Full relative path to the toolbox installer
 
+% Get the toolbox folder
+stored_cd = cd;
+cd_onCleanup = onCleanup(@() cd(stored_cd));
+[toolbox_dev_path, ~, ~] = fileparts([mfilename('fullpath') '.m']);
+cd(toolbox_dev_path); % Go to 'dev'-folder
+cd('..'); % Step folder up to the toolbox folder
+toolbox_path = cd; % Get the toolbox folder
 
+% Full absolute path to the toolbox installer
+toolbox = fullfile(toolbox_path, toolbox);
 
 str = sprintf('Attempting to update configuration.xml in ''%s'' to include subfolders as addpath!', toolbox);
 fprintf('%s\n%s\n%s\n', repmat('-', size(str)), str, repmat('-', size(str)));
@@ -39,9 +48,9 @@ data = reshape(fread(fid, inf, 'uint8=>char'), 1, []);
 fclose(fid);
 
 % Get all relevant subfolders
-[toolbox_path, ~, ~] = fileparts([mfilename('fullpath') '.m']);
-toolbox_paths_wo_git = regexprep(genpath(toolbox_path), '[^;]*(?<=\.git)[^;]*;', ''); % Exclude all .git folders from addpath
-strs = strrep(toolbox_paths_wo_git, toolbox_path, ''); % From absolute to relative paths
+[toolbox_dev_path, ~, ~] = fileparts([mfilename('fullpath') '.m']);
+toolbox_paths_wo_git = regexprep(genpath(toolbox_dev_path), '[^;]*(?<=\.git)[^;]*;', ''); % Exclude all .git folders from addpath
+strs = strrep(toolbox_paths_wo_git, toolbox_dev_path, ''); % From absolute to relative paths
 strs = strrep(strs, '\', '/'); % Convert \'s to /'s
 strs = strrep(strs, ';', '</matlabPath><matlabPath>'); % Convert ;'s
 strs = strrep(strs, '<matlabPath>/metadata</matlabPath>', ''); % Remove metadata-folder
@@ -69,3 +78,5 @@ rmdir('metadata');
 
 str = 'Update successful!';
 fprintf('%s\n%s\n%s\n', repmat('-', size(str)), str, repmat('-', size(str)));
+
+clear cd_onCleanup;
