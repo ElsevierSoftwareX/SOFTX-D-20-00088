@@ -43,7 +43,8 @@ classdef wip < handle, % Since R2008a
         ForceSpectralUnit = '';
         ForceTimeUnit = '';
         % Configure writing behaviour
-        OnWriteResetViewers = true; % If true, then remove all the Viewer windows (shown on the WITec software side). This avoids possible corruption of the modified files, because wit_io mostly ignores Viewers.
+        OnWriteRemoveViewers = true; % If true, then removes all the Viewer windows (shown on the WITec software side). This avoids possible corruption of the modified files, because wit_io mostly ignores Viewers.
+        OnWriteRemoveDuplicateTransformations = false; % If true, then removes all the duplicate Transformations (and keeps the first one).
         % Below LIFO (last in, first out) arrays with their default values.
         % Update the default values (if changed) in their pop-functions.
         UseLineValid = true; % A feature of TDGraph and TDImage. If used, shows NaN where invalid.
