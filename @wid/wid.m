@@ -259,7 +259,7 @@ classdef wid < handle, % Since R2008a
         
         % Array of linked wid-classes
         function LinksToThis = get.LinksToThis(obj),
-            linked_tags = obj.find_linked_wits_to_this_wid;
+            linked_tags = wid.find_linked_wits_to_this_wid(obj);
         	owner_ids = wid.find_owner_id_to_this_wit(linked_tags);
             LinksToThis = obj.Project.find_Data(owner_ids);
         end
@@ -304,6 +304,7 @@ classdef wid < handle, % Since R2008a
         
         % Object copying, destroying, writing
         new = copy(obj); % Copy-method
+        varargout = copy_Others_if_shared_and_unshare(obj, varargin); % Copy given shared linked objects and relink
         copy_LinksToOthers(obj); % Copy linked objects (i.e. transformations and interpretations) and relink
         copy_Links(obj); % Deprecated version! Use copy_LinksToOthers
         destroy(obj); % Destructor-method
@@ -379,7 +380,7 @@ classdef wid < handle, % Since R2008a
         obj = new_Transformation_Spectral(O_wit);
         
         % Other wit-tree related helper functions
-        Id = find_owner_id_to_this_wit(O_wit);
+        Ids = find_owner_id_to_this_wit(O_wit);
         O_wit = find_linked_wits_to_this_wid(obj);
         
         % DataTree formats

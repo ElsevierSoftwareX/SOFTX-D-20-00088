@@ -4,7 +4,7 @@
 
 % This returns the owner wid-object's Id for each given wit-object. If no
 % owner is found, then returns 0.
-function Id = find_owner_id_to_this_wit(O_wit),
+function Ids = find_owner_id_to_this_wit(O_wit),
     Ids = zeros(size(O_wit), 'int32');
     for ii = 1:numel(O_wit),
         % Find one of the owner wid-object's main wit-tree branches
