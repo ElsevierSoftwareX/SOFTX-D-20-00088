@@ -6,15 +6,18 @@
 function Version = read_Version(File),
     Version = []; % Default value if no Version is found
     
-    warning off;
     try,
-        wit.read(File, 4096, @error_by_obj_criteria); % Read UNTIL Version-tag is found
+        % Read UNTIL Version-tag is found, skipping everything unessential
+        wit.read(File, 4096, @skip_Data_criteria_for_obj, @error_criteria_for_obj);
     catch,
         % DO NOTHING ELSE
     end
-    warning on;
     
-    function error_by_obj_criteria(O_wit),
+    function tf = skip_Data_criteria_for_obj(O_wit),
+        tf = isempty(O_wit.regexp('^(Version<)?WITec (Project|Data)$', true));
+    end
+    
+    function error_criteria_for_obj(O_wit),
         if O_wit.Parent == O_wit.Root && ... % Test if tag's Parent is its Root
                 strcmp(O_wit.Name, 'Version'), % Test if tag's name is 'Version'
             Version = O_wit.Data; % Store the Version
