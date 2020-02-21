@@ -4,5 +4,6 @@
 
 function write(obj, File),
     if nargin < 2, File = obj.File; end
+    if obj.OnWriteResetViewers, obj.reset_Viewers; end
     obj.Tree.write(File);
 end
