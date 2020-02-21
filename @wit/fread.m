@@ -3,12 +3,13 @@
 % All rights reserved.
 
 % USE THIS ONLY IF LOW-ON MEMORY OR WHEN READING HUGE FILES!
-function fread(obj, fid, N_bytes_max, swapEndianess, error_by_obj_criteria),
+function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj),
     % Reads a WIT-formatted tag info from the given file stream.
     % Reading can be limited by N_bytes_max (if low on memory).
     if nargin < 3, N_bytes_max = Inf; end % Default: no read limit!
     if nargin < 4, swapEndianess = false; end % By default: Read without swapping endianess
-    if nargin < 5, error_by_obj_criteria = []; end % By default: no criteria!
+    if nargin < 5, skip_Data_criteria_for_obj = []; end % By default: no criteria!
+    if nargin < 6, error_criteria_for_obj = []; end % By default: no criteria!
     
     % Test the file stream
     if isempty(fid) || fid == -1, obj.IsValid = false; return; end
@@ -41,13 +42,21 @@ function fread(obj, fid, N_bytes_max, swapEndianess, error_by_obj_criteria),
     
     % Update the flag used for the reloading cases
     obj.HasData = obj.End > obj.Start;
+    
+    % SPECIAL CASE: Skip if obj meets the given skip Data criteria.
+    skip_Data = false;
+    if isa(skip_Data_criteria_for_obj, 'function_handle'),
+        skip_Data = skip_Data_criteria_for_obj(obj);
+    end
 
     % Data reading
-    if obj.Type == 0, % Read the children
+    if skip_Data, % Handle Data skipping
+        fseek(fid, double(obj.End), 'bof'); % Double OFFSET for compability!
+    elseif obj.Type == 0, % Read the children
         children = wit.empty;
         while(ftell(fid) < obj.End), % Continue reading until DataEnd
             child = wit(obj);
-            child.fread(fid, N_bytes_max, swapEndianess, error_by_obj_criteria);
+            child.fread(fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj);
             if child.IsValid, children(end+1) = child; % Append only if valid
             else, child.destroy(true); end % Otherwise destroy the child (and skip unnotified Parent)
         end
@@ -55,7 +64,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, error_by_obj_criteria),
     else, obj.fread_Data(fid, N_bytes_max, swapEndianess); end % Otherwise, read the Data
     
     % SPECIAL CASE: Abort if obj meets the given error criteria.
-    if isa(error_by_obj_criteria, 'function_handle'),
-        error_by_obj_criteria(obj); % EXPECTED TO ERROR if its criteria is met
+    if isa(error_criteria_for_obj, 'function_handle'),
+        error_criteria_for_obj(obj); % EXPECTED TO ERROR if its criteria is met
     end
 end

@@ -280,7 +280,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         
         % Conversion to/from binary form
         buffer = binary(obj, swapEndianess);
-        ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndianess, error_by_obj_criteria);
+        ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj);
         ind_begin = binaryread_Data(obj, buffer, N_bytes_max, swapEndianess);
         
         % Object search
@@ -297,7 +297,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
     %% STATIC METHODS
     methods (Static)
         % Read file to obj
-        obj = read(File, N_bytes_max, error_by_obj_criteria);
+        obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteria_for_obj);
         
         % Getters and setters for (un)formatted DataTree, also for debugging
         DataTree_set(parent, in, format); % For (un)formatted structs
@@ -318,7 +318,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
     %% PRIVATE METHODS
     methods (Access = private)
         fwrite(obj, fid, swapEndianess);
-        fread(obj, fid, N_bytes_max, swapEndianess, error_by_obj_criteria);
+        fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj);
         fread_Data(obj, fid, N_bytes_max, swapEndianess);
     end
 end
