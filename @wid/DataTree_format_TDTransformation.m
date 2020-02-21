@@ -5,6 +5,11 @@
 function format = DataTree_format_TDTransformation(Version_or_obj),
     if nargin == 0, Version_or_obj = []; end
     
+    % Parse Project from input
+    Project = wip.empty;
+    if isa(Version_or_obj, 'wid'), Project = Version_or_obj.Project;
+    elseif isa(Version_or_obj, 'wip'), Project = Version_or_obj; end
+    
     % Each row: wit-tag name, isVisible, {write-parser; read-parser}
     subformat_TDTransformation = ... % Excluding the Version-tag
         { ...
