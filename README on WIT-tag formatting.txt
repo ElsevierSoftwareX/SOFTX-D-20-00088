@@ -343,7 +343,7 @@ TDTransformation (wit)
 	UnitKind (int32)
 	InterpretationID (int32)
 	IsCalibrated (logical)
-TDLUTTransformation (wit)
+TDLUTTransformation (wit) (not in v0,v2)
 	Version (int32) = 0
 	LUTSize (int32)
 	LUT (double)
