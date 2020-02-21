@@ -3,7 +3,7 @@
 % All rights reserved.
 
 %% WIT_IO EXAMPLE CASE 2 C: DATA CROPPING
-% Simple examples of (E2C 5) data cropping.
+% Simple examples of (E2C) data cropping.
 
 clear all; % Clear workspace
 close all; % Close figures
@@ -44,7 +44,7 @@ figure; O_PointScan.plot();
 
 
 %-------------------------------------------------------------------------%
-h = helpdlg({'!!! (E2C 5) Cropping objects:' ...
+h = helpdlg({'!!! (E2C) Cropping objects:' ...
     '' ...
     '* Any TDBitmap, TDGraph or TDImage can be cropped using crop-function, which takes pixel indices as input.' ...
     '' ...
@@ -83,6 +83,22 @@ O_PointScan_cropped = O_PointScan.crop_Graph([332 1130]);  % Start/end indices i
 %-------------------------------------------------------------------------%
 figure; O_Bitmap_cropped.plot(); % Cropped bitmap
 figure; O_PointScan_cropped.plot(); % Cropped spectrum
+
+% It is worth noting that WHEN WRITING BACK TO WIP-FILE, the Viewer windows
+% (shown on the WITec software side) may become corrupted due to the Data
+% modifications if not removed before writing. This was a true risk until
+% wit_io v1.1.2 (unless O_wip.reset_Viewers; was manually executed).
+% However, in the newer wit_io versions, the Viewers windows are now
+% always removed before writing. User may disable this automation by
+% setting O_wip.OnWriteRemoveViewers to false.
+
+% ADDITIONALLY, remove any duplicate Transformations created by the
+% (possibly multiple) data croppings (or i.e. data copyings). This is
+% necessary when user wishes to utilize many of the WITec software's data
+% analysis tools, which may refuse to work if the selected data do not
+% share the same Transformation Id.
+O_wip.destroy_duplicate_Transformations; % Do it immediately
+% O_wip.OnWriteRemoveDuplicateTransformations = true; % Alternatively, do it on write
 %-------------------------------------------------------------------------%
 
 
