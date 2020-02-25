@@ -27,7 +27,7 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before
 
 
 %-------------------------------------------------------------------------%
-[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)'); % Load all the file plottable content
+[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', 'rel. 1/cm'); % Load all the file plottable content
 
 % Get handles to some specific data
 O_Text = O_wid(1); % Get object of "Global (Calibration Information)" at index 1

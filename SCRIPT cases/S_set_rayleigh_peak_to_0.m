@@ -10,7 +10,7 @@
 % This interactive script was implemented 6.5.2019 by Joonas Holmi
 
 % Load and select the data with Rayleigh-peak
-[O_wid_w_Rayleigh, O_wip, ~] = wip.read('-SpectralUnit', '(rel. 1/cm)', '-Manager', ...
+[O_wid_w_Rayleigh, O_wip, ~] = wip.read('-SpectralUnit', 'rel. 1/cm', '-Manager', ...
     '--closepreview', '--singlesection', '--Title', 'SELECT ONE DATA WITH RAYLEIGH-PEAK', '--Type', 'TDGraph');
 if isempty(O_wid_w_Rayleigh), return; end
 
