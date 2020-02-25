@@ -10,6 +10,14 @@ function h = plot(obj, varargin),
     % Use --markImageFun, --markLineFun and --markPointFun to customize it.
     % (For more details, see the documentation of @wid/plot_position.m.)
     
+    % -scalebar: Shows scalebar. Use --markScalebarFun to customize it.
+    % Other case-insensitive customizations are --Color, --Anchor,
+    % --PositionRatio, --Position, --TextSpacingRatio, --TextSpacing,
+    % --TextHeightRatio, --TextHeight, --ThicknessRatio, --Thickness,
+    % --AutoLengthRatio, --AutoFloorDigitTo, --Length, --LengthUnit,
+    % --LengthFormat, --PatchVargin, --TextVargin and --NoText. (For more
+    % details, see the documentation of @wid/plot_scalebar.m.)
+    
     % -compare: Shows comparison of obj and all subsequent wid objects. Implemented
     % for Image<TDGraph, Line<TDGraph, Point<TDGraph, Array<TDGraph,
     % Histogram<TDGraph, Time<TDGraph and Mask<TDGraph.
@@ -38,6 +46,7 @@ function h = plot(obj, varargin),
     showPreview = ~varargin_dashed_str_exists('nopreview', varargin); % By default, show preview
     showCursor = ~varargin_dashed_str_exists('nocursor', varargin); % By default, show cursor
     obj_showPosition = varargin_dashed_str_datas('position', varargin);
+    obj_showScalebar = varargin_dashed_str_datas('scalebar', varargin);
     obj_compare = varargin_dashed_str_datas('compare', varargin);
     fun_auto = @(x) true; % By default, enable autoscaling
     
@@ -174,6 +183,12 @@ function h = plot(obj, varargin),
     if ~isempty(obj_showPosition),
         h_position = obj.plot_position(Fig, obj_showPosition{:});
         h = [h; h_position];
+    end
+    
+    % Show scalebar
+    if ~isempty(obj_showScalebar),
+        h_scalebar = obj.plot_scalebar(Fig, obj_showScalebar{:});
+        h = [h; h_scalebar];
     end
     
     % Set visible
