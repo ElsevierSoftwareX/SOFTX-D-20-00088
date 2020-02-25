@@ -94,8 +94,8 @@ function [ValueUnit, varargout] = interpret(I, Unit_new, Unit_old, varargin),
     if ~isempty(Unit_old), % Interpret input if Unit_old is non-empty
         if ischar(Unit_old), % If given Unit_old is ValueUnit_old
             if ~skipMatching, % Skip only for ZInterpretation
-                bw_find = strcmp(Units(:,1), wip.interpret_StandardUnit(Unit_old)) | ...
-                    ~cellfun(@isempty, strfind(Units(:,1), Unit_old));
+                bw_find = strcmp(Units(:,1), wip.interpret_StandardUnit(Unit_old)); % First test if a Standard Unit
+                if sum(bw_find) ~= 1, bw_find = ~cellfun(@isempty, strfind(Units(:,1), Unit_old)); end % Otherwise widen the search
                 if sum(bw_find) == 1, varargout = cellfun(Units{bw_find,3}, varargout, 'UniformOutput', false);
                 elseif sum(bw_find) > 1, error('TWO OR MORE MATCHES FOUND for old unit pattern (''%s'')!', Unit_old);
                 elseif isempty(strfind(PixelUnit, Unit_old)), error('NO MATCH FOUND for old unit pattern (''%s'')!', Unit_old); end
@@ -113,8 +113,8 @@ function [ValueUnit, varargout] = interpret(I, Unit_new, Unit_old, varargin),
             if skipMatching, % Only for ZInterpretation
                 ValueUnit = wip.interpret_StandardUnit(Unit_new);
             else, % Otherwise
-                bw_find = strcmp(Units(:,1), wip.interpret_StandardUnit(Unit_new)) | ...
-                    ~cellfun(@isempty, strfind(Units(:,1), Unit_new));
+                bw_find = strcmp(Units(:,1), wip.interpret_StandardUnit(Unit_new)); % First test if a Standard Unit
+                if sum(bw_find) ~= 1, bw_find = ~cellfun(@isempty, strfind(Units(:,1), Unit_new)); end % Otherwise widen the search
                 if sum(bw_find) == 1,
                     ValueUnit = Units{bw_find,1};
                     varargout = cellfun(Units{bw_find,2}, varargout, 'UniformOutput', false);
