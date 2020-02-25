@@ -5,12 +5,15 @@
 function h = plot(obj, varargin),
     % Supports following extra options, which can be followed by any number
     % of extra option inputs:
-    % -positions: Shows positions of subsequent Image, Line and Point wid objects.
+    
+    % -position: Shows positions of subsequent Image, Line and Point wid objects.
     % Use --markImageFun, --markLineFun and --markPointFun to customize it.
-    % (For more details, see the documentation of @wid/show_Position.m.)
+    % (For more details, see the documentation of @wid/plot_position.m.)
+    
     % -compare: Shows comparison of obj and all subsequent wid objects. Implemented
     % for Image<TDGraph, Line<TDGraph, Point<TDGraph, Array<TDGraph,
     % Histogram<TDGraph, Time<TDGraph and Mask<TDGraph.
+    
     % -mask: Uses subsequent inclusion masks to exclude areas in obj as NaNs.
     % -nocursor: Disables cursor.
     % -nopreview: Disables preview.
@@ -169,8 +172,8 @@ function h = plot(obj, varargin),
     
     % Show positions of the given objects
     if ~isempty(obj_showPosition),
-        h_positions = obj.show_Position(Fig, obj_showPosition{:});
-        h = [h; h_positions];
+        h_position = obj.plot_position(Fig, obj_showPosition{:});
+        h = [h; h_position];
     end
     
     % Set visible

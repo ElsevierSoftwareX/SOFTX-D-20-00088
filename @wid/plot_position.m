@@ -8,13 +8,14 @@
 % The plotter functions for Image, Line and Point wid objects can be
 % customized by providing anonymous functions paired with '-markImageFun',
 % '-markLineFun' and '-markPointFun'. The anonymous functions must be of
-% the following form: gohandles = fun(positions, color), where 'gohandles'
-% is an array of handles to the created gobjects, 'positions' is an N-by-3
-% XYZ-coordinate array and 'color' is an 1-by-3 RGB-channel vector. Here N
-% is 4, 2 and 1 for Image, Line and Point wid objects, respectively.
-function h = show_Position(obj, Fig, varargin),
+% the following form: gohandles = fun(Ax, positions, color), where
+% 'gohandles' is an array of handles to the created gobjects, 'Ax'
+% represents the figure axes handle, 'positions' is an N-by-3 XYZ-
+% coordinate array and 'color' is an 1-by-3 RGB-channel vector. Here N is
+% 4, 2 and 1 for Image, Line and Point wid objects, respectively.
+function h_position = plot_position(obj, Fig, varargin),
     % Empty output by default
-    h = [];
+    h_position = [];
     
     % Test main object
     if ~strcmp(obj.SubType, 'Image'), return; end % Exit if not an Image
@@ -76,8 +77,8 @@ function h = show_Position(obj, Fig, varargin),
                 px = bsxfun(@plus, (Rotation*Scale)\bsxfun(@minus, um_ii, WorldOrigin), ModelOrigin+1);
                 
                 % Mark ii'th Image object on top of the main object figure
-                h_image = markImage(px.', Color_ii);
-                h = [h; h_image(:)]; % Append gobjects
+                h_image = markImage(Ax, px.', Color_ii);
+                h_position = [h_position; h_image(:)]; % Append gobjects
             case 'Line',
                 % Calculate two vertices in three coordinate systems:
                 % (1) its own, (2) world coordinate system, and
@@ -87,8 +88,8 @@ function h = show_Position(obj, Fig, varargin),
                 px = bsxfun(@plus, (Rotation*Scale)\bsxfun(@minus, um_ii, WorldOrigin), ModelOrigin+1);
                 
                 % Mark ii'th Line object on top of the main object figure
-                h_line = markLine(px.', Color_ii);
-                h = [h; h_line(:)]; % Append gobjects
+                h_line = markLine(Ax, px.', Color_ii);
+                h_position = [h_position; h_line(:)]; % Append gobjects
             case 'Point',
                 % Calculate one vertex in three coordinate systems:
                 % (1) its own, (2) world coordinate system, and
@@ -98,8 +99,8 @@ function h = show_Position(obj, Fig, varargin),
                 px = bsxfun(@plus, (Rotation*Scale)\bsxfun(@minus, um_ii, WorldOrigin), ModelOrigin+1);
                 
                 % Mark ii'th Point object on top of the main object figure
-                h_point = markPoint(px.', Color_ii);
-                h = [h; h_point(:)]; % Append gobjects
+                h_point = markPoint(Ax, px.', Color_ii);
+                h_position = [h_position; h_point(:)]; % Append gobjects
         end
     end
     
@@ -132,7 +133,7 @@ function h = show_Position(obj, Fig, varargin),
     % Expects size(positions) = [4 3], where the 1st and the 2nd values
     % represent the number of points and the number of point coordinate
     % dimensions, respectively.
-    function h_image = markImage_default(positions, color),
+    function h_image = markImage_default(Ax, positions, color),
         % Truncate if the image looks like a line (looking from the xy-plane)
         if all(abs(positions(1,1:2)-positions(4,1:2)) <= 1) && all(abs(positions(2,1:2)-positions(3,1:2)) <= 1),
             positions = (positions([1 2],:) + positions([4 3],:))./2;
@@ -145,14 +146,14 @@ function h = show_Position(obj, Fig, varargin),
             v_ii = positions(:,1:2); % Discard the Z-axis indices and reshape for patch
             h_image = patch(Ax, 'Faces', f, 'Vertices', v_ii, 'EdgeColor', color, 'FaceColor', 'none', 'LineWidth', 1);
         elseif size(positions, 1) == 2,
-            h_image = markLine_default(positions, Color_ii);
+            h_image = markLine_default(Ax, positions, Color_ii);
         end
     end
     
     % Expects size(positions) = [2 3], where the 1st and the 2nd values
     % represent the number of points and the number of point coordinate
     % dimensions, respectively.
-    function h_line = markLine_default(positions, color),
+    function h_line = markLine_default(Ax, positions, color),
         % Truncate if the line looks like a point (looking from the xy-plane)
         if all(abs(positions(1,1:2)-positions(2,1:2)) <= 1),
             positions = (positions(1,:) + positions(2,:))./2;
@@ -161,14 +162,14 @@ function h = show_Position(obj, Fig, varargin),
         if size(positions, 1) == 2,
             h_line = line(Ax, positions(:,1), positions(:,2), 'Color', color, 'LineWidth', 1);
         elseif size(positions, 1) == 1,
-            h_line = markPoint_default(positions, Color_ii);
+            h_line = markPoint_default(Ax, positions, Color_ii);
         end
     end
     
     % Expects size(positions) = [1 3], where the 1st and the 2nd values
     % represent the number of points and the number of point coordinate
     % dimensions, respectively.
-    function h_point = markPoint_default(positions, color),
+    function h_point = markPoint_default(Ax, positions, color),
         if size(positions, 1) == 1,
             h_point = line(Ax, positions(1), positions(2), 'Color', color, 'LineWidth', 1, 'Marker', 'o'); % Add marker which is same size regardless of the zoom level
         end
