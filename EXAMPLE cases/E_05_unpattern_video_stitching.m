@@ -16,11 +16,11 @@ pathstr = fileparts([mfilename('fullpath') '.m']); % Get folder of this script
 file = fullfile(pathstr, 'E_05_unpattern_video_stitching_v7.wip'); % Construct full path of the example file
 
 %-------------------------------------------------------------------------%
+wit_io_license;
+
 h = helpdlg({'EXAMPLE CASE 5: UNPATTERN VIDEO STITCHING IMAGES' ...
     '' ...
-    '* If unfamiliar with ''wit_io'', then go through the previous examples first.' ...
-    '' ...
-    '* Please note that MOST of this ''wit_io'' code is OPEN-SOURCED under simple and permissive BSD 3-Clause License and is FREE-TO-USE like described in LICENSE.txt!'});
+    '* If unfamiliar with ''wit_io'', then go through the previous examples first.'});
 uiwait(h); % Wait for helpdlg to be closed before continuing.
 %-------------------------------------------------------------------------%
 

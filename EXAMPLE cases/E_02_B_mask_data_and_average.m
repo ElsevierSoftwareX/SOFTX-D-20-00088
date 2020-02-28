@@ -17,11 +17,11 @@ file = fullfile(pathstr, 'E_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
+wit_io_license;
+
 h = helpdlg({'EXAMPLE CASE 2 B: DATA MASKING AND SPATIAL AVERAGING' ...
     '' ...
-    '* Using ''E_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.' ...
-    '' ...
-    '* Please note that MOST of this ''wit_io'' code is OPEN-SOURCED under simple and permissive BSD 3-Clause License and is FREE-TO-USE like described in LICENSE.txt!'});
+    '* Using ''E_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'});
 if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before continuing.
 %-------------------------------------------------------------------------%
 

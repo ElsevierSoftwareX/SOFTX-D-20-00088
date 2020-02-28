@@ -19,11 +19,11 @@ file = fullfile(pathstr, 'E_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
+wit_io_license;
+
 h = helpdlg({'EXAMPLE CASE INF: CUSTOMIZE DATA AND EXPORT' ...
     '' ...
-    '* If unfamiliar with ''wit_io'', then go through the previous examples first.' ...
-    '' ...
-    '* Please note that MOST of this ''wit_io'' code is OPEN-SOURCED under simple and permissive BSD 3-Clause License and is FREE-TO-USE like described in LICENSE.txt!'});
+    '* If unfamiliar with ''wit_io'', then go through the previous examples first.'});
 uiwait(h); % Wait for helpdlg to be closed before continuing.
 %-------------------------------------------------------------------------%
 
