@@ -2,8 +2,8 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Prefer toolbox installer (*.mltbx) instead (and its uninstallation)!
-function wit_io_unload_or_rmpath_permanently(toolbox_path, ispermanent),
+% Prefer toolbox installer (*.mltbx) instead!
+function wit_io_permanent_load_or_addpath(toolbox_path, ispermanent),
     if nargin < 1 || isempty(toolbox_path),
         this_script = [mfilename('fullpath') '.m'];
         [root, ~, ~] = fileparts(this_script);
@@ -11,7 +11,7 @@ function wit_io_unload_or_rmpath_permanently(toolbox_path, ispermanent),
     end
     if nargin < 2, ispermanent = true; end
     toolbox_paths_wo_git = regexprep(genpath(toolbox_path), '[^;]*(?<=\.git)[^;]*;', ''); % Exclude all .git folders from addpath
-    rmpath(toolbox_paths_wo_git); % Remove all subfolder dependencies!
+    addpath(toolbox_paths_wo_git); % Add all subfolder dependencies!
     if ispermanent,
         try, savepath; % Permanently save the dependencies (requires Admin-rights!)
         catch, warning('Cannot make permanent changes without Admin-rights!'); end
@@ -19,5 +19,5 @@ function wit_io_unload_or_rmpath_permanently(toolbox_path, ispermanent),
 end
 
 % MANUAL & TEMPORARY WAY: Right-click wit_io's main folder in "Current
-% Folder"-view and from the context menu left-click "Remove from Path" and
+% Folder"-view and from the context menu left-click "Add to Path" and
 % "Selected Folders and Subfolders".
