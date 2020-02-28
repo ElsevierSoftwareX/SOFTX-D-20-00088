@@ -45,8 +45,8 @@ function h = plot(obj, varargin),
     showSidebar = ~varargin_dashed_str_exists('nosidebar', varargin); % By default, show sidebar
     showPreview = ~varargin_dashed_str_exists('nopreview', varargin); % By default, show preview
     showCursor = ~varargin_dashed_str_exists('nocursor', varargin); % By default, show cursor
-    obj_showPosition = varargin_dashed_str_datas('position', varargin);
-    obj_showScalebar = varargin_dashed_str_datas('scalebar', varargin);
+    showPosition = varargin_dashed_str_datas('position', varargin);
+    [showScalebar, vararginScalebar] = varargin_dashed_str_exists_and_datas('scalebar', varargin);
     obj_compare = varargin_dashed_str_datas('compare', varargin);
     fun_auto = @(x) true; % By default, enable autoscaling
     
@@ -180,14 +180,14 @@ function h = plot(obj, varargin),
     h = Ax.Children;
     
     % Show positions of the given objects
-    if ~isempty(obj_showPosition),
-        h_position = obj.plot_position(Fig, obj_showPosition{:});
+    if ~isempty(showPosition),
+        h_position = obj.plot_position(Fig, showPosition{:});
         h = [h; h_position];
     end
     
     % Show scalebar
-    if ~isempty(obj_showScalebar),
-        h_scalebar = obj.plot_scalebar(Fig, obj_showScalebar{:});
+    if showScalebar,
+        h_scalebar = obj.plot_scalebar(Fig, vararginScalebar{:});
         h = [h; h_scalebar];
     end
     
