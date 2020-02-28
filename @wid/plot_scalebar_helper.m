@@ -87,7 +87,7 @@ function h = plot_scalebar_helper(Ax, image_size, image_size_in_SU, image_SU, va
     if numel(datas) > 0, thickness_ratio = datas{1}; end
 
     % Check if Thickness (in points) was specified
-    datas = varargin_dashed_str_datas('Height', varargin, -1);
+    datas = varargin_dashed_str_datas('Thickness', varargin, -1);
     thickness = thickness_ratio .* image_size(2);
     if numel(datas) > 0, thickness = datas{1}; end
 
@@ -201,4 +201,7 @@ function h = plot_scalebar_helper(Ax, image_size, image_size_in_SU, image_SU, va
             set(h(2), text_varargin{:});
         end;
     end
+    
+    % Force column vector
+    h = h(:);
 end
