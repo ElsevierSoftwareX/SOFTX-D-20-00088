@@ -78,7 +78,21 @@ classdef wip < handle, % Since R2008a
                 obj.Tree = O_wit;
                 obj.Data = wid(O_wit);
             end
-            obj.storeState(); % Store this state
+            
+            % Get user preferences (or default values if not found)
+            obj.ForceDataUnit = wit_io_pref_get('wip_ForceDataUnit', obj.ForceDataUnit);
+            obj.ForceSpaceUnit = wit_io_pref_get('wip_ForceSpaceUnit', obj.ForceSpaceUnit);
+            obj.ForceSpectralUnit = wit_io_pref_get('wip_ForceSpectralUnit', obj.ForceSpectralUnit);
+            obj.ForceTimeUnit = wit_io_pref_get('wip_ForceTimeUnit', obj.ForceTimeUnit);
+            obj.OnWriteRemoveViewers = wit_io_pref_get('wip_OnWriteRemoveViewers', obj.OnWriteRemoveViewers);
+            obj.OnWriteRemoveDuplicateTransformations = wit_io_pref_get('wip_OnWriteRemoveDuplicateTransformations', obj.OnWriteRemoveDuplicateTransformations);
+            obj.UseLineValid = wit_io_pref_get('wip_UseLineValid', obj.UseLineValid);
+            obj.AutoCreateObj = wit_io_pref_get('wip_AutoCreateObj', obj.AutoCreateObj);
+            obj.AutoCopyObj = wit_io_pref_get('wip_AutoCopyObj', obj.AutoCopyObj);
+            obj.AutoModifyObj = wit_io_pref_get('wip_AutoModifyObj', obj.AutoModifyObj);
+            
+            % Store this state
+            obj.storeState();
         end
         
         function set.Data(obj, Data),
