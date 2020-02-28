@@ -402,6 +402,9 @@ classdef wid < handle, % Since R2008a
         %% OTHER PUBLIC METHODS
         [Data_range, Graph_range, Data_range_bg, range] = crop_Graph_with_bg_helper(Data, Graph, range, bg_avg_lower, bg_avg_upper);
         [Data_range, Graph_range, Data_range_bg, range] = reduce_Graph_with_bg_helper(Data, Graph, range, bg_avg_lower, bg_avg_upper); % DEPRECATED! USE ABOVE INSTEAD!
+        h_image = plot_position_Image_helper(Ax, positions, color);
+        h_line = plot_position_Line_helper(Ax, positions, color);
+        h_point = plot_position_Point_helper(Ax, positions, color);
         h = plot_scalebar_helper(Ax, image_size, image_size_in_SU, image_SU, varargin);
         [Graph, Data, W, D] = spectral_stitch_helper(Graphs_nm, Datas, isdebug);
         [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_SI_XY, varargin); % Add '-debug' as input to see debug plots

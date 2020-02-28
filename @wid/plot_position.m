@@ -8,11 +8,13 @@
 % The plotter functions for Image, Line and Point wid objects can be
 % customized by providing anonymous functions paired with '-markImageFun',
 % '-markLineFun' and '-markPointFun'. The anonymous functions must be of
-% the following form: gohandles = fun(Ax, positions, color), where
-% 'gohandles' is an array of handles to the created gobjects, 'Ax'
-% represents the figure axes handle, 'positions' is an N-by-3 XYZ-
-% coordinate array and 'color' is an 1-by-3 RGB-channel vector. Here N is
-% 4, 2 and 1 for Image, Line and Point wid objects, respectively.
+% the following form: h = fun(Ax, positions, color), where 'h' is an array
+% of the created graphical object handles, 'Ax' is a figure axes handle,
+% 'positions' is an N-by-3 XYZ-coordinate array and 'color' is a 1-by-3
+% RGB-channel vector. Here N is 4, 2 and 1 for Image, Line and Point wid
+% objects, respectively. For more details, see the default helper functions
+% wid.plot_position_Image_helper.m, wid.plot_position_Line_helper.m and
+% wid.plot_position_Point_helper.m.
 function h_position = plot_position(obj, Fig, varargin),
     % Empty output by default
     h_position = [];
@@ -22,17 +24,17 @@ function h_position = plot_position(obj, Fig, varargin),
     
     % Check if markImageFun was specified
     datas = varargin_dashed_str_datas('markImageFun', varargin, -1);
-    markImage = @markImage_default;
+    markImage = @wid.plot_position_Image_helper;
     if numel(datas) > 0, markImage = datas{1}; end
     
     % Check if markLineFun was specified
     datas = varargin_dashed_str_datas('markLineFun', varargin, -1);
-    markLine = @markLine_default;
+    markLine = @wid.plot_position_Line_helper;
     if numel(datas) > 0, markLine = datas{1}; end
     
     % Check if markPointFun was specified
     datas = varargin_dashed_str_datas('markPointFun', varargin, -1);
-    markPoint = @markPoint_default;
+    markPoint = @wid.plot_position_Point_helper;
     if numel(datas) > 0, markPoint = datas{1}; end
     
     % Parse the varargin and keep only TDBitmap, TDGraph and TDImage wid objects
@@ -128,50 +130,5 @@ function h_position = plot_position(obj, Fig, varargin),
         WorldOrigin = TSpace.ViewPort3D.WorldOrigin(:);
         Scale = reshape(TSpace.ViewPort3D.Scale, [3 3]);
         Rotation = reshape(TSpace.ViewPort3D.Rotation, [3 3]);
-    end
-    
-    % Expects size(positions) = [4 3], where the 1st and the 2nd values
-    % represent the number of points and the number of point coordinate
-    % dimensions, respectively.
-    function h_image = markImage_default(Ax, positions, color),
-        % Truncate if the image looks like a line (looking from the xy-plane)
-        if all(abs(positions(1,1:2)-positions(4,1:2)) <= 1) && all(abs(positions(2,1:2)-positions(3,1:2)) <= 1),
-            positions = (positions([1 2],:) + positions([4 3],:))./2;
-        elseif all(abs(positions(1,1:2)-positions(4,1:2)) <= 1) && all(abs(positions(4,1:2)-positions(3,1:2)) <= 1),
-            positions = (positions([1 4],:) + positions([2 3],:))./2;
-        end
-        
-        if size(positions, 1) == 4,
-            f = [1 2 3 4]; % How vertices are connected to each other
-            v_ii = positions(:,1:2); % Discard the Z-axis indices and reshape for patch
-            h_image = patch(Ax, 'Faces', f, 'Vertices', v_ii, 'EdgeColor', color, 'FaceColor', 'none', 'LineWidth', 1);
-        elseif size(positions, 1) == 2,
-            h_image = markLine_default(Ax, positions, Color_ii);
-        end
-    end
-    
-    % Expects size(positions) = [2 3], where the 1st and the 2nd values
-    % represent the number of points and the number of point coordinate
-    % dimensions, respectively.
-    function h_line = markLine_default(Ax, positions, color),
-        % Truncate if the line looks like a point (looking from the xy-plane)
-        if all(abs(positions(1,1:2)-positions(2,1:2)) <= 1),
-            positions = (positions(1,:) + positions(2,:))./2;
-        end
-        
-        if size(positions, 1) == 2,
-            h_line = line(Ax, positions(:,1), positions(:,2), 'Color', color, 'LineWidth', 1);
-        elseif size(positions, 1) == 1,
-            h_line = markPoint_default(Ax, positions, Color_ii);
-        end
-    end
-    
-    % Expects size(positions) = [1 3], where the 1st and the 2nd values
-    % represent the number of points and the number of point coordinate
-    % dimensions, respectively.
-    function h_point = markPoint_default(Ax, positions, color),
-        if size(positions, 1) == 1,
-            h_point = line(Ax, positions(1), positions(2), 'Color', color, 'LineWidth', 1, 'Marker', 'o'); % Add marker which is same size regardless of the zoom level
-        end
     end
 end
