@@ -7,7 +7,7 @@
 % 'value' pairs, and (2) initializes 'value' with []'s if it was not given.
 function wit_io_pref_set(pref, value),
     if nargin > 0,
-        if isstruct(pref),
+        if isstruct(pref), % SPECIAL CASE: a struct input
             if nargin == 1, value = struct2cell(pref); end
             pref = fieldnames(pref);
         elseif nargin == 1,

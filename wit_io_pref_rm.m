@@ -11,6 +11,7 @@ function wit_io_pref_rm(pref),
     elseif ischar(pref), % If a char input, then remove the specified preference
         if ispref('wit_io', pref), rmpref('wit_io', pref); end
     else, % Otherwise, remove the specified multiple preferences
+        if isstruct(pref), pref = fieldnames(pref); end % SPECIAL CASE: a struct input
         rmpref('wit_io', pref(ispref('wit_io', pref)));
     end
 end

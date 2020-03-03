@@ -13,7 +13,10 @@ function value = wit_io_pref_get(pref, value),
         if ispref('wit_io', pref), value = getpref('wit_io', pref);
         else, setpref('wit_io', pref, value); end
     else, % Otherwise, get the specified multiple preferences
-        if nargin == 1, value = cell(size(pref)); end
+        if isstruct(pref), % SPECIAL CASE: a struct input
+            if nargin == 1, value = struct2cell(pref); end
+            pref = fieldnames(pref);
+        elseif nargin == 1, value = cell(size(pref)); end
         B_get = ispref('wit_io', pref);
         value(B_get) = getpref('wit_io', pref(B_get));
         setpref('wit_io', pref(~B_get), value(~B_get));
