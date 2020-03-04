@@ -43,8 +43,8 @@ classdef wip < handle, % Since R2008a
         ForceSpectralUnit = '';
         ForceTimeUnit = '';
         % Configure writing behaviour
-        OnWriteRemoveViewers = true; % If true, then removes all the Viewer windows (shown on the WITec software side). This avoids possible corruption of the modified files, because wit_io mostly ignores Viewers.
-        OnWriteRemoveDuplicateTransformations = false; % If true, then removes all the duplicate Transformations (and keeps the first one).
+        OnWriteDestroyAllViewers = true; % If true, then removes all the Viewer windows (shown on the WITec software side). This avoids possible corruption of the modified files, because wit_io mostly ignores Viewers.
+        OnWriteDestroyDuplicateTransformations = false; % If true, then removes all the duplicate Transformations (and keeps the first one).
         % Below LIFO (last in, first out) arrays with their default values.
         % Update the default values (if changed) in their pop-functions.
         UseLineValid = true; % A feature of TDGraph and TDImage. If used, shows NaN where invalid.
@@ -84,15 +84,12 @@ classdef wip < handle, % Since R2008a
             obj.ForceSpaceUnit = wit_io_pref_get('wip_ForceSpaceUnit', obj.ForceSpaceUnit);
             obj.ForceSpectralUnit = wit_io_pref_get('wip_ForceSpectralUnit', obj.ForceSpectralUnit);
             obj.ForceTimeUnit = wit_io_pref_get('wip_ForceTimeUnit', obj.ForceTimeUnit);
-            obj.OnWriteRemoveViewers = wit_io_pref_get('wip_OnWriteRemoveViewers', obj.OnWriteRemoveViewers);
-            obj.OnWriteRemoveDuplicateTransformations = wit_io_pref_get('wip_OnWriteRemoveDuplicateTransformations', obj.OnWriteRemoveDuplicateTransformations);
+            obj.OnWriteDestroyAllViewers = wit_io_pref_get('wip_OnWriteDestroyAllViewers', obj.OnWriteDestroyAllViewers);
+            obj.OnWriteDestroyDuplicateTransformations = wit_io_pref_get('wip_OnWriteDestroyDuplicateTransformations', obj.OnWriteDestroyDuplicateTransformations);
             obj.UseLineValid = wit_io_pref_get('wip_UseLineValid', obj.UseLineValid);
             obj.AutoCreateObj = wit_io_pref_get('wip_AutoCreateObj', obj.AutoCreateObj);
             obj.AutoCopyObj = wit_io_pref_get('wip_AutoCopyObj', obj.AutoCopyObj);
             obj.AutoModifyObj = wit_io_pref_get('wip_AutoModifyObj', obj.AutoModifyObj);
-            
-            % Store this state
-            obj.storeState();
         end
         
         function set.Data(obj, Data),
@@ -153,23 +150,9 @@ classdef wip < handle, % Since R2008a
         
         
         %% OTHER METHODS
-        % Call storeState-function in order to save previous state and
-        % temporarily alter any of the wip-class parameters and finally use
-        % restoreState-function to reload previous state.
-        % NOTE (1.8.2019): Prefer pop- and push- functions below instead as
-        % these two may be removed in the future releases.
-        function storedState = storeState(obj),
-            storedState = {obj.ForceDataUnit, obj.ForceSpaceUnit, obj.ForceSpectralUnit, obj.ForceTimeUnit, obj.UseLineValid, obj.AutoCreateObj, obj.AutoCopyObj, obj.AutoModifyObj};
-        end
-        function restoreState(obj, storedState),
-            if ~isempty(storedState),
-                [obj.ForceDataUnit, obj.ForceSpaceUnit, obj.ForceSpectralUnit, obj.ForceTimeUnit, obj.UseLineValid, obj.AutoCreateObj, obj.AutoCopyObj, obj.AutoModifyObj] = deal(storedState{:});
-            end
-        end
-        
         % LIFO (last in, first out) concept for UseLineValid
         function latest = popUseLineValid(obj),
-            latest = obj.popBoolean('UseLineValid', true); % With default
+            latest = obj.popBoolean('UseLineValid', wit_io_pref_get('wip_UseLineValid', true)); % With default
         end
         function pushUseLineValid(obj, latest),
             obj.pushBoolean('UseLineValid', latest);
@@ -177,7 +160,7 @@ classdef wip < handle, % Since R2008a
         
         % LIFO (last in, first out) concept for AutoCreateObj
         function latest = popAutoCreateObj(obj),
-            latest = obj.popBoolean('AutoCreateObj', true); % With default
+            latest = obj.popBoolean('AutoCreateObj', wit_io_pref_get('wip_AutoCreateObj', true)); % With default
         end
         function pushAutoCreateObj(obj, latest),
             obj.pushBoolean('AutoCreateObj', latest);
@@ -185,7 +168,7 @@ classdef wip < handle, % Since R2008a
         
         % LIFO (last in, first out) concept for AutoCopyObj
         function latest = popAutoCopyObj(obj),
-            latest = obj.popBoolean('AutoCopyObj', true); % With default
+            latest = obj.popBoolean('AutoCopyObj', wit_io_pref_get('wip_AutoCopyObj', true)); % With default
         end
         function pushAutoCopyObj(obj, latest),
             obj.pushBoolean('AutoCopyObj', latest);
@@ -193,7 +176,7 @@ classdef wip < handle, % Since R2008a
         
         % LIFO (last in, first out) concept for AutoModifyObj
         function latest = popAutoModifyObj(obj),
-            latest = obj.popBoolean('AutoModifyObj', true); % With default
+            latest = obj.popBoolean('AutoModifyObj', wit_io_pref_get('wip_AutoModifyObj', true)); % With default
         end
         function pushAutoModifyObj(obj, latest),
             obj.pushBoolean('AutoModifyObj', latest);
@@ -214,7 +197,8 @@ classdef wip < handle, % Since R2008a
         destroy_duplicate_Transformations(obj);
         
         % Remove saved Viewer-settings
-        reset_Viewers(obj);
+        destroy_all_Viewers(obj);
+        reset_Viewers(obj); % Deprecated version! Use destroy_all_Viewers.m instead.
         
         % Helper functions for adding, removing and finding wid-objects
         add_Data(obj, varargin);
@@ -231,7 +215,7 @@ classdef wip < handle, % Since R2008a
         % GENERIC BOOLEAN LIFO (last in, first out) concept
         function latest = popBoolean(obj, field, default),
             if isempty(obj),
-                latest = default; % Return default value if an empty wip
+                latest = default(end); % Return (last) default value if an empty wip
             else,
                 lifo_array = obj.(field);
                 latest = lifo_array(end);

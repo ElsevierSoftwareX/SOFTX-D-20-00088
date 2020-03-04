@@ -87,10 +87,10 @@ figure; O_PointScan_cropped.plot(); % Cropped spectrum
 % It is worth noting that WHEN WRITING BACK TO WIP-FILE, the Viewer windows
 % (shown on the WITec software side) may become corrupted due to the Data
 % modifications if not removed before writing. This was a true risk until
-% wit_io v1.1.2 (unless O_wip.reset_Viewers; was manually executed).
+% wit_io v1.1.2 (unless O_wip.destroy_all_Viewers; was manually executed).
 % However, in the newer wit_io versions, the Viewers windows are now
 % always removed before writing. User may disable this automation by
-% setting O_wip.OnWriteRemoveViewers to false.
+% setting O_wip.OnWriteDestroyAllViewers to false.
 
 % ADDITIONALLY, remove any duplicate Transformations created by the
 % (possibly multiple) data croppings (or i.e. data copyings). This is
@@ -98,7 +98,7 @@ figure; O_PointScan_cropped.plot(); % Cropped spectrum
 % analysis tools, which may refuse to work if the selected data do not
 % share the same Transformation Id.
 O_wip.destroy_duplicate_Transformations; % Do it immediately
-% O_wip.OnWriteRemoveDuplicateTransformations = true; % Alternatively, do it on write
+% O_wip.OnWriteDestroyDuplicateTransformations = true; % Alternatively, do it on write
 %-------------------------------------------------------------------------%
 
 

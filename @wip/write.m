@@ -4,7 +4,7 @@
 
 function write(obj, File),
     if nargin < 2, File = obj.File; end
-    if obj.OnWriteRemoveViewers, obj.reset_Viewers; end
-    if obj.OnWriteRemoveDuplicateTransformations, obj.destroy_duplicate_Transformations; end
+    if obj.OnWriteDestroyAllViewers, obj.destroy_all_Viewers; end
+    if obj.OnWriteDestroyDuplicateTransformations, obj.destroy_duplicate_Transformations; end
     obj.Tree.write(File);
 end
