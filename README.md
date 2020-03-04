@@ -1,5 +1,7 @@
 # [wit_io: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wid) files](https://se.mathworks.com/matlabcentral/fileexchange/70983-wit_io-toolbox-for-witec-project-data-wip-wid-files)
 
+[![wit_io v1.2.0 Changelog Badge][changelog-badge]][changelog] [![BSD License Badge][license-badge]][license]
+
 Toolbox can directly **read**/**write** [WITec](https://witec.de/) Project/Data (\*.wip/\*.wid)
 files in [MATLAB](https://www.mathworks.com/products/matlab.html) with or without
 GUI. It also provides data analysis tools.
@@ -109,3 +111,8 @@ J. T. Holmi (2019). wit_io: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.w
 [*] [jtholmi](https://gitlab.com/jtholmi)'s supervisor: [Prof. Harri Lipsanen](https://people.aalto.fi/harri.lipsanen), Aalto University, Finland  
 [1] [*'clever_statistics_and_outliers.m'*](/helper/clever_statistics_and_outliers.m): G. Buzzi-Ferraris and F. Manenti (2011) "Outlier detection in large data sets", http://dx.doi.org/10.1016/j.compchemeng.2010.11.004  
 [2] [*'apply_MRLCM.m'*](/helper/corrections/apply_MRLCM.m) (and deprecated *wip_reader*): J. T. Holmi (2016) "Determining the number of graphene layers by Raman-based Si-peak analysis", pp. 27–28,35, freely available to download at: http://urn.fi/URN:NBN:fi:aalto-201605122027
+
+[changelog]: ./CHANGELOG.md
+[license]: ./LICENSE
+[changelog-badge]: https://img.shields.io/badge/changelog-wit__io_v1.2.0-0000ff.svg
+[license-badge]: https://img.shields.io/badge/license-BSD-ff0000.svg
