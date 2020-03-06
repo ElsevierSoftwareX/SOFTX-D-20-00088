@@ -34,11 +34,11 @@ function [line_length, line_label] = bw2lines(bw_lines),
     
     % Simulate that of bw_lines_cumsum_padded = padarray(bw_lines_cumsum, [0 1], 0, 'pre'):
     bw_lines_cumsum = cumsum(bw_lines, 2);
-    bw_lines_cumsum_padded = zeros(size(bw_lines_cumsum, 1), size(bw_lines_cumsum, 1)+1);
+    bw_lines_cumsum_padded = zeros(size(bw_lines_cumsum, 1), size(bw_lines_cumsum, 2)+1);
     bw_lines_cumsum_padded(:,2:end) = bw_lines_cumsum;
     
     % Simulate that of bw_lines_padded = padarray(bw_lines, [0 1], 0, 'both'):
-    bw_lines_padded = zeros(size(bw_lines, 1), size(bw_lines, 1)+2);
+    bw_lines_padded = zeros(size(bw_lines, 1), size(bw_lines, 2)+2);
     bw_lines_padded(:,2:end-1) = bw_lines;
     
     % Preparation
