@@ -2,12 +2,12 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% A simple wrapper for MATLAB's built-in msgbox functionality but without
+% A simple wrapper for MATLAB's built-in msgbox functionality with fixed
 % text wrapping. By default, opens a wit_io's Dialog -window, which has
 % wit_io's main icon and TeX Interpreter enabled to more enriched text. See
 % the msgbox documentation [1] for the possible TeX Markups.
 % [1] https://www.mathworks.com/help/matlab/ref/msgbox.html
-function h = wit_io_msgbox(message, title, icon, icondata, iconcmap, WindowStyle, Interpreter),
+function h = wit_io_msgbox(message, title, icon, icondata, iconcmap, WindowStyle, Interpreter, textwrapping),
     % Load the default wit_io icon only once
     persistent default_icondata default_iconcmap;
     if isempty(default_icondata) || isempty(default_iconcmap),
@@ -27,6 +27,7 @@ function h = wit_io_msgbox(message, title, icon, icondata, iconcmap, WindowStyle
     % Parse the createmode struct field values
     if nargin < 6 || isempty(WindowStyle), WindowStyle = 'modal'; end
     if nargin < 7 || isempty(Interpreter), Interpreter = 'tex'; end
+    if nargin < 8, textwrapping = true; end
     
     % Get maximum height needed to get out of screen in pixels
     Units = get(0, 'Units');
@@ -55,17 +56,18 @@ function h = wit_io_msgbox(message, title, icon, icondata, iconcmap, WindowStyle
     set(h, 'Position', Position);
     set(h, 'Units', Units);
     
-    % Disable the forced 75 characer text wrapping (enforced by msgbox).
-    % This is necessary to show i.e. Tex-enriched text correctly! In
-    % effect, resize the text object and its surroundings. Units of each
-    % object are set same in msgbox.
+    % Remove the forced 75 characer text wrapping (enforced by msgbox). By
+    % default, redo it manually. This is necessary to show i.e. Tex-
+    % enriched text correctly! The text object and its surroundings are
+    % resized if necessary. (Units of each object are set same in msgbox.)
     % Get relevant objects
     h_MessageBox = findall(h, 'Tag', 'MessageBox');
     h_IconAxes = findall(h, 'Tag', 'IconAxes');
     h_OKButton = findall(h, 'Tag', 'OKButton');
-    % Replace text wrapped with unwrapped text and find the extent delta
+    % Replace text wrapped with unwrapped (or rewrapped) text and find the extent delta
     Extent_before = get(h_MessageBox, 'Extent');
     set(h_MessageBox, 'String', message); % Restore the original line breaks
+    if textwrapping, mytextwrap(h_MessageBox, Extent_before(3)); end
     Extent_after = get(h_MessageBox, 'Extent');
     delta_Extent = Extent_after - Extent_before;
     % Update figure position
