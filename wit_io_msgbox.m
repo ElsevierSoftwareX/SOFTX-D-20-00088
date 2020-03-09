@@ -26,7 +26,7 @@
 % default, the automatic text wrapping is enabled.
 
 % EXAMPLE:
-% h = wit_io_msgbox('\bullet This is an{\bf example \color{magenta}dialog} box with {\fontname{Courier}200 px} wide text wrapping.', '-Icon', 'help', '-TextWrapping', 200, 'pixels');
+% h = wit_io_msgbox('\bullet This is an{\bf example \color{magenta}dialog} box with max. {\fontname{Courier}200 px} wide text wrapping.', '-Icon', 'help', '-TextWrapping', 200, 'pixels');
 function h = wit_io_msgbox(message, varargin),
     % Load the default wit_io icon only once
     persistent default_icondata default_iconcmap;
@@ -77,11 +77,11 @@ function h = wit_io_msgbox(message, varargin),
     
     % Modify dialog using MATLAB's built-in msgbox
     h_event = addlistener(h, {'Visible', 'WindowStyle'}, 'PostSet', @force_visible_off_and_out_of_screen); % Prepare to interrupt msgbox from setting h's 'Visible' to 'on'!
-    msgbox(message, title, icon{:}, struct('WindowStyle', 'replace', 'Interpreter', Interpreter)); % Always sets WindowStyle to 'normal' according to the documentation and the code.
+    msgbox(message, title, icon{:}, struct('WindowStyle', 'replace', 'Interpreter', Interpreter)); % Always sets 'WindowStyle' to 'normal' according to the documentation and the code.
     delete(h_event); % Delete listener
     set(h, 'WindowStyle', WindowStyle); % Enforce the user preferred window modality
     
-    % Shift figure's Position back to screen vertically
+    % Shift figure's Position back to main screen vertically
     Units = get(h, 'Units');
     set(h, 'Units', 'pixels');
     Position = get(h, 'Position');
@@ -97,43 +97,52 @@ function h = wit_io_msgbox(message, varargin),
     h_MessageBox = findall(h, 'Tag', 'MessageBox');
     h_IconAxes = findall(h, 'Tag', 'IconAxes');
     h_OKButton = findall(h, 'Tag', 'OKButton');
-    % Replace text wrapped with unwrapped (or rewrapped) text and find the extent delta
-    set(h_MessageBox, 'Interpreter', 'none'); % Disable Interpreter for the correct extent BEFORE calculation
-    Extent_before = get(h_MessageBox, 'Extent');
-    set(h_MessageBox, 'Interpreter', Interpreter); % Restore Interpreter
+    % Store old positions
+    Position_dialog = get(h, 'Position');
+    Position_text = get(h_MessageBox, 'Position');
+    Position_icon = get(h_IconAxes, 'Position');
+    Position_ok = get(h_OKButton, 'Position');
+    % Calculate the key lengths
+    min_y = min(Position_icon(2), Position_text(2)); % Like in msgbox
+    margins = [Position_icon(1) Position_ok(2)]; % Like in msgbox
+    text_width = Position_dialog(3) - Position_text(1) - margins(1) - get(h_MessageBox, 'Margin')./2; % Recalculate a more reliable width than that of the direct get(h_MessageBox, 'Extent'); due to the possible use of Interpreter
+    % Replace text wrapped with unwrapped (or rewrapped) text
     set(h_MessageBox, 'String', message); % Restore the original line breaks
-    if ~islogical(TextWrapping{1}) || TextWrapping{1} == true,
-        max_width = Extent_before(3); % Auto width
+    if ~islogical(TextWrapping{1}) || TextWrapping{1} == true, % Rewrapping
+        max_width = text_width; % Auto width
         if ~islogical(TextWrapping{1}), max_width = TextWrapping{1}; end % Manual width
         if numel(TextWrapping) > 1 && ~islogical(TextWrapping{1}), % Manual units
-            Units = get(h, 'Units');
-            set(h, 'Units', TextWrapping{2});
+            Units = get(h_MessageBox, 'Units');
+            set(h_MessageBox, 'Units', TextWrapping{2});
         end
-        mytextwrap(h_MessageBox, max_width);
+        mytextwrap(h_MessageBox, max_width); % Rewrap the text
         if numel(TextWrapping) > 1 && ~islogical(TextWrapping{1}),
-            set(h, 'Units', Units);
+            set(h_MessageBox, 'Units', Units);
         end
     end
-    Extent_after = get(h_MessageBox, 'Extent');
-    delta_Extent = Extent_after - Extent_before;
-    % Update figure position
-    Position = get(h, 'Position');
-    Position(1) = Position(1) - delta_Extent(3)./2;
-    Position(2) = Position(2) - delta_Extent(4);
-    Position(3) = Position(3) + delta_Extent(3);
-    Position(4) = Position(4) + delta_Extent(4);
-    set(h, 'Position', Position);
-    % Recenter the icon position
-    Position = get(h_IconAxes, 'Position');
-    Position(2) = Position(2) + delta_Extent(4)./2; % Icon vertical centering
-    set(h_IconAxes, 'Position', Position);
-    % Recenter the OK button position
-    Units = get(h_OKButton, 'Units');
-    set(h_OKButton, 'Units', 'normalized');
-    Position = get(h_OKButton, 'Position');
-    Position(1) = 0.5 - Position(3)./2; % OK button horizontal centering
-    set(h_OKButton, 'Position', Position);
-    set(h_OKButton, 'Units', Units);
+    Extent_text = get(h_MessageBox, 'Extent'); % Calculate the extent
+    % Center the icon position OR the text position like in msgbox
+    Width_dialog = Position_text(1) + Extent_text(3) + margins(1);
+    delta = (Extent_text(4) - Position_icon(4))./2;
+    if delta < 0, % Center the vertically smaller text
+        Position_icon(2) = min_y;
+        Position_text(2) = min_y - delta;
+        Height_dialog = Position_icon(2) + Position_icon(4) + margins(2);
+    else, % Center the vertically smaller icon
+        Position_icon(2) = min_y + delta;
+        Position_text(2) = min_y;
+        Height_dialog = Position_text(2) + Extent_text(4) + margins(2);
+    end
+    % Shift the dialog box position so that its center does not move
+    Position_dialog(1:2) = Position_dialog(1:2) + (Position_dialog(3:4) - [Width_dialog Height_dialog])./2;
+    Position_dialog(3:4) = [Width_dialog Height_dialog];
+    % Center the OK button horizontally
+    Position_ok(1) = Position_dialog(3)./2 - Position_ok(3)./2;
+    % Update positions
+    set(h, 'Position', Position_dialog);
+    set(h_MessageBox, 'Position', Position_text);
+    set(h_IconAxes, 'Position', Position_icon);
+    set(h_OKButton, 'Position', Position_ok);
     % Make figure visible
     set(h, 'Visible', 'on');
     drawnow;
