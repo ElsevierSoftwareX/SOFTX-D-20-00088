@@ -21,6 +21,7 @@ function mytextwrap(h_text, max_width),
     
     % Get the text object lines
     lines = get(h_text, 'String');
+    if ~iscell(lines), lines = {lines}; end % Force a cell array
     if numel(lines) == 0, return; end % Do nothing if no text lines
     
     % Hide the text object
