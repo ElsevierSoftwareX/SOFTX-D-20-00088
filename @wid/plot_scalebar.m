@@ -55,6 +55,7 @@ function h_scalebar = plot_scalebar(obj, FigAxNeither, varargin),
     if numel(datas) > 0, markScalebar = datas{1}; end
     
     % Parse FigAxNeither
+    if nargin < 2, FigAxNeither = []; end
     Fig = [];
     Ax = [];
     try, % Test if FigAxNeither is Figure or Axes
