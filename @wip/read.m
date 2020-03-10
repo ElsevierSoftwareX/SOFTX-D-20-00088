@@ -47,7 +47,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     end
     
     if isempty(files),
-        [filename, folder] = uigetfile({'*.wip;*.wid;*.zip', 'WITec Project/Data Files (*.wip/*.wid)'}, 'Open Project', wit_io_pref_get('latest_folder', cd), 'MultiSelect', 'on');
+        [filename, folder] = uigetfile({'*.wip;*.wiP;*.wIp;*.wIP;*.Wip;*.WiP;*.WIp;*.WIP;*.wid;*.wiD;*.wId;*.wID;*.Wid;*.WiD;*.WId;*.WID', 'WITec Project/Data Files (*.wip/*.wid)'}, 'Open Project', wit_io_pref_get('latest_folder', cd), 'MultiSelect', 'on');
 %         [filename, folder] = uigetfile({'*.wip;*.wid;*.zip', 'WITec Project/Data Files (*.wip/*.wid [or *.zip if compressed])'}, 'Open Project', latest_folder, 'MultiSelect', 'on'); % Considered implementing either indirect or direct unzipping scheme. It appears that WIT-formatted files can potentially be significantly compressed. (16.1.2019)
         if ~iscell(filename), filename = {filename}; end
         if folder ~= 0,

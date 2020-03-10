@@ -7,7 +7,11 @@
 % Also, analyze the tree structures visually by comparing two identical
 % WIP-files saved under old and new formats (using official softwares).
 
-[filename, folder] = uigetfile({'*.wip', 'WITec Project (*.WIP)'; '*.wid', 'WITec Data (*.WID)'; '*.*', 'WIT-formatted files (*.*)'}, 'Open Project', 'MultiSelect', 'off');
+[filename, folder] = uigetfile( ...
+    {'*.wip;*.wiP;*.wIp;*.wIP;*.Wip;*.WiP;*.WIp;*.WIP', 'WITec Project (*.WIP)'; ... % Include all the case-sensitive permutations
+    '*.wid;*.wiD;*.wId;*.wID;*.Wid;*.WiD;*.WId;*.WID', 'WITec Data (*.WID)'; ... % Include all the case-sensitive permutations
+    '*.*', 'WIT-formatted files (*.*)'}, ...
+    'Open Project', 'MultiSelect', 'off');
 if ~iscell(filename), filename = {filename}; end
 if folder ~= 0, file_left = fullfile(folder, filename);
 else, return; end % Abort as no file was selected!
