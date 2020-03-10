@@ -94,7 +94,7 @@ function [obj, Data_cropped, X_cropped, Y_cropped, Graph_cropped, Z_cropped] = c
         [TX, TY, TGraph, TZ] = deal(Info.XTransformation, Info.YTransformation, Info.GraphTransformation, Info.ZTransformation);
         
         % Copy Transformations if shared and unshare
-        [TX, TY, TGraph, TZ] = obj.copy_Others_if_shared_and_unshare(TX, TY, TGraph, TZ); 
+        [TX, TY, TGraph, TZ] = obj.copy_Others_if_shared_and_unshare(TX, TY, TGraph, TZ);
         
         % X
         if ~isempty(TX), % Continue only if there is transformation
