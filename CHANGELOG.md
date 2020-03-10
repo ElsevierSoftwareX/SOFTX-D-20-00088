@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+Types of changes:
+**Added** for new features.
+**Changed** for changes in existing functionality.
+**Deprecated** for soon-to-be removed features.
+**Removed** for now removed features.
+**Fixed** for any bug fixes.
+**Security** in case of vulnerabilities.
+**Performance** for any performance improvements.
+
 ## [Unreleased]
 
 ## [1.2.0] - 2020-03-10
@@ -244,30 +253,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added git mergetool to resolve conflicts before proceeding.
 
 ## [1.1.0] - 2019-04-17
-- Add DEVELOP.
-- Comment about TDGraph SubTypes.
-- Fixed 'copy selection to clipboard'-feature asynchronous error for text plots.
-- Added missing STT==2 case for TDSpectralTransformation: constrained... 
-- Added unimplemented initial values.
-- New info to TDSpaceTransformation.
-- Added notes for two ideas: '-groups' and '-SIR'.
-- Exclude all .git folders from addpath.
-- Avoided SVG filter effects in order to enable use in PDF.
-- Exclude all .git folders from rmpath.
-- Fixed 'non-existent field' bug with older MATLAB versions.
-- Fixed typo.
-- Fixed a bug with 'which' when working with network addresses.
-- Fixed typo with use of get_Root_Version.
-- Added experimental spectral stitching features.
-- Remove dependency on R2014a.
-- Remove dependencies on Statistics and Machine Learning Toolbox.
-- Support to 4-D Data.
-- Compatible with R2011a.
-- Supports to R2011a.
-- Add WID file reference in order to study and fix 'ID of Data Object "..." is 0!' issue.
-- New spectral_stitch-feature for 'TDGraph' wid objects.
-- Add broken WID file in order to study and fix 'ID of Data Object "..." is 0!' issue.
+### Added
+- New spectral stitching -feature for the TDGraph wid objects.
+- Support to MATLAB R2011a version.
+- Support to STT==2 (polynomial transformation) case in TDSpectralTransformation.
+- New test files for the 'ID of Data Object "..." is 0!'-issue.
 - Add git bash script for semi-automated merging.
+- New 'DEVELOP'-folder to 'develop'-branch for any experimental code.
+
+### Changed
+- Improve the icon PDF compatibility by removing the SVG filter effects.
+- Improve initial values of newly created TDSpaceTransformation.
+- Exclude all .git folders in the addpath- and rmpath-functions.
+
+### Removed
+- Remove dependencies on MATLAB R2014a version.
+- Remove dependencies on Statistics and Machine Learning Toolbox.
+
+### Fixed
+- Improve support to network drive working.
+- Fix wit-class file reading errors in older MATLAB versions.
+- Fix TDText plot's 'copy selection to clipboard'-feature.
+- Fix usage of get_Root_Version in wid-class.
+- Improve documentations of some example cases, the arbitrary fitting algorithm and the formatting readme.
 
 ## [1.0.4] - 2019-04-02
 
