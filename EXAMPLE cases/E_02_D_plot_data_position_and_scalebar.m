@@ -54,8 +54,8 @@ if ishandle(h), figure(h); uiwait(h); end
 
 
 %-------------------------------------------------------------------------%
-figure(1); h1 = O_Bitmap.plot('-position', O_wid([1 3:end]), '-scalebar'); % Show positions AND show default bottom-left auto-length scalebar with text
-figure(2); h2 = O_ImageScan.plot('-position', O_wid([2 4:end]), ... % Here ... allows multiline function calls
+figure(1); h1 = O_Bitmap.plot('-position', O_wid([3 16 17]), '-scalebar'); % Show positions AND show default bottom-left auto-length scalebar with text
+figure(2); h2 = O_ImageScan.plot('-position', O_wid([2 16 17]), ... % Here ... allows multiline function calls
     '-scalebar', '--NoText', '--Anchor', [1 1], '--PositionRatio', [0.95 0.95]); % Show positions AND show bottom-right auto-length scalebar without text
 
 % Description of the '-position' option above. All the subsequent inputs
@@ -100,9 +100,9 @@ figure(2); h2 = O_ImageScan.plot('-position', O_wid([2 4:end]), ... % Here ... a
 % how plot_scalebar takes in the configuration inputs with a single dash
 % '-' instead of two dashes '--' like above. This is because we now call
 % it directly, avoiding the plot-function input parser.
-h3a = O_Bitmap.plot_position(figure(3), O_wid([1 3:end]));
+h3a = O_Bitmap.plot_position(figure(3), O_wid([3 16 17]));
 set(findall(h3a, 'Marker', 'o'), 'Marker', 'x'); % Set point markers from o to x
-figure(4); h4a = O_ImageScan.plot_position(O_wid([2 4:end])); % Moved figure(4) outside the function call
+figure(4); h4a = O_ImageScan.plot_position(O_wid([2 16 17])); % Moved figure(4) outside the function call
 set(findall(h4a, 'Type', 'line', 'Marker', 'none'), 'Color', 'white', 'LineWidth', 2); % Set line color to white and its width to 3
 
 h3b = O_Bitmap.plot_scalebar(figure(3), '-NoText', '-Color', [0 0 0]); % Plot customized black scalebar without text
