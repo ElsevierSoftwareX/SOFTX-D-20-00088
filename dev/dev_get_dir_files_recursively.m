@@ -3,14 +3,12 @@
 % All rights reserved.
 
 function files = dev_get_dir_files_recursively(folder),
-    persistent previous_folder;
-    if isempty(previous_folder), previous_folder = cd; end
     files = {};
     if nargin == 0, % If no folder is provided, then ask for it
         % Select folder in which to begin recursive search of files
-        folder = uigetdir(previous_folder);
+        folder = uigetdir(wit_io_pref_get('latest_folder', cd));
         if folder == 0, return; end % Abort as no folder was selected!
-        previous_folder = folder;
+        wit_io_pref_set('latest_folder', folder);
     end
     S = dir(folder);
     files = fullfile(folder, {S(~[S.isdir]).name});

@@ -55,6 +55,7 @@ if ishandle(h), figure(h); uiwait(h); end
 % Get user preferences (or default values if not found)
 pref_value_pairs_struct = wit_io_pref_get(); % Get all the user preferences as a struct
 license_dialog = wit_io_pref_get('license_dialog'); % No default value given here
+latest_folder = wit_io_pref_get('latest_folder', cd);
 wip_ForceDataUnit = wit_io_pref_get('wip_ForceDataUnit', '');
 wip_ForceSpaceUnit = wit_io_pref_get('wip_ForceSpaceUnit', '');
 wip_ForceSpectralUnit = wit_io_pref_get('wip_ForceSpectralUnit', '');
@@ -70,6 +71,7 @@ wip_AutoModifyObj = wit_io_pref_get('wip_AutoModifyObj', true);
 
 % Set user preferences
 wit_io_pref_set('license_dialog', true);
+wit_io_pref_set('latest_folder', cd);
 wit_io_pref_set('wip_ForceDataUnit', 'a.u.');
 wit_io_pref_set('wip_ForceSpaceUnit', 'um');
 wit_io_pref_set('wip_ForceSpectralUnit', 'nm');

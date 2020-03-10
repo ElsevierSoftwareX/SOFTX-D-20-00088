@@ -4,9 +4,6 @@
 
 % Requires 3rd party export_fig
 function export_ui_figure(Fig),
-    persistent previous_folder;
-    if isempty(previous_folder), previous_folder = cd; end
-    
     if nargin < 1 || isempty(Fig), Fig = gcf; end % By default, update gcf
     h_sidebar = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
     h_mainbar = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'mainbar'); % Find mainbar uipanel
@@ -36,12 +33,12 @@ function export_ui_figure(Fig),
     % Add CROPPED versions of the formats
     formats(end+1:end+2,1) = formats(1:2,1);
     formats(end-1:end,2) = anyfun2cell(@(x) sprintf('CROP >> %s', x{1}), formats(1:2,2));
-    [filename, pathname, filterindex] = uiputfile(formats, 'Export figure >> 600 DPI >> ...', previous_folder);
+    [filename, pathname, filterindex] = uiputfile(formats, 'Export figure >> 600 DPI >> ...', wit_io_pref_get('latest_folder', cd));
     
     % Export if filename is provided
     if pathname ~= 0,
         file = fullfile(pathname, filename);
-        previous_folder = pathname; % Remember the latest folder
+        wit_io_pref_set('latest_folder', pathname); % Remember permanently the latest folder
         h_waitbar = waitbar(0, 'Please wait...', 'Name', 'Exporting figure');
         export_opt = {'-r600', ... % Dots Per Inch (DPI), ...
             '-nofontswap', ... % Preserves original fonts for vector formats
