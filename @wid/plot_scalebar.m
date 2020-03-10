@@ -42,7 +42,7 @@
 % '-TextVarargin': Any accompanying inputs are provided to the text object.
 % '-NoText': If provided (standalone), then the scalebar is plotted without
 % text label.
-function h_scalebar = plot_scalebar(obj, Fig, varargin),
+function h_scalebar = plot_scalebar(obj, FigAxNeither, varargin),
     % Empty output by default
     h_scalebar = [];
     
@@ -54,15 +54,33 @@ function h_scalebar = plot_scalebar(obj, Fig, varargin),
     markScalebar = @wid.plot_scalebar_helper;
     if numel(datas) > 0, markScalebar = datas{1}; end
     
-    % Test figure
-    if nargin == 1 || isempty(Fig), Fig = gcf; end
-    Ax = findobj(Fig, 'Type', 'Axes'); % Find all Axes
-    if isempty(Ax), % Create default axes if needed
+    % Parse FigAxNeither
+    Fig = [];
+    Ax = [];
+    try, % Test if FigAxNeither is Figure or Axes
+        type = get(FigAxNeither, 'type'); % Compatible with older versions
+        if strcmp(type, 'figure'),
+            Fig = FigAxNeither;
+            Ax = findobj(Fig, 'Type', 'Axes'); % Find all Axes
+        elseif strcmp(type, 'axes'),
+            Ax = FigAxNeither;
+            Fig = get(Ax, 'Parent');
+        else, varargin = [{FigAxNeither} varargin]; end % Add to varargin if neither
+    catch, varargin = [{FigAxNeither} varargin]; end % Add to varargin if neither
+    % Get current figure if needed
+    if isempty(Fig),
+        Fig = gcf;
+        Ax = findobj(Fig, 'Type', 'Axes'); % Find all Axes
+    end
+    % Create default axes if needed
+    if isempty(Ax),
         Ax = axes('Parent', Fig);
         set(0, 'CurrentFigure', Fig);
         obj.plot;
     end
-    hold on; % Ensure that the subsequent plots are included into same axes
+    
+    % Ensure that the subsequent plots are included into same axes
+    hold on;
     
     obj_Info = obj.Info; % Load Info only once
     

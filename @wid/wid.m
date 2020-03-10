@@ -299,8 +299,8 @@ classdef wid < handle, % Since R2008a
         %% OTHER PUBLIC METHODS
         % Object plotting
         h = plot(obj, varargin);
-        h_position = plot_position(obj, Fig, varargin); % To show position of other objects on obj
-        h_scalebar = plot_scalebar(obj, Fig, varargin);
+        h_position = plot_position(obj, FigAxNeither, varargin); % To show position of other objects on obj
+        h_scalebar = plot_scalebar(obj, FigAxNeither, varargin);
         varargout = manager(obj, varargin); % A wrapper method that shows the given objects via Project Manager view.
         
         % Object copying, destroying, writing

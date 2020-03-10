@@ -102,11 +102,11 @@ figure(2); h2 = O_ImageScan.plot('-position', O_wid([2 4:end]), ... % Here ... a
 % it directly, avoiding the plot-function input parser.
 h3a = O_Bitmap.plot_position(figure(3), O_wid([1 3:end]));
 set(findall(h3a, 'Marker', 'o'), 'Marker', 'x'); % Set point markers from o to x
-h4a = O_ImageScan.plot_position(figure(4), O_wid([2 4:end]));
+figure(4); h4a = O_ImageScan.plot_position(O_wid([2 4:end])); % Moved figure(4) outside the function call
 set(findall(h4a, 'Type', 'line', 'Marker', 'none'), 'Color', 'white', 'LineWidth', 2); % Set line color to white and its width to 3
 
 h3b = O_Bitmap.plot_scalebar(figure(3), '-NoText', '-Color', [0 0 0]); % Plot customized black scalebar without text
-h4b = O_ImageScan.plot_scalebar(figure(4), '-Length', 3.5, '-TextHeightRatio', 0.075); % Plot customized scalebar with length of 3.5 um and 50% larger text
+figure(4); h4b = O_ImageScan.plot_scalebar('-Length', 3.5, '-TextHeightRatio', 0.075); % Plot customized scalebar with length of 3.5 um and 50% larger text
 
 % Please note that each of these graphical object arrays h1, h2, h3a, h3b,
 % h4a and h4b may be customized by their get/set-functions like shown

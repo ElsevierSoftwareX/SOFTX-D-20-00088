@@ -15,7 +15,7 @@
 % objects, respectively. For more details, see the default helper functions
 % wid.plot_position_Image_helper.m, wid.plot_position_Line_helper.m and
 % wid.plot_position_Point_helper.m.
-function h_position = plot_position(obj, Fig, varargin),
+function h_position = plot_position(obj, FigAxNeither, varargin),
     % Empty output by default
     h_position = [];
     
@@ -37,6 +37,31 @@ function h_position = plot_position(obj, Fig, varargin),
     markPoint = @wid.plot_position_Point_helper;
     if numel(datas) > 0, markPoint = datas{1}; end
     
+    % Parse FigAxNeither
+    Fig = [];
+    Ax = [];
+    try, % Test if FigAxNeither is Figure or Axes
+        type = get(FigAxNeither, 'type'); % Compatible with older versions
+        if strcmp(type, 'figure'),
+            Fig = FigAxNeither;
+            Ax = findobj(Fig, 'Type', 'Axes'); % Find all Axes
+        elseif strcmp(type, 'axes'),
+            Ax = FigAxNeither;
+            Fig = get(Ax, 'Parent');
+        else, varargin = [{FigAxNeither} varargin]; end % Add to varargin if neither
+    catch, varargin = [{FigAxNeither} varargin]; end % Add to varargin if neither
+    % Get current figure if needed
+    if isempty(Fig),
+        Fig = gcf;
+        Ax = findobj(Fig, 'Type', 'Axes'); % Find all Axes
+    end
+    % Create default axes if needed
+    if isempty(Ax),
+        Ax = axes('Parent', Fig);
+        set(0, 'CurrentFigure', Fig);
+        obj.plot;
+    end
+    
     % Parse the varargin and keep only TDBitmap, TDGraph and TDImage wid objects
     B_valid = cellfun(@(x) isa(x, 'wid'), varargin); % Test if wid
     varargin = varargin(B_valid); % Keep only wid
@@ -48,15 +73,8 @@ function h_position = plot_position(obj, Fig, varargin),
     O_wid = O_wid(B_valid);
     if isempty(O_wid), return; end % Exit if no valid inputs
     
-    % Test figure
-    if isempty(Fig), Fig = gcf; end
-    Ax = findobj(Fig, 'Type', 'Axes'); % Find all Axes
-    if isempty(Ax), % Create default axes if needed
-        Ax = axes('Parent', Fig);
-        set(0, 'CurrentFigure', Fig);
-        obj.plot;
-    end
-    hold on; % Ensure that the subsequent plots are included into same axes
+    % Ensure that the subsequent plots are included into same axes
+    hold on;
     
     % Get figure ColorOrder
     ColorOrder = get(Ax, 'ColorOrder');
