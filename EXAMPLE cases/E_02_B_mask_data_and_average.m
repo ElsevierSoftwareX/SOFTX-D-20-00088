@@ -33,7 +33,7 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for wit_io_msgbox to be closed 
 
 % Get handles to some specific data
 O_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
-O_Mask = O_wid(6); % Get object of "1-layer Gr<Mask 2" at index 6
+O_Mask = O_wid(7); % Get object of "1-layer Gr<Mask 2" at index 7
 % To see these names, double-click O_wid_HtmlNames-variable under your Workspace!
 
 

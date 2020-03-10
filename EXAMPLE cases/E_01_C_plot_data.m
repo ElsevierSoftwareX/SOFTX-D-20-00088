@@ -34,7 +34,7 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for wit_io_msgbox to be closed 
 O_Text = O_wid(1); % Get object of "Global (Calibration Information)" at index 1
 O_Bitmap = O_wid(2); % Get object of "Exfoliated graphene (Gr) on SiO2/Si-substrate<Video Image (Data)" at index 2
 O_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
-O_Mask = O_wid(6); % Get object of "1-layer Gr<Mask 2" at index 6
+O_Mask = O_wid(7); % Get object of "1-layer Gr<Mask 2" at index 7
 % To see these names, double-click O_wid_HtmlNames-variable under your Workspace!
 
 
