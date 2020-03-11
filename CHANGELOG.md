@@ -1,5 +1,5 @@
 # Changelog
-All notable changes to this project will be documented in this file.
+All **notable** changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -19,132 +19,95 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-## [1.2.0] - 2020-03-10
+## [1.2.0] - 2020-03-11
 
-- Fixed error due to typo.
-- Made wit-class basic functionality Octave-compatible.
-- Made wit-class basic functionality Octave-compatible.
-- Disabled unused 'Volume'-feature due to major performance bottle-neck.
-- Improved Octave-compatible code. Fix preallocation typo of 'ones' by 'zeros'.
-- Fixed indenting and fixed Octave's constructor error.
-- Call to cat(2, ...) replaced by horzcat for Octave-compatibility.
-- Add tester function to recognize Octave instance.
-- Add Octave-compatible horzcat, vertcat and reshape.
-- Fix horzcat and vertcat "empty-object-array"-bug in Octave.
-- Fix typo in horzcat and vertcat.
-- Fix error-causing typo.
-- Fix inconsistency with new MATLAB versions.
-- Fix corrupted written files due to same-Id-bug (due to Octave-compatible code).
+### Added
+- Add this changelog to the project.
+- Experimental support to legacy file versions **v0&endash;v4**, all of which will be read and written technically as **v5** due to the way WITec software ignores unused and unrelated WIT-tags.
 - Demo to show measurement regions in the microscope image.
-- Fix error when no working solution can exist.
+- New plot_position functionality and added '-position'-option to plot-function.
+- New plot_scalebar functionality and added '-scalebar'-option to plot-function.
+- Add [regexp][?] and [search][?] functions for wit object ancestors.
+- Added clear notes on MATLAB toolbox dependencies in each related file.
+- New dev tools to quickly get file Versions or unique wid Type diversity.
+- Feature: Get number's digits and 10th power exponent up to the specified number of significant digits.
+- Add: Describe BSD license in dialog with checkbox to not show again.
+- Feature: Permanent user preferences (with related get, rm and set -functionality).
+- Feature: Wrapper for msgbox with auto-enabled TeX text enrichment using mytextwrap.
+- Add helper function to mask automatically bad fitting results or near noise results.
+- New feature to abort file reading by the given error criteria.
+- New feature to read file Version (quickly without loading the whole file into memory).
+- Added skip_Data_criteria_for_obj to customize (and speedup) the file reading for specific needs.
+- Add: Example of configuring permanent toolbox user preferences.
+- Add: Example of plotting scalebar and marking data positions on each other.
+- Add: Scripts to quickly open the main and New Issue pages at GitLab.
+- New wip-class properties: OnWriteRemoveViewers and OnWriteRemoveDuplicateTransformations.
+- New '-outliers'-option to mark outliers in the image. @wid/unpattern_video_stitching_helper.m
+- (1) Allow A's and u's search special characters Å's (U+00C5) and µ's (U+00B5) in units. (2) Fix ForceDataUnit usage issues and utilize its changes better.
+- (1) New destroy_duplicate_Transformations wip-class method. (2) New related helper functions to get linked wits (to wid-objects) and owner ids (of wit-objects).
+- Add copy_Others_if_shared_and_unshare to wid-class.
+- Add mtrapz-functionality for fit_lineshape_automatic_guess.
+- Short note for future on how to improve the window filtering algorithm.
+
+### Changed
+- For MATLAB R2019b or newer: Replace Java-based GUI with HTML5-based GUI, fixing JAVACOMPONENT warnings. For example, [Project Manager][1.2.0,C1] now uses [HTML5-based JList-like code][1.2.0,C2] to create its window.
+- Allow special the multiple-dashed strings for [varargin dashed string parsers][?] under the [helper][?] folder. Usage examples of double-dashed string options.
+- Permanently remember the latest folder in the wit_io's file browsing ui.
+- Make wit-class basic functionality Octave-compatible.
 - Improve regexp renaming with data listing
 - Remove waitbar in '-nopreview'-mode.
 - Enable manager -Type and -SubType with multiple inputs and added some usage examples.
-- Fix missing img height and width, required by R2019b or newer.
-- Use nargout to reduce computation burden if only using first output argument.
-- Removed cellfun's and reduced use of cells to improve performance.
-- Add mtrapz-functionality for fit_lineshape_automatic_guess.
-- Added support to NaN valued inputs.
-- Added usePrevCstd to fix performance issue in loops with changing data dimensions.
-- Handled all-nan-valued cases and fixed jacobian_helper performance issue.
-- Simplified the guessing procedure. Fixed few lurking bugs. Added assumptions.
-- Added helper function to mask automatically bad fitting results or near noise results.
-- Made wip.read to remember the latest folder being browsed.
-- First pilot implementation of HTML5-based listbox in order to replace the... 
-- Pilot version to replace Java with HTML5 (for R2019b or newer).
-- First completed and working version of HTML5 listbox implementation. Updated the documentation.
-- Updated documentation, polished code, fixed bug and corrected misunderstanding... 
-- Better numerical stability at extremes. Validity double-checked. Fixed pure Gaussian issues.
-- Restored the original approach due to superior numerical stability. The... 
-- Added special feature for the multiple-dashed strings.
-- Fixed uifigure's header (and commented on sending a R2019b bug report on... 
-- Remember the latest save folder.
-- Added tag 'wit_io_project_manager_gcf' to find manager's main window handle.
-- Finalized the show_Position functionality and added 'position'-option to plot-function.
-- Test file for uihtml_JList.html.
-- New '-outliers'-option to mark outliers in the image.
-- show_Position's 'no output'-bug fixed.
-- Usage examples of double-dashed string options.
-- Added the missing space transformation update.
-- New feature: Items with 'noid'-class cannot be selected.
-- Finalized uihtml-implemenation for R2019b or newer. Some code cleanup.
-- Bug fix (for v5 *.wip): Added bitmap write/read row-padding to nearest 4-byte boundary.
-- Added regexp and search functions for ancestors.
-- Renamed wid-class Links to LinksToOthers and added LinksToThis.
-- Added copying of IDLists.
-- Minuscule notation fix.
-- Fixed error due to a copy-paste typo.
-- (1) Allow A's and u's search special characters Å's (U+00C5) and µ's (U+00B5)... 
-- (1) New destroy_duplicate_Transformations wip-class method. (2) New related... 
-- Reverted to uicontrol's slider due to the upcoming removal of JAVACOMPONENT... 
-- New feature to abort file reading by the given error criteria.
-- New feature to read file Version (quickly without loading the whole file into memory).
-- Added short notes on (1) usage, (2) Symbolic Math Toolbox requirement and (3)... 
-- Added note on Image Processing Toolbox requirement.
-- Added note on Image Processing Toolbox requirement.
-- Removed the dependency on Statistics and Machine Learning Toolbox.
-- Removed the dependency on Image Processing Toolbox.
-- Removed the dependency on 'padarray' of Image Processing Toolbox.
-- Added special plot cases, where areas look like lines and lines look like points.
-- Removed the dependency on 'ordfilt2' of Image Processing Toolbox.
-- Fixed some document typos.
-- Minuscule notation update.
-- Minuscule reduction of calculus.
-- Removed the dependency on 'stdfilt' of Image Processing Toolbox.
-- Short note for future on how to improve the window filtering algorithm.
-- Added experimental support to v0-v4 after observing v2 minuscule differences... 
-- Combined the legacy version (v1-v5) implementations, because WITec software... 
-- Accidentally committed.
 - Moved the developer's tools under 'dev' folder and renamed them to have 'dev'-prefix.
-- Renamed the toolbox setup functions to have 'wit_io'-prefixes.
-- Added skip_Data_criteria_for_obj to customize (and speedup) the file reading for specific needs.
-- Fixed typos in new function definitions.
-- Speedup using wit-class read's new skip_Data_criteria_for_obj-feature.
-- New dev tools to quickly get file Versions or unique wid Type diversity.
-- Added that TDLUTTransformation is not in legacy versions v0,v2.
-- From now on, *.wip writing removes all the Viewer windows (shown on the WITec... 
-- Fixed error due to a missing variable.
-- (1) Added copy_Others_if_shared_and_unshare to wid-class. (2) Fixed some typos.
-- New wip-class properties: OnWriteRemoveViewers and OnWriteRemoveDuplicateTransformations.
-- (1) Now 'crop' properly copies shared Transformations and modifies their...
-- Feature: Get number's digits and 10th power exponent up to the specified number of significant digits.
-- (1) Rename: From show_Position to plot_position and plot's '-position' to '-positions'. (2) Add: Axes as input to anonymous functions.
+- Renamed the toolbox setup functions to have 'wit_io'-prefixes. Better names for alphabetically ordered file listing.
+- Change: New Tex-enriched dialogs with wit_io_msgbox.
+- Added tag 'wit_io_project_manager_gcf' to find manager's main window handle.
+- Update: New screenshot with updated features like uihtml-based gui.
+- Update: Latest version of the 3rd party code 'export_fig'.
+- Doc: New changelog and license badges to README.md.
+- Renamed wid-class Links to LinksToOthers and added LinksToThis.
+- Add copying of IDLists. @wid/copy_LinksToOthers.m
+- From now on, *.wip writing removes all the Viewer windows (shown on the WITec software side). This avoids possible corruption of modified files, because wit_io mostly ignores Viewers. Set wip-object's OnWriteResetViewers-property to false to disable this.
+- Now 'crop' properly copies shared Transformations and modifies their unshared versions.
+- Simplified the guessing procedure. Fixed few lurking bugs. Added assumptions. helper/fitting/fit_lineshape_automatic_guess.m
+
+[1.2.0,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/manager.m
+[1.2.0,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/icons/uihtml_JList.html
+
+### Deprecated
+- Deprecate: reset_Viewers replaced by destroy_all_Viewers.
+- Deprecate: storeState and keep LIFO functions.
+
+### Removed
+- Less dependencies on Image Processing Toolbox.
+- Remove mistaken dependency on Statistics and Machine Learning Toolbox.
+
+### Fixed
+- Fix (for v5 *.wip): Add bitmap write/read row-padding to nearest 4-byte boundary.
+- Fixed error due to typo. @wid/spectral_stitch.m
+- Fix error-causing typo. SCRIPT cases/S_remove_dark_current.m
+- Fix error when no working solution can exist. @wid/unpattern_video_stitching_helper.m
+- Fix missing img height and width, required by R2019b or newer. @wid/get_HtmlName.m
 - Fix: Prioritize Standard Unit search first and only then widen the search.
 - Fix: Removed unnecessary ()-brackets around Standard Unit searches.
-- Feature: Customizable scalebar plotting on images.
-- Fix: Typo in -Thickness configuration.
-- Add: Separate helper functions for plot_position.
-- Fix: Show scalebar only when -scalebar stated.
-- Add: Describe BSD license in dialog with checkbox to not show again.
-- Rename: Better names for alphabetically ordered file listing.
-- (1) Feature: Permanent user preferences (with related get, rm and set -functionality). (2) Update: Its usage in wip-class constructor.
-- Add: Accept a struct of pref-value pairs.
-- Update: User preference 'license_dialog' is now converted to boolean.
-- Add: Is-function for permanent user preferences.
-- Feature: Wrapper for msgbox with auto-enabled TeX text enrichment.
-- (1) Deprecate: reset_Viewers replaced by destroy_all_Viewers. (2) Rename: OnWrite-properties. (3) Remove: storeState. (4) Update: LIFO functions.
-- Doc: New changelog and license badges.
-- Fix: Cancel the msgbox's automatic text wrapping, which caused problems with Tex-enriched texts.
-- Fix: Typo causing an error.
-- Feature: use mytextwrap in wit_io_msgbox for Tex-enriched text wrapping.
-- Fix: Replaced the flawed text wrapping algorithm with a new more robust approach.
 - Fix: To avoid weird datatype icon listings in Project Manager, force-minimized the first column width.
-- Change: New Tex-enriched dialogs with wit_io_msgbox.
-- Add: Example of configuring permanent toolbox user preferences.
-- Add: Example of plotting scalebar and marking data positions on each other.
-- Fix: enable single-line text wrapping.
-- (1) Change: From fixed input to variable input. (2) Doc: Documented the extra inputs. (3) Fix: Setting of the dialog WindowStyle. (4) Fix: Anomalous dialog box width (with respect to the text width).
-- (1) Fix: Rewrote the GUI positioning code to solve all the remaining issues. (2) Fix: -TextWrapping 2nd input 'Units' works now as expected.
-- Add: Scripts to quickly open the main and New Issue pages at GitLab.
-- Feature: Remember the latest browsed folder permanently and store it to 'latest_folder'-preference.
-- Feature: Figure input now optional in 'plot_position' and 'plot_scalebar' and also accept Axes input.
-- Fix: Handle no input case properly.
 - Fix: Handle shared transformation in 'crop_Graph' like in 'crop'.
-- Change: Better colored positions through fewer indices.
-- (1) Fix: E_v5.wip corrupted space transformations (and update changed examples). (2) Fix: Lower-case the E_v5.wip file extension due to the errors in case-sensitive file systems.
-- Deprecated: Replaced by E_v5.wip.
-- Update: New screenshot with updated features like uihtml-based gui.
 - Fix: File reading gui now include all the case-sensitive file extension permutations.
+- Fix: E_v5.wip corrupted space transformations (and update changed examples).
+- Fix uifigure's header (and commented on sending a R2019b bug report on inputdlg's forced modality).
+- Fix: Add the missing space transformation update. @wid/spatial_average.m
+- Fix error due to a copy-paste typo. EXAMPLE cases/E_02_B_mask_data_and_average.m
+- Fix: Handled all-nan-valued cases and fixed jacobian_helper performance issue. helper/fitting/fit_lineshape_arbitrary.m
+
+### Security
+- Better numerical stability at extremes. Validity double-checked. Fixed pure Gaussian issues.
+- Restored the original approach due to superior numerical stability. The secondary approach commented due to numerical instabilities. No more bugs found.
+
+### Performance
+- Disable unused 'Volume'-feature due to major performance bottle-neck.
+- Use nargout to reduce computation burden if only using first output argument.
+- Remove cellfun's and reduced use of cells to improve performance.
+- @wip/read_Version.m: Speedup using wit-class read's new skip_Data_criteria_for_obj-feature.
+- Add usePrevCstd to fix performance issue in loops with changing data dimensions. helper/fitting/jacobian_helper.m
 
 
 
