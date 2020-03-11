@@ -151,88 +151,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.2] - 2019-08-08
 
 ### Added
-- Update Toolbox installer.
-- Add example 5 (and related functionality) demonstrating Video Stitching image unpatterning.
-- Add shell script to merge release to master.
-- Add support to multiple dim input.
-- Add TODO on interpreting negative dim values as NOT operation.
-- Manager-functionality for wid-class objects.
-- Add toolbox installer and updated README accordingly.
-- Add varargin dashed string parsers and updated the related code.
-- Add note recommending the toolbox installer.
-- Quick script that jumps to the toolbox main folder.
-- Add wrapper for rolling window analysis.
-- Add low memory mplementation idea for the future.
-- Add 2nd output for the rolling window analysis indices.
-- Add isCircular padding feature.
-- Add isDataCropped-feature and input validation to crop-function.
+- New convenient [toolbox installer][1.1.2,A1] (for MATLAB R2014b or newer).
+- New [example 5][1.1.2,A2] (and [related functionality][1.1.2,A3]) demonstrating Video Stitching image unpatterning. It is noteworthy that [its documentation][1.1.2,A4] describes dozens of extra customization options.
+- [helper/clever_statistics_and_outliers.m][1.1.2,A5]: Support to multiple dims input with an ability to negate the selection. Fix the known bug cases.
+- Allow [manager][1.1.2,A6]-calls for wid objects like previously for wip objects, what can be used to quickly glance through the wid objects.
+- New [varargin dashed string parsers][1.1.2,A7] under the [helper][1.1.2,A8] folder.
+- [@wid/crop.m][1.1.2,A9]: Add isDataCropped-feature and validate inputs.
 - Add LIFO (first in = push, last out = pop) concept to wip-class to simplify all code.
-- Add 2nd output for the inputs without the given dashed string and its datas.
-- New '-replace', '-value', '-truncate', '-circulate' and '-matrix' extra options.
-- Add comments on ndgrid_and_sub2ind_and_cast.m.
-- Experimental version: attempt to use the secondary regions.
-- Add '-mirror'. Fill-in nan values in arraySize. Improve documentation. Allow 2-by-N numeric matrix extra input to handle lower and upper out-of-bound cases separately.
-- Add verbose command window output.
+- New memory conservative way to generate indices via [helper/generic_sub2ind.m][1.1.2,A10], merging calls to ndgrid, sub2ind and cast. It can be customized with several extra options: '-isarray', '-nobsxfun', '-truncate', '-replace', '-mirror', '-circulate'.
+- New [helper/rolling_window_analysis.m][1.1.2,A11]-scheme.
+- New [shell script][1.1.2,A12] to merge release to master.
+
+[1.1.2,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/wit_io.mltbx
+[1.1.2,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/EXAMPLE%20cases/E_05_unpattern_video_stitching.m
+[1.1.2,A3]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/@wid/unpattern_video_stitching.m
+[1.1.2,A4]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/@wid/unpattern_video_stitching_helper.m
+[1.1.2,A5]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/clever_statistics_and_outliers.m
+[1.1.2,A6]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/@wid/manager.m
+[1.1.2,A7]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/varargin_dashed_str.m
+[1.1.2,A8]: https://gitlab.com/jtholmi/wit_io/-/tree/v1.1.2/helper
+[1.1.2,A9]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/@wid/crop.m
+[1.1.2,A10]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/generic_sub2ind.m
+[1.1.2,A11]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/rolling_window_analysis.m
+[1.1.2,A12]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/git_release_to_master.sh
 
 ### Changed
-- Update Background and removed typos.
-- Title update. Generalized Cite As.
-- Change C_wid, C_wip, C_wit and HtmlNames (or n) to O_wid, O_wip, O_wit and O_HtmlNames, respectively.
-- Change obj to O_wit (or O_wit_debug).
-- For clarity, O_HtmlNames to O_wid_HtmlNames.
-- Update due to new notation for wip.read.
-- Change absolute links to relative links.
-- Update and documented the varargin parsing code.
-- Update old notation to new with O's (= objects).
-- Use varargin_dashed_str_exists.
-- Make notation consistent with other examples.
-- Remove last '\n' from TDText's clipboard string.
-- Accept multiple pushes at once.
-- Unify function definition notations.
-- Change index display notation from ':' to '.' for wid-objects.
-- Unifying notation with other examples.
-- Merge much of the varargin dashed string parser code.
-- Update varargin_dashed_str_datas usage.
-- Append missing dimensions for the dashed string inputs.
-- Rename 'ndgrid_and_sub2ind_and_cast' to 'generic_sub2ind' and fixed typos.
-- Disable automatic cropping. Changed '-nocrop' to '-crop'.
-- Change '-nocrop' to '-crop'.
+- Notation change for wid, wip and wit objects. For instance, C_wid, C_wip, C_wit and HtmlNames (or n) are now O_wid, O_wip, O_wit and O_wid_HtmlNames, respectively.
+- [helper/fitting/fit_lineshape_arbitrary.m][1.1.2,C1]: Verbose iteration progress by showing total and delta sum of squared residuals.
+- [S_rename_by_regexprep.m][1.1.2,C2]: Verbose command window output.
+- Remove last '\n' from TDText plot's clipboard string.
+- [README.md][1.1.2,C3]: Update Title and Background. Generalized Cite As. Remove typos. Change absolute links to relative links.
 
-### Deprecated
-
-### Removed
-- Remove reshaping by reordering the outputs and separated the transformation part (for customization purposes).
+[1.1.2,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/fitting/fit_lineshape_arbitrary.m
+[1.1.2,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/SCRIPT%20cases/S_rename_by_regexprep.m
+[1.1.2,C3]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/README.md
 
 ### Fixed
-- Fix Cite As formatting.
-- Fix typo.
-- Fix "Error if 1st column all NaN"-bug. Improved iteration using "If done"-flags.
-- Fix typos. Fix "Single NaN output when all NaN input"-bug.
-- Fix mistake that broke the code.
-- Fix bug. Add multiple dims -feature (with negation -feature). Fix documentation.
-- Fix '-lowOnMemory' error. Added total and delta sum of squared residuals to verbose iteration output.
-- Fix bugs when nothing to calculate. Noted unbiased sample variance.
-- Fix reshaping bug and added more comments.
-- Fix typo.
-- Fix typo.
-- More consistent comments for push-functions.
-- Code tabulations corrected and some Updated-comments fixed.
-- Pop needed states on entry (to avoid push-pop bugs).
-- Fix typo.
-- Fix typos.
-- Fix bug due to typo.
-- Fix errors due to typos.
-- Fix bugs due to typos.
-- First working release without apparent bugs. Only tiny fractions of the stitching images are unresolved. 
-- Fix comment typos.
-- Heavy commenting and clean-up.
-- Update unpattern_video_stitching_helper reference.
+- [helper/fitting/fit_lineshape_arbitrary.m][1.1.2,F1]: Fix '-lowOnMemory' error.
+- Fix typos causing bugs.
 
-### Performance
-- Multiple speed-up fixes to allow calls from huge loops.
-- Add '-nobsxfun' (and '-isarray') with speed optimizations.
-- Add fast method to test if any dashed strings exists.
-- Ready code. Many improvements. Many bottlenecks removed.
+[1.1.2,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/fitting/fit_lineshape_arbitrary.m
 
 
 
