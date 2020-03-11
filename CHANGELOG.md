@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Add this changelog to the project.
-- Experimental support to legacy file versions **v0&endash;v4**, all of which will be read and written technically as **v5** due to the way WITec software ignores unused and unrelated WIT-tags.
+- Experimental support to legacy file versions **v0&ndash;v4**, all of which will be read and written technically as **v5** due to the way WITec software ignores unused and unrelated WIT-tags.
 - Demo to show measurement regions in the microscope image.
 - New plot_position functionality and added '-position'-option to plot-function.
 - New plot_scalebar functionality and added '-scalebar'-option to plot-function.
@@ -48,27 +48,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add copy_Others_if_shared_and_unshare to wid-class.
 - Add mtrapz-functionality for fit_lineshape_automatic_guess.
 - Short note for future on how to improve the window filtering algorithm.
+- Update all example cases to use new Tex-enriched dialogs with wit_io_msgbox (in place of helpdlg).
 
 ### Changed
 - For MATLAB R2019b or newer: Replace Java-based GUI with HTML5-based GUI, fixing JAVACOMPONENT warnings. For example, [Project Manager][1.2.0,C1] now uses [HTML5-based JList-like code][1.2.0,C2] to create its window.
 - Allow special the multiple-dashed strings for 'varargin dashed string parsers' under the 'helper' folder. Usage examples of double-dashed string options.
 - Permanently remember the latest folder in the wit_io's file browsing ui.
+- Rename wid-class Links-property to LinksToOthers and add LinksToThis-property.
+- @wid/copy_LinksToOthers.m: Add copying of IDLists.
 - Make wit-class basic functionality Octave-compatible.
-- Improve regexp renaming with data listing
-- Remove waitbar in '-nopreview'-mode.
-- Enable manager -Type and -SubType with multiple inputs and added some usage examples.
-- Moved the developer's tools under 'dev' folder and renamed them to have 'dev'-prefix.
-- Renamed the toolbox setup functions to have 'wit_io'-prefixes. Better names for alphabetically ordered file listing.
-- Change: New Tex-enriched dialogs with wit_io_msgbox.
-- Added tag 'wit_io_project_manager_gcf' to find manager's main window handle.
-- Update: New screenshot with updated features like uihtml-based gui.
-- Update: Latest version of the 3rd party code 'export_fig'.
-- Doc: New changelog and license badges to README.md.
-- Renamed wid-class Links to LinksToOthers and added LinksToThis.
-- Add copying of IDLists. @wid/copy_LinksToOthers.m
-- From now on, *.wip writing removes all the Viewer windows (shown on the WITec software side). This avoids possible corruption of modified files, because wit_io mostly ignores Viewers. Set wip-object's OnWriteResetViewers-property to false to disable this.
-- Now 'crop' properly copies shared Transformations and modifies their unshared versions.
-- Simplified the guessing procedure. Fixed few lurking bugs. Added assumptions. helper/fitting/fit_lineshape_automatic_guess.m
+- S_rename_by_regexprep.m: Improve regexp renaming with data listing. Usage is limited in MATLAB R2019b by its 'inputdlg's forced uifigure modality'-bug.
+- @wip/manager.m: Remove waitbar in '-nopreview'-mode. Allow -Type and -SubType with multiple inputs. Add tag 'wit_io_project_manager_gcf' to find its latest main window handle (whether figure or uifigure).
+- helper/fitting/fit_lineshape_automatic_guess.m: Simplify the process. Fix few lurking bugs. Notes on assumptions.
+- From now on, *.wip writing removes all the Viewer windows (shown on the WITec software side). This avoids possible corruption of modified files, because wit_io mostly ignores Viewers. Set wip-object's OnWriteDestroyAllViewers-property to false to disable this.
+- Move the toolbox developer's functions under the 'dev' folder and give them 'dev'-prefix.
+- Rename the toolbox's main folder functions to have 'wit_io'-prefix and better names for alphabetically ordered file listing.
+- Upload latest version of the 3rd party code 'export_fig'.
+- example.png: New screenshot with updated features like uihtml-based gui.
+- README.md: New changelog and license badges.
 
 [1.2.0,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/manager.m
 [1.2.0,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/icons/uihtml_JList.html
@@ -87,11 +84,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - @wid/wid_Data_get_Bitmap.m and @wid/wid_Data_set_Bitmap.m: For **v5** files, add bitmap write/read row-padding to nearest 4-byte boundary.
 - @wip/interpret.m: Prioritize Standard Unit search first and only then widen the search. Removed unnecessary ()-brackets around Standard Unit searches.
 - E_v5.wip: Fix corrupted TDSpaceTransformations and update affected examples.
-- @wid/crop.m and @wid/crop_Graph.m: Properly handles shared transformations now.
+- @wid/crop.m and @wid/crop_Graph.m: Properly copies shared transformations and modifies their unshared versions.
 - The file browsing GUI is now case-insensitive to *.wid and *.wip file extensions even though the file system is case-sensitive.
 - @wid/unpattern_video_stitching_helper.m: Fix error when no working solution can exist.
 - @wid/spatial_average.m: Properly updates TDSpaceTransformations now.
-- S_rename_by_regexprep.m: Properly gets uifigure handle now although usage is limited by MATLAB R2019b's 'inputdlg's forced uifigure modality'-bug.
 - helper/fitting/fit_lineshape_arbitrary.m: Properly handles all-nan-valued case now.
 - helper/fitting/fun_lineshape_voigtian.m: Validity meticulously checked and alternatives considered. Fix pure Gaussian issues.
 - Fix typos causing bugs.
