@@ -259,6 +259,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix the license texts.
 - [helper/get_unique_names.m][1.1.1,F1]: Fix cell array size issues.
 - [git_develop_to_release.sh][1.1.1,F2]: Add git mergetool to resolve conflicts before proceeding.
+
 [1.1.1,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/helper/get_unique_names.m
 [1.1.1,F2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/git_develop_to_release.sh
 
