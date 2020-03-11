@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Demo to show measurement regions in the microscope image.
 - New plot_position functionality and added '-position'-option to plot-function.
 - New plot_scalebar functionality and added '-scalebar'-option to plot-function.
-- Add [regexp][?] and [search][?] functions for wit object ancestors.
+- Add 'regexp' and 'search' functions for wit object ancestors.
 - Added clear notes on MATLAB toolbox dependencies in each related file.
 - New dev tools to quickly get file Versions or unique wid Type diversity.
 - Feature: Get number's digits and 10th power exponent up to the specified number of significant digits.
@@ -51,7 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - For MATLAB R2019b or newer: Replace Java-based GUI with HTML5-based GUI, fixing JAVACOMPONENT warnings. For example, [Project Manager][1.2.0,C1] now uses [HTML5-based JList-like code][1.2.0,C2] to create its window.
-- Allow special the multiple-dashed strings for [varargin dashed string parsers][?] under the [helper][?] folder. Usage examples of double-dashed string options.
+- Allow special the multiple-dashed strings for 'varargin dashed string parsers' under the 'helper' folder. Usage examples of double-dashed string options.
 - Permanently remember the latest folder in the wit_io's file browsing ui.
 - Make wit-class basic functionality Octave-compatible.
 - Improve regexp renaming with data listing
@@ -74,40 +74,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.2.0,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/icons/uihtml_JList.html
 
 ### Deprecated
-- Deprecate: reset_Viewers replaced by destroy_all_Viewers.
-- Deprecate: storeState and keep LIFO functions.
+- Supersede reset_Viewers of wip-class by [destroy_all_Viewers][1.2.0,D1].
+
+[1.2.0,D1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/destroy_all_Viewers.m
 
 ### Removed
-- Less dependencies on Image Processing Toolbox.
-- Remove mistaken dependency on Statistics and Machine Learning Toolbox.
+- Some dependencies on Image Processing Toolbox.
+- Remove unintentional dependency on Statistics and Machine Learning Toolbox.
+- Remove unused storeState- and restoreState-functions of wip-class. From now on, rely on the LIFO-concept push- and pop-functions.
 
 ### Fixed
-- Fix (for v5 *.wip): Add bitmap write/read row-padding to nearest 4-byte boundary.
-- Fixed error due to typo. @wid/spectral_stitch.m
-- Fix error-causing typo. SCRIPT cases/S_remove_dark_current.m
-- Fix error when no working solution can exist. @wid/unpattern_video_stitching_helper.m
-- Fix missing img height and width, required by R2019b or newer. @wid/get_HtmlName.m
-- Fix: Prioritize Standard Unit search first and only then widen the search.
-- Fix: Removed unnecessary ()-brackets around Standard Unit searches.
-- Fix: To avoid weird datatype icon listings in Project Manager, force-minimized the first column width.
-- Fix: Handle shared transformation in 'crop_Graph' like in 'crop'.
-- Fix: File reading gui now include all the case-sensitive file extension permutations.
-- Fix: E_v5.wip corrupted space transformations (and update changed examples).
-- Fix uifigure's header (and commented on sending a R2019b bug report on inputdlg's forced modality).
-- Fix: Add the missing space transformation update. @wid/spatial_average.m
-- Fix error due to a copy-paste typo. EXAMPLE cases/E_02_B_mask_data_and_average.m
-- Fix: Handled all-nan-valued cases and fixed jacobian_helper performance issue. helper/fitting/fit_lineshape_arbitrary.m
+- @wid/wid_Data_get_Bitmap.m and @wid/wid_Data_set_Bitmap.m: For **v5** files, add bitmap write/read row-padding to nearest 4-byte boundary.
+- @wip/interpret.m: Prioritize Standard Unit search first and only then widen the search. Removed unnecessary ()-brackets around Standard Unit searches.
+- E_v5.wip: Fix corrupted TDSpaceTransformations and update affected examples.
+- @wid/crop.m and @wid/crop_Graph.m: Properly handles shared transformations now.
+- The file browsing GUI is now case-insensitive to *.wid and *.wip file extensions even though the file system is case-sensitive.
+- @wid/unpattern_video_stitching_helper.m: Fix error when no working solution can exist.
+- @wid/spatial_average.m: Properly updates TDSpaceTransformations now.
+- S_rename_by_regexprep.m: Properly gets uifigure handle now although usage is limited by MATLAB R2019b's 'inputdlg's forced uifigure modality'-bug.
+- helper/fitting/fit_lineshape_arbitrary.m: Properly handles all-nan-valued case now.
+- helper/fitting/fun_lineshape_voigtian.m: Validity meticulously checked and alternatives considered. Fix pure Gaussian issues.
+- Fix typos causing bugs.
 
-### Security
-- Better numerical stability at extremes. Validity double-checked. Fixed pure Gaussian issues.
-- Restored the original approach due to superior numerical stability. The secondary approach commented due to numerical instabilities. No more bugs found.
+[1.2.0,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/destroy_all_Viewers.m
 
 ### Performance
-- Disable unused 'Volume'-feature due to major performance bottle-neck.
-- Use nargout to reduce computation burden if only using first output argument.
-- Remove cellfun's and reduced use of cells to improve performance.
-- @wip/read_Version.m: Speedup using wit-class read's new skip_Data_criteria_for_obj-feature.
-- Add usePrevCstd to fix performance issue in loops with changing data dimensions. helper/fitting/jacobian_helper.m
+- @wid/wid_SubType_get.m: Disable unused 'Volume'-feature due to major performance bottleneck.
+- @wip/read_Version.m: Speedup using @wit/read.m's new skip_Data_criteria_for_obj-feature.
+- helper/fitting/bw2lines.m: Reduce computation burden when using only the first output argument.
+- helper/dim_size_consistent_repmat.m: Remove cellfun's and reduced use of cells to improve performance.
+- helper/fitting/jacobian_helper.m and helper/fitting/fit_lineshape_arbitrary.m: Add usePrevCstd to fix performance issue in loops with changing data dimensions.
 
 
 
