@@ -13,7 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Security** in case of vulnerabilities.
 - **Performance** for any performance improvements.
 
+
+
 ## [Unreleased]
+
+
 
 ## [1.2.0] - 2020-03-10
 - Fixed error due to typo.
@@ -141,6 +145,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update: New screenshot with updated features like uihtml-based gui.
 - Fix: File reading gui now include all the case-sensitive file extension permutations.
 
+
+
 ## [1.1.2] - 2019-08-08
 - Added shell script to merge release to master.
 - Updated Background and removed typos.
@@ -216,55 +222,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ready code. Many improvements. Many bottlenecks removed.
 - Toolbox v.1.1.2 release candidate.
 
+
+
 ## [1.1.1] - 2019-06-25
-- Fix wrong comments.
-- Fix SpaceTransformation error.
-- Add normalizer script.
-- Add script to rename datas by regexprep.
-- Removed zip files for MATLAB File Exchange compatibility.
-- Fixed the license texts.
-- Fix cell array size issues by forcing to a row and restoring the shape later.
-- Forced IDs to int32 as required by WITec software, fixing ID=0 bug with *.WID files.
-- Better naming: renamed reduce<postfix> functions to crop<postfix>. This naming... 
-- No more needed as ID=0 bug is fixed.
-- Set IDs to int32 everywhere in order to avoid issues with WITec software.
-- Made get_HtmlName output Workspace-optimized by default for better usability... 
-- Mentioned difference between Project Manager and Workspace icon sizes.
-- Mentioned export_fig as dependency.
-- Show & rename also NON-plottable data objects in the file!
-- Added a link to regexprep documentation.
-- Added example for spectral stitching.
-- Allow variable number of input.
-- Added example for data cropping.
-- Renamed scripts to be more easily found by MATLAB tab-functionality.
-- Shortening the script naming quicker for MATLAB Tab-completion.
-- Added non-permanent addpath with how-to and comments.
-- Indented installation guide list properly.
-- Updated Citation.
-- Note about new idea to allow replication of fun-input for simplicity.
-- Note on idea to use i.e. residual procedure to guess multiple peaks.
-- More, simpler examples. Renamed the files.
-- Updated example cases for better clarity.
-- Fixed some links.
-- Fixed relative links.
-- Refix relative links.
-- Fix attempt to relative links.
-- Solved whitespace issue with links.
-- Added git mergetool to resolve conflicts before proceeding.
+### Added
+- Example cases for [spectral stitching][1.1.1, 1] and [data cropping][1.1.1, 2].
+- Interactive scripts to [rename datas by regexprep][1.1.1, 3] and [normalize spectra][1.1.1, 4].
+- Notes on improving the arbitrary fitting algorithm in the future.
+- [load_or_addpath_permanently.m][1.1.1, 5]: Allow toolbox and its subfolders be added non-permanently.
+
+[1.1.1, 1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/EXAMPLE%20cases/E_04_stitch_spectra.m
+[1.1.1, 2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/EXAMPLE%20cases/E_02_C_crop_data.m
+[1.1.1, 3]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/SCRIPT%20cases/S_rename_by_regexprep.m
+[1.1.1, 4]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/SCRIPT%20cases/S_divide_by_local_max.m
+[1.1.1, 5]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/load_or_addpath_permanently.m
+
+### Changed
+- More and simpler [example cases][1.1.1, 6].
+- Shorter [example][1.1.1, 6] and [script][1.1.1, 7] names for improved [Tab-key completion][1.1.1, 8] experience in MATLAB's Command Window.
+- Replace zip files with folders in the [icons][1.1.1, 9] folder for MATLAB File Exchange compatibility.
+- [@wid/get_HtmlName.m][1.1.1, 10]: Use small icons for wid objects in Workspace and larger for wid objets in Project Manager.
+- Rename all wid-class reduce-prefixed functions as crop for consistency with WITec software.
+- [@wid/crop.m][1.1.1, 11]: Accept variable number of inputs. Fix TDSpaceTransformation error.
+- Update [README.md][1.1.1, 12] links and citation.
+
+[1.1.1, 6]: https://gitlab.com/jtholmi/wit_io/-/tree/v1.1.1/EXAMPLE%20cases
+[1.1.1, 7]: https://gitlab.com/jtholmi/wit_io/-/tree/v1.1.1/SCRIPT%20cases
+[1.1.1, 8]: https://www.mathworks.com/company/newsletters/articles/avoiding-repetitive-typing-with-tab-completion.html
+[1.1.1, 9]: https://gitlab.com/jtholmi/wit_io/-/tree/v1.1.1/icons
+[1.1.1, 10]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/@wid/get_HtmlName.m
+[1.1.1, 11]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/@wid/crop.m
+[1.1.1, 12]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/README.md
+
+### Fixed
+- Fix 'ID of Data Object "..." is 0!'-issue at WITec software with  generated *.WID files by enforcing all IDs to int32, required by WITec software.
+- Fix the license texts.
+- [helper/get_unique_names.m][1.1.1, 10]: Fix cell array size issues.
+- [git_develop_to_release.sh][1.1.1, 11]: Add git mergetool to resolve conflicts before proceeding.
+[1.1.1, 10]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/helper/get_unique_names.m
+[1.1.1, 11]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/git_develop_to_release.sh
+
+
 
 ## [1.1.0] - 2019-04-17
 ### Added
-- New spectral stitching -feature for the TDGraph wid objects.
+- New [spectral stitching -feature][1.1.0, 1] for the TDGraph wid objects.
 - Support to MATLAB R2011a version.
 - Support to STT==2 (polynomial transformation) case in TDSpectralTransformation.
 - New test files for the 'ID of Data Object "..." is 0!'-issue.
-- Add git bash script for semi-automated merging.
+- Add [git bash script][1.1.0, 2] for semi-automated merging.
 - New 'DEVELOP'-folder to 'develop'-branch for any experimental code.
 
 ### Changed
 - Improve the icon PDF compatibility by removing the SVG filter effects.
-- Improve initial values of newly created TDSpaceTransformations.
-- Exclude all .git folders in the addpath- and rmpath-functions.
+- Improve initial values of [newly created TDSpaceTransformations][1.1.0, 3].
+- Exclude all .git folders in the [addpath][1.1.0, 4]- and [rmpath][1.1.0, 5]-functions.
 
 ### Removed
 - Remove dependencies on MATLAB R2014a version.
@@ -277,7 +289,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix usage of get_Root_Version in wid-class.
 - Improve documentations of some example cases, the arbitrary fitting algorithm and the formatting readme.
 
+[1.1.0, 1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.0/@wid/spectral_stitch.m
+[1.1.0, 2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.0/git_develop_to_release.sh
+[1.1.0, 3]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.0/@wid/new_Transformation_Space.m
+[1.1.0, 4]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.0/load_or_addpath_permanently.m
+[1.1.0, 5]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.0/unload_or_rmpath_permanently.m
+
+
+
 ## [1.0.4] - 2019-04-02
+
+
 
 [Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.0...develop
 [1.2.0]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.1.2...v1.2.0
