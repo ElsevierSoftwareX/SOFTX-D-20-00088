@@ -152,14 +152,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - New convenient [toolbox installer][1.1.2,A1] (for MATLAB R2014b or newer).
-- New [example 5][1.1.2,A2] (and [related functionality][1.1.2,A3]) demonstrating Video Stitching image unpatterning. It is noteworthy that [its documentation][1.1.2,A4] describes dozens of extra customization options.
-- [helper/clever_statistics_and_outliers.m][1.1.2,A5]: Support to multiple dims input with an ability to negate the selection. Fix the known bug cases.
-- Allow [manager][1.1.2,A6]-calls for wid objects like previously for wip objects, what can be used to quickly glance through the wid objects.
+- New [example case 5][1.1.2,A2] (and [related functionality][1.1.2,A3]) demonstrating Video Stitching image unpatterning. It is noteworthy that [its documentation][1.1.2,A4] describes dozens of extra customization options.
+- [helper/clever_statistics_and_outliers.m][1.1.2,A5]: Support to multiple dims input with an ability to negate the selection with negative values. Fix the known bug cases.
+- Allow [manager][1.1.2,A6]-calls for wid objects like previously for wip objects. This can be used to quickly glance through the wid objects and see their corresponding index value.
 - New [varargin dashed string parsers][1.1.2,A7] under the [helper][1.1.2,A8] folder.
 - [@wid/crop.m][1.1.2,A9]: Add isDataCropped-feature and validate inputs.
-- Add LIFO (first in = push, last out = pop) concept to wip-class to simplify all code.
-- New memory conservative way to generate indices via [helper/generic_sub2ind.m][1.1.2,A10], merging calls to ndgrid, sub2ind and cast. It can be customized with several extra options: '-isarray', '-nobsxfun', '-truncate', '-replace', '-mirror', '-circulate'.
-- New [helper/rolling_window_analysis.m][1.1.2,A11]-scheme.
+- Add LIFO (first in = push, last out = pop) concept to wip-class to simplify all the state-related code.
+- New memory conservative way to generate indices via [helper/generic_sub2ind.m][1.1.2,A10], merging calls to ndgrid, sub2ind and cast. It can be customized with extra options: '-isarray', '-nobsxfun', '-truncate', '-replace', '-mirror', '-circulate'.
+- New [helper/rolling_window_analysis.m][1.1.2,A11]-function that is used by the Video Stitching image unpatterning code.
 - New [shell script][1.1.2,A12] to merge release to master.
 
 [1.1.2,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/wit_io.mltbx
@@ -177,10 +177,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Notation change for wid, wip and wit objects. For instance, C_wid, C_wip, C_wit and HtmlNames (or n) are now O_wid, O_wip, O_wit and O_wid_HtmlNames, respectively.
-- [helper/fitting/fit_lineshape_arbitrary.m][1.1.2,C1]: Verbose iteration progress by showing total and delta sum of squared residuals.
-- [S_rename_by_regexprep.m][1.1.2,C2]: Verbose command window output.
+- [helper/fitting/fit_lineshape_arbitrary.m][1.1.2,C1]: Verbose iteration progress by showing total and delta sum of squared residuals. This can be disabled by providing extra input '-silent'.
+- [S_rename_by_regexprep.m][1.1.2,C2]: Verbose progress in Command Window.
 - Remove last '\n' from TDText plot's clipboard string.
-- [README.md][1.1.2,C3]: Update Title and Background. Generalized Cite As. Remove typos. Change absolute links to relative links.
+- [README.md][1.1.2,C3]: Update Title and Background. Generalize Cite As. Remove typos. Change absolute links to relative links.
 
 [1.1.2,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/fitting/fit_lineshape_arbitrary.m
 [1.1.2,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/SCRIPT%20cases/S_rename_by_regexprep.m
