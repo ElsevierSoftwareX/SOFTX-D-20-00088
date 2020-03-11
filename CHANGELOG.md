@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [1.2.0] - 2020-03-10
+
 - Fixed error due to typo.
 - Made wit-class basic functionality Octave-compatible.
 - Made wit-class basic functionality Octave-compatible.
@@ -148,83 +149,95 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [1.1.2] - 2019-08-08
-- Added shell script to merge release to master.
-- Updated Background and removed typos.
+
+### Added
+- Update Toolbox installer.
+- Add example 5 (and related functionality) demonstrating Video Stitching image unpatterning.
+- Add shell script to merge release to master.
+- Add support to multiple dim input.
+- Add TODO on interpreting negative dim values as NOT operation.
+- Manager-functionality for wid-class objects.
+- Add toolbox installer and updated README accordingly.
+- Add varargin dashed string parsers and updated the related code.
+- Add note recommending the toolbox installer.
+- Quick script that jumps to the toolbox main folder.
+- Add wrapper for rolling window analysis.
+- Add low memory mplementation idea for the future.
+- Add 2nd output for the rolling window analysis indices.
+- Add isCircular padding feature.
+- Add isDataCropped-feature and input validation to crop-function.
+- Add LIFO (first in = push, last out = pop) concept to wip-class to simplify all code.
+- Add 2nd output for the inputs without the given dashed string and its datas.
+- New '-replace', '-value', '-truncate', '-circulate' and '-matrix' extra options.
+- Add comments on ndgrid_and_sub2ind_and_cast.m.
+- Experimental version: attempt to use the secondary regions.
+- Add '-mirror'. Fill-in nan values in arraySize. Improve documentation. Allow 2-by-N numeric matrix extra input to handle lower and upper out-of-bound cases separately.
+- Add verbose command window output.
+
+### Changed
+- Update Background and removed typos.
 - Title update. Generalized Cite As.
-- Fixed Cite As formatting.
+- Change C_wid, C_wip, C_wit and HtmlNames (or n) to O_wid, O_wip, O_wit and O_HtmlNames, respectively.
+- Change obj to O_wit (or O_wit_debug).
+- For clarity, O_HtmlNames to O_wid_HtmlNames.
+- Update due to new notation for wip.read.
+- Change absolute links to relative links.
+- Update and documented the varargin parsing code.
+- Update old notation to new with O's (= objects).
+- Use varargin_dashed_str_exists.
+- Make notation consistent with other examples.
+- Remove last '\n' from TDText's clipboard string.
+- Accept multiple pushes at once.
+- Unify function definition notations.
+- Change index display notation from ':' to '.' for wid-objects.
+- Unifying notation with other examples.
+- Merge much of the varargin dashed string parser code.
+- Update varargin_dashed_str_datas usage.
+- Append missing dimensions for the dashed string inputs.
+- Rename 'ndgrid_and_sub2ind_and_cast' to 'generic_sub2ind' and fixed typos.
+- Disable automatic cropping. Changed '-nocrop' to '-crop'.
+- Change '-nocrop' to '-crop'.
+
+### Deprecated
+
+### Removed
+- Remove reshaping by reordering the outputs and separated the transformation part (for customization purposes).
+
+### Fixed
+- Fix Cite As formatting.
 - Fix typo.
 - Fix "Error if 1st column all NaN"-bug. Improved iteration using "If done"-flags.
 - Fix typos. Fix "Single NaN output when all NaN input"-bug.
-- Fixed mistake that broke the code.
-- Added support to multiple dim input.
-- Added TODO on interpreting negative dim values as NOT operation.
+- Fix mistake that broke the code.
 - Fix bug. Add multiple dims -feature (with negation -feature). Fix documentation.
-- Fixed '-lowOnMemory' error. Added total and delta sum of squared residuals to... 
-- Fixed bugs when nothing to calculate. Noted unbiased sample variance.
-- Changed C_wid, C_wip, C_wit and HtmlNames (or n) to O_wid, O_wip, O_wit and... 
-- Changed obj to O_wit (or O_wit_debug).
-- For clarity, O_HtmlNames to O_wid_HtmlNames.
-- Manager-functionality for wid-class objects.
-- Updated due to new notation for wip.read.
-- Changed absolute links to relative links.
-- Added toolbox installer and updated README accordingly.
-- Added varargin dashed string parsers and updated the related code.
-- Added note recommending the toolbox installer.
-- Updated and documented the varargin parsing code.
-- Quick script that jumps to the toolbox main folder.
-- Fixed reshaping bug and added more comments.
-- Added wrapper for rolling window analysis.
+- Fix '-lowOnMemory' error. Added total and delta sum of squared residuals to verbose iteration output.
+- Fix bugs when nothing to calculate. Noted unbiased sample variance.
+- Fix reshaping bug and added more comments.
 - Fix typo.
-- Added low memory mplementation idea for the future.
-- Removed reshaping by reordering the outputs and separated the transformation... 
-- Added 2nd output for the rolling window analysis indices.
-- Fixed typo.
-- Added isCircular padding feature.
-- Updated old notation to new with O's (= objects).
-- Used varargin_dashed_str_exists.
-- Made notation consistent with other examples.
-- Removed last '\n' from TDText's clipboard string.
-- Added isDataCropped-feature and input validation to crop-function.
-- Added LIFO (first in = push, last out = pop) concept to wip-class to simplify all code.
+- Fix typo.
 - More consistent comments for push-functions.
 - Code tabulations corrected and some Updated-comments fixed.
 - Pop needed states on entry (to avoid push-pop bugs).
-- Accepting multiple pushes at once.
-- Unify function definition notations.
-- Changed index display notation from ':' to '.' for wid-objects.
-- Unifying notation with other examples.
-- Added example 5 (and related functionality) demonstrating Video Stitching image unpatterning.
-- Update Toolbox installer.
-- Add 2nd output for the inputs without the given dashed string and its datas.
-- Merged much of the varargin dashed string parser code.
 - Fix typo.
-- Updated varargin_dashed_str_datas usage.
-- New '-replace', '-value', '-truncate', '-circulate' and '-matrix' extra options.
-- Append missing dimensions for the dashed string inputs.
-- Added comments on ndgrid_and_sub2ind_and_cast.m.
-- Renamed 'ndgrid_and_sub2ind_and_cast' to 'generic_sub2ind' and fixed typos.
-- Experimental version: attempt to use the secondary regions.
-- Add '-mirror'. Fill-in nan values in arraySize. Improve documentation. Allow... 
 - Fix typos.
-- Add verbose command window output.
 - Fix bug due to typo.
 - Fix errors due to typos.
 - Fix bugs due to typos.
-- First working release without apparent bugs. Only tiny fractions of the... 
+- First working release without apparent bugs. Only tiny fractions of the stitching images are unresolved. 
 - Fix comment typos.
 - Heavy commenting and clean-up.
-- Updated unpattern_video_stitching_helper reference.
-- Disabled automatic cropping. Changed '-nocrop' to '-crop'.
-- Changed '-nocrop' to '-crop'.
+- Update unpattern_video_stitching_helper reference.
+
+### Performance
 - Multiple speed-up fixes to allow calls from huge loops.
 - Add '-nobsxfun' (and '-isarray') with speed optimizations.
 - Add fast method to test if any dashed strings exists.
 - Ready code. Many improvements. Many bottlenecks removed.
-- Toolbox v.1.1.2 release candidate.
 
 
 
 ## [1.1.1] - 2019-06-25
+
 ### Added
 - Example cases for [spectral stitching][1.1.1,A1] and [data cropping][1.1.1,A2].
 - Interactive scripts to [rename datas by regexprep][1.1.1,A3] and [normalize spectra][1.1.1,A4].
@@ -266,6 +279,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [1.1.0] - 2019-04-17
+
 ### Added
 - New [spectral stitching -feature][1.1.0,A1] for the TDGraph wid objects.
 - Support to MATLAB R2011a version.
