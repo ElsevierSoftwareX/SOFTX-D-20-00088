@@ -13,7 +13,7 @@ files in [MATLAB] with or without GUI. It also provides data analysis tools.
 
 ### Description
 This [MATLAB] toolbox is intended for users of [WITec.de][WITec] microscopes
-(i.e. Raman or SNOM), who work with **\*.wip**/**\*.wid** files (**v0**&ndash;**v7**)
+(i.e. Raman or SNOM), who work with **\*.wip**/**\*.wid** files (**v0** &ndash; **v7**)
 and wish to directly **read**/**write** and **analyze** them in MATLAB. The
 main aim of this project is to reduce the time consumed by importing, exporting
 and various post-processing steps. Toolbox can also [read/write **any** WIT-tag
