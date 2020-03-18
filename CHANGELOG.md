@@ -25,20 +25,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - This `CHANGELOG.md` file to the project.
-- Experimental support to legacy file `Versions` **v0&ndash;v4** via **v5**, enabled by the way the WITec software ignores the unused `wit` tag objects.
+- Experimental support to legacy file `Versions` **v0 &ndash; v4** via **v5**, enabled by the way the WITec software ignores the unused `wit` tag objects.
 - Example case on [plotting scalebar and marking measurement positions on one other][1.2.0,A1] using either new `'-scalebar'` and `'-position'` options of [`plot`][1.2.0,A2] or new [`plot_scalebar`][1.2.0,A3] and [`plot_position`][1.2.0,A4] functions.
 - Example case on [configuring toolbox by permanent user preferences][1.2.0,A5] using new [`wit_io_pref_get`][1.2.0,A6], [`wit_io_pref_is`][1.2.0,A7], [`wit_io_pref_rm`][1.2.0,A8] and [`wit_io_pref_set`][1.2.0,A9] functions.
 - TeX-enriched help dialogs for [all example cases][1.2.0,A10] using new [`wit_io_msgbox`][1.2.0,A11] and [`mytextwrap`][1.2.0,A12] functions.
 - Ability to [destroy duplicate Transformations][1.2.0,A13] in the project. Update affected example case on [data cropping][1.2.0,A14].
 - New OnWrite-tasks of [*.wip file writing][1.2.0,A15] via new `wip`-class properties `OnWriteDestroyAllViewers` (`true` by default) and `OnWriteDestroyDuplicateTransformations` (`false` by default).
-- Features to [abort wit file reading or skip file contents by the given criterias][1.2.0,A16] in order to customize and speedup the file reading for specific needs. For example, [file `Version` reading][1.2.0,A17] is now much quicker because it only loads small portion of the file into memory.
+- Features to [abort `wit` tag file reading or skip its contents by the given criterias][1.2.0,A16] in order to customize and speedup the file reading for specific needs. For example, [file `Version` reading][1.2.0,A17] is now much quicker because it only loads small portion of the file into memory.
 - Scripts to quickly open the main and New Issue pages at GitLab: [`wit_io_gitlab`][1.2.0,A18] and [`wit_io_gitlab_new_issue`][1.2.0,A19].
-- [`@wid/unpattern_video_stitching_helper`][1.2.0,A20]: New `'-outliers'`-option to provide known outliers in the image for the unpatterning algorithm.
-- New helper function, [`mask_bad_results_and_noise`][1.2.0,A21] to mask automatically bad fitting results or near noise results.
+- New `'-outliers'` option of [`unpattern_video_stitching_helper`][1.2.0,A20] to provide known outliers in the image to the algorithm.
+- Ability to automatically mask bad fitting results or near noise results using new [`mask_bad_results_and_noise`][1.2.0,A21] helper function.
 - Ability to search `wit` tag object ancestors using new [`regexp_ancestors`][1.2.0,A22] and [`search_ancestors`][1.2.0,A23] functions.
-- New [dev tools][1.2.0,A24] to quickly get [multiple file `Versions`][1.2.0,A25] or [unique `wid` object's `Type` diversity][1.2.0,A26].
-- Add clear notes on MATLAB toolbox dependencies in each related file.
-- Short note for future on how to improve the window filtering algorithms [`mynanmaxfilt2`][1.2.0,A27] and [`mynanstdfilt2`][1.2.0,A28].
+- [Developer tools][1.2.0,A24] to quickly get [`Versions`][1.2.0,A25] or [unique `wid`-class `Types`][1.2.0,A26] of multiple files.
+- Notes on MATLAB toolbox dependencies in the beginning of each dependent file.
 
 [1.2.0,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/EXAMPLE%20cases/E_02_D_plot_data_position_and_scalebar.m
 [1.2.0,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/plot.m
@@ -66,8 +65,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.2.0,A24]: https://gitlab.com/jtholmi/wit_io/-/tree/develop/dev
 [1.2.0,A25]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/dev/dev_get_Versions.m
 [1.2.0,A26]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/dev/dev_get_unique_wid_Types.m
-[1.2.0,A27]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/mynanmaxfilt2.m
-[1.2.0,A28]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/mynanstdfilt2.m
 
 ### Changed
 - For MATLAB R2019b or newer: Replace Java-based GUI with HTML5-based GUI, fixing JAVACOMPONENT warnings. For example, [Project Manager][1.2.0,C1] now uses [HTML5-based JList-like code][1.2.0,C2] to create its window.
