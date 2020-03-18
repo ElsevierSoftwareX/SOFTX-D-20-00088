@@ -24,13 +24,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.0] - 2020-03-13
 
 ### Added
-- Add this changelog to the project.
-- Experimental support to legacy file versions **v0&ndash;v4**, all of which will be read and written technically as **v5** due to the way WITec software ignores unused and unrelated WIT-tags.
-- New example case on [plotting scalebar and marking measurement locations with respect to each other][1.2.0,A1] using updated [plot][1.2.0,A2] and new [plot_position][1.2.0,A3] and [plot_scalebar][1.2.0,A4] functions.
-- New example case on [configuring toolbox by permanent user preferences][1.2.0,A5] using new [wit_io_pref_get][1.2.0,A6], [wit_io_pref_is][1.2.0,A7], [wit_io_pref_rm][1.2.0,A8] and [wit_io_pref_set][1.2.0,A9] functions.
-- Enrich help dialogs of [all example cases][1.2.0,A10] with TeX content using new [wit_io_msgbox][1.2.0,A11] and [mytextwrap][1.2.0,A12] functions.
-- Feature to [destroy duplicate Transformations][1.2.0,A13] in the project. Update example case on [data cropping][1.2.0,A14].
-- New wip-class [write][1.2.0,A15] behaviour via OnWriteDestroyAllViewers and OnWriteDestroyDuplicateTransformations states. New related functions to get linked wits (to wid-objects) and owner ids (of wit-objects).
+- This CHANGELOG.md file to the project.
+- Experimental support to legacy file versions **v0&ndash;v4** via **v5**, enabled by the way the WITec software ignores the unused WIT-tags.
+- Example case on [plotting scalebar and marking measurement positions on one other][1.2.0,A1] using either new '-scalebar' and '-position' options for [plot][1.2.0,A2] or new [plot_scalebar][1.2.0,A3] and [plot_position][1.2.0,A4] functions.
+- Example case on [configuring toolbox by permanent user preferences][1.2.0,A5] using new [wit_io_pref_get][1.2.0,A6], [wit_io_pref_is][1.2.0,A7], [wit_io_pref_rm][1.2.0,A8] and [wit_io_pref_set][1.2.0,A9] functions.
+- TeX-enriched help dialogs for [all example cases][1.2.0,A10] using new [wit_io_msgbox][1.2.0,A11] and [mytextwrap][1.2.0,A12] functions.
+- Ability to [destroy duplicate Transformations][1.2.0,A13] in the project. Update affected example case on [data cropping][1.2.0,A14].
+- New OnWrite-tasks of [*.wip file writing][1.2.0,A15] via new `wip`-class properties `OnWriteDestroyAllViewers` (`= true` by default) and `OnWriteDestroyDuplicateTransformations` (`= false` by default).
+
 - Features to [abort wit file reading or skip file contents by the given criterias][1.2.0,A16]. This can be used to customize and speedup the file reading for specific needs. For example, [file Version reading][1.2.0,A17] is now much quicker because it only loads small portion of the file into memory.
 - Scripts to quickly open the main and New Issue pages at GitLab: [wit_io_gitlab][1.2.0,A18] and [wit_io_gitlab_new_issue][1.2.0,A19].
 - [@wid/unpattern_video_stitching_helper.m][1.2.0,A20]: New '-outliers'-option to provide outliers in the image.
@@ -42,8 +43,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [1.2.0,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/EXAMPLE%20cases/E_02_D_plot_data_position_and_scalebar.m
 [1.2.0,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/plot.m
-[1.2.0,A3]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/plot_position.m
-[1.2.0,A4]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/plot_scalebar.m
+[1.2.0,A3]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/plot_scalebar.m
+[1.2.0,A4]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/plot_position.m
 [1.2.0,A5]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/EXAMPLE%20cases/E_01_D_permanent_user_preferences.m
 [1.2.0,A6]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/wit_io_pref_get.m
 [1.2.0,A7]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/wit_io_pref_is.m
@@ -74,7 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow special the multiple-dashed strings for [varargin dashed string parsers][1.2.0,C3] under the [helper][1.2.0,C4] folder. Updated all example cases, where extra arguments were passed to '-manager' via [wip.read][1.2.0,C5].
 - Example cases now describe BSD license in dialog with checkbox to not show again.
 - Permanently remember the latest folder in the wit_io's file browsing ui.
-- Rename [wid][1.2.0,C6]-class Links-property to LinksToOthers and add LinksToThis-property. Rename related copy_Links to [copy_LinksToOthers][1.2.0,C7] (and add copying of IDLists).
+- Rename [wid][1.2.0,C6]-class Links-property to LinksToOthers and add LinksToThis-property. Rename related copy_Links to [copy_LinksToOthers][1.2.0,C7] (and add copying of IDLists). New related functions to get linked wits (to wid-objects) and owner ids (of wit-objects).
 - Make [wit][1.2.0,C8]-class basic functionality Octave-compatible.
 - [S_rename_by_regexprep.m][1.2.0,C9]: Improve regexp renaming with data listing. Usage is limited in MATLAB R2019b due to its 'inputdlg's forced uifigure modality'-bug.
 - [@wip/manager.m][1.2.0,C10]: Remove waitbar in '-nopreview'-mode. Allow -Type and -SubType with multiple inputs. Add tag 'wit_io_project_manager_gcf' to find its latest main window handle (whether figure or uifigure).
