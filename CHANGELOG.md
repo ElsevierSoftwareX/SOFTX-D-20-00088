@@ -160,7 +160,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `wip`-class: Add LIFO (first in = push, last out = pop) concept to simplify all the state-related code.
 - Add feature to generate indices via [`generic_sub2ind`][1.1.2,A10], merging calls to `ndgrid`, `sub2ind` and `cast` and being memory conservative. It can be customized with extra options: `'-isarray'`, `'-nobsxfun'`, `'-truncate'`, `'-replace'`, `'-mirror'`, `'-circulate'`.
 - Add feature to perform [`rolling window analysis`][1.1.2,A11] that is used by the Video Stitching image unpatterning code.
-- Add [shell script][1.1.2,A12] to merge release to master.
+- Add [git bash script][1.1.2,A12] for semi-automated merging from **release**-tag to **master**-branch.
 
 [1.1.2,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/wit_io.mltbx
 [1.1.2,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/EXAMPLE%20cases/E_05_unpattern_video_stitching.m
@@ -245,16 +245,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support to MATLAB R2011a version.
 - Implement polynomial transformation case of `TDSpectralTransformation`.
 - Add generated **\*.wid** files for the `ID of Data Object "..." is 0!`-issue at the WITec software side.
-- Add [git bash script][1.1.0,A2] for semi-automated merging.
-- Add DEVELOP-folder to **develop**-branch for any experimental code.
+- Add [git bash script][1.1.0,A2] for semi-automated merging from **develop**-branch to **release**-tag.
+- For **develop**-branch: Add DEVELOP-folder, which can have contents like unfinished experimental code that will not be merged to **master**-branch.
 
 [1.1.0,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.0/@wid/spectral_stitch.m
 [1.1.0,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.0/git_develop_to_release.sh
 
 ### Changed
-- Improve the icon PDF compatibility by removing the SVG filter effects.
-- [`@wid/new_Transformation_Space`][1.1.0,C1]: Make initial values on `wid` object creation more self-consistent.
-- [`load_or_addpath_permanently`][1.1.0,C2] and [`unload_or_rmpath_permanently`][1.1.0,C3]: Exclude all .git folders.
+- Remove the SVG filter effects from the **\*.svg** icon files to improve their PDF compatibility.
+- [`@wid/new_Transformation_Space`][1.1.0,C1]: Make its initial values more self-consistent.
+- [`load_or_addpath_permanently`][1.1.0,C2] and [`unload_or_rmpath_permanently`][1.1.0,C3]: Exclude all .git folders from the path.
 
 [1.1.0,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.0/@wid/new_Transformation_Space.m
 [1.1.0,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.0/load_or_addpath_permanently.m
@@ -266,9 +266,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Improve support to network drive working.
-- Fix `wit`-class file reading errors in older MATLAB versions.
+- `wit`-class: Fix file reading errors in older MATLAB versions.
 - Fix `copy selection to clipboard`-feature of `TDText` plots.
-- Fix usage of `@wip/get_Root_Version` in `wid`-class.
+- `wid`-class: Fix usage of `@wip/get_Root_Version`.
 - Improve documentations of some example cases, the arbitrary lineshape fitting algorithm and the file formatting readme.
 
 
