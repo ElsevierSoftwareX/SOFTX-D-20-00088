@@ -24,20 +24,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.0] - 2020-03-13
 
 ### Added
-- This `CHANGELOG.md` file to the project.
-- Experimental support to legacy file `Versions` **v0 &ndash; v4** via **v5**, enabled by the way the WITec software ignores the unused `wit` tag objects.
-- Example case on [plotting scalebar and marking measurement positions on one other][1.2.0,A1] using either new `'-scalebar'` and `'-position'` options of [`plot`][1.2.0,A2] or new [`plot_scalebar`][1.2.0,A3] and [`plot_position`][1.2.0,A4] functions.
-- Example case on [configuring toolbox by permanent user preferences][1.2.0,A5] using new [`wit_io_pref_get`][1.2.0,A6], [`wit_io_pref_is`][1.2.0,A7], [`wit_io_pref_rm`][1.2.0,A8] and [`wit_io_pref_set`][1.2.0,A9] functions.
-- TeX-enriched help dialogs for [all example cases][1.2.0,A10] using new [`wit_io_msgbox`][1.2.0,A11] and [`mytextwrap`][1.2.0,A12] functions.
-- Ability to [destroy duplicate Transformations][1.2.0,A13] in the project. Update affected example case on [data cropping][1.2.0,A14].
-- New OnWrite-tasks of [*.wip file writing][1.2.0,A15] via new `wip`-class properties `OnWriteDestroyAllViewers` (`true` by default) and `OnWriteDestroyDuplicateTransformations` (`false` by default).
-- Features to [abort `wit` tag file reading or skip its contents by the given criterias][1.2.0,A16] in order to customize and speedup the file reading for specific needs. For example, [file `Version` reading][1.2.0,A17] is now much quicker because it only loads small portion of the file into memory.
-- Scripts to quickly open the main and New Issue pages at GitLab: [`wit_io_gitlab`][1.2.0,A18] and [`wit_io_gitlab_new_issue`][1.2.0,A19].
-- New `'-outliers'` option of [`unpattern_video_stitching_helper`][1.2.0,A20] to provide known outliers in the image to the algorithm.
-- Ability to automatically mask bad fitting results or near noise results using new [`mask_bad_results_and_noise`][1.2.0,A21] helper function.
-- Ability to search `wit` tag object ancestors using new [`regexp_ancestors`][1.2.0,A22] and [`search_ancestors`][1.2.0,A23] functions.
-- [Developer tools][1.2.0,A24] to quickly get [`Versions`][1.2.0,A25] or [unique `wid`-class `Types`][1.2.0,A26] of multiple files.
-- Notes on MATLAB toolbox dependencies in the beginning of each dependent file.
+- Add this `CHANGELOG.md` file to the project.
+- Add experimental support to legacy file `Versions` **v0 &ndash; v4** via **v5**, enabled by the way the WITec software ignores the unused `wit` tag objects.
+- Add example case on [plotting scalebar and marking measurement positions on one other][1.2.0,A1] using either new `'-scalebar'` and `'-position'` options of [`plot`][1.2.0,A2] or new [`plot_scalebar`][1.2.0,A3] and [`plot_position`][1.2.0,A4] functions.
+- Add example case on [configuring toolbox by permanent user preferences][1.2.0,A5] using new [`wit_io_pref_get`][1.2.0,A6], [`wit_io_pref_is`][1.2.0,A7], [`wit_io_pref_rm`][1.2.0,A8] and [`wit_io_pref_set`][1.2.0,A9] functions. For example, permanently remember the latest folder in the `wit_io`'s file browsing UI.
+- Add TeX-enriched help dialogs to [all example cases][1.2.0,A10] using new [`wit_io_msgbox`][1.2.0,A11] and [`mytextwrap`][1.2.0,A12] functions.
+- Add ability to [destroy duplicate Transformations][1.2.0,A13] in the project. Update affected example case on [data cropping][1.2.0,A14].
+- Add `OnWrite`-tasks of [*.wip file writing][1.2.0,A15] via new `wip`-class properties `OnWriteDestroyAllViewers` (`true` by default) and `OnWriteDestroyDuplicateTransformations` (`false` by default). The former avoids possible corruption of modified *.wip files, because `wit_io` does not modify `Viewers`-section of file.
+- Add features to [abort `wit` tag file reading or skip its contents by the given criterias][1.2.0,A16] in order to customize and speedup the file reading for specific needs. For example, [file `Version` reading][1.2.0,A17] is now much quicker because it only loads small portion of the file into memory.
+- Add scripts to quickly open the main and New Issue pages at GitLab: [`wit_io_gitlab`][1.2.0,A18] and [`wit_io_gitlab_new_issue`][1.2.0,A19].
+- [`unpattern_video_stitching_helper`][1.2.0,A20]: Add new `'-outliers'` option to provide known outliers in the image to the algorithm.
+- Add ability to automatically mask bad fitting results or near noise results using new [`mask_bad_results_and_noise`][1.2.0,A21] helper function.
+- Add ability to search `wit` tag object ancestors using new [`regexp_ancestors`][1.2.0,A22] and [`search_ancestors`][1.2.0,A23] functions.
+- Add [developer's functions][1.2.0,A24] to quickly get [`Versions`][1.2.0,A25] or [unique `wid`-class `Types`][1.2.0,A26] of multiple files.
+- Add notes on MATLAB toolbox dependencies in the beginning of each dependent file.
 
 [1.2.0,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/EXAMPLE%20cases/E_02_D_plot_data_position_and_scalebar.m
 [1.2.0,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/plot.m
@@ -67,21 +67,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.2.0,A26]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/dev/dev_get_unique_wid_Types.m
 
 ### Changed
-- For MATLAB R2019b or newer: Replace Java-based GUI with HTML5-based GUI, fixing JAVACOMPONENT warnings. For example, [Project Manager][1.2.0,C1] now uses [HTML5-based JList-like code][1.2.0,C2] to create its window.
+- For MATLAB R2019b or newer: Replace Java-based GUI with HTML5-based GUI, fixing `JAVACOMPONENT` warnings. For example, [Project Manager][1.2.0,C1] now uses [HTML5-based JList-like code][1.2.0,C2] to create its window.
 - Allow special the multiple-dashed strings for [varargin dashed string parsers][1.2.0,C3] under the [helper][1.2.0,C4] folder. Updated all example cases, where extra arguments were passed to '-manager' via [wip.read][1.2.0,C5].
 - Example cases now describe BSD license in dialog with checkbox to not show again.
-- Permanently remember the latest folder in the wit_io's file browsing ui.
-- Rename [wid][1.2.0,C6]-class Links-property to LinksToOthers and add LinksToThis-property. Rename related copy_Links to [copy_LinksToOthers][1.2.0,C7] (and add copying of IDLists). New related functions to get linked wits (to wid-objects) and owner ids (of wit-objects).
-- Make [wit][1.2.0,C8]-class basic functionality Octave-compatible.
-- [S_rename_by_regexprep.m][1.2.0,C9]: Improve regexp renaming with data listing. Usage is limited in MATLAB R2019b due to its 'inputdlg's forced uifigure modality'-bug.
-- [@wip/manager.m][1.2.0,C10]: Remove waitbar in '-nopreview'-mode. Allow -Type and -SubType with multiple inputs. Add tag 'wit_io_project_manager_gcf' to find its latest main window handle (whether figure or uifigure).
-- [helper/fitting/fit_lineshape_automatic_guess.m][1.2.0,C11]: (1) Simplify the process. (2) More robust lineshape center estimation by integration via new [mtrapz][1.2.0,C12] function. (3) Fix few lurking bugs. (4) Notes on assumptions.
-- From now on, *.wip writing removes all the Viewer windows (shown on the WITec software side). This avoids possible corruption of modified files, because wit_io mostly ignores Viewers. Set wip-object's OnWriteDestroyAllViewers-property to false to disable this.
-- Move the toolbox developer's functions under the [dev][1.2.0,C13] folder and give them 'dev'-prefix.
-- Rename the [toolbox's main folder][1.2.0,C14] functions to have 'wit_io'-prefix and better names for alphabetically ordered file listing.
-- Upload latest version of the 3rd party code [export_fig][1.2.0,C15].
-- [example.png][1.2.0,C16]: New screenshot with updated features like uihtml-based gui.
-- [README.md][1.2.0,C17]: New changelog and license badges.
+- Rename [`wid`][1.2.0,C6]-class `Links`-property to `LinksToOthers` and add `LinksToThis`-property. Rename related `copy_Links` to [`copy_LinksToOthers`][1.2.0,C7] (and add copying of `IDLists`).
+- Make [`wit`][1.2.0,C8]-class basic functionality Octave-compatible.
+- [`S_rename_by_regexprep`][1.2.0,C9]: Improve regexp renaming with data listing. Usage is limited in MATLAB R2019b due to its 'inputdlg's forced uifigure modality'-bug.
+- [`@wip/manager`][1.2.0,C10]: (1) Remove waitbar in '-nopreview'-mode. (2) Allow `'-Type'` and `'-SubType'` with multiple inputs. (3) Add tag `'wit_io_project_manager_gcf'` to find its latest main window handle (whether `figure` or `uifigure`).
+- [`fit_lineshape_automatic_guess`][1.2.0,C11]: (1) Simplify the process. (2) More robust lineshape center estimation by integration via new [`mtrapz`][1.2.0,C12] function. (3) Fix few lurking bugs. (4) Notes on assumptions.
+- Move the toolbox developer's functions under the [dev][1.2.0,C13] folder and give them `dev`-prefix.
+- Rename the [toolbox's main folder][1.2.0,C14] functions to have `wit_io`-prefix and better names for alphabetically ordered file listing.
+- [`export_fig`][1.2.0,C15]: Upload latest version of this 3rd party code.
 
 [1.2.0,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/manager.m
 [1.2.0,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/icons/uihtml_JList.html
@@ -98,30 +94,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.2.0,C13]: https://gitlab.com/jtholmi/wit_io/-/tree/develop/dev
 [1.2.0,C14]: https://gitlab.com/jtholmi/wit_io/-/tree/develop
 [1.2.0,C15]: https://gitlab.com/jtholmi/wit_io/-/tree/develop/helper%2F3rd%20party%2Fexport_fig
-[1.2.0,C16]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/example.png
-[1.2.0,C17]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/README.md
 
 ### Deprecated
-- Supersede reset_Viewers of wip-class by [destroy_all_Viewers][1.2.0,D1].
+- `@wip/reset_Viewers`: Supercede by [`@wip/destroy_all_Viewers`][1.2.0,D1].
 
 [1.2.0,D1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/destroy_all_Viewers.m
 
 ### Removed
-- Some dependencies on Image Processing Toolbox.
-- Remove unintentional dependency on Statistics and Machine Learning Toolbox.
-- Remove unused storeState- and restoreState-functions of wip-class. From now on, rely on the LIFO-concept push- and pop-functions.
+- Remove some dependencies on `Image Processing Toolbox`.
+- Remove unintentional dependency on `Statistics and Machine Learning Toolbox`.
+- `wip`-class: Remove unused `storeState`- and `restoreState`-functions and, from now on, rely on the LIFO-concept `push`- and `pop`-functions.
 
 ### Fixed
-- [@wid/wid_Data_get_Bitmap.m][1.2.0,F1] and [@wid/wid_Data_set_Bitmap.m][1.2.0,F2]: For **v5** files, add bitmap write/read row-padding to nearest 4-byte boundary.
-- [@wip/interpret.m][1.2.0,F3]: Prioritize Standard Unit search first and only then widen the search. Removed unnecessary ()-brackets around Standard Unit searches.
-- [E_v5.wip][1.2.0,F4]: Fix corrupted TDSpaceTransformations and update affected examples.
-- [@wid/crop.m][1.2.0,F5] and [@wid/crop_Graph.m][1.2.0,F6]: Properly copy shared transformations and modifies their unshared versions using new [copy_Others_if_shared_and_unshare][1.2.0,F7] function.
+- [`@wid/wid_Data_get_Bitmap`][1.2.0,F1] and [`@wid/wid_Data_set_Bitmap`][1.2.0,F2]: For **v5** files, add unimplemented bitmap write/read row-padding to nearest 4-byte boundary.
+- [`@wip/interpret`][1.2.0,F3]: Prioritize `Standard Unit` search first and only then widen the search. Removed unnecessary `()`-brackets around `Standard Unit` searches.
+- [`E_v5.wip`][1.2.0,F4]: Fix corrupted `TDSpaceTransformations` and update affected example cases.
+- [`@wid/crop`][1.2.0,F5] and [`@wid/crop_Graph`][1.2.0,F6]: Properly copy shared transformations and modify their unshared versions using new [`@wid/copy_Others_if_shared_and_unshare`][1.2.0,F7] function.
 - The file browsing GUI is now case-insensitive to *.wid and *.wip file extensions even though the file system is case-sensitive.
-- [@wid/unpattern_video_stitching_helper.m][1.2.0,F8]: Fix error when no working solution can exist.
-- [@wid/spatial_average.m][1.2.0,F9]: Properly updates TDSpaceTransformations now.
-- [helper/fitting/fit_lineshape_arbitrary.m][1.2.0,F10]: Properly handles all-nan-valued case now.
-- [helper/fitting/fun_lineshape_voigtian.m][1.2.0,F11]: Validity meticulously checked and alternatives considered. Fix pure Gaussian issues.
-- Fix wip.ForceDataUnit usage issues and utilize its changes better.
+- [`@wid/unpattern_video_stitching_helper`][1.2.0,F8]: Fix error when no working solution can exist.
+- [`@wid/spatial_average`][1.2.0,F9]: Properly update `TDSpaceTransformations` now.
+- [`fit_lineshape_arbitrary`][1.2.0,F10]: Properly handle all-`NaN`-valued case now.
+- [`fun_lineshape_voigtian`][1.2.0,F11]: Double-check algorithm validity meticulously and consider alternatives. Fix pure Gaussian issues.
+- Fix `wip`-class `ForceDataUnit`-property usage issues and utilize its changes better.
 - Fix typos causing bugs.
 
 [1.2.0,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/wid_Data_get_Bitmap.m
@@ -137,11 +131,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.2.0,F11]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/fun_lineshape_voigtian.m
 
 ### Performance
-- [@wid/wid_SubType_get.m][1.2.0,P1]: Disable unused 'Volume'-feature due to major performance bottleneck.
-- [@wip/read_Version.m][1.2.0,P2]: Speedup using @wit/read.m's new skip_Data_criteria_for_obj-feature.
-- [helper/fitting/bw2lines.m][1.2.0,P3]: Reduce computation burden when using only the first output argument.
-- [helper/dim_size_consistent_repmat.m][1.2.0,P4]: Remove cellfun's and reduced use of cells to improve performance.
-- [helper/fitting/jacobian_helper.m][1.2.0,P5] and [helper/fitting/fit_lineshape_arbitrary.m][1.2.0,P6]: Add usePrevCstd to fix performance issue in loops with changing data dimensions.
+- [`@wid/wid_SubType_get`][1.2.0,P1]: Disable unused `'Volume'`-feature due to major performance bottleneck.
+- [`@wip/read_Version`][1.2.0,P2]: Speedup using `@wit/read`'s new `skip_Data_criteria_for_obj`-feature.
+- [`bw2lines`][1.2.0,P3]: Reduce computation burden when using only the first output argument.
+- [`dim_size_consistent_repmat`][1.2.0,P4]: Remove `cellfun`'s and reduced use of cells to improve performance.
+- [`jacobian_helper`][1.2.0,P5] and [`fit_lineshape_arbitrary`][1.2.0,P6]: Add `usePrevCstd` to fix performance issue in loops with changing data dimensions.
 
 [1.2.0,P1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/wid_SubType_get.m
 [1.2.0,P2]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/read_Version.m
@@ -155,16 +149,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.2] - 2019-08-08
 
 ### Added
-- New convenient [toolbox installer][1.1.2,A1] (for MATLAB R2014b or newer).
-- New [example case][1.1.2,A2] (and [related functionality][1.1.2,A3]) demonstrate Video Stitching image unpatterning. It is noteworthy that [its documentation][1.1.2,A4] describes dozens of extra customization options.
-- [helper/clever_statistics_and_outliers.m][1.1.2,A5]: Support to multiple dims input with an ability to negate the selection with negative values. Fix the known bug cases.
-- Allow [manager][1.1.2,A6]-calls for wid objects like previously for wip objects. This can be used to quickly glance through the wid objects and see their corresponding index value.
-- New [varargin dashed string parsers][1.1.2,A7] under the [helper][1.1.2,A8] folder.
-- [@wid/crop.m][1.1.2,A9]: Add isDataCropped-feature and validate inputs.
-- Add LIFO (first in = push, last out = pop) concept to wip-class to simplify all the state-related code.
-- New memory conservative way to generate indices via [helper/generic_sub2ind.m][1.1.2,A10], merging calls to ndgrid, sub2ind and cast. It can be customized with extra options: '-isarray', '-nobsxfun', '-truncate', '-replace', '-mirror', '-circulate'.
-- New [helper/rolling_window_analysis.m][1.1.2,A11]-function that is used by the Video Stitching image unpatterning code.
-- New [shell script][1.1.2,A12] to merge release to master.
+- Add convenient [toolbox installer][1.1.2,A1] (for MATLAB R2014b or newer).
+- Add [example case][1.1.2,A2] (and [related functionality][1.1.2,A3]) to demonstrate Video Stitching image unpatterning. It is noteworthy that [its documentation][1.1.2,A4] describes dozens of extra customization options.
+- [`clever_statistics_and_outliers`][1.1.2,A5]: (1) Add support to multiple dims input with an ability to negate the selection with negative values. (2) Fix the known bug cases.
+- Allow [`manager`][1.1.2,A6]-calls for `wid` objects like previously for `wip` objects. This can be used to quickly glance through the `wid` objects and see their corresponding index value.
+- Add new [varargin dashed string parsers][1.1.2,A7] under the [`helper`][1.1.2,A8] folder.
+- [`@wid/crop`][1.1.2,A9]: Add `isDataCropped`-feature and validate inputs.
+- `wip`-class: Add LIFO (first in = push, last out = pop) concept to simplify all the state-related code.
+- Add new memory conservative way to generate indices via [`generic_sub2ind`][1.1.2,A10], merging calls to `ndgrid`, `sub2ind` and `cast`. It can be customized with extra options: `'-isarray'`, `'-nobsxfun'`, `'-truncate'`, `'-replace'`, `'-mirror'`, `'-circulate'`.
+- Add new [`rolling_window_analysis`][1.1.2,A11] function that is used by the Video Stitching image unpatterning code.
+- Add new [shell script][1.1.2,A12] to merge release to master.
 
 [1.1.2,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/wit_io.mltbx
 [1.1.2,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/EXAMPLE%20cases/E_05_unpattern_video_stitching.m
@@ -180,18 +174,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.1.2,A12]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/git_release_to_master.sh
 
 ### Changed
-- Notation change for wid, wip and wit objects. For instance, C_wid, C_wip, C_wit and HtmlNames (or n) are now O_wid, O_wip, O_wit and O_wid_HtmlNames, respectively.
-- [helper/fitting/fit_lineshape_arbitrary.m][1.1.2,C1]: Verbose iteration progress by showing total and delta sum of squared residuals. This can be disabled by providing extra input '-silent'.
-- [S_rename_by_regexprep.m][1.1.2,C2]: Verbose progress in Command Window.
-- Remove last '\n' from TDText plot's clipboard string.
-- [README.md][1.1.2,C3]: Update Title and Background. Generalize Cite As. Remove typos. Change absolute links to relative links.
+- Change notation for `wid`, `wip` and `wit` objects. For instance, `C_wid`, `C_wip`, `C_wit` (and `HtmlNames` or `n`) are now `O_wid`, `O_wip`, `O_wit` (and `O_wid_HtmlNames`), respectively.
+- [`fit_lineshape_arbitrary`][1.1.2,C1]: Change to verbose iteration progress by showing total and delta sum of squared residuals. This can be disabled by providing extra input `'-silent'`.
+- [`S_rename_by_regexprep`][1.1.2,C2]: Change to verbose progress in `Command Window`.
+- Remove last `'\n'` from `TDText` plot's clipboard string.
+- [`README.md`][1.1.2,C3]: (1) Update Title and Background. (2) Generalize Cite As. (3) Remove typos. (4) Change absolute links to relative links.
 
 [1.1.2,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/fitting/fit_lineshape_arbitrary.m
 [1.1.2,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/SCRIPT%20cases/S_rename_by_regexprep.m
 [1.1.2,C3]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/README.md
 
 ### Fixed
-- [helper/fitting/fit_lineshape_arbitrary.m][1.1.2,F1]: Fix '-lowOnMemory' error.
+- [`fit_lineshape_arbitrary.m`][1.1.2,F1]: Fix `'-lowOnMemory'` error.
 - Fix typos causing bugs.
 
 [1.1.2,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/fitting/fit_lineshape_arbitrary.m
@@ -201,10 +195,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.1] - 2019-06-25
 
 ### Added
-- Example cases for [spectral stitching][1.1.1,A1] and [data cropping][1.1.1,A2].
-- Interactive scripts to [rename datas by regexprep][1.1.1,A3] and [normalize spectra][1.1.1,A4].
-- Notes on improving the arbitrary fitting algorithm in the future.
-- [load_or_addpath_permanently.m][1.1.1,A5]: Allow toolbox and its subfolders to be added non-permanently.
+- Add example cases for [spectral stitching][1.1.1,A1] and [data cropping][1.1.1,A2].
+- Add interactive scripts to [rename datas by regexprep][1.1.1,A3] and [normalize spectra][1.1.1,A4].
+- Add notes on improving the arbitrary lineshape fitting algorithm in the future.
+- [`load_or_addpath_permanently`][1.1.1,A5]: Allow toolbox and its subfolders to be added non-permanently.
 
 [1.1.1,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/EXAMPLE%20cases/E_04_stitch_spectra.m
 [1.1.1,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/EXAMPLE%20cases/E_02_C_crop_data.m
@@ -213,13 +207,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.1.1,A5]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/load_or_addpath_permanently.m
 
 ### Changed
-- More and simpler [example cases][1.1.1,C1].
-- Shorter [example][1.1.1,C1] and [script][1.1.1,C2] names for improved [Tab-key completion][1.1.1,C3] experience in MATLAB's Command Window.
-- Replace zip files with folders in the [icons][1.1.1,C4] folder for MATLAB File Exchange compatibility.
-- [@wid/get_HtmlName.m][1.1.1,C5]: Use small icons for wid objects in Workspace and larger for wid objets in Project Manager.
-- Rename all wid-class reduce-prefixed functions as crop for consistency with WITec software.
-- [@wid/crop.m][1.1.1,C6]: Accept variable number of inputs. Fix TDSpaceTransformation error.
-- Update [README.md][1.1.1,C7] links and citation.
+- Rewrite [example cases][1.1.1,C1] with simplicity in mind and split into more files.
+- Shorten [example][1.1.1,C1] and [script][1.1.1,C2] case names for improved [Tab-key completion][1.1.1,C3] experience in MATLAB's `Command Window`.
+- Replace *.zip files with folders in the [`icons`][1.1.1,C4] folder for MATLAB `File Exchange` compatibility.
+- [`@wid/get_HtmlName`][1.1.1,C5]: Use small icons for `wid` objects in `Workspace` and larger for `wid` objects in `Project Manager`.
+- Rename all `wid`-class `reduce`-prefixed functions as `crop`-prefixed for consistency with the WITec software.
+- [`@wid/crop`][1.1.1,C6]: Accept variable number of inputs. Fix `TDSpaceTransformation` error.
+- [`README.md`][1.1.1,C7]: Update links and citation.
 
 [1.1.1,C1]: https://gitlab.com/jtholmi/wit_io/-/tree/v1.1.1/EXAMPLE%20cases
 [1.1.1,C2]: https://gitlab.com/jtholmi/wit_io/-/tree/v1.1.1/SCRIPT%20cases
@@ -230,10 +224,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.1.1,C7]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/README.md
 
 ### Fixed
-- Fix 'ID of Data Object "..." is 0!'-issue at WITec software with  generated *.WID files by enforcing all IDs to int32, required by WITec software.
+- Fix `'ID of Data Object "..." is 0!'`-issue at the WITec software with generated *.wid files by enforcing all IDs to `int32`, required by the WITec software.
 - Fix the license texts.
-- [helper/get_unique_names.m][1.1.1,F1]: Fix cell array size issues.
-- [git_develop_to_release.sh][1.1.1,F2]: Add git mergetool to resolve conflicts before proceeding.
+- [`get_unique_names`][1.1.1,F1]: Fix cell array size issues.
+- [`git_develop_to_release.sh`][1.1.1,F2]: Add `git mergetool` to resolve conflicts before proceeding with merging.
 
 [1.1.1,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/helper/get_unique_names.m
 [1.1.1,F2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.1/git_develop_to_release.sh
@@ -243,20 +237,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] - 2019-04-17
 
 ### Added
-- New [spectral stitching -feature][1.1.0,A1] for the TDGraph wid objects.
-- Support to MATLAB R2011a version.
-- Support to STT==2 (polynomial transformation) case in TDSpectralTransformation.
-- New test files for the 'ID of Data Object "..." is 0!'-issue.
+- Add [spectral stitching -feature][1.1.0,A1] for the `TDGraph` `wid` objects.
+- Add support to MATLAB R2011a version.
+- Implement polynomial transformation case of `TDSpectralTransformation`.
+- Add test files for the `'ID of Data Object "..." is 0!'`-issue.
 - Add [git bash script][1.1.0,A2] for semi-automated merging.
-- New 'DEVELOP'-folder to 'develop'-branch for any experimental code.
+- Add `'DEVELOP'`-folder to `'develop'`-branch for any experimental code.
 
 [1.1.0,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.0/@wid/spectral_stitch.m
 [1.1.0,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.0/git_develop_to_release.sh
 
 ### Changed
 - Improve the icon PDF compatibility by removing the SVG filter effects.
-- Improve initial values of [newly created TDSpaceTransformations][1.1.0,C1].
-- Exclude all .git folders in the [addpath][1.1.0,C2]- and [rmpath][1.1.0,C3]-functions.
+- Improve initial values of [newly created `TDSpaceTransformations`][1.1.0,C1].
+- [`load_or_addpath_permanently`][1.1.0,C2] and [`unload_or_rmpath_permanently`][1.1.0,C3]: Exclude all .git folders.
 
 [1.1.0,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.0/@wid/new_Transformation_Space.m
 [1.1.0,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.0/load_or_addpath_permanently.m
@@ -264,13 +258,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - Remove dependencies on MATLAB R2014a version.
-- Remove dependencies on Statistics and Machine Learning Toolbox.
+- Remove dependencies on `Statistics and Machine Learning Toolbox`.
 
 ### Fixed
 - Improve support to network drive working.
-- Fix wit-class file reading errors in older MATLAB versions.
-- Fix TDText plot's 'copy selection to clipboard'-feature.
-- Fix usage of get_Root_Version in wid-class.
+- Fix `wit`-class file reading errors in older MATLAB versions.
+- Fix `TDText` plot's 'copy selection to clipboard'-feature.
+- Fix usage of `get_Root_Version` in `wid`-class.
 - Improve documentations of some example cases, the arbitrary fitting algorithm and the formatting readme.
 
 
