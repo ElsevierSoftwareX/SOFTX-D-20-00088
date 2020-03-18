@@ -68,7 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - For MATLAB R2019b or newer, replace Java-based GUI with HTML5-based GUI, fixing `JAVACOMPONENT` warnings. For example, [`Project Manager`][1.2.0,C1] now uses [HTML5-based JList-like code][1.2.0,C2] to create its window.
-- Allow special the multiple-dashed strings for [varargin dashed string parsers][1.2.0,C3] under [helper][1.2.0,C4]-folder. Updated all example cases, where extra arguments were passed to `'-manager'` via [@wip/read][1.2.0,C5].
+- [helper][1.2.0,C3]-folder: Allow special the multiple-dashed strings for [varargin dashed string parsers][1.2.0,C4]. Updated all example cases, where extra arguments were passed to `'-manager'` via [@wip/read][1.2.0,C5].
 - Example cases now describe [`BSD license`][1.2.0,C6] in dialog with checkbox to not show again.
 - [`wid`][1.2.0,C7]-class: Rename `Links`-property to `LinksToOthers` and add `LinksToThis`-property. Rename related `copy_Links` to [`copy_LinksToOthers`][1.2.0,C8] (and add copying of `IDLists`).
 - `wit`-class: Make basic functionality Octave-compatible.
@@ -81,8 +81,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [1.2.0,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/manager.m
 [1.2.0,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/icons/uihtml_JList.html
-[1.2.0,C3]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/varargin_dashed_str.m
-[1.2.0,C4]: https://gitlab.com/jtholmi/wit_io/-/tree/develop/helper
+[1.2.0,C3]: https://gitlab.com/jtholmi/wit_io/-/tree/develop/helper
+[1.2.0,C4]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/varargin_dashed_str.m
 [1.2.0,C5]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/read.m
 [1.2.0,C6]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/LICENSE
 [1.2.0,C7]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/wid.m
@@ -155,11 +155,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.2] - 2019-08-08
 
 ### Added
-- Add convenient [toolbox installer][1.1.2,A1] (for MATLAB R2014b or newer).
-- Add [example case][1.1.2,A2] (and [related functionality][1.1.2,A3]) to demonstrate Video Stitching image unpatterning. It is noteworthy that [its documentation][1.1.2,A4] describes dozens of extra customization options.
+- for MATLAB R2014b or newer, add convenient [toolbox installer][1.1.2,A1].
+- Add [example case][1.1.2,A2] and [related functionality][1.1.2,A3] to demonstrate Video Stitching image unpatterning. It is noteworthy that [its documentation][1.1.2,A4] describes dozens of extra customization options.
 - [`clever_statistics_and_outliers`][1.1.2,A5]: Add support to multiple dims input with an ability to negate the selection with negative values.
-- Allow [`manager`][1.1.2,A6]-calls for `wid` objects like previously for `wip` objects. This can be used to quickly glance through the `wid` objects and see their corresponding index value.
-- Add [varargin dashed string parsers][1.1.2,A7] under [helper][1.1.2,A8]-folder.
+- `wid`-class: Add feature to open [`Project Manager`][1.1.2,A6] for the `wid` objects like previously for the `wip` object. This can be used to quickly glance through the selected `wid` objects and see their corresponding index value.
+- [helper][1.1.2,A7]-folder: Add [varargin dashed string parsers][1.1.2,A8].
 - [`@wid/crop`][1.1.2,A9]: Add `isDataCropped`-feature and validate inputs.
 - `wip`-class: Add LIFO (first in = push, last out = pop) concept to simplify all the state-related code.
 - Add feature to generate indices via [`generic_sub2ind`][1.1.2,A10], merging calls to `ndgrid`, `sub2ind` and `cast` and being memory conservative. It can be customized with extra options: `'-isarray'`, `'-nobsxfun'`, `'-truncate'`, `'-replace'`, `'-mirror'`, `'-circulate'`.
@@ -172,8 +172,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.1.2,A4]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/@wid/unpattern_video_stitching_helper.m
 [1.1.2,A5]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/clever_statistics_and_outliers.m
 [1.1.2,A6]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/@wid/manager.m
-[1.1.2,A7]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/varargin_dashed_str.m
-[1.1.2,A8]: https://gitlab.com/jtholmi/wit_io/-/tree/v1.1.2/helper
+[1.1.2,A7]: https://gitlab.com/jtholmi/wit_io/-/tree/v1.1.2/helper
+[1.1.2,A8]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/varargin_dashed_str.m
 [1.1.2,A9]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/@wid/crop.m
 [1.1.2,A10]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/generic_sub2ind.m
 [1.1.2,A11]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/rolling_window_analysis.m
@@ -217,9 +217,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Rewrite [example cases][1.1.1,C1] with simplicity in mind and split into more files.
 - Shorten [example][1.1.1,C1] and [script][1.1.1,C2] case names for improved [Tab-key completion][1.1.1,C3] experience in MATLAB's `Command Window`.
-- Replace **\*.zip** files under [`icons`][1.1.1,C4]-folder with folders for MATLAB [`File Exchange`][1.1.1,C5] compatibility.
+- [`icons`][1.1.1,C4]-folder: Replace **\*.zip** files with folders for MATLAB [`File Exchange`][1.1.1,C5] compatibility.
 - [`@wid/get_HtmlName`][1.1.1,C6]: Use small icons for `wid` objects in `Workspace` and larger for `wid` objects in `Project Manager`.
-- Rename all `wid`-class `reduce`-prefixed functions as `crop`-prefixed for consistency with the WITec software.
+- `wid`-class: Rename all `reduce`-prefixed functions as `crop`-prefixed for consistency with the WITec software.
 - [`@wid/crop`][1.1.1,C7]: Accept variable number of inputs.
 
 [1.1.1,C1]: https://gitlab.com/jtholmi/wit_io/-/tree/v1.1.1/EXAMPLE%20cases
