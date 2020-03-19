@@ -40,21 +40,29 @@ function [obj, Data_cropped, Graph_cropped] = crop_Graph(obj, ind_range, Data_cr
     if AutoModifyObj,
         % Update the object
         obj.Data = Data_cropped; % Updating this affects Info.Graph calculus. Correct order is to do this last.
-        GT = Info.GraphTransformation; % Get the graph transformation object
-        if ~isempty(GT) && ~isempty(ind_range), % Continue only if there is transformation and not out of range
-            GT_Data = GT.Data; % And its data
-            switch(GT.Type), % Adjust the pixel offset accordingly
+        
+        % Get Transformations
+        TGraph = Info.GraphTransformation;
+        
+        % Copy Transformations if shared and unshare
+        TGraph = obj.copy_Others_if_shared_and_unshare(TGraph);
+        
+        % Graph
+        if ~isempty(TGraph) && ~isempty(ind_range), % Continue only if there is transformation and not out of range
+            TGraph_Data = TGraph.Data; % And its data
+            switch(TGraph.Type), % Adjust the pixel offset accordingly
                 case 'TDLinearTransformation',
-                    GT.Data.TDLinearTransformation.ModelOrigin_D = GT_Data.TDLinearTransformation.ModelOrigin_D - (ind_range(1) - 1);
-                    GT.Data.TDLinearTransformation.ModelOrigin = GT_Data.TDLinearTransformation.ModelOrigin - (ind_range(1) - 1);
+                    TGraph_Data.TDLinearTransformation.ModelOrigin_D = TGraph_Data.TDLinearTransformation.ModelOrigin_D - (ind_range(1) - 1);
+                    TGraph_Data.TDLinearTransformation.ModelOrigin = TGraph_Data.TDLinearTransformation.ModelOrigin - (ind_range(1) - 1);
                 case 'TDLUTTransformation',
-                    GT.Data.TDLUTTransformation.LUT = GT_Data.TDLUTTransformation.LUT(ind_range(1):ind_range(2));
-                    GT.Data.TDLUTTransformation.LUTSize = ind_range(2)-ind_range(1)+1;
+                    TGraph_Data.TDLUTTransformation.LUT = TGraph_Data.TDLUTTransformation.LUT(ind_range(1):ind_range(2));
+                    TGraph_Data.TDLUTTransformation.LUTSize = ind_range(2)-ind_range(1)+1;
                 case 'TDSpaceTransformation',
                     error('TDSpaceTransformation cannot be GraphTransformation!');
                 case 'TDSpectralTransformation',
-                    GT.Data.TDSpectralTransformation.nC = GT_Data.TDSpectralTransformation.nC - (ind_range(1) - 1);
+                    TGraph_Data.TDSpectralTransformation.nC = TGraph_Data.TDSpectralTransformation.nC - (ind_range(1) - 1);
             end
+            TGraph.Data = TGraph_Data; % Write all changes at once
         end
     end
 end

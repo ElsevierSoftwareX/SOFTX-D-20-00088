@@ -36,8 +36,6 @@
 % ERRORS:
 % (1) N_SI_XY must be a vector of length 2!
 % (2) Number of Stitching Images X and Y must both be >= 3!
-    
-% REQUIREMENTS: Image Processing Toolbox (due to usage of 'stdfilt')
 
 % INPUTS:
 % (1) I: Preferably the WITec software's Video Stitching image.
@@ -60,6 +58,7 @@
 % '-BestContinuity': Used for visually strongly varying images in order to
 % preserve the pattern-to-pattern continuity. However, this may not work if
 % the reference region is filled with outliers.
+% '-Outliers': Boolean map to mark outliers in the image.
 % '-RestoreTooBright': Does not modify too bright (=max intensity) regions.
 % '-TrueBlackColor': Provide [R G B] if the camera has a known dark level.
 % '-MinSigmasThreshold' (= 2 by default): Try from 2 to 4. The smaller the
@@ -75,8 +74,9 @@
 % '-DisableAutoIgnoreChannels': Disables automatic color channel analysis,
 % whether they are mostly (>50%) black (= zero) or not.
 % '-IgnoreChannels': Ignores the specified color channels.
-% '-LocalWindowSize' (= 17 by default): Used by 'stdfilt' during the local
-% variance minimization procedure. The number should be an odd integer.
+% '-LocalWindowSize' (= 17 by default): Used to window-filtering of std
+% during the local variance minimization procedure. The number should be an
+% odd integer.
 % '-OverlapRatio' (= 0.05 by default): Overlap ratio for the stitching.
 % '-LowResMaxPixels' (= 1024^2 by default): Low resolution image max size.
 % '-HighResMaxPixels' (= 64e6 by default): High resolution image max size.
@@ -134,6 +134,11 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
 %     EdgePatterns = ~varargin_dashed_str_exists('DisableEdgePatterns', varargin); % By default, enable edge patterns
 % '-DisableEdgePatterns': Disables the edge pattern calculations. Can be
 % provided with [left, right, top, bottom] input for customization.
+
+    % Check if Outliers was specified
+    datas = varargin_dashed_str_datas('Outliers', varargin, -1);
+    B_Outliers = false(W, H);
+    if numel(datas) > 0, B_Outliers = datas{1}; end
 
     % Check if MinSigmasThreshold was specified
     datas = varargin_dashed_str_datas('MinSigmasThreshold', varargin, -1);
@@ -224,6 +229,15 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     end
     N_test = N_test(:); % Force to column vector
     
+    % Abort if no working solution can exist
+    if isempty(N_test),
+        warning('No working solution can exist!');
+        I_best = I;
+        N_best = NaN;
+        cropIndices = [];
+        return;
+    end
+    
     % Calculate the overlap, the stitch, and the no-stitch sizes
     N_overlap = round(N_test.*N_SI_XY_CF); % Rounded to nearest integer
     N_stitch = N_test + N_overlap;
@@ -301,7 +315,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     B_test(ind1_test, ind2_test, :) = true;
     
     % Preallocations
-    local_var_kernel = ones(LocalWindowSize);
+%     local_var_kernel = ones(LocalWindowSize);
     local_var_test = zeros(size(N_test));
     
     % Store only the best
@@ -333,9 +347,9 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     
     fprintf('Testing all side lengths between %d and %d.\n', N_lower, N_upper);
     
-    B_invalid = test_pattern(1, I, B_too_bright); % Store invalid to reduce cpu demand of clever_outliers_and_statistics-calls
+    B_invalid = test_pattern(1, I, B_Outliers | B_too_bright); % Store invalid to reduce cpu demand of clever_outliers_and_statistics-calls
     if numel(N_test) > 1,
-        B_invalid_last = test_pattern(numel(N_test), I, B_too_bright); % Store invalid to reduce cpu demand of clever_outliers_and_statistics-calls
+        B_invalid_last = test_pattern(numel(N_test), I, B_Outliers | B_too_bright); % Store invalid to reduce cpu demand of clever_outliers_and_statistics-calls
         B_invalid = B_invalid & B_invalid_last; % AND-operation to reduce cpu demand of clever_outliers_and_statistics-calls
         for ii = 2:numel(N_test)-1,
             test_pattern(ii, I, B_invalid);
@@ -617,7 +631,8 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         I_test = I_test(ind1_test,ind2_test,:); % Keep the test area
         
         % Evaluate local variance in the test area
-        local_var_test(ii) = mynansum(reshape(stdfilt(I_test, local_var_kernel).^2, [], 1)); % Minimize this
+        local_var_test(ii) = mynansum(reshape(mynanstdfilt2(I_test, LocalWindowSize).^2, [], 1)); % Minimize this
+%         local_var_test(ii) = mynansum(reshape(stdfilt(I_test, local_var_kernel).^2, [], 1)); % Minimize this
         
         fprintf(' -> Local variance of %g', local_var_test(ii));
         

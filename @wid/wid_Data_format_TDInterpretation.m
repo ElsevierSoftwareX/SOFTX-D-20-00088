@@ -4,12 +4,12 @@
 
 function format = wid_Data_format_TDInterpretation(obj),
     % Each row: wit-tag name, {write-parser; read-parser}
-    subformat_TDInterpretation_v5 = ... % Excluding the Version-tag
+    subformat_TDInterpretation = ... % Excluding the Version-tag
         { ...
         'Version' {false; @int32; @int32}; ...
         'UnitIndex' {true; @int32; @int32} ...
         };
     
     % Each row: wit-tag name, {subformat}
-    format = {'TDInterpretation' subformat_TDInterpretation_v5};
+    format = {'TDInterpretation' subformat_TDInterpretation};
 end

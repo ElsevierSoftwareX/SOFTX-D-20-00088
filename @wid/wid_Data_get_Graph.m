@@ -24,21 +24,7 @@ function out = wid_Data_get_Graph(obj),
         if obj.Project.popUseLineValid, % Get the latest value (may be temporary or permanent or default)
             out = obj.wid_get_LineValid(out);
         end
-    elseif Version == 6, % WITec Project 4.x
-        TDGraph = obj.Tag.Data.regexp('^TDGraph<', true);
-        Data = TDGraph.regexp('^Data<GraphData<', true);
-        if isempty(Data.Data), Data.reload(); end
-        in = Data.Data;
-
-        SizeX = TDGraph.regexp('^SizeX<', true).Data;
-        SizeY = TDGraph.regexp('^SizeY<', true).Data;
-        SizeGraph = TDGraph.regexp('^SizeGraph<', true).Data;
-        % Reshape to user format
-        out = permute(reshape(obj.wid_get_DataType(in), [SizeGraph SizeY SizeX]), [3 2 1]);
-        if obj.Project.popUseLineValid, % Get the latest value (may be temporary or permanent or default)
-            out = obj.wid_get_LineValid(out);
-        end
-    elseif Version == 5, % WITec Project 2.x
+    elseif Version >= 0 && Version <= 5 || Version == 6, % Legacy versions OR WITec Project 4.x
         TDGraph = obj.Tag.Data.regexp('^TDGraph<', true);
         Data = TDGraph.regexp('^Data<GraphData<', true);
         if isempty(Data.Data), Data.reload(); end

@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Used by helper\nanmedian_without_toolbox.m
+% Used by nanmedian_without_toolbox.m
 function Y = quantile_without_toolbox(X, p, dim),
     % Mimics built-in quantile, which requires Statistics and Machine
     % Learning Toolbox. Input values are converted to double-type.

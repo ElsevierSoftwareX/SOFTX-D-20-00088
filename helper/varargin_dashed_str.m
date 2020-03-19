@@ -2,14 +2,17 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Helper function to parse and locate the given dashed string (and its
-% datas) in the given cell array input.
+% Helper function to parse and locate the given single-dashed string (and
+% its datas) in the given cell array input. Any multiple-dashed string is
+% treated as data (for now) and its first dash is removed. This feature can
+% be used to pass such strings to the nested functions, where they may be
+% detected as single-dashed strings.
 
 % INPUTS:
 % (1) str_wo_dash: A char array for case-insensitive string-to-string
-% comparison. The first '-'-character is assumed to be missing and is
-% always added to it prior the search.
-%   IF EMPTY: It matches any dashed string!
+% comparison. The first '-'-character is assumed to be excluded and is
+% always added to it prior the search. It must begin with a non-dash char.
+%   IF EMPTY: It matches any single-dashed string!
 % (2) in: A cell array of some function inputs for parsing. For instance,
 % a variable-length input argument list, varargin.
 % (3) N = inf (by default): A numeric scalar that limits the number of
@@ -28,6 +31,7 @@ function [B_dashed, ind_dashed_begin, ind_dashed_end] = varargin_dashed_str(str_
     
     % Test input or error
     if ~ischar(str_wo_dash), error('Input ''str_wo_dash'' must be a char array!'); end
+    if strncmp(str_wo_dash, '-', 1), error('Input ''str_wo_dash'' must not begin with a dash!'); end
     if ~iscell(in), error('Input ''in'' must be a cell array!'); end
     if ~isnumeric(N) || numel(N) > 1, error('Input ''N'' must be a numeric scalar!'); end
     
@@ -36,8 +40,9 @@ function [B_dashed, ind_dashed_begin, ind_dashed_end] = varargin_dashed_str(str_
     in = reshape(in, 1, []); % Force row vector
     N = double(N); % Force double
     
-    % First find all dashed strings, their beginnings and endings
+    % First find all single-dashed strings, their beginnings and endings
     B_dashed = strncmp(in, '-', 1);
+    B_dashed(B_dashed) = ~strncmp(in(B_dashed), '--', 2); % Treat those containing two or more subsequent dashes as datas
     ind_dashed_begin = find(B_dashed);
     ind_dashed_end = [ind_dashed_begin(2:end)-1 numel(in)];
     
@@ -52,7 +57,7 @@ function [B_dashed, ind_dashed_begin, ind_dashed_end] = varargin_dashed_str(str_
         B_dashed(B_dashed) = B_valid;
     end
     
-    % SPECIAL CASE: Interpred negative N as reversing the order
+    % SPECIAL CASE: Interpret negative N as reversing the order
     if N < 0, % Reverse the order making first last and last first
         ind_dashed_begin = flip(ind_dashed_begin);
         ind_dashed_end = flip(ind_dashed_end);

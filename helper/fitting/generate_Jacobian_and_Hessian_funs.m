@@ -27,6 +27,9 @@
 % OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+% This can be used to validate the analytical solutions of the lineshape's
+% Jacobian and Hessian matrices (if they exist). Although this requires
+% Symbolic Math Toolbox, it is not programmatically used by wit_io.
 function [fun_Jf, fun_Hf, exception] = generate_Jacobian_and_Hessian_funs(fun_f, N_constants, N_steps),
     % Generates Jacobian and Hessian (if possible).
     % If not possible, return empty Jf and Hf, and generate exception.

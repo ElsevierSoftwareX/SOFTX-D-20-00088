@@ -27,7 +27,7 @@
 % OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-function [J, H] = jacobian_helper(tol_abs, tol_rel, F, Y, varargin),
+function [J, H] = jacobian_helper(tol_abs, tol_rel, F, Y, usePrevCstd, varargin),
     % Evaluate numerical sparse Jacobian matrix, J for 2-D matrix function
     % F(Y, varargin{:}), where size(Y) = [# of variables, # of samples] and
     % size(F) = [# of dimensions, # of samples]. Also, Hessian matrix, H is
@@ -37,7 +37,6 @@ function [J, H] = jacobian_helper(tol_abs, tol_rel, F, Y, varargin),
     % size(H) = [numel(F), size(Y, 1).^2] due to independency of samples.
     % NOTE: If the first evaluation, then automatically tries to
     % precalculate in order to speed-up the consequent iterations.
-    % Implemented 14.8.2018 by Joonas T. Holmi
     
     % The numerical J and H have been compared to and verified with
     % MATLAB-GENERATED ANALYTICAL SOLUTIONS using helper function
@@ -79,9 +78,11 @@ function [J, H] = jacobian_helper(tol_abs, tol_rel, F, Y, varargin),
 %         K1 = kron(speye(S(1)), ones(1, S(2)));
 %         K2 = kron(speye(S(1)), ones(1, S(1).*S(2)));
 
-        [~, ~, cvar] = clever_statistics_and_outliers(Y, [], 4);
-        if isnan(cvar), cvar = 0; end
-        cstd = sqrt(cvar);
+        if isempty(cstd) || ~usePrevCstd,
+            [~, ~, cvar] = clever_statistics_and_outliers(Y, [], 4); % May become extremely costly in loops
+            if isnan(cvar), cvar = 0; end
+            cstd = sqrt(cvar);
+        end
     end
     
     % Repmat-version (memory intensive!)

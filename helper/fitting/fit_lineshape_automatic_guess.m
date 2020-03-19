@@ -2,6 +2,13 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
+% KEY ASSUMPTIONS FOR EACH SPECIFIED DATASET:
+% (1) There is only one lineshape.
+% (2) The lineshape tails disappear to the background noise.
+% (3) The background slope has been removed.
+% (4) The dark count offset may be present.
+% (5) There are no random cosmic ray peaks or other anomalous data points.
+
 % Returns a 2-D matrix P0, where P0(1,:), P0(2,:), P0(3,:) and P0(4,:)
 % represent rough estimates of I (= Intensity), Pos (= Position), Fwhm
 % (= Full width at half maximum) and I0 (= Offset), respectively. Resulting
@@ -17,77 +24,80 @@
 % the user. If it does not, then it should take function as input fun.
 % The peaks are then guessed gradually based on the lineshape. (25.6.2019)
 function P0 = fit_lineshape_automatic_guess(x, Y, dim),
-    % Written by Joonas T. Holmi
     if nargin < 3, dim = 3; end % By default, operate 3rd or spectral dimension
     
     %% INITIAL GUESS
     [Y, perm] = dim_first_permute(Y, dim); % Permute dim to first
-    S = size(Y); % Dimensions of permuted matrix Y
-    Y = Y(:,:); % Operate on first dimension
-
+    S_orig = size(Y); % Dimensions of permuted matrix Y
+    
+    Y = Y(:,:); % Operate on the 1st dimension and merge the rest
+    x = x(:); % Force column vector
+    
     % Convert to double
     Y = double(Y);
     x = double(x);
-
-    SD = prod(S(2:end)); % Number of datasets
-    x = x(:); % Force column vector
-
-    X = repmat(x, [1 SD]);
-
-    %% GUESS INITIAL PARAMETERS
-    % Robust way (less sensitive to noise)
-    [Y_sort_ascend, ~] = sort(Y, 1, 'ascend'); % Sort once
-    N_samples = 2; % How many samples to estimate min and max
-    if S(1) < N_samples, N_samples = S(1); end % Reduce sample # if needed
-    [idx_Y_sort_ascend_max, ~] = bw2lines(~isnan(Y_sort_ascend)'); % Handle NaNs
-    idx_Y_sort_ascend_max = idx_Y_sort_ascend_max(:,1);
-    Y_max = median(Y_sort_ascend(1+idx_Y_sort_ascend_max-N_samples:idx_Y_sort_ascend_max,:), 1);
-    Y_min = median(Y_sort_ascend(1:N_samples,:), 1);
-    clear Y_sort_ascend;
-
-    [X_min, ~] = min(X, [], 1);
-    [X_max, ~] = max(X, [], 1);
-
-    % Determine FWHM
-    bw_peak = bsxfun(@ge, Y, 0.5.*(Y_max-Y_min))'; % Transpose needed
-
-    % First: FIND and FILL-IN short-length antilines (or holes)
-    % Determine bw lengths per spectrum or 2nd dimension
-    [antiline_length, ~] = bw2lines(~bw_peak); % Convert bw to lines
-    bw_peak(antiline_length >= 1 & antiline_length <= 2) = true; % Fill in (reduce effect of noise)
-
-    % Second: FIND and KEEP best-length lines
-    % Determine bw lengths per spectrum or 2nd dimension
-    [line_length, ~] = bw2lines(bw_peak); % Convert bw to lines
-    clear bw_peak;
-    best_line_length = max(line_length', [], 1); % Best lengths per spectrum
-    bw_best_peak = bsxfun(@eq, line_length', best_line_length); % Highlight best
-    bw_best_peak = line_length' >= 2 & bw_best_peak; % Require minimum of 3
-
-    % Third: ESTIMATE FWHM 
-    cumsum_bw = cumsum(bw_best_peak, 1);
-    cumsum_bw(~bw_best_peak) = NaN;
-    [~, idx_min] = min(cumsum_bw, [], 1);
-    [~, idx_max] = max(cumsum_bw, [], 1);
-    bw_FWHM = any(bw_best_peak, 1); % Pixels to be changed
-
-    Fwhm = (X_max-X_min)./10; % FWHM
-    Fwhm(bw_FWHM) = x(idx_max(bw_FWHM))-x(idx_min(bw_FWHM));  % Better estimate for those with FWHM
-
-    % Determine Center
-    Pos = x(idx_Y_sort_ascend_max)'; % Center
-    Pos(bw_FWHM) = (x(idx_max(bw_FWHM))+x(idx_min(bw_FWHM)))./2; % Center of mass in middle of FWHM
-
-    % Determine Amplitude
-    I = Y_max-Y_min; % Amplitude
-    I(bw_FWHM) = (Y_max(bw_FWHM)-Y_min(bw_FWHM)).*(1+1./(2.*(X_min(bw_FWHM)-Pos(bw_FWHM))./Fwhm(bw_FWHM)).^2); % Ensure that function amplitude fits well
-
-    % Determine Offset
-    I0 = Y_min; % Offset
-    I0(bw_FWHM) = Y_max(bw_FWHM) - I(bw_FWHM); % Ensure that at graph boundaries function fits well
-
-    P0 = cat(1, I, Pos, Fwhm, I0);
     
-%     P0 = reshape(P0, [SP S(2:end)]);
+    % Discard all-NaN datasets (to be restored later in the end)
+    B_allnan = all(isnan(Y), 1);
+    Y = Y(:,~B_allnan);
+    S = size(Y);
+
+    %% ESTIMATE INITIAL PARAMETERS
+    % Estimate lineshape dark count offset
+    I0 = min(Y, [], 1); % Noise sensitive parameter
+    
+    % Remove the dark count offset
+    Y = bsxfun(@minus, Y, I0);
+    
+    % Estimate lineshape intensity
+    I = max(Y, [], 1); % Noise sensitive parameter
+    
+    % Estimate lineshape integrated intensity
+    A = mtrapz(x, Y, 1); % Robust parameter
+    
+    % Estimate lineshape position using center of mass
+    Pos = mtrapz(x, bsxfun(@times, x, Y), 1) ./ A; % Robust parameter
+    
+    % IDEA: Consider iterating cosmic rays away using antilines until none
+    % is found anymore (17.12.2019)
+    
+    % Consider using the fact that for a Lorentzian function A_Fwhm = I.*Fwhm.*atan(2);
+    
+    % Find all possible peak regions using the Fwhm definition
+    B_peaks = bsxfun(@ge, Y, 0.5.*I).'; % Transpose needed
+    
+    % First: FIND and FILL-IN short-length antilines (or holes)
+    % Determine B lengths per spectrum or 2nd dimension
+    antiline_length = bw2lines(~B_peaks); % Convert B to lines
+    B_peaks(antiline_length >= 1 & antiline_length <= 2) = true; % Fill in (reduce effect of noise)
+    
+    % Second: FIND and KEEP best-length lines
+    % Determine B lengths per spectrum or 2nd dimension
+    line_length = bw2lines(B_peaks); % Convert B to lines
+    line_length = line_length.'; % Transpose only once
+    best_line_length = max(line_length, [], 1); % Best lengths per spectrum
+    B_widest_peak = bsxfun(@eq, line_length, best_line_length); % Highlight best
+    B_widest_peak = line_length >= 3 & B_widest_peak; % Require minimum of 3
+    
+    % Third: FIND Fwhm indices
+    cumsum_B = cumsum(B_widest_peak, 1);
+    cumsum_B(~B_widest_peak) = NaN;
+    [~, idx_min] = min(cumsum_B, [], 1);
+    [~, idx_max] = max(cumsum_B, [], 1);
+    B_peak_found = any(B_widest_peak, 1); % Pixels to be changed
+    
+    % Estimate lineshape full width at half maximum (= 2./pi.*A./I; for a Lorentzian function)
+%     Fwhm2 = 2./pi.*A./I; % True for a common Lorentzian function
+    Fwhm = ones(1, S(2)); % If no peak found: try a midpoint Fwhm of range 0-2
+    Fwhm(B_peak_found) = x(idx_max(B_peak_found))-x(idx_min(B_peak_found));  % Better estimate for those with Fwhm
+
+    % Combine estimates (and handle all nan datasets)
+    P0 = nan(4, prod(S_orig(2:end)));
+    P0(1,~B_allnan) = I;
+    P0(2,~B_allnan) = Pos;
+    P0(3,~B_allnan) = Fwhm;
+    P0(4,~B_allnan) = I0;
+    
+%     P0 = reshape(P0, S_orig);
 %     P0 = ipermute(P0, perm);
 end

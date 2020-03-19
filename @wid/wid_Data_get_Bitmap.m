@@ -5,7 +5,7 @@
 function out = wid_Data_get_Bitmap(obj),
     Version = [obj.Version];
      % 'README on WIT-tag formatting.txt'
-    if isempty(Version) || Version == 7, % WITec Suite FIVE 5.x
+    if isempty(Version) || Version == 7 || Version == 6, % WITec Suite FIVE 5.x OR WITec Project 4.x
         TDBitmap = obj.Tag.Data.regexp('^TDBitmap<', true);
         Data = TDBitmap.regexp('^Data<BitmapData<', true);
         if isempty(Data.Data), Data.reload(); end
@@ -18,29 +18,16 @@ function out = wid_Data_get_Bitmap(obj),
         out = reshape(out, 4, SizeX, SizeY); % Reshape back to a matrix
         out = permute(out, [2 3 1]); % Permute the matrix so that the color channels go to the end
         out = out(:,:,1:3); % Ignore the 4th channel (= alpha)
-    elseif Version == 6, % WITec Project 4.x
-        TDBitmap = obj.Tag.Data.regexp('^TDBitmap<', true);
-        Data = TDBitmap.regexp('^Data<BitmapData<', true);
-        if isempty(Data.Data), Data.reload(); end
-        in = Data.Data;
-
-        SizeX = TDBitmap.regexp('^SizeX<', true).Data;
-        SizeY = TDBitmap.regexp('^SizeY<', true).Data;
-        % Reshape to user format
-        out = typecast(obj.wid_get_DataType(in), 'uint8'); % From int32 to uint8
-        out = reshape(out, 4, SizeX, SizeY); % Reshape back to a matrix
-        out = permute(out, [2 3 1]); % Permute the matrix so that the color channels go to the end
-        out = out(:,:,1:3); % Ignore the 4th channel (= alpha)
-    elseif Version == 5, % WITec Project 2.x
+    elseif Version >= 0 && Version <= 5, % Legacy versions
         Data = obj.Tag.Data.regexp('^StreamData<TDStream<', true);
         if isempty(Data.Data), Data.reload(); end
         in = Data.Data;
-
+        
         % Test if this is correctly formatted bitmap
         if ~strcmp(reshape(char(in(1:2)), 1, []), 'BM'),
             error('Unsupported TDBitmap format detected!');
         end
-
+        
 %             BmpFileSize = typecast(uint8(in(3:6)), 'uint32'); % The size of the BMP file in bytes
 %             Reserved1 = typecast(uint8(in(7:8)), 'uint16'); % Reserved; actual value depends on the application that creates the image
 %             Reserved2 = typecast(uint8(in(9:10)), 'uint16'); % Reserved; actual value depends on the application that creates the image
@@ -56,10 +43,15 @@ function out = wid_Data_get_Bitmap(obj),
 %             ResolutionY = typecast(uint8(in(43:46)), 'int32'); % The vertical resolution of the image. (pixel per meter, signed integer)
 %             NColorsInPalette = typecast(uint8(in(47:50)), 'uint32'); % The number of colors in the color palette, or 0 to default to 2n
 %             NImportantColors = typecast(uint8(in(51:54)), 'uint32'); % The number of important colors used, or 0 when every color is important; generally ignored
-
+        
+        % Process the image for reading
+        SizeX = double(SizeX);
+        SizeY = double(SizeY);
+        BytesPerPixel = double(BitsPerPixel)./8;
         out = in(Offset+1:Offset+BitmapSize); % Actual data (Suboptimal for low memory systems)
-
-        out = permute(reshape(uint8(out), [int32(BitsPerPixel/8) SizeX SizeY]), [2 3 1]); % Reshape to easier format % int32 added for backward compability! Avoids 'Warning: Concatenation with dominant (left-most) integer class may overflow other operands on conversion to return class.'
+        out = reshape(uint8(out), [], SizeY); % Reshape to easier format
+        out = out(1:BytesPerPixel.*SizeX,:); % Remove padding to nearest 4-byte boundary
+        out = permute(reshape(out, [BytesPerPixel SizeX SizeY]), [2 3 1]); % Reshape and permute to easier format
         out = out(:,end:-1:1,end:-1:1); % Restructure data (to be shown correctly)
     else, error('Unimplemented Version (%d)!', Version); end
 end

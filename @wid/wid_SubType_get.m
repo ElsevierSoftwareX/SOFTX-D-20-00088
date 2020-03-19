@@ -7,11 +7,11 @@ function out = wid_SubType_get(obj),
     switch(obj.Type),
         case 'TDBitmap',
             out = 'Image';
-            if size(obj.Data, 4) > 1, out = 'Volume'; end % CUSTOM
+%             if size(obj.Data, 4) > 1, out = 'Volume'; end % CUSTOM (but very slow due to obj.Data-call!)
         case 'TDGraph',
             switch(obj.ImageIndex), % VERIFIED 25.7.2016 TO BE THE COMPLETE LIST!
                 case 0, out = 'Image';
-                    if size(obj.Data, 4) > 1, out = 'Volume'; end % CUSTOM
+%                     if size(obj.Data, 4) > 1, out = 'Volume'; end % CUSTOM (but very slow due to obj.Data-call!)
                 case 1, out = 'Line';
                 case 2, out = 'Point';
                 case 3, out = 'Array';
@@ -21,7 +21,7 @@ function out = wid_SubType_get(obj),
             end
         case 'TDImage',
             out = 'Image';
-            if size(obj.Data, 4) > 1, out = 'Volume'; end % CUSTOM
+%             if size(obj.Data, 4) > 1, out = 'Volume'; end % CUSTOM (but very slow due to obj.Data-call!)
         case 'TDLinearTransformation', out = 'Linear';
         case 'TDSpaceTransformation', out = 'Space';
         case 'TDSpectralTransformation', out = 'Spectral';

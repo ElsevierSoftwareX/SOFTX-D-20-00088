@@ -28,7 +28,7 @@ function new = copy(obj),
             new(ii).Tag(1).ImageIndex = Tag_2.search('ImageIndex', 'TData', {'^Data \d+$'});
         end
         % Copy the linked objects AFTER the tags have been copied!
-        new(ii).copy_Links();
+        new(ii).copy_LinksToOthers();
         % Add copied object to the project
         if ~isempty(new(ii).Project), new(ii).Project.Data = [new(ii).Project.Data; new(ii)]; end
     end

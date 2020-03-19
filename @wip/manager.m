@@ -3,6 +3,7 @@
 % All rights reserved.
 
 function O_wid = manager(obj, varargin),
+    persistent latest_fig;
     if isempty(obj), error('No project given!'); end
     
     % START OF VARARGIN PARSING
@@ -22,14 +23,19 @@ function O_wid = manager(obj, varargin),
     if numel(datas) > 0, Title = datas{1}; end
     
     % Check if Type was specified
-    datas = varargin_dashed_str_datas('Type', varargin, -1);
+    datas = varargin_dashed_str_datas('Type', varargin);
     Type = {'TDBitmap', 'TDGraph', 'TDImage', 'TDText'}; % Default
     if numel(datas) > 0, Type = datas; end
     
     % Check if SubType was specified
-    datas = varargin_dashed_str_datas('SubType', varargin, -1);
-    SubType = repmat({''}, size(Type));
+    datas = varargin_dashed_str_datas('SubType', varargin);
+    SubType = {};
     if numel(datas) > 0, SubType = datas; end
+    
+    % Add empty char arrays for any missing elements so that the sizes of
+    % Type and SubType extend to the same size.
+    Type(end+1:numel(SubType)) = {''}; % Extend
+    SubType(end+1:numel(Type)) = {''}; % Extend
     
     % Check if Data was specified
     datas = varargin_dashed_str_datas('Data', varargin, -1);
@@ -38,6 +44,11 @@ function O_wid = manager(obj, varargin),
     if isempty(O_wid), return; end % Exit if no project data
     
     % END OF VARARGIN PARSING
+    
+    % Test whether MATLAB version is R2019b or newer. If true, then use
+    % HTML5-based UI instead of JAVACOMPONENT-based UI. This is required,
+    % because JAVACOMPONENT will be removed in a future release.
+    preferHTML5overJAVACOMPONENT = ~verLessThan('matlab', '9.7'); % true = for R2019b or newer
     
     %http://undocumentedmatlab.com/blog/matlab-java-memory-leaks-performance
     %http://undocumentedmatlab.com/blog/setting-status-bar-components
@@ -75,21 +86,57 @@ function O_wid = manager(obj, varargin),
     isQueue = false; % Status of queue
     isBusy = false; % Status of loading
     
-    % Create figure window
     fig_offset = floor(rem(now, 1)*86400000); % Produce unique figure index offset
-    fig = figure(fig_offset);
-    set(fig, 'CloseRequestFcn', @CloseRequestFcn);
-    set(fig, 'DeleteFcn', 'delete(setdiff(findobj(gcbo), gcbo)); delete(gcbo);'); % Deletes all (including Java) and the figure % http://undocumentedmatlab.com/blog/couple-of-bugs-and-workarounds
-    set(fig, 'Name', window_name, 'NumberTitle', 'off', 'MenuBar', 'none', 'ToolBar', 'none', 'Units', 'normalized', 'Position', [0.075 0.1 0.225 0.8]);
-    
-    % Get figure window position in pixels
-    Units = get(fig, 'Units'); % Store Units
-    set(fig, 'Units', 'pixels'); % Pixels
-    Position = get(fig, 'Position'); % Get Position
-    set(fig, 'Units', Units); % Restore Units
     
     % Bottom table height
     height_table = 60;
+    
+    if ~preferHTML5overJAVACOMPONENT, % For versions older than R2019b
+        % Prepare figure for JAVACOMPONENT JList
+        
+        % Create figure window
+        fig = figure(fig_offset);
+        set(fig, 'CloseRequestFcn', @CloseRequestFcn);
+        set(fig, 'DeleteFcn', 'delete(setdiff(findobj(gcbo), gcbo)); delete(gcbo);'); % Deletes all (including Java) and the figure % http://undocumentedmatlab.com/blog/couple-of-bugs-and-workarounds
+        set(fig, 'Name', window_name, ...
+            'NumberTitle', 'off', ...
+            'MenuBar', 'none', ...
+            'ToolBar', 'none', ...
+            'Units', 'normalized', ...
+            'Position', [0.075 0.1 0.225 0.8]);
+        
+        % Get figure window position in pixels
+        Units = get(fig, 'Units'); % Store Units
+        set(fig, 'Units', 'pixels'); % Pixels
+        Position = get(fig, 'Position'); % Get Position
+        set(fig, 'Units', Units); % Restore Units
+        set(fig, 'Tag', 'wit_io_project_manager_gcf'); % Set tag in order to find this with findall
+        if ~isempty(latest_fig),
+            set(latest_fig, 'Tag', ''); % Remove tag duplicates
+            latest_fig = fig; % Update latest figure
+        end
+    else, % For R2019b or newer versions
+        % Prepare uifigure for HTML5 uihtml_JList.html via uihtml
+        % (introduced in R2019b).
+        fig = uifigure;
+%         fig.Number = fig_offset; % Commented because NOT supported in uifigure!
+        fig.CloseRequestFcn = @CloseRequestFcn;
+        fig.DeleteFcn = 'delete(setdiff(findobj(gcbo), gcbo)); delete(gcbo);';
+        fig.Name = window_name;
+        fig.NumberTitle = 'off';
+        fig.MenuBar = 'none';
+        fig.ToolBar = 'none';
+        fig.Units = 'pixels'; % 'normalized' is NOT supported in uifigure!
+        fig.Color = [1 1 1];
+        XYWH = get(0, 'ScreenSize');
+        fig.Position = XYWH([3:4 3:4]).*[0.075 0.1 0.225 0.8];
+        Position = fig.Position; % Get Position
+        fig.Tag = 'wit_io_project_manager_gcf'; % Set tag in order to find this later with findall
+        if ~isempty(latest_fig),
+            latest_fig.Tag = ''; % Remove tag duplicates
+            latest_fig = fig; % Update latest figure
+        end
+    end
     
     % First create simple list
     list = O_wid.get_HtmlName(false); % Get ProjectManager-optimized names
@@ -107,21 +154,43 @@ function O_wid = manager(obj, varargin),
         if show_indices, list{ii} = strrep(list{ii}, '&nbsp;', sprintf('&nbsp;<b>%d</b>. ', ii)); end
         if isempty(files{ii}), continue; end
         [pathstr, name, ext] = fileparts(files{ii});
-        list{ii} = strrep(list{ii}, '<html>', ['<html>&#x25BE; <b>' name ext '</b> (v' sprintf('%d', O_wid(ii).Version) ') @ ' pathstr ':<br>']);
+        if ~preferHTML5overJAVACOMPONENT, % For versions older than R2019b
+            list{ii} = strrep(list{ii}, '<html>', ['<html>&#x25BE; <b>' name ext '</b> (v' sprintf('%d', O_wid(ii).Version) ') @ ' pathstr ':<br>']);
+        else, % For R2019b or newer versions
+            list{ii} = strrep(list{ii}, '<tr>', ['<tr class="noid"><td colspan="2">&#x25BE; <b>' name ext '</b> (v' sprintf('%d', O_wid(ii).Version) ') @ ' pathstr ':<br></td></tr><tr>']);
+        end
     end
     
-    % Create list using Java
-    [hcomponent, hcontainer] = javacomponent(javax.swing.JScrollPane(javax.swing.JList(list)), [], fig); % Create JScrollPane and JList: http://undocumentedmatlab.com/blog/javacomponent
-    set(hcontainer, 'Units', 'pixels', 'Position', [0 height_table Position(3) Position(4)-height_table]); % Resize to fill the figure
-%     set(hcontainer, 'Units', 'normalized', 'Position', [0 0 1 1]); % Resize to fill the figure
-    if is_multiple_selection, selection_mode = javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION;
-    else, selection_mode = javax.swing.ListSelectionModel.SINGLE_SELECTION; end
-    set(handle(hcomponent.getViewport().getView(), 'CallbackProperties'), ...
-        'SelectionMode', selection_mode, ... % Whether single or multiple selection mode
-        'KeyReleasedCallback', @ReleasedCallback, 'MouseReleasedCallback', @ReleasedCallback, 'MouseMovedCallback', @MouseMovedCallback); % Modify standard callbacks of JList: http://undocumentedmatlab.com/blog/uicontrol-callbacks
-
+    if ~preferHTML5overJAVACOMPONENT, % For versions older than R2019b
+        % Create list using Java
+        [hcomponent, hcontainer] = javacomponent(javax.swing.JScrollPane(javax.swing.JList(list)), [], fig); % Create JScrollPane and JList: http://undocumentedmatlab.com/blog/javacomponent
+        set(hcontainer, 'Units', 'pixels', 'Position', [0 height_table Position(3) Position(4)-height_table]); % Resize to fill the figure
+%         set(hcontainer, 'Units', 'normalized', 'Position', [0 0 1 1]); % Resize to fill the figure
+        if is_multiple_selection, selection_mode = javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION;
+        else, selection_mode = javax.swing.ListSelectionModel.SINGLE_SELECTION; end
+        set(handle(hcomponent.getViewport().getView(), 'CallbackProperties'), ...
+            'SelectionMode', selection_mode, ... % Whether single or multiple selection mode
+            'KeyReleasedCallback', @ReleasedCallback, 'MouseReleasedCallback', @ReleasedCallback, 'MouseMovedCallback', @MouseMovedCallback); % Modify standard callbacks of JList: http://undocumentedmatlab.com/blog/uicontrol-callbacks
+    else, % For R2019b or newer versions
+        % Construct a configuration struct for uihtml_JList.html
+        S = struct();
+        S.items = list;
+        S.allowScrollbarKeydownEvents = false;
+        S.allowMouseHoverHighlights = false;
+        % 0 = SINGLE_SELECTION, 1 = SINGLE_INTERVAL_SELECTION, 2 = MULTIPLE_INTERVAL_SELECTION
+        if is_multiple_selection, S.selectionMode = 2;
+        else, S.selectionMode = 0; end
+        
+        % Create list using HTML5
+        hcontainer = uihtml(fig);
+        hcontainer.Position = [0 height_table Position(3) Position(4)-height_table];
+        hcontainer.HTMLSource = 'uihtml_JList.html';
+        drawnow;
+        hcontainer.Data = S;
+        hcontainer.DataChangedFcn = @ReleasedCallback;
+    end
+    
     % Create preview checkbox
-%     c = uicontrol(fig, 'Style', 'checkbox', 'String', 'Preview', 'Value', 1, 'Units', 'normalized', 'Position', [0 0 1 0.03]);
     isPreview = show_preview;
     h_table = uitable(fig, ...
         'Data', {isPreview obj.ForceDataUnit obj.ForceSpaceUnit obj.ForceSpectralUnit obj.ForceTimeUnit}, ...
@@ -134,12 +203,10 @@ function O_wid = manager(obj, varargin),
         'CellEditCallback', @CallEditCallback);
     
     % Add resizing function
-    if isprop(fig, 'SizeChangedFcn'), set(fig, 'SizeChangedFcn', @update);
-    else, set(fig, 'ResizeFcn', @update); end % Added for backward compability
-    
-    % Create Java waitbar
-%     [hcomponent2, hcontainer2] = javacomponent(javax.swing.JProgressBar(0, 1000), [], fig); % From 0.0% to 100.0%
-%     set(hcontainer2, 'Units', 'normalized', 'Position', [0 0 1 0.03], 'Visible', 'off');
+    if ~preferHTML5overJAVACOMPONENT, % For versions older than R2019b
+        if isprop(fig, 'SizeChangedFcn'), set(fig, 'SizeChangedFcn', @update);
+        else, set(fig, 'ResizeFcn', @update); end % Added for backward compability
+    end
     
     indices = []; % Store old indices (to be updated by MouseReleasedCallback)
     if nargout > 0,
@@ -166,9 +233,13 @@ function O_wid = manager(obj, varargin),
     function ReleasedCallback(h, varargin),
         if ~isBusy, % Proceed only if NOT busy
             isBusy = true;
-            h_Waitbar = waitbar(0, 'Please wait...');
+            if isPreview, h_Waitbar = waitbar(0, 'Please wait...'); end
 %             isPreview = get(c, 'Value'); % State of preview checkbox
-            next_indices = h.getSelectedIndices()+1; % New indices
+            if ~preferHTML5overJAVACOMPONENT, % For versions older than R2019b
+                next_indices = h.getSelectedIndices()+1; % New indices
+            else, % For R2019b or newer versions
+                next_indices = h.Data+1; % New indices
+            end
             if ~isempty(indices), % Compare with old indices
                 bw_ne = bsxfun(@ne, next_indices(:), indices(:)'); % Construct not-equal matrix
                 bw_new = all(bw_ne, 2); % Truly new indices
@@ -194,8 +265,8 @@ function O_wid = manager(obj, varargin),
                 if isPreview, 
                     invisible_figure(idx+fig_offset); % Create new invisible figure
                     plot(O_wid(next_indices(jj))); % Show data
+                    waitbar(jj / N_new);
                 end
-                waitbar(jj / N_new);
             end
     %         if N_new > 0, set(hcontainer2, 'Visible', 'off'); drawnow; hcomponent2.setValue(0); end % Java waitbar
             delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Solves the closing issues with close(h_Waitbar);
@@ -213,17 +284,17 @@ function O_wid = manager(obj, varargin),
     end
     
     % Proper resizing of the uitable (topbar, bottombar)
-    function update(varargin),
+    function update(varargin), % Only for R2019a or older
         % Store previous Units
         fig_Units = get(fig, 'Units');
         hcontainer_Units = get(hcontainer, 'Units');
         table_Units = get(h_table, 'Units');
-        
+
         % Change Units to pixels
         set(fig, 'Units', 'pixels');
         set(hcontainer, 'Units', 'pixels');
         set(h_table, 'Units', 'pixels');
-        
+
         % Calculate and set new Positions
         drawnow; % Update Figure first (added for backward compability)
         fig_Position = get(fig, 'Position');
@@ -232,7 +303,7 @@ function O_wid = manager(obj, varargin),
         table_Position = [0 0 fig_Position(3) table_Position(4)];
         set(hcontainer, 'Position', hcontainer_Position);
         set(h_table, 'Position', table_Position);
-        
+
         % Restore previous Units
         set(hcontainer, 'Units', hcontainer_Units);
         set(h_table, 'Units', table_Units);
@@ -260,7 +331,7 @@ function O_wid = manager(obj, varargin),
 
     % MouseMovedCallback, which sets JList-item name as tooltip string
     % https://undocumentedmatlab.com/blog/setting-listbox-mouse-actions/
-    function MouseMovedCallback(jListbox, jEventData),
+    function MouseMovedCallback(jListbox, jEventData), % Only for R2019a or older
         % Get the current mouse position
         mousePosition = java.awt.Point(jEventData.getX, jEventData.getY);
         % Get the currently-hovered JList-item

@@ -5,13 +5,20 @@
 function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     % WITec Project/Data (*.WIP/*.WID) -file data reader. Returns the
     % selected data when the Project Manager -window (if opened) is CLOSED.
-    % 0) Input is parsed into files and extra options:
+    % 0) Input is parsed into files and extra case-insensitive options:
     % *Option '-all': Skip Project Manager and load all data in the files.
     % *Option '-ifall': Inquery the user whether or not to do '-all'.
+    % *Option '-LimitedRead': If given, then limit file content reading to
+    % the specified number of bytes per Data and skip any exceeding Data.
+    % The skipped Data is read from file later only if requested by a user.
+    % If given without a number, then the limit is set to 4096.
     % *Options '-DataUnit', '-SpaceUnit', '-SpectralUnit' and '-TimeUnit':
     % Force the output units. This is very useful for automated processing.
-    % *Option '-Manager': Pass any varargin to Project Manager. For
-    % instance, can be used to load all data with specified Type / SubType.
+    % *Option '-Manager': Passes the given inputs to Project Manager:
+    % (1) by providing the inputs in a single cell, i.e. {'-all'}, OR
+    % (2) by writing the related single-dashed strings as double-dashed,
+    % i.e. '-all' becomes '--all'. For instance, it can be used to load all
+    % data with specified Type / SubType.
     % 1) If the file input is omitted, then a file browsing GUI is opened.
     % 2) The specified file is loaded, processed and shown in a new window.
     % 3) Project Manager -window allows preview of all data in the project.
@@ -32,21 +39,30 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     showProjectManager = ~varargin_dashed_str_exists('all', varargin); % By default, show Project Manager
     show_ui_ifall = varargin_dashed_str_exists('ifall', varargin);
     
+    [exists, datas] = varargin_dashed_str_exists_and_datas('LimitedRead', varargin, -1);
+    LimitedRead = Inf; % By default, unlimited read
+    if exists,
+        LimitedRead = 4096; % Default limited read in bytes
+        if numel(datas) > 0, LimitedRead = datas{1}; end % Customized limited read
+    end
+    
     if isempty(files),
-        [filename, folder] = uigetfile({'*.wip;*.wid;*.zip', 'WITec Project/Data Files (*.wip/*.wid)'}, 'Open Project', 'MultiSelect', 'on');
-%         [filename, folder] = uigetfile({'*.wip;*.wid;*.zip', 'WITec Project/Data Files (*.wip/*.wid [or *.zip if compressed])'}, 'Open Project', 'MultiSelect', 'on'); % Considered implementing either indirect or direct unzipping scheme. It appears that WIT-formatted files can potentially be significantly compressed. (16.1.2019)
+        [filename, folder] = uigetfile({'*.wip;*.wiP;*.wIp;*.wIP;*.Wip;*.WiP;*.WIp;*.WIP;*.wid;*.wiD;*.wId;*.wID;*.Wid;*.WiD;*.WId;*.WID', 'WITec Project/Data Files (*.wip/*.wid)'}, 'Open Project', wit_io_pref_get('latest_folder', cd), 'MultiSelect', 'on');
+%         [filename, folder] = uigetfile({'*.wip;*.wid;*.zip', 'WITec Project/Data Files (*.wip/*.wid [or *.zip if compressed])'}, 'Open Project', latest_folder, 'MultiSelect', 'on'); % Considered implementing either indirect or direct unzipping scheme. It appears that WIT-formatted files can potentially be significantly compressed. (16.1.2019)
         if ~iscell(filename), filename = {filename}; end
-        if folder ~= 0, files = fullfile(folder, filename);
+        if folder ~= 0,
+            files = fullfile(folder, filename);
+            wit_io_pref_set('latest_folder', folder); % Remember permanently the latest folder
         else, return; end % Abort as no file was selected!
     end
     
     % Read all files preferring limited read and append them together
-    O_wit = wit.Empty;
+    O_wit = wit.empty;
     h = waitbar(0, 'Please wait...');
     for ii = 1:numel(files),
         if ~ishandle(h), return; end % Abort if cancelled!
         waitbar((ii-1)/numel(files), h, sprintf('Loading file %d/%d. Please wait...', ii, numel(files)));
-        O_wit = wip.append(O_wit, wit.read(files{ii}, 4096)); % Prefer 4KB limited read
+        O_wit = wip.append(O_wit, wit.read(files{ii}, LimitedRead));
     end
     if ~ishandle(h), return; end % Abort if cancelled!
     waitbar(1, h, 'Completed!');
@@ -67,9 +83,10 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     datas = varargin_dashed_str_datas('TimeUnit', varargin, -1);
     if numel(datas) > 0, O_wip.ForceTimeUnit = datas{1}; end
     
-    datas = varargin_dashed_str_datas('Manager', varargin, -1);
+    datas = varargin_dashed_str_datas('Manager', varargin);
     ManagerVarargin = {};
-    if numel(datas) > 0, ManagerVarargin = datas{1}; end
+    if numel(datas) == 1 && iscell(datas{1}), ManagerVarargin = datas{1}; % Special case of {}-enclosed inputs
+    elseif numel(datas) > 0, ManagerVarargin = datas; end
     
     % Show project manager on demand
     if show_ui_ifall, showProjectManager = strncmp(questdlg('Would you like to 1) browse & select data OR 2) load all data?', 'How to proceed?', '1) Browse & select', '2) Load all', '1) Browse & select'), '1)', 2); end

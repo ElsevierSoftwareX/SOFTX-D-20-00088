@@ -15,27 +15,28 @@ file = fullfile(pathstr, 'E_04_stitch_spectra_v7.wip'); % Construct full path of
 
 
 %-------------------------------------------------------------------------%
-h = helpdlg({'EXAMPLE CASE 4: SPECTRAL STITCHING' ...
+wit_io_license;
+
+h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 4:}' ...
+    '{\bf\fontsize{12}SPECTRAL STITCHING}' ...
     '' ...
-    '* If unfamiliar with ''wit_io'', then go through the previous examples first.' ...
-    '' ...
-    '* Please note that MOST of this ''wit_io'' code is OPEN-SOURCED under simple and permissive BSD 3-Clause License and is FREE-TO-USE like described in LICENSE.txt!'});
-uiwait(h); % Wait for helpdlg to be closed before continuing.
+    '\bullet If unfamiliar with ''wit\_io'', then go through the previous examples first.'});
+uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
 % Load all TDGraphs and set their SpectralUnits to '(nm)'.
-[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-Manager', {'-Type', 'TDGraph'}, '-SpectralUnit', '(nm)');
+[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-Manager', '--Type', 'TDGraph', '-SpectralUnit', 'nm');
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-h = helpdlg({'!!! (E4) Spectral stitching the measured LED lamp spectra into one spectrum:' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E4)} Spectral stitching the measured LED lamp spectra into one spectrum:}' ...
     '' ...
-    '* Illustrative stitching procedure begins by closing this help dialog.'});
+    '\bullet Illustrative stitching procedure begins by closing this help dialog.'});
 if ishandle(h), figure(h); uiwait(h); end
 %-------------------------------------------------------------------------%
 
@@ -57,11 +58,11 @@ if ishandle(h), figure(h); uiwait(h); end
 
 
 %-------------------------------------------------------------------------%
-h = helpdlg({'!!! Spectral stitching has completed:' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}Spectral stitching has completed:}' ...
     '' ...
-    '* Here the 1st figure illustrates how each neighbouring datas were weighted. See the opened figures for the total-weighted datas, the original datas and the total-weights.' ...
+    '\bullet Here the 1st figure illustrates how each neighbouring datas were weighted. See the opened figures for the total-weighted datas, the original datas and the total-weights.' ...
     '' ...
-    '* Close this dialog to END and see the final result.'});
+    '\ldots Close this dialog to END and see the final result.'});
 if ishandle(h), figure(h); uiwait(h); end
 %-------------------------------------------------------------------------%
 
