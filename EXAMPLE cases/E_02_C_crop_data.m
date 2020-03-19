@@ -97,9 +97,12 @@ figure; O_PointScan_cropped.plot(); % Cropped spectrum
 % (possibly multiple) data croppings (or i.e. data copyings). This is
 % necessary when user wishes to utilize many of the WITec software's data
 % analysis tools, which may refuse to work if the selected data do not
-% share the same Transformation Id.
+% share the same Transformation Id. IT IS NOTEWORTHY that this task is done
+% now by default during *.wip file writing (unless the default user
+% preference is changed as is shown in the last commented line).
 O_wip.destroy_duplicate_Transformations; % Do it immediately
-% O_wip.OnWriteDestroyDuplicateTransformations = true; % Alternatively, do it on write
+% O_wip.OnWriteDestroyDuplicateTransformations = true; % OR do it later on write
+% wit_io_pref_set('wip_OnWriteDestroyDuplicateTransformations', true); % Permanently change its user preference for the future runs
 %-------------------------------------------------------------------------%
 
 
