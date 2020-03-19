@@ -29,14 +29,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add example case on [plotting scalebar and marking measurement positions on one other][1.2.0,A1] using either new `'-scalebar'` and `'-position'` options of [`@wid/plot`][1.2.0,A2] or new [`@wid/plot_scalebar`][1.2.0,A3] and [`@wid/plot_position`][1.2.0,A4] functions.
 - Add example case on [configuring toolbox by permanent user preferences][1.2.0,A5] using new [`wit_io_pref_get`][1.2.0,A6], [`wit_io_pref_is`][1.2.0,A7], [`wit_io_pref_rm`][1.2.0,A8] and [`wit_io_pref_set`][1.2.0,A9] functions. For example, permanently remember the latest folder in the **wit_io**'s file browsing UI.
 - Add TeX-enriched help dialogs to [all example cases][1.2.0,A10] using new [`wit_io_msgbox`][1.2.0,A11] and [`mytextwrap`][1.2.0,A12] functions.
-- Add ability to [destroy duplicate Transformations][1.2.0,A13] in the opened projects. Update affected example case on [data cropping][1.2.0,A14].
-- `wip`-class: Add `OnWrite`-tasks to [**\*.wip** file writing][1.2.0,A15] via new properties `OnWriteDestroyAllViewers` (`= true` by default) and `OnWriteDestroyDuplicateTransformations` (`= false` by default). The former avoids possible corruption of modified **\*.wip** files, because **wit_io** does not update the file tree `Viewer`-section.
-- `wit`-class: Add features to [abort `wit` tag file reading or skip its contents by the given criterias][1.2.0,A16] in order to customize and speed up the file reading for specific needs. For example, [file `Version` reading][1.2.0,A17] is now much quicker because it only loads small portion of the file into memory.
-- Add scripts to quickly open the main and New Issue pages at GitLab: [`wit_io_gitlab`][1.2.0,A18] and [`wit_io_gitlab_new_issue`][1.2.0,A19].
-- [`@wid/unpattern_video_stitching_helper`][1.2.0,A20]: Add new `'-outliers'` option to provide known outliers in the image to the algorithm.
-- Add ability to automatically mask bad fitting results or near noise results using new [`mask_bad_results_and_noise`][1.2.0,A21] helper function.
-- `wit`-class: Add ability to search `wit` tag object ancestors using new [`regexp_ancestors`][1.2.0,A22] and [`search_ancestors`][1.2.0,A23] functions.
-- Add [developer's functions][1.2.0,A24] to quickly get [`Versions`][1.2.0,A25] or [unique `wid`-class `Types`][1.2.0,A26] of multiple files.
+- Add ability to [destroy duplicate Transformations][1.2.0,A13] in the opened `wip` project object. (Update affected example case on [data cropping][1.2.0,A14].)
+- `wit`-class: Add features to [abort `wit` tag file reading or skip its contents by the given criterias][1.2.0,A15] in order to customize and speed up the file reading for specific needs. For example, [file `Version` reading][1.2.0,A16] is now much quicker because it only loads small portion of the file into memory.
+- Add scripts to quickly open the main and New Issue pages at GitLab: [`wit_io_gitlab`][1.2.0,A17] and [`wit_io_gitlab_new_issue`][1.2.0,A18].
+- [`@wid/unpattern_video_stitching_helper`][1.2.0,A19]: Add new `'-outliers'` option to provide known outliers in the image to the algorithm.
+- Add ability to automatically mask bad fitting results or near noise results using new [`mask_bad_results_and_noise`][1.2.0,A20] helper function.
+- `wit`-class: Add ability to search `wit` tag object ancestors using new [`regexp_ancestors`][1.2.0,A21] and [`search_ancestors`][1.2.0,A22] functions.
+- Add [developer's functions][1.2.0,A23] to quickly get [`Versions`][1.2.0,A24] or [unique `wid`-class `Types`][1.2.0,A25] of multiple files.
 - Add notes on MATLAB toolbox dependencies in the beginning of each dependent file.
 
 [1.2.0,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/EXAMPLE%20cases/E_02_D_plot_data_position_and_scalebar.m
@@ -53,47 +52,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.2.0,A12]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/plotting/mytextwrap.m
 [1.2.0,A13]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/destroy_duplicate_Transformations.m
 [1.2.0,A14]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/EXAMPLE%20cases/E_02_C_crop_data.m
-[1.2.0,A15]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/write.m
-[1.2.0,A16]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wit/read.m
-[1.2.0,A17]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/read_Version.m
-[1.2.0,A18]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/wit_io_gitlab.m
-[1.2.0,A19]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/wit_io_gitlab_new_issue.m
-[1.2.0,A20]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/unpattern_video_stitching_helper.m
-[1.2.0,A21]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/mask_bad_results_and_noise.m
-[1.2.0,A22]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wit/regexp_ancestors.m
-[1.2.0,A23]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wit/search_ancestors.m
-[1.2.0,A24]: https://gitlab.com/jtholmi/wit_io/-/tree/develop/dev
-[1.2.0,A25]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/dev/dev_get_Versions.m
-[1.2.0,A26]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/dev/dev_get_unique_wid_Types.m
+[1.2.0,A15]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wit/read.m
+[1.2.0,A16]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/read_Version.m
+[1.2.0,A17]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/wit_io_gitlab.m
+[1.2.0,A18]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/wit_io_gitlab_new_issue.m
+[1.2.0,A19]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/unpattern_video_stitching_helper.m
+[1.2.0,A20]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/mask_bad_results_and_noise.m
+[1.2.0,A21]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wit/regexp_ancestors.m
+[1.2.0,A22]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wit/search_ancestors.m
+[1.2.0,A23]: https://gitlab.com/jtholmi/wit_io/-/tree/develop/dev
+[1.2.0,A24]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/dev/dev_get_Versions.m
+[1.2.0,A25]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/dev/dev_get_unique_wid_Types.m
 
 ### Changed
 - For MATLAB R2019b or newer, replace Java-based GUI with HTML5-based GUI, fixing `JAVACOMPONENT` warnings. For example, [`Project Manager`][1.2.0,C1] now uses [HTML5-based JList-like code][1.2.0,C2] to create its window.
-- [helper][1.2.0,C3]-folder: Allow special the multiple-dashed strings for [varargin dashed string parsers][1.2.0,C4]. Updated all example cases, where extra arguments were passed to `'-manager'` via [@wip/read][1.2.0,C5].
-- Example cases now describe [`BSD license`][1.2.0,C6] in dialog with checkbox to not show again.
-- [`wid`][1.2.0,C7]-class: Rename `Links`-property to `LinksToOthers` and add `LinksToThis`-property. Rename related `copy_Links` to [`copy_LinksToOthers`][1.2.0,C8] (and add copying of `IDLists`).
+- `wip`-class: Add `OnWrite`-tasks to [**\*.wip** file writing][1.2.0,C3] via new properties `OnWriteDestroyAllViewers` (`= true` by default) and `OnWriteDestroyDuplicateTransformations` (`= true` by default). The former avoids possible corruption of modified **\*.wip** files, because **wit_io** does not update the file tree `Viewer`-section. The latter allows data analysis across the affected datasets in the WITec software. To change the default behaviour, refer to [this new example case][1.2.0,C4].
+- [helper][1.2.0,C5]-folder: For subfunction customizations, make multiple-dashed strings a special case in [varargin dashed string parsers][1.2.0,C6], so that the first dash is always removed during parsing. Updated all example cases, where extra arguments were passed to `'-manager'` via [@wip/read][1.2.0,C7].
+- Example cases now describe [`BSD license`][1.2.0,C8] in dialog with checkbox to not show again.
+- [`fit_lineshape_automatic_guess`][1.2.0,C9]: Simplify the process and describe the assumptions. Change to more robust lineshape center estimation by integration via new [`mtrapz`][1.2.0,C10] function.
 - `wit`-class: Make basic functionality Octave-compatible.
-- [`S_rename_by_regexprep`][1.2.0,C9]: Improve regexp renaming with data listing. Usage is limited in MATLAB R2019b due to its `inputdlg's forced uifigure modality`-bug.
-- [`@wip/manager`][1.2.0,C10]: (1) Remove waitbar in '-nopreview'-mode. (2) Allow `'-Type'` and `'-SubType'` with multiple inputs. (3) Add tag `'wit_io_project_manager_gcf'` to find its latest main window handle (whether `figure` or `uifigure`).
-- [`fit_lineshape_automatic_guess`][1.2.0,C11]: (1) Simplify the process and describe the assumptions. (2) Change to more robust lineshape center estimation by integration via new [`mtrapz`][1.2.0,C12] function.
-- Move the toolbox developer's functions under [dev][1.2.0,C13]-folder and give them `dev`-prefix.
-- Rename the [toolbox's main folder][1.2.0,C14] functions to have **wit_io**-prefix and better names for alphabetically ordered file listing.
-- [`export_fig`][1.2.0,C15]: Upload latest version of this 3rd party code.
+- [`S_rename_by_regexprep`][1.2.0,C11]: Improve regexp renaming by listing data via `Project Manager`. (However, the usage is limited in MATLAB R2019b due to a reported `inputdlg's forced uifigure modality`-bug.)
+- [`@wip/manager`][1.2.0,C12]: Remove waitbar in `'-nopreview'`-mode.
+- [`@wip/manager`][1.2.0,C12]: Allow `'-Type'` and `'-SubType'` with multiple inputs.
+- [`@wip/manager`][1.2.0,C12]: Add tag `'wit_io_project_manager_gcf'` to find its latest main window handle (whether `figure` or `uifigure`) without gcf.
+- [`wid`][1.2.0,C13]-class: Rename `Links`-property to `LinksToOthers` and add `LinksToThis`-property. Rename related `copy_Links` to [`copy_LinksToOthers`][1.2.0,C14] (and add copying of `IDLists`).
+- Move the toolbox developer's functions under [dev][1.2.0,C15]-folder and give them `dev`-prefix.
+- Rename the [toolbox's main folder][1.2.0,C16] functions to have `wit_io`-prefix and better names for alphabetically ordered file listing.
+- [`export_fig`][1.2.0,C17]: Upload latest version of this 3rd party code.
 
 [1.2.0,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/manager.m
 [1.2.0,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/icons/uihtml_JList.html
-[1.2.0,C3]: https://gitlab.com/jtholmi/wit_io/-/tree/develop/helper
-[1.2.0,C4]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/varargin_dashed_str.m
-[1.2.0,C5]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/read.m
-[1.2.0,C6]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/LICENSE
-[1.2.0,C7]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/wid.m
-[1.2.0,C8]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/copy_LinksToOthers.m
-[1.2.0,C9]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/SCRIPT%20cases/S_rename_by_regexprep.m
-[1.2.0,C10]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/manager.m
-[1.2.0,C11]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/fit_lineshape_automatic_guess.m
-[1.2.0,C12]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/mtrapz.m
-[1.2.0,C13]: https://gitlab.com/jtholmi/wit_io/-/tree/develop/dev
-[1.2.0,C14]: https://gitlab.com/jtholmi/wit_io/-/tree/develop
-[1.2.0,C15]: https://gitlab.com/jtholmi/wit_io/-/tree/develop/helper%2F3rd%20party%2Fexport_fig
+[1.2.0,C3]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/write.m
+[1.2.0,C4]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/EXAMPLE%20cases/E_01_D_permanent_user_preferences.m
+[1.2.0,C5]: https://gitlab.com/jtholmi/wit_io/-/tree/develop/helper
+[1.2.0,C6]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/varargin_dashed_str.m
+[1.2.0,C7]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/read.m
+[1.2.0,C8]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/LICENSE
+[1.2.0,C9]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/fit_lineshape_automatic_guess.m
+[1.2.0,C10]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/mtrapz.m
+[1.2.0,C11]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/SCRIPT%20cases/S_rename_by_regexprep.m
+[1.2.0,C12]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/manager.m
+[1.2.0,C13]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/wid.m
+[1.2.0,C14]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/copy_LinksToOthers.m
+[1.2.0,C15]: https://gitlab.com/jtholmi/wit_io/-/tree/develop/dev
+[1.2.0,C16]: https://gitlab.com/jtholmi/wit_io/-/tree/develop
+[1.2.0,C17]: https://gitlab.com/jtholmi/wit_io/-/tree/develop/helper%2F3rd%20party%2Fexport_fig
 
 ### Deprecated
 - `@wip/reset_Viewers`: Supercede by [`@wip/destroy_all_Viewers`][1.2.0,D1].
@@ -104,67 +107,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove some dependencies on [`Image Processing Toolbox`][1.2.0,R1].
 - Remove unintentional dependency on [`Statistics and Machine Learning Toolbox`][1.2.0,R2].
 - `wip`-class: Remove unused `storeState`- and `restoreState`-functions and, from now on, rely on the LIFO-concept `push`- and `pop`-functions.
+- `clever_statistics`: Remove this deprecated function. Use [`clever_statistics_and_outliers`][1.2.0,R3] instead.
 
 [1.2.0,R1]: https://www.mathworks.com/products/image.html
 [1.2.0,R2]: https://www.mathworks.com/products/statistics.html
+[1.2.0,R3]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/clever_statistics_and_outliers.m
 
 ### Fixed
 - [`@wid/wid_Data_get_Bitmap`][1.2.0,F1] and [`@wid/wid_Data_set_Bitmap`][1.2.0,F2]: For **v5** files, add unimplemented bitmap write/read row-padding to nearest 4-byte boundary.
-- [`@wip/interpret`][1.2.0,F3]: Prioritize `Standard Unit` search first and only then widen the search. Removed unnecessary `()`-brackets around `Standard Unit` searches.
-- [`E_v5.wip`][1.2.0,F4]: Fix corrupted `TDSpaceTransformations` and update affected example cases.
-- [`@wid/crop`][1.2.0,F5] and [`@wid/crop_Graph`][1.2.0,F6]: Properly copy shared transformations and modify their unshared versions using new [`@wid/copy_Others_if_shared_and_unshare`][1.2.0,F7] function.
+- [`@wip/interpret`][1.2.0,F3]: Prioritize [`Standard Unit`][1.2.0,F4] search first and only then widen the search. Remove unnecessary `()`-brackets around [`Standard Unit`][1.2.0,F4] searches. Allow A's and u's search special characters Å's (U+00C5) and µ's (U+00B5).
+- [`E_v5.wip`][1.2.0,F5]: Fix corrupted `TDSpaceTransformations` and update affected example cases.
+- [`@wid/crop`][1.2.0,F6] and [`@wid/crop_Graph`][1.2.0,F7]: Properly copy shared transformations and modify only their unshared versions using new [`@wid/copy_Others_if_shared_and_unshare`][1.2.0,F8] function.
 - The file browsing GUI is now case-insensitive to **\*.wid** and **\*.wip** file extensions even though the file system is case-sensitive.
-- [`@wid/unpattern_video_stitching_helper`][1.2.0,F8]: Fix error when no working solution can exist.
-- [`@wid/spatial_average`][1.2.0,F9]: Properly update `TDSpaceTransformations` now.
-- [`fit_lineshape_arbitrary`][1.2.0,F10]: Properly handle all-`NaN`-valued case now.
-- [`fun_lineshape_voigtian`][1.2.0,F11]: Double-check algorithm validity meticulously and consider alternatives. Fix pure Gaussian issues.
-- [`fit_lineshape_automatic_guess`][1.2.0,F12]: Fix few lurking bugs.
+- [`@wid/unpattern_video_stitching_helper`][1.2.0,F9]: Fix error when no working solution can exist.
+- [`@wid/spatial_average`][1.2.0,F10]: Properly update `TDSpaceTransformations` now.
+- [`fit_lineshape_arbitrary`][1.2.0,F11]: Properly handle all-`NaN`-valued case now.
+- [`fun_lineshape_voigtian`][1.2.0,F12]: Double-check algorithm validity meticulously and consider alternatives. Fix pure Gaussian issues.
+- [`fit_lineshape_automatic_guess`][1.2.0,F13]: Fix few lurking bugs.
 - Fix `wip`-class `ForceDataUnit`-property usage issues and utilize its changes better.
 - Fix typos causing bugs.
 
 [1.2.0,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/wid_Data_get_Bitmap.m
 [1.2.0,F2]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/wid_Data_set_Bitmap.m
 [1.2.0,F3]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/interpret.m
-[1.2.0,F4]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/EXAMPLE%20cases/E_v5.wip
-[1.2.0,F5]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/crop.m
-[1.2.0,F6]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/crop_Graph.m
-[1.2.0,F7]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/copy_Others_if_shared_and_unshare.m
-[1.2.0,F8]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/unpattern_video_stitching_helper.m
-[1.2.0,F9]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/spatial_average.m
-[1.2.0,F10]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/fit_lineshape_arbitrary.m
-[1.2.0,F11]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/fun_lineshape_voigtian.m
-[1.2.0,F12]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/fit_lineshape_automatic_guess.m
+[1.2.0,F4]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/interpret_StandardUnit.m
+[1.2.0,F5]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/EXAMPLE%20cases/E_v5.wip
+[1.2.0,F6]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/crop.m
+[1.2.0,F7]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/crop_Graph.m
+[1.2.0,F8]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/copy_Others_if_shared_and_unshare.m
+[1.2.0,F9]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/unpattern_video_stitching_helper.m
+[1.2.0,F10]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/spatial_average.m
+[1.2.0,F11]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/fit_lineshape_arbitrary.m
+[1.2.0,F12]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/fun_lineshape_voigtian.m
+[1.2.0,F13]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/fit_lineshape_automatic_guess.m
 
 ### Performance
 - [`@wid/wid_SubType_get`][1.2.0,P1]: Disable unused `'Volume'`-feature due to major performance bottleneck.
-- [`@wip/read_Version`][1.2.0,P2]: Speed it up using `@wit/read`'s new `skip_Data_criteria_for_obj`-feature.
-- [`bw2lines`][1.2.0,P3]: Reduce computation burden when using only the first output argument.
-- [`dim_size_consistent_repmat`][1.2.0,P4]: Remove [`cellfun`][1.2.0,P5]'s and reduce use of cells to improve performance.
-- [`jacobian_helper`][1.2.0,P6] and [`fit_lineshape_arbitrary`][1.2.0,P7]: Add `usePrevCstd`-flag to fix performance issue in loops with changing data dimensions.
+- [`jacobian_helper`][1.2.0,P2] and [`fit_lineshape_arbitrary`][1.2.0,P3]: Add `usePrevCstd`-flag to fix performance issue in loops with changing data dimensions.
+- [`@wip/read_Version`][1.2.0,P4]: Speed it up using `@wit/read`'s new `skip_Data_criteria_for_obj`-feature.
+- [`bw2lines`][1.2.0,P5]: Reduce computation burden when using only the first output argument.
+- [`dim_size_consistent_repmat`][1.2.0,P6]: Remove [`cellfun`][1.2.0,P7]'s and reduce use of cells to improve performance.
 
 [1.2.0,P1]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wid/wid_SubType_get.m
-[1.2.0,P2]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/read_Version.m
-[1.2.0,P3]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/bw2lines.m
-[1.2.0,P4]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/dim_size_consistent_repmat.m
-[1.2.0,P5]: https://www.mathworks.com/help/matlab/ref/cellfun.html
-[1.2.0,P6]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/jacobian_helper.m
-[1.2.0,P7]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/fit_lineshape_arbitrary.m
+[1.2.0,P2]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/jacobian_helper.m
+[1.2.0,P3]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/fit_lineshape_arbitrary.m
+[1.2.0,P4]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/@wip/read_Version.m
+[1.2.0,P5]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/fitting/bw2lines.m
+[1.2.0,P6]: https://gitlab.com/jtholmi/wit_io/-/blob/develop/helper/dim_size_consistent_repmat.m
+[1.2.0,P7]: https://www.mathworks.com/help/matlab/ref/cellfun.html
 
 
 
 ## [1.1.2] - 2019-08-08
 
 ### Added
-- for MATLAB R2014b or newer, add convenient [toolbox installer][1.1.2,A1].
+- For MATLAB R2014b or newer, add convenient [toolbox installer][1.1.2,A1].
 - Add [example case][1.1.2,A2] and [related functionality][1.1.2,A3] to demonstrate Video Stitching image unpatterning. It is noteworthy that [its documentation][1.1.2,A4] describes dozens of extra customization options.
 - [`clever_statistics_and_outliers`][1.1.2,A5]: Add support to multiple dims input with an ability to negate the selection with negative values.
-- `wid`-class: Add feature to open [`Project Manager`][1.1.2,A6] for the `wid` objects like previously for the `wip` object. This can be used to quickly glance through the selected `wid` objects and see their corresponding index value.
-- [helper][1.1.2,A7]-folder: Add [varargin dashed string parsers][1.1.2,A8].
-- [`@wid/crop`][1.1.2,A9]: Add `isDataCropped`-feature and validate inputs.
+- `wid`-class: Add feature to open [`Project Manager`][1.1.2,A6] for the `wid` objects like previously for the `wip` object. This can be used to quickly glance through the selected `wid` objects and see their corresponding array index value.
+- [helper][1.1.2,A7]-folder: Add [varargin dashed string parsers][1.1.2,A8] for easier function customizations.
+- [`@wid/crop`][1.1.2,A9]: Add `isDataCropped`-flag (if `wid` object Data was already cropped elsewhere) and validate inputs.
 - `wip`-class: Add LIFO (first in = push, last out = pop) concept to simplify all the state-related code.
-- Add feature to generate indices via [`generic_sub2ind`][1.1.2,A10], merging calls to `ndgrid`, `sub2ind` and `cast` and being memory conservative. It can be customized with extra options: `'-isarray'`, `'-nobsxfun'`, `'-truncate'`, `'-replace'`, `'-mirror'`, `'-circulate'`.
-- Add feature to perform [`rolling window analysis`][1.1.2,A11] that is used by the Video Stitching image unpatterning code.
-- Add [git bash script][1.1.2,A12] for semi-automated merging from **release**-tag to **master**-branch.
+- Add feature to generate indices via [`generic_sub2ind`][1.1.2,A10], merging calls to [`ndgrid`][1.1.2,A11], [`sub2ind`][1.1.2,A12] and [`cast`][1.1.2,A13] and being memory conservative. It can be customized with extra options: `'-isarray'`, `'-nobsxfun'`, `'-truncate'`, `'-replace'`, `'-mirror'`, `'-circulate'`.
+- Add feature to perform [`rolling window analysis`][1.1.2,A14] that is used by the Video Stitching image unpatterning code.
+- Add [git bash script][1.1.2,A15] for semi-automated merging from **release**-tag to **master**-branch.
 
 [1.1.2,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/wit_io.mltbx
 [1.1.2,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/EXAMPLE%20cases/E_05_unpattern_video_stitching.m
@@ -176,8 +182,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.1.2,A8]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/varargin_dashed_str.m
 [1.1.2,A9]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/@wid/crop.m
 [1.1.2,A10]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/generic_sub2ind.m
-[1.1.2,A11]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/rolling_window_analysis.m
-[1.1.2,A12]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/git_release_to_master.sh
+[1.1.2,A11]: https://www.mathworks.com/help/matlab/ref/ndgrid.html
+[1.1.2,A12]: https://www.mathworks.com/help/matlab/ref/sub2ind.html
+[1.1.2,A13]: https://www.mathworks.com/help/matlab/ref/cast.html
+[1.1.2,A14]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/helper/rolling_window_analysis.m
+[1.1.2,A15]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.1.2/git_release_to_master.sh
 
 ### Changed
 - Change notation for `wid`, `wip` and `wit` objects. For instance, `C_wid`, `C_wip`, `C_wit` (and `HtmlNames` or `n`) are now `O_wid`, `O_wip`, `O_wit` (and `O_wid_HtmlNames`), respectively.
@@ -218,7 +227,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rewrite [example cases][1.1.1,C1] with simplicity in mind and split into more files.
 - Shorten [example][1.1.1,C1] and [script][1.1.1,C2] case names for improved [Tab-key completion][1.1.1,C3] experience in MATLAB's `Command Window`.
 - [`icons`][1.1.1,C4]-folder: Replace **\*.zip** files with folders for MATLAB [`File Exchange`][1.1.1,C5] compatibility.
-- [`@wid/get_HtmlName`][1.1.1,C6]: Use small icons for `wid` objects in `Workspace` and larger for `wid` objects in `Project Manager`.
+- [`@wid/get_HtmlName`][1.1.1,C6]: Use small icons for `wid` object names in MATLAB's `Workspace` and larger icons for `wid` object names in `Project Manager`.
 - `wid`-class: Rename all `reduce`-prefixed functions as `crop`-prefixed for consistency with the WITec software.
 - [`@wid/crop`][1.1.1,C7]: Accept variable number of inputs.
 
