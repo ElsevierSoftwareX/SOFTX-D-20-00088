@@ -56,7 +56,7 @@ and from the context menu left-click "Add to Path" and "Selected Folders and
 Subfolders".
 
 ### Installation to context menus (for MATLAB R2011a or newer)
-**Optionally**, run *(or F5)* also *'[update_wip_and_wid_context_menus.m]'*
+**Optionally**, run *(or F5)* also *'[wit_io_update_context_menus_for_wip_and_wid_files.m]'*
 to add *'MATLAB'*-option to the **\*.wip** and **\*.wid** file right-click
 context menus to enable a quick call to `[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file);`.
 **This also requires administration rights.**
@@ -126,7 +126,7 @@ J. T. Holmi (2019). wit_io: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.w
 [EXAMPLE cases]: ./EXAMPLE%20cases
 [SCRIPT cases]: ./SCRIPT%20cases
 [wit_io_permanent_load_or_addpath.m]: ./wit_io_permanent_load_or_addpath.m
-[update_wip_and_wid_context_menus.m]: ./update_wip_and_wid_context_menus.m
+[wit_io_update_context_menus_for_wip_and_wid_files.m]: ./wit_io_update_context_menus_for_wip_and_wid_files.m
 [README on WIT-tag formatting.txt]: ./README%20on%20WIT-tag%20formatting.txt
 [clever_statistics_and_outliers.m]: ./helper/clever_statistics_and_outliers.m
 [apply_MRLCM.m]: ./helper/corrections/apply_MRLCM.m
