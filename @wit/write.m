@@ -23,9 +23,6 @@ function write(obj, File),
         swapEndianess = ~isLittleEndian; % Swap if to write big endian
     end
     
-    % Get available memory in bytes (IN ORDER TO HANDLE LOW-MEMORY CASE!)
-    [~, sys] = memory;
-    
     % Update the root first
     obj.Root.update();
     
@@ -38,11 +35,18 @@ function write(obj, File),
     % Close the file ONLY WHEN out of the function scope
     C = onCleanup(@() fclose(fid)); % https://blogs.mathworks.com/loren/2008/03/10/keeping-things-tidy/
     
-    if 1.2.*obj.End + 1e6 < sys.PhysicalMemory.Available, % TEST IF BUFFER FITS IN MEM
+    % Get file name and size
+    [~, name, ext] = fileparts(File);
+    FileName = [name ext];
+    FileSize = obj.End; % Get file size
+    
+    try, % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
+        % Avoid call to builtin 'memory', which is Octave-incompatible!
+        buffer = zeros(FileSize, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
         buffer = obj.binary(swapEndianess);
         fwrite(fid, buffer, 'uint8');
-    else,
-        warning('Writing file in slower LOW-ON-MEMORY mode!');
-        obj.Root.fwrite(fid, swapEndianess); % ONLY IF LOW-ON MEMORY!
+    catch, % OTHERWISE USE LOW-ON MEMORY SCHEME!
+        warning('Low on memory... Writing file ''%s'' of %d bytes children-by-children!', FileName, FileSize);
+        obj.Root.fwrite(fid, swapEndianess);
     end
 end

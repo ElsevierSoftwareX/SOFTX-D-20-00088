@@ -17,24 +17,25 @@ file = fullfile(pathstr, 'E_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
-h = helpdlg({'EXAMPLE CASE 2 A: DATA FILTERING FOR LINESHAPE PARAMETERS' ...
+wit_io_license;
+
+h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 2 A:}' ...
+    '{\bf\fontsize{12}DATA FILTERING FOR LINESHAPE PARAMETERS}' ...
     '' ...
-    '* Using ''E_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.' ...
-    '' ...
-    '* Please note that MOST of this ''wit_io'' code is OPEN-SOURCED under simple and permissive BSD 3-Clause License and is FREE-TO-USE like described in LICENSE.txt!'});
-if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before continuing.
+    '\bullet Using ''E\_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'});
+if ishandle(h), figure(h); uiwait(h); end % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', '(rel. 1/cm)'); % Load all the file plottable content and force SpectralUnit to Raman shift
+[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', 'rel. 1/cm'); % Load all the file plottable content and force SpectralUnit to Raman shift
 
 % Get handles to some specific data
 O_Text = O_wid(1); % Get object of "Global (Calibration Information)" at index 1
 O_Bitmap = O_wid(2); % Get object of "Exfoliated graphene (Gr) on SiO2/Si-substrate<Video Image (Data)" at index 2
 O_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
-O_Mask = O_wid(6); % Get object of "1-layer Gr<Mask 2" at index 6
+O_Mask = O_wid(7); % Get object of "1-layer Gr<Mask 2" at index 7
 O_Point = O_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 17
 % To see these names, double-click O_wid_HtmlNames-variable under your Workspace!
 
@@ -43,7 +44,7 @@ O_Point = O_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 1
 O_ImageScans = O_wip.manager('-nomanager', '-Type', 'TDGraph', '-SubType', 'Image');
 O_ImageScan = O_ImageScans(1); % Get the first Image<TDGraph in the file
 O_Images = O_wip.manager('-nomanager', '-Type', 'TDImage');
-O_Mask = O_Images(2); % Get the second TDImage in the file
+O_Mask = O_Images(3); % Get the third TDImage in the file
 O_Points = O_wip.manager('-nomanager', '-Type', 'TDGraph', '-SubType', 'Point');
 O_Point = O_Points(end); % Get the last TDGraph Point in the file
 %-------------------------------------------------------------------------%
@@ -51,11 +52,11 @@ O_Point = O_Points(end); % Get the last TDGraph Point in the file
 
 
 %-------------------------------------------------------------------------%
-h = helpdlg({'!!! (E2A i.) Applying filters on the Raman D-, G- and 2D-peaks:' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E2A i.)} Apply filters on the Raman D-, G- and 2D-peaks:}' ...
     '' ...
-    '* Please read the code that applies Sum and Center of Mass -filters over the specified ranges.' ...
+    '\bullet Please read the code that applies Sum and Center of Mass -filters over the specified ranges.' ...
     '' ...
-    '* Click and see the newly processed data in the end of the opened Project Manager before closing this help dialog. Please note that you may also use arrow keys to move in images.'});
+    '\ldots Click and see the newly processed data in the end of the opened Project Manager before closing this help dialog. Please note that you may also use arrow keys to move in images.'});
 %-------------------------------------------------------------------------%
 
 
@@ -97,11 +98,11 @@ close all; % Close Project Manager
 
 
 %-------------------------------------------------------------------------%
-h = helpdlg({'!!! (E2A ii.) Applying lineshape-fitting filters on the Raman 0-, D-, G- and 2D-peaks:' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E2A ii.)} Apply lineshape-fitting filters on the Raman 0-, D-, G- and 2D-peaks:}' ...
     '' ...
-    '* Please read the code that applies Gaussian and Voigtian -filters over the specified ranges.' ...
+    '\bullet Please read the code that applies Gaussian and Voigtian -filters over the specified ranges.' ...
     '' ...
-    '* See the fitting result in the opened figure before closing this help dialog to END.'});
+    '\ldots See the fitting result in the opened figure before closing this help dialog to END.'});
 %-------------------------------------------------------------------------%
 
 

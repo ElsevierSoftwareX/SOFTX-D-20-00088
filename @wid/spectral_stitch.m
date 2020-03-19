@@ -13,7 +13,7 @@
 % apparent stitching result looks smooth!
 function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin),
     % Pop states (even if not used to avoid push-pop bugs)
-    AutoCreateObj = obj.Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
+    AutoCreateObj = obj(1).Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
     
     new_obj = wid.Empty;
     
@@ -50,7 +50,7 @@ function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin),
     obj = O_wid(1);
     if AutoCreateObj,
         new_obj = obj.copy(); % Copy first object, because all of them must be of same spatial size
-        new_obj.Links.XTransformationID.destroy(); % But destroy copied TDSpectralTransformation
+        new_obj.LinksToOthers.XTransformationID.destroy(); % But destroy copied TDSpectralTransformation
         
         new_obj.Name = sprintf('Spectral Stitch[%d spectra]<%s', N_TDGraph, new_obj.Name); % Generate new name
         new_obj.Data = Data;

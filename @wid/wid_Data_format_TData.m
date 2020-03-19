@@ -3,7 +3,7 @@
 % All rights reserved.
 
 function format = wid_Data_format_TData(obj),
-    if isempty(obj.Version) || obj.Version == 7 || obj.Version == 6,
+    if isempty(obj.Version) || obj.Version == 7,
         % Define the file format fields
         % Each row: wit-tag name, {write-parser; read-parser}
         subformat_TData = ...
@@ -23,7 +23,7 @@ function format = wid_Data_format_TData(obj),
             'Types' {false; @int32; @int32} ...
             } ...
             };
-    elseif obj.Version == 5,
+    elseif obj.Version >= 0 && obj.Version <= 5 || obj.Version == 6, % Legacy versions OR v6
         % Define the file format fields
         % Each row: wit-tag name, {write-parser; read-parser}
         subformat_TData = ...

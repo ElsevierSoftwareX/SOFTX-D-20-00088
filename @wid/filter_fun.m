@@ -89,7 +89,7 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin),
             Project.pushAutoCopyObj(true); % Temporarily allow copying
             Project.pushAutoModifyObj(true); % Temporarily allow modifying
 
-            new_TDGraph = obj.crop_Graph([], Data_range_new, Graph_range); % Which uses wid.copy-function that automatically appends new copy (and its Links) to the Project
+            new_TDGraph = obj.crop_Graph([], Data_range_new, Graph_range); % Which uses wid.copy-function that automatically appends new copy (and its LinksToOthers) to the Project
             new_TDGraph.Name = sprintf('%s[%g-%g]<%s', str_fun{end}, varargin{1}(1), varargin{1}(2), Name); % Generate new name
 
             new_obj = [new_obj new_TDGraph]; % Also return new_TDGraph

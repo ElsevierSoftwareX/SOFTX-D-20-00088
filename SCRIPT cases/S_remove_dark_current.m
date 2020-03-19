@@ -16,7 +16,7 @@
 
 % Load and select the dark current
 [O_wid_dark, O_wip, ~] = wip.read('-Manager', ...
-    {'-closepreview', '-singlesection', '-Title', 'SELECT ONE DARK', '-Type', 'TDGraph'});
+    '--closepreview', '--singlesection', '--Title', 'SELECT ONE DARK', '--Type', 'TDGraph');
 if isempty(O_wid_dark), return; end
 
 % Remove the cosmic rays from the dark current (can be 0-D, 1-D, 2-D and
@@ -25,13 +25,13 @@ if isempty(O_wid_dark), return; end
 
 % Load and select the datas of interest
 [O_wid, O_wip, O_wid_HtmlNames] = wip.read(O_wip.File, '-ifall', '-Manager', ...
-    {'-nopreview', '-Title', 'SELECT NON-DARK', '-Type', 'TDGraph'});
+    '--nopreview', '--Title', 'SELECT NON-DARK', '--Type', 'TDGraph');
 if isempty(O_wid), return; end
 
 % Remove the selected dark current from the selection
 bw_nondark = all(bsxfun(@ne, [O_wid.Id].', [O_wid_dark.Id]), 2);
 O_wid = O_wid(bw_nondark);
-n = n(bw_nondark);
+O_wid_HtmlNames = O_wid_HtmlNames(bw_nondark);
 
 % Ask if to make copies
 makecopies = strncmp(questdlg('Would you like to 1) make copies OR 2) overwrite original?', 'How to proceed?', '1) Make copies', '2) Overwrite original', '1) Make copies'), '1)', 2);

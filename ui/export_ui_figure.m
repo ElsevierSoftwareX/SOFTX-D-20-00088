@@ -33,11 +33,12 @@ function export_ui_figure(Fig),
     % Add CROPPED versions of the formats
     formats(end+1:end+2,1) = formats(1:2,1);
     formats(end-1:end,2) = anyfun2cell(@(x) sprintf('CROP >> %s', x{1}), formats(1:2,2));
-    [filename, pathname, filterindex] = uiputfile(formats, 'Export figure >> 600 DPI >> ...');
+    [filename, pathname, filterindex] = uiputfile(formats, 'Export figure >> 600 DPI >> ...', wit_io_pref_get('latest_folder', cd));
     
     % Export if filename is provided
     if pathname ~= 0,
         file = fullfile(pathname, filename);
+        wit_io_pref_set('latest_folder', pathname); % Remember permanently the latest folder
         h_waitbar = waitbar(0, 'Please wait...', 'Name', 'Exporting figure');
         export_opt = {'-r600', ... % Dots Per Inch (DPI), ...
             '-nofontswap', ... % Preserves original fonts for vector formats

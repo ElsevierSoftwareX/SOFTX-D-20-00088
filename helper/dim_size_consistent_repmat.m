@@ -27,8 +27,6 @@ function varargout = dim_size_consistent_repmat(varargin),
     % OR 2) all nonsingleton input dimension sizes are equivalent.
     % If inconsistency is found, then function returns error.
     
-    % Updated 3.11.2015 by Joonas T. Holmi
-    
     %% EXAMPLE 1: Equivalent case with meshgrid
     % Inputs with sizes [1 10], [70 1] produce outputs with size [70 10].
     % x = 1:10; % size(x) == [1 10]
@@ -51,31 +49,31 @@ function varargout = dim_size_consistent_repmat(varargin),
     %% CODE
     if nargin > 0, % If inputs given
         % Get input dimension counts
-        NDIMS = cellfun(@ndims, varargin, 'UniformOutput', true);
-        ndims_max = max(NDIMS); % Find maximum dimension count
+        NDIMS_in = zeros(nargin, 1);
+        for ii = 1:nargin, NDIMS_in(ii) = ndims(varargin{ii}); end
+        ndims_max = max(NDIMS_in); % Find maximum dimension count
 
         % Get input sizes (with 1-padding)
-        S_cell = cellfun(@(x) [size(x) ones(1, ndims_max-ndims(x))], varargin, 'UniformOutput', false);
-        S = cat(1, S_cell{:}); % Convert to matrix
+        SIZE_in = ones(nargin, ndims_max);
+        for ii = 1:nargin, SIZE_in(ii,1:NDIMS_in(ii)) = size(varargin{ii}); end
 
         % Find singletons for consistency test and repmat
-        is_singleton = S == 1;
+        is_singleton = SIZE_in == 1;
 
         % Output size
-        s_out = max(S, [], 1);
-        S_out = repmat(s_out, [nargin 1]); % Repmat to simplify code
+        size_out = max(SIZE_in, [], 1);
+        SIZE_out = repmat(size_out, [nargin 1]); % Repmat to simplify code
 
         % Test dimension size consistency
-        is_out_consistent = S == S_out; % If consistent with output size
+        is_out_consistent = SIZE_in == SIZE_out; % If consistent with output size
         is_consistent = (~is_singleton & is_out_consistent) | is_singleton;
         if any(~is_consistent(:)), error('Inconsistent dimension sizes!'); end
 
         % Repmat singleton dimensions to reach output size
-        repmat_out = ones(size(S_out));
-        repmat_out(is_singleton) = S_out(is_singleton); % Replace singletons
-        repmat_out_cell = mat2cell(repmat_out, ones(nargin, 1))'; % Convert to cell
+        repmat_out = ones(nargin, ndims_max);
+        repmat_out(is_singleton) = SIZE_out(is_singleton); % Replace singletons
 
         % Create dimension size consistent output
-        varargout = cellfun(@repmat, varargin, repmat_out_cell, 'UniformOutput', false);
+        for ii = nargin:-1:1, varargout{ii} = repmat(varargin{ii}, repmat_out(ii,:)); end
     end
 end

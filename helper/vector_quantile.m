@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Used by tools\wip_hist.m
+% Used by @wid\histogram.m
 function Y = vector_quantile(x, P),
     % Simplified quantile function for backward compability that avoids
     % Statistics and Machine Learning Toolbox. Treats x as vector by

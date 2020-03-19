@@ -46,8 +46,10 @@ classdef wid < handle, % Since R2008a
         ImageIndex;
         OrdinalNumber;
         SubType;
-        Links;
-        AllLinks;
+        LinksToOthers;
+        AllLinksToOthers;
+        LinksToThis;
+        AllLinksToThis;
     end
     
     properties (SetAccess = private)
@@ -224,49 +226,91 @@ classdef wid < handle, % Since R2008a
         end
         
         % Struct of linked wid-classes
-        function Links = get.Links(obj),
-            Links = struct.empty;
+        function LinksToOthers = get.LinksToOthers(obj),
+            LinksToOthers = struct.empty;
             if isfield(obj.Tag, 'Data'),
                 Tag_Id = obj.Tag.Data.regexp('^[^<]+ID(<[^<]*)*$'); % Should not match with ID under TData!
                 strs = get_valid_and_unique_names({Tag_Id.Name}); % Convert all wit Names to struct-compatible versions
                 for ii = 1:numel(Tag_Id),
                     if Tag_Id(ii).Data ~= 0, % Ignore if zero
-                        Links(1).(strs{ii}) = obj.Project.find_Data(Tag_Id(ii).Data);
+                        LinksToOthers(1).(strs{ii}) = obj.Project.find_Data(Tag_Id(ii).Data);
                     end
                 end
             end
         end
         
-        % Same as Links but includes also the Links of Links and so on.
-        function AllLinks = get.AllLinks(obj),
-            Links = obj.Links;
-            N = fieldnames(Links);
-            C = struct2cell(Links);
+        % Same as LinksToOthers but includes also the LinksToOthers of LinksToOthers and so on.
+        function AllLinksToOthers = get.AllLinksToOthers(obj),
+            NewLinksToOthers = obj.LinksToOthers;
+            N = fieldnames(NewLinksToOthers);
+            C = struct2cell(NewLinksToOthers);
             ii = 1;
             while ii <= numel(C),
-                if isempty(C{ii}), NewLinks = struct();
-                else, NewLinks = C{ii}.Links; end
-                NewN = cellfun(@(x) [N{ii} '_' x], fieldnames(NewLinks), 'UniformOutput', false);
-                NewC = struct2cell(NewLinks);
+                if isempty(C{ii}), NewLinksToOthers = struct();
+                else, NewLinksToOthers = C{ii}.LinksToOthers; end
+                NewN = cellfun(@(x) [N{ii} '_' x], fieldnames(NewLinksToOthers), 'UniformOutput', false);
+                NewC = struct2cell(NewLinksToOthers);
                 if ~isempty(NewN), N = [N; NewN]; end
                 if ~isempty(NewC), C = [C; NewC]; end
                 ii = ii + 1;
             end
-            AllLinks = cell2struct(C, N, 1);
+            AllLinksToOthers = cell2struct(C, N, 1);
+        end
+        
+        % Array of linked wid-classes
+        function LinksToThis = get.LinksToThis(obj),
+            linked_tags = wid.find_linked_wits_to_this_wid(obj);
+        	owner_ids = wid.find_owner_id_to_this_wit(linked_tags);
+            LinksToThis = obj.Project.find_Data(owner_ids);
+        end
+        
+        % Same as LinksToThis but includes also the LinksToThis of LinksToThis and so on.
+        function AllLinksToThis = get.AllLinksToThis(obj),
+            AllLinksToThis = wid.Empty;
+            if isfield(obj.Tag, 'Data'),
+                % First get the object's wit-tree parent tag
+                tags = obj.Tag.Data.Parent;
+                % List all the project's ID-tags (except NextDataID and
+                % ID<TData) under the Data tree tag
+                tags = tags.regexp('^(?!NextDataID)([^<]+ID(List)?(<[^<]*)*(<Data(<WITec (Project|Data))?)?$)');
+                ids = obj.Id;
+                ii = 1;
+                while ii <= numel(ids),
+                    % Keep only those ID-tags, which point to this object
+                    subtags = tags.match_by_Data_criteria(@(x) any(x == ids(ii)));
+                    % Get their owner wid-objects' IDs
+                    subids = wid.find_owner_id_to_this_wit(subtags);
+                    % Detect duplicates (to avoid circular loops) and
+                    % append without them
+                    B_duplicates = any(bsxfun(@eq, ids, subids(:)), 2);
+                    ids = [ids subids(~B_duplicates)];
+                    % Proceed to next id
+                    ii = ii + 1;
+                end
+                % Exclude this object
+                ids = ids(2:end);
+                % Get the wid-objects of the tags
+                AllLinksToThis = obj.Project.find_Data(ids);
+            end
         end
         
         
         
         %% OTHER PUBLIC METHODS
         % Object plotting
-        plot(obj, varargin);
+        h = plot(obj, varargin);
+        h_position = plot_position(obj, FigAxNeither, varargin); % To show position of other objects on obj
+        h_scalebar = plot_scalebar(obj, FigAxNeither, varargin);
         varargout = manager(obj, varargin); % A wrapper method that shows the given objects via Project Manager view.
         
         % Object copying, destroying, writing
         new = copy(obj); % Copy-method
-        copy_Links(obj); % Copy linked objects (i.e. transformations and interpretations) and relink
+        varargout = copy_Others_if_shared_and_unshare(obj, varargin); % Copy given shared linked objects and relink
+        copy_LinksToOthers(obj); % Copy linked objects (i.e. transformations and interpretations) and relink
+        copy_Links(obj); % Deprecated version! Use copy_LinksToOthers
         destroy(obj); % Destructor-method
-        destroy_Links(obj); % Destroy links to objects (i.e. transformations and interpretations)
+        destroy_LinksToOthers(obj); % Destroy links to objects (i.e. transformations and interpretations)
+        destroy_Links(obj); % Deprecated version! Use destroy_LinksToOthers
         write(obj, File); % Ability to write selected objects to *.WID-format
         
         % Merge multiple object Data or Graph together (if possible)
@@ -278,9 +322,7 @@ classdef wid < handle, % Since R2008a
         
         % Reduce object Data
         [Data_cropped, Graph_cropped] = crop_Graph(obj, ind_range, Data_cropped, Graph_cropped);
-        [Data_reduced, Graph_reduced] = reduce_Graph(obj, ind_range, Data_reduced, Graph_reduced); % DEPRECATED! USE ABOVE INSTEAD!
         [obj, Data_cropped, X_cropped, Y_cropped, Graph_cropped, Z_cropped] = crop(obj, ind_X_begin, ind_X_end, ind_Y_begin, ind_Y_end, ind_Graph_begin, ind_Graph_end, ind_Z_begin, ind_Z_end, isDataCropped);
-        [obj, Data_reduced, X_reduced, Y_reduced, Graph_reduced, Z_reduced] = reduce(obj, ind_X_begin, ind_X_end, ind_Y_begin, ind_Y_end, ind_Graph_begin, ind_Graph_end, ind_Z_begin, ind_Z_end); % DEPRECATED! USE ABOVE INSTEAD!
         [obj, Data_range, Graph_range, Data_range_bg] = filter_bg(obj, varargin);
         
         % Filter object Data
@@ -336,6 +378,10 @@ classdef wid < handle, % Since R2008a
         obj = new_Transformation_Space(O_wit);
         obj = new_Transformation_Spectral(O_wit);
         
+        % Other wit-tree related helper functions
+        Ids = find_owner_id_to_this_wit(O_wit);
+        O_wit = find_linked_wits_to_this_wid(obj);
+        
         % DataTree formats
         format = DataTree_format_TData(Version_or_obj);
         
@@ -353,7 +399,10 @@ classdef wid < handle, % Since R2008a
         
         %% OTHER PUBLIC METHODS
         [Data_range, Graph_range, Data_range_bg, range] = crop_Graph_with_bg_helper(Data, Graph, range, bg_avg_lower, bg_avg_upper);
-        [Data_range, Graph_range, Data_range_bg, range] = reduce_Graph_with_bg_helper(Data, Graph, range, bg_avg_lower, bg_avg_upper); % DEPRECATED! USE ABOVE INSTEAD!
+        h_image = plot_position_Image_helper(Ax, positions, color);
+        h_line = plot_position_Line_helper(Ax, positions, color);
+        h_point = plot_position_Point_helper(Ax, positions, color);
+        h = plot_scalebar_helper(Ax, image_size, image_size_in_SU, image_SU, varargin);
         [Graph, Data, W, D] = spectral_stitch_helper(Graphs_nm, Datas, isdebug);
         [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_SI_XY, varargin); % Add '-debug' as input to see debug plots
     end

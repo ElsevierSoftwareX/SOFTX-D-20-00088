@@ -13,10 +13,10 @@ function write(obj, File) % For saving WIT-formatted WID-files!
             if all(isfield(obj(ii).Tag, {'DataClassName', 'Data'})),
                 O_wits = [obj(ii).Tag.DataClassName obj(ii).Tag.Data];
             end
-            AllLinks = struct2cell(obj(ii).AllLinks);
-            for jj = 1:numel(AllLinks), % Also add the linked object such as transformations and interpretations
-                if all(isfield(AllLinks{jj}.Tag, {'DataClassName', 'Data'})),
-                    O_wits = [O_wits AllLinks{jj}.Tag.DataClassName AllLinks{jj}.Tag.Data];
+            AllLinksToOthers = struct2cell(obj(ii).AllLinksToOthers);
+            for jj = 1:numel(AllLinksToOthers), % Also add the linked object such as transformations and interpretations
+                if all(isfield(AllLinksToOthers{jj}.Tag, {'DataClassName', 'Data'})),
+                    O_wits = [O_wits AllLinksToOthers{jj}.Tag.DataClassName AllLinksToOthers{jj}.Tag.Data];
                 end
             end
             O_wit = wip.append(O_wit, unique(O_wits));
@@ -27,7 +27,7 @@ function write(obj, File) % For saving WIT-formatted WID-files!
         Version = wip.get_Root_Version(obj(1));
         if numel(obj) > 0, O_wit = wid.new(Version);
         else, O_wit = wid.new(); end % Create minimal data for all objects
-        O_wits = wit.Empty;
+        O_wits = wit.empty;
         for ii = 1:numel(obj),
             if wip.get_Root_Version(obj(ii)) ~= Version,
                 warning('Object with index ii has mismatching Version numbering.', ii);
@@ -35,10 +35,10 @@ function write(obj, File) % For saving WIT-formatted WID-files!
             if all(isfield(obj(ii).Tag, {'DataClassName', 'Data'})),
                 O_wits = [O_wits obj(ii).Tag.DataClassName obj(ii).Tag.Data];
             end
-            AllLinks = struct2cell(obj(ii).AllLinks);
-            for jj = 1:numel(AllLinks), % Also add the linked object such as transformations and interpretations
-                if ~isempty(AllLinks{jj}) && all(isfield(AllLinks{jj}.Tag, {'DataClassName', 'Data'})),
-                    O_wits = [O_wits AllLinks{jj}.Tag.DataClassName AllLinks{jj}.Tag.Data];
+            AllLinksToOthers = struct2cell(obj(ii).AllLinksToOthers);
+            for jj = 1:numel(AllLinksToOthers), % Also add the linked object such as transformations and interpretations
+                if ~isempty(AllLinksToOthers{jj}) && all(isfield(AllLinksToOthers{jj}.Tag, {'DataClassName', 'Data'})),
+                    O_wits = [O_wits AllLinksToOthers{jj}.Tag.DataClassName AllLinksToOthers{jj}.Tag.Data];
                 end
             end
         end

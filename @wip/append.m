@@ -19,7 +19,7 @@ function [O_wit, varargout] = append(varargin),
     varargin = varargin(~cellfun(@isempty, varargin));
     
     % Exit if no non-empty input remaining
-    O_wit = wit.Empty;
+    O_wit = wit.empty;
     if numel(varargin) == 0, return; end % Exit here if no inputs
     
     % Append everything to the first non-empty object
@@ -45,8 +45,8 @@ function [O_wit, varargout] = append(varargin),
     end
     
     % Loop through the other input
-    DataOrDataClassNames = wit.Empty;
-    ViewerOrViewerClassNames = wit.Empty;
+    DataOrDataClassNames = wit.empty;
+    ViewerOrViewerClassNames = wit.empty;
     for ii = 1:numel(varargin),
         O_wit_ii = varargin{ii}.copy(); % Get copy of the given wit-tree
         varargout{ii} = O_wit_ii; % Save copies also as output

@@ -2,6 +2,8 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
+% REQUIREMENTS: Image Processing Toolbox (due to usage of 'bwdist',
+% 'bwlabel' and 'regionprops').
 function varargout = data_true_and_nan_collective_hole_reduction(varargin),
     % This collectively reduces holes in invalid regions (= true and NaN
     % input values). Inputs are assumed to be different maps of the same
@@ -30,7 +32,8 @@ function varargout = data_true_and_nan_collective_hole_reduction(varargin),
     
     % Near-safely remove the one-pixel noise. This attempts to avoid
     % eroding away wider one-pixel thick connected regions with Area >= 4
-    D_nearby = ordfilt2(D, 9, ones(3)); % Get maximum of 4-conn neighbours
+    D_nearby = mynanmaxfilt2(D, 3); % Get maximum of 4-conn neighbours
+%     D_nearby = ordfilt2(D, 9, ones(3)); % Same as above
     bw_erode = D_nearby <= 1;
     
     % Restore the areas with the maximum distance >= 2 or areas >= 6

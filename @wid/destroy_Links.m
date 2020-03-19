@@ -3,9 +3,6 @@
 % All rights reserved.
 
 function destroy_Links(obj),
-    % Handle transformations and interpretations
-    Tag_Id = obj.Tag.Data.regexp('^[^<]+ID(<[^<]*)*$'); % Should not match with ID under TData!
-    for ii = 1:numel(Tag_Id),
-        Tag_Id(ii).Data = int32(0); % Must be int32!
-    end
+    warning('You are using a deprecated version! Use destroy_LinksToOthers.m instead.');
+    obj.destroy_LinksToOthers();
 end

@@ -28,19 +28,13 @@
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 % Class for tree tags
-classdef wit < handle, % Since R2008a
-    % Hidden constant to reduce calls to a lot used wit.empty
-    properties (Constant, Hidden)
-        % Using wit.Empty is up to 60 times faster than wit.empty
-        Empty = wit.empty; % Call wit.empty only once
-    end
-    
+classdef wit < handle, % Since R2008a and Octave-compatible
     properties
         % Main file-format parameters
         Name = '';
-        Data = wit.Empty;
+        Data; % = wit.empty; % latter is Octave-incompatible!
         % References to other relevant tags
-        Parent = wit.Empty;
+        Parent; % = wit.empty; % latter is Octave-incompatible!
     end
 
     % Depend either on Data (for Children) or Parent (for the others)
@@ -71,27 +65,41 @@ classdef wit < handle, % Since R2008a
     
     properties
         Magic = 'WIT_TREE'; % Practically only the Magic string of Root matters
+        IsValid = true; % Used internally by fread and binaryread functions
+        Id = uint64(0); % Used internally enable handle-like comparison in Octave
     end
     
     %% PUBLIC METHODS
     methods
         % CONSTRUCTOR
         function obj = wit(ParentOrName, NameOrData, DataOrNone),
+            % Store object Id in order to enable handle-like comparisons
+            persistent NextId;
+            if isempty(NextId), NextId = uint64(1);
+            else, NextId = NextId + 1; end
+            obj.Id = NextId;
+            
+            % Set empty objects to Data and Parent in Octave-compatible way
+            empty_obj = obj([]); % Octave-compatible way to construct empty array of objects
+            obj.Data = empty_obj; % Avoiding wit.empty due to infinite loop
+            obj.Parent = empty_obj; % Avoiding wit.empty due to infinite loop
+            
+            % Parse input
             if nargin > 0,
-                if isa(ParentOrName, 'wit'),
+                if isa(ParentOrName, 'wit'), % Set new Parent
                     obj.Parent = ParentOrName;
-                elseif isa(ParentOrName, 'char'),
+                elseif isa(ParentOrName, 'char'), % Set new Name
                     if nargin > 2, error('Too many input arguments.'); end
                     obj.Name = ParentOrName;
                 else, error('First input must be either wit-class or char!'); end
             end
             if nargin > 1,
-                if isa(ParentOrName, 'wit'),
-                    if isa(NameOrData, 'char'),
+                if isa(ParentOrName, 'wit'), % After new Parent
+                    if isa(NameOrData, 'char'), % Set new Name
                         obj.Name = NameOrData;
-                        if nargin > 2, obj.Data = DataOrNone; end
+                        if nargin > 2, obj.Data = DataOrNone; end % Set new Data
                     else, error('If first input is wit-class, then second must be char!'); end
-                else, obj.Data = NameOrData; end
+                else, obj.Data = NameOrData; end % After new Name set new Data
             end
         end
         
@@ -121,7 +129,7 @@ classdef wit < handle, % Since R2008a
         
         %% READ-ONLY
         function Children = get.Children(obj),
-            Children = wit.Empty;
+            Children = wit.empty;
             if isa(obj.Data, 'wit'), Children = obj.Data; end
         end
         
@@ -131,7 +139,7 @@ classdef wit < handle, % Since R2008a
         end
         
         function Siblings = get.Siblings(obj),
-            Siblings = wit.Empty;
+            Siblings = wit.empty;
             if ~isempty(obj.Parent),
                 Siblings = obj.Parent.Data; % Including itself
                 Siblings = Siblings(Siblings ~= obj); % Exclude itself
@@ -139,7 +147,7 @@ classdef wit < handle, % Since R2008a
         end
         
         function Next = get.Next(obj),
-            Next = wit.Empty;
+            Next = wit.empty;
             if ~isempty(obj.Parent),
                 Siblings = obj.Parent.Data; % Including itself
                 ind_Next = find(Siblings == obj, 1) + 1;
@@ -148,7 +156,7 @@ classdef wit < handle, % Since R2008a
         end
         
         function Prev = get.Prev(obj),
-            Prev = wit.Empty;
+            Prev = wit.empty;
             if ~isempty(obj.Parent),
                 Siblings = obj.Parent.Data; % Including itself
                 ind_Prev = find(Siblings == obj, 1) - 1;
@@ -192,6 +200,73 @@ classdef wit < handle, % Since R2008a
         
         
         
+        % Define Octave-compatible handle-like eq, ne, lt, le, gt and ge:
+        % https://se.mathworks.com/help/matlab/ref/handle.relationaloperators.html
+        function tf = compare(O1, O2, fun, default),
+            if numel(O1) == 1 || numel(O2) == 1 || ... % Either O1 or O2 is scalar
+                    ndims(O1) == ndims(O2) && all(size(O1) == size(O2)), % Or size(O1) == size(O2)
+                if isa(O2, 'wit'), tf = fun(reshape([O1.Id], size(O1)), reshape([O2.Id], size(O2)));
+                elseif numel(O1) == 1, tf = repmat(default, size(O2));
+                else, tf = repmat(default, size(O1)); end
+            else, error('Matrix dimensions must agree.'); end
+        end
+        function tf = eq(O1, O2), tf = O1.compare(O2, @eq, false); end % Equal
+        function tf = ne(O1, O2), tf = O1.compare(O2, @ne, true); end % Not equal
+        function tf = lt(O1, O2), tf = O1.compare(O2, @lt, false); end % Less than
+        function tf = le(O1, O2), tf = O1.compare(O2, @le, false); end % Less than or equal
+        function tf = gt(O1, O2), tf = O1.compare(O2, @gt, false); end % Greater than
+        function tf = ge(O1, O2), tf = O1.compare(O2, @ge, false); end % Greater than or equal
+        
+        % Define horzcat, vertcat, reshape missing in Octave
+        function obj = horzcat(varargin), % Enables [O1 O2 ...]
+            if ~is_octave(), obj = builtin('horzcat', varargin{:}); % MATLAB-way
+            else, % Octave-way
+                obj = wit.empty;
+                varargin = varargin(~cellfun(@isempty, varargin)); % Skip empty
+                if ~isempty(varargin),
+                    D = max(cellfun(@ndims, varargin)); % Number of dimensions
+                    obj = varargin{1}; % Get the 1st non-empty object array
+                    [S{1:D}] = size(obj); % and its size
+                    for ii = 2:numel(varargin),
+                        obj_ii = varargin{ii}; % Get the ii'th non-empty object array
+                        [S_ii{1:D}] = size(obj_ii); % and its size
+                        if any([S{[1 3:D]}] ~= [S_ii{[1 3:D]}]), % Test if the sizes are compatible
+                            error('Dimensions of arrays being concatenated are not consistent.');
+                        end
+                        obj(end+1:end+numel(obj_ii)) = obj_ii; % Append to the 1st non-empty object array
+                    end
+                    obj = reshape(obj, S{1}, [], S{3:D}); % Restore the shape accordingly
+                end
+            end
+        end
+        function obj = vertcat(varargin), % Enables [O1; O2; ...]
+            if ~is_octave(), obj = builtin('vertcat', varargin{:}); % MATLAB-way
+            else, % Octave-way
+                obj = wit.empty;
+                varargin = varargin(~cellfun(@isempty, varargin)); % Skip empty
+                if ~isempty(varargin),
+                    D = max(cellfun(@ndims, varargin)); % Number of dimensions
+                    obj = varargin{1}; % Get the 1st non-empty object array
+                    [S{1:D}] = size(obj); % and its size
+                    for ii = 2:numel(varargin),
+                        obj_ii = varargin{ii}; % Get the ii'th non-empty object array
+                        [S_ii{1:D}] = size(obj_ii); % and its size
+                        if any([S{2:D}] ~= [S_ii{2:D}]), % Test if the sizes are compatible
+                            error('Dimensions of arrays being concatenated are not consistent.');
+                        end
+                        obj(end+1:end+numel(obj_ii)) = obj_ii; % Append to the 1st non-empty object array
+                    end
+                    obj = reshape(obj, [], S{2:D}); % Restore the shape accordingly
+                end
+            end
+        end
+        function obj = reshape(obj, varargin), % Enables object array reshaping
+            if ~is_octave(), obj = builtin('reshape', obj, varargin{:}); % MATLAB-way
+            else, obj = obj(reshape(1:numel(obj), varargin{:})); end % Octave-way
+        end
+        
+        
+        
         %% OTHER METHODS
         % Object copying, destroying, writing, reloading
         new = copy(obj); % Copy obj
@@ -205,12 +280,14 @@ classdef wit < handle, % Since R2008a
         
         % Conversion to/from binary form
         buffer = binary(obj, swapEndianess);
-        ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndianess);
+        ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj);
         ind_begin = binaryread_Data(obj, buffer, N_bytes_max, swapEndianess);
         
         % Object search
         tags = regexp(obj, pattern, FirstOnly, LayersFurther, PrevFullNames);
         tags = search(obj, varargin);
+        tags = regexp_ancestors(obj, pattern, FirstOnly, LayersFurther);
+        tags = search_ancestors(obj, varargin);
         tags = match_by_Data_criteria(obj, test_fun);
         
         % Object debugging
@@ -220,17 +297,28 @@ classdef wit < handle, % Since R2008a
     %% STATIC METHODS
     methods (Static)
         % Read file to obj
-        obj = read(File, N_bytes_max);
+        obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteria_for_obj);
         
         % Getters and setters for (un)formatted DataTree, also for debugging
         DataTree_set(parent, in, format); % For (un)formatted structs
         out = DataTree_get(parent, format); % For (un)formatted structs
+        
+        % Define Octave-compatible empty-function
+        function empty = empty(),
+            persistent empty_obj;
+            if ~isa(empty_obj, 'wit'), % Do only once to achieve best performance
+                dummy_obj = wit(); % Create a dummy wit-class
+                empty_obj = dummy_obj([]); % Octave-compatible way to construct empty array of objects
+                delete(dummy_obj); % Delete the dummy wit-class
+            end
+            empty = empty_obj;
+        end
     end
     
     %% PRIVATE METHODS
     methods (Access = private)
         fwrite(obj, fid, swapEndianess);
-        fread(obj, fid, N_bytes_max, swapEndianess);
+        fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj);
         fread_Data(obj, fid, N_bytes_max, swapEndianess);
     end
 end

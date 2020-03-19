@@ -9,8 +9,8 @@
 % and end indices are set to first and last index of Data, respectively.
 function [obj, Data_cropped, X_cropped, Y_cropped, Graph_cropped, Z_cropped] = crop(obj, ind_X_begin, ind_X_end, ind_Y_begin, ind_Y_end, ind_Graph_begin, ind_Graph_end, ind_Z_begin, ind_Z_end, isDataCropped),
     % Pop states (even if not used to avoid push-pop bugs)
-    AutoCopyObj = obj.Project.popAutoCopyObj; % Get the latest value (may be temporary or permanent or default)
-    AutoModifyObj = obj.Project.popAutoModifyObj; % Get the latest value (may be temporary or permanent or default)
+    AutoCopyObj = obj(1).Project.popAutoCopyObj; % Get the latest value (may be temporary or permanent or default)
+    AutoModifyObj = obj(1).Project.popAutoModifyObj; % Get the latest value (may be temporary or permanent or default)
     
     if nargin < 2, ind_X_begin = []; end
     if nargin < 3, ind_X_end = []; end
@@ -89,77 +89,83 @@ function [obj, Data_cropped, X_cropped, Y_cropped, Graph_cropped, Z_cropped] = c
         if ~isDataCropped,
             obj.Data = Data_cropped; % Update the data accordingly
         end
-
-        T = Info.XTransformation; % Get the x transformation object
-        if ~isempty(T), % Continue only if there is transformation
-            T_Data = T.Data; % And its data
-            switch(T.Type), % Adjust the pixel offset accordingly
+        
+        % Get Transformations
+        [TX, TY, TGraph, TZ] = deal(Info.XTransformation, Info.YTransformation, Info.GraphTransformation, Info.ZTransformation);
+        
+        % Copy Transformations if shared and unshare
+        [TX, TY, TGraph, TZ] = obj.copy_Others_if_shared_and_unshare(TX, TY, TGraph, TZ);
+        
+        % X
+        if ~isempty(TX), % Continue only if there is transformation
+            TX_Data = TX.Data; % And its data
+            switch(TX.Type), % Adjust the pixel offset accordingly
                 case 'TDLinearTransformation',
-                    T_Data.TDLinearTransformation.ModelOrigin_D = T_Data.TDLinearTransformation.ModelOrigin_D - (ind_X_begin - 1);
-                    T_Data.TDLinearTransformation.ModelOrigin = T_Data.TDLinearTransformation.ModelOrigin - (ind_X_begin - 1);
+                    TX_Data.TDLinearTransformation.ModelOrigin_D = TX_Data.TDLinearTransformation.ModelOrigin_D - (ind_X_begin - 1);
+                    TX_Data.TDLinearTransformation.ModelOrigin = TX_Data.TDLinearTransformation.ModelOrigin - (ind_X_begin - 1);
                 case 'TDLUTTransformation',
-                    T_Data.TDLUTTransformation.LUT = T_Data.TDLUTTransformation.LUT(ind_X_begin:ind_X_end);
-                    T_Data.TDLUTTransformation.LUTSize = ind_X_end-ind_X_begin+1;
+                    TX_Data.TDLUTTransformation.LUT = TX_Data.TDLUTTransformation.LUT(ind_X_begin:ind_X_end);
+                    TX_Data.TDLUTTransformation.LUTSize = ind_X_end-ind_X_begin+1;
                 case 'TDSpaceTransformation',
-                    T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(1) = T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(1) - (ind_X_begin - 1);
+                    TX_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(1) = TX_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(1) - (ind_X_begin - 1);
                 case 'TDSpectralTransformation',
-                    T_Data.TDSpectralTransformation.nC = T_Data.TDSpectralTransformation.nC - (ind_X_begin - 1);
+                    TX_Data.TDSpectralTransformation.nC = TX_Data.TDSpectralTransformation.nC - (ind_X_begin - 1);
             end
-            T.Data = T_Data; % Write all changes at once
+            TX.Data = TX_Data; % Write all changes at once
         end
-
-        T = Info.YTransformation; % Get the y transformation object
-        if ~isempty(T), % Continue only if there is transformation
-            T_Data = T.Data; % And its data
-            switch(T.Type), % Adjust the pixel offset accordingly
+        
+        % Y
+        if ~isempty(TY), % Continue only if there is transformation
+            TY_Data = TY.Data; % And its data
+            switch(TY.Type), % Adjust the pixel offset accordingly
                 case 'TDLinearTransformation',
-                    T_Data.TDLinearTransformation.ModelOrigin_D = T_Data.TDLinearTransformation.ModelOrigin_D - (ind_Y_begin - 1);
-                    T_Data.TDLinearTransformation.ModelOrigin = T_Data.TDLinearTransformation.ModelOrigin - (ind_Y_begin - 1);
+                    TY_Data.TDLinearTransformation.ModelOrigin_D = TY_Data.TDLinearTransformation.ModelOrigin_D - (ind_Y_begin - 1);
+                    TY_Data.TDLinearTransformation.ModelOrigin = TY_Data.TDLinearTransformation.ModelOrigin - (ind_Y_begin - 1);
                 case 'TDLUTTransformation',
-                    T_Data.TDLUTTransformation.LUT = T_Data.TDLUTTransformation.LUT(ind_Y_begin:ind_Y_end);
-                    T_Data.TDLUTTransformation.LUTSize = ind_Y_end-ind_Y_begin+1;
+                    TY_Data.TDLUTTransformation.LUT = TY_Data.TDLUTTransformation.LUT(ind_Y_begin:ind_Y_end);
+                    TY_Data.TDLUTTransformation.LUTSize = ind_Y_end-ind_Y_begin+1;
                 case 'TDSpaceTransformation',
-                    T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(2) = T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(2) - (ind_Y_begin - 1);
+                    TY_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(2) = TY_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(2) - (ind_Y_begin - 1);
                 case 'TDSpectralTransformation',
-                    T_Data.TDSpectralTransformation.nC = T_Data.TDSpectralTransformation.nC - (ind_Y_begin - 1);
+                    TY_Data.TDSpectralTransformation.nC = TY_Data.TDSpectralTransformation.nC - (ind_Y_begin - 1);
             end
-            T.Data = T_Data; % Write all changes at once
+            TY.Data = TY_Data; % Write all changes at once
         end
-
-        T = Info.GraphTransformation; % Get the graph transformation object
-        if ~isempty(T), % Continue only if there is transformation
-            T_Data = T.Data; % And its data
-            switch(T.Type), % Adjust the pixel offset accordingly
+        
+        % Graph
+        if ~isempty(TGraph), % Continue only if there is transformation
+            TGraph_Data = TGraph.Data; % And its data
+            switch(TGraph.Type), % Adjust the pixel offset accordingly
                 case 'TDLinearTransformation',
-                    T_Data.TDLinearTransformation.ModelOrigin_D = T_Data.TDLinearTransformation.ModelOrigin_D - (ind_Graph_begin - 1);
-                    T_Data.TDLinearTransformation.ModelOrigin = T_Data.TDLinearTransformation.ModelOrigin - (ind_Graph_begin - 1);
+                    TGraph_Data.TDLinearTransformation.ModelOrigin_D = TGraph_Data.TDLinearTransformation.ModelOrigin_D - (ind_Graph_begin - 1);
+                    TGraph_Data.TDLinearTransformation.ModelOrigin = TGraph_Data.TDLinearTransformation.ModelOrigin - (ind_Graph_begin - 1);
                 case 'TDLUTTransformation',
-                    T_Data.TDLUTTransformation.LUT = T_Data.TDLUTTransformation.LUT(ind_Graph_begin:ind_Graph_end);
-                    T_Data.TDLUTTransformation.LUTSize = ind_Graph_end-ind_Graph_begin+1;
+                    TGraph_Data.TDLUTTransformation.LUT = TGraph_Data.TDLUTTransformation.LUT(ind_Graph_begin:ind_Graph_end);
+                    TGraph_Data.TDLUTTransformation.LUTSize = ind_Graph_end-ind_Graph_begin+1;
                 case 'TDSpaceTransformation',
                     error('TDSpaceTransformation cannot be GraphTransformation!');
                 case 'TDSpectralTransformation',
-                    T_Data.TDSpectralTransformation.nC = T_Data.TDSpectralTransformation.nC - (ind_Graph_begin - 1);
+                    TGraph_Data.TDSpectralTransformation.nC = TGraph_Data.TDSpectralTransformation.nC - (ind_Graph_begin - 1);
             end
-            T.Data = T_Data; % Write all changes at once
+            TGraph.Data = TGraph_Data; % Write all changes at once
         end
-
-        T = Info.ZTransformation; % Get the z transformation object
-        if ~isempty(T), % Continue only if there is transformation
-            T_Data = T.Data; % And its data
-            switch(T.Type), % Adjust the pixel offset accordingly
+        
+        % Z
+        if ~isempty(TZ), % Continue only if there is transformation
+            TZ_Data = TZ.Data; % And its data
+            switch(TZ.Type), % Adjust the pixel offset accordingly
                 case 'TDLinearTransformation',
-                    T_Data.TDLinearTransformation.ModelOrigin_D = T_Data.TDLinearTransformation.ModelOrigin_D - (ind_Z_begin - 1);
-                    T_Data.TDLinearTransformation.ModelOrigin = T_Data.TDLinearTransformation.ModelOrigin - (ind_Z_begin - 1);
+                    TZ_Data.TDLinearTransformation.ModelOrigin_D = TZ_Data.TDLinearTransformation.ModelOrigin_D - (ind_Z_begin - 1);
+                    TZ_Data.TDLinearTransformation.ModelOrigin = TZ_Data.TDLinearTransformation.ModelOrigin - (ind_Z_begin - 1);
                 case 'TDLUTTransformation',
-                    T_Data.TDLUTTransformation.LUT = T_Data.TDLUTTransformation.LUT(ind_Z_begin:ind_Z_end);
-                    T_Data.TDLUTTransformation.LUTSize = ind_Z_end-ind_Z_begin+1;
+                    TZ_Data.TDLUTTransformation.LUT = TZ_Data.TDLUTTransformation.LUT(ind_Z_begin:ind_Z_end);
+                    TZ_Data.TDLUTTransformation.LUTSize = ind_Z_end-ind_Z_begin+1;
                 case 'TDSpaceTransformation',
-                    T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(3) = T_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(3) - (ind_Z_begin - 1);
+                    TZ_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(3) = TZ_Data.TDSpaceTransformation.ViewPort3D.ModelOrigin(3) - (ind_Z_begin - 1);
                 case 'TDSpectralTransformation',
-                    T_Data.TDSpectralTransformation.nC = T_Data.TDSpectralTransformation.nC - (ind_Z_begin - 1);
+                    TZ_Data.TDSpectralTransformation.nC = TZ_Data.TDSpectralTransformation.nC - (ind_Z_begin - 1);
             end
-            T.Data = T_Data; % Write all changes at once
+            TZ.Data = TZ_Data; % Write all changes at once
         end
     end
 end

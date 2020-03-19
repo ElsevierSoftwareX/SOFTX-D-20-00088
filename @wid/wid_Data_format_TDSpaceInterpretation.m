@@ -4,9 +4,9 @@
 
 function format = wid_Data_format_TDSpaceInterpretation(obj),
     % Each row: wit-tag name, {subformat}
-    format_TDSpaceInterpretation_v5 = ...
+    format_TDSpaceInterpretation = ...
         [obj.wid_Data_format_TData(); ...
         obj.wid_Data_format_TDInterpretation()];
     
-    format = format_TDSpaceInterpretation_v5;
+    format = format_TDSpaceInterpretation;
 end

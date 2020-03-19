@@ -2,13 +2,27 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function plot(obj, varargin),
+function h = plot(obj, varargin),
     % Supports following extra options, which can be followed by any number
     % of extra option inputs:
-    % -compare: Shows comparison of S and all subsequent datas. Implemented
+    
+    % -position: Shows positions of subsequent Image, Line and Point wid objects.
+    % Use --markImageFun, --markLineFun and --markPointFun to customize it.
+    % (For more details, see the documentation of @wid/plot_position.m.)
+    
+    % -scalebar: Shows scalebar. Use --markScalebarFun to customize it.
+    % Other case-insensitive customizations are --Color, --Anchor,
+    % --PositionRatio, --Position, --TextSpacingRatio, --TextSpacing,
+    % --TextHeightRatio, --TextHeight, --ThicknessRatio, --Thickness,
+    % --AutoLengthRatio, --AutoFloorDigitTo, --Length, --LengthUnit,
+    % --LengthFormat, --PatchVargin, --TextVargin and --NoText. (For more
+    % details, see the documentation of @wid/plot_scalebar.m.)
+    
+    % -compare: Shows comparison of obj and all subsequent wid objects. Implemented
     % for Image<TDGraph, Line<TDGraph, Point<TDGraph, Array<TDGraph,
     % Histogram<TDGraph, Time<TDGraph and Mask<TDGraph.
-    % -mask: Uses subsequent inclusion masks to exclude areas in S as NaNs.
+    
+    % -mask: Uses subsequent inclusion masks to exclude areas in obj as NaNs.
     % -nocursor: Disables cursor.
     % -nopreview: Disables preview.
     % -nosidebar: Disables sidebar.
@@ -31,7 +45,9 @@ function plot(obj, varargin),
     showSidebar = ~varargin_dashed_str_exists('nosidebar', varargin); % By default, show sidebar
     showPreview = ~varargin_dashed_str_exists('nopreview', varargin); % By default, show preview
     showCursor = ~varargin_dashed_str_exists('nocursor', varargin); % By default, show cursor
-    CompareDatas = varargin_dashed_str_datas('compare', varargin);
+    showPosition = varargin_dashed_str_datas('position', varargin);
+    [showScalebar, vararginScalebar] = varargin_dashed_str_exists_and_datas('scalebar', varargin);
+    obj_compare = varargin_dashed_str_datas('compare', varargin);
     fun_auto = @(x) true; % By default, enable autoscaling
     
     Name = obj.Name;
@@ -157,6 +173,22 @@ function plot(obj, varargin),
                     set(h_mainbar, 'Visible', 'off'); % Hide mainbar or it will hide uitable
                 end
         end
+    end
+    
+    % Get handles of Axes children
+    Ax = get(Fig, 'CurrentAxes');
+    h = Ax.Children;
+    
+    % Show positions of the given objects
+    if ~isempty(showPosition),
+        h_position = obj.plot_position(Fig, showPosition{:});
+        h = [h; h_position];
+    end
+    
+    % Show scalebar
+    if showScalebar,
+        h_scalebar = obj.plot_scalebar(Fig, vararginScalebar{:});
+        h = [h; h_scalebar];
     end
     
     % Set visible
@@ -330,14 +362,14 @@ function plot(obj, varargin),
         if isempty(h_sub) || ~ishandle(h_sub(1)),
             if nargin < 3, fun_plot = []; end
             h_sub = plot_Spectrum(Fig_sub, Info.Graph, Info.GraphUnit, Data(indX,indY,:), Info.DataUnit, fun_plot, fun_auto());
-            if numel(CompareDatas) > 0,
+            if numel(obj_compare) > 0,
                 hold on;
                 Colors = get(get(h_sub(1), 'Parent'), 'ColorOrder');
                 set(h_sub(1), 'Color', Colors(1,:));
                 strs = {obj.Name};
                 counter = 0;
-                for ii = 1:numel(CompareDatas),
-                    C_compare = CompareDatas{ii};
+                for ii = 1:numel(obj_compare),
+                    C_compare = obj_compare{ii};
                     for jj = 1:numel(C_compare),
                         if ~strcmp(C_compare(jj).Type, 'TDGraph'), continue; end
                         Data_compare = C_compare(jj).Data;
@@ -364,8 +396,8 @@ function plot(obj, varargin),
             set(h_sub(1), 'YData', Data(indX,indY,:));
             if fun_auto(), autoaxis(get(h_sub(1), 'Parent'), Info.Graph, Data(indX,indY,:)); end
             counter = 0;
-            for ii = 1:numel(CompareDatas),
-                C_compare = CompareDatas{ii};
+            for ii = 1:numel(obj_compare),
+                C_compare = obj_compare{ii};
                 for jj = 1:numel(C_compare),
                     if ~strcmp(C_compare(jj).Type, 'TDGraph'), continue; end
                     Data_compare = C_compare(jj).Data;

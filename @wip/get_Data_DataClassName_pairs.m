@@ -4,7 +4,7 @@
 
 function Pairs = get_Data_DataClassName_pairs(O_wit),
     % Test the given input and gather valid tags to be added
-    Pairs = wit.Empty;
+    Pairs = wit.empty;
     for ii = 1:numel(O_wit),
         C_ii = O_wit(ii);
         % Test if the input is a parent or its child
