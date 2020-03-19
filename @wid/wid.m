@@ -322,9 +322,7 @@ classdef wid < handle, % Since R2008a
         
         % Reduce object Data
         [Data_cropped, Graph_cropped] = crop_Graph(obj, ind_range, Data_cropped, Graph_cropped);
-        [Data_reduced, Graph_reduced] = reduce_Graph(obj, ind_range, Data_reduced, Graph_reduced); % DEPRECATED! USE ABOVE INSTEAD!
         [obj, Data_cropped, X_cropped, Y_cropped, Graph_cropped, Z_cropped] = crop(obj, ind_X_begin, ind_X_end, ind_Y_begin, ind_Y_end, ind_Graph_begin, ind_Graph_end, ind_Z_begin, ind_Z_end, isDataCropped);
-        [obj, Data_reduced, X_reduced, Y_reduced, Graph_reduced, Z_reduced] = reduce(obj, ind_X_begin, ind_X_end, ind_Y_begin, ind_Y_end, ind_Graph_begin, ind_Graph_end, ind_Z_begin, ind_Z_end); % DEPRECATED! USE ABOVE INSTEAD!
         [obj, Data_range, Graph_range, Data_range_bg] = filter_bg(obj, varargin);
         
         % Filter object Data
@@ -401,7 +399,6 @@ classdef wid < handle, % Since R2008a
         
         %% OTHER PUBLIC METHODS
         [Data_range, Graph_range, Data_range_bg, range] = crop_Graph_with_bg_helper(Data, Graph, range, bg_avg_lower, bg_avg_upper);
-        [Data_range, Graph_range, Data_range_bg, range] = reduce_Graph_with_bg_helper(Data, Graph, range, bg_avg_lower, bg_avg_upper); % DEPRECATED! USE ABOVE INSTEAD!
         h_image = plot_position_Image_helper(Ax, positions, color);
         h_line = plot_position_Line_helper(Ax, positions, color);
         h_point = plot_position_Point_helper(Ax, positions, color);
