@@ -8,6 +8,9 @@
 % inputs are parsed:
 % '-CompressionLevel' (= 9 by default): Compression level ranges for
 % DEFLATED from 0 (= none) to 9 (= maximum).
+% '-MaxBlockSize' (= 67108864 or 64 MB by default): Set maximum blocksize
+% per write to allow writing in smaller blocks and avoid Java Heap Memory
+% limitation.
 function myzip(file_zip, files, datas, varargin),
     % It is noteworthy that the 64-bit ZIP archives (with individual
     % entries and archives larger than 4 GB or with more than 65536
@@ -48,9 +51,14 @@ function myzip(file_zip, files, datas, varargin),
     % MATLAB seriously lags behind the Commons Compress version.
     
     % Parse extra inputs: CompressionLevel
-    CompressionLevel = varargin_dashed_str_datas('CompressionLevel', varargin, -1);
-    if numel(CompressionLevel) > 0, CompressionLevel = CompressionLevel{1};
-    else, CompressionLevel = 9; end % By default, maximum compression
+    parsed = varargin_dashed_str_datas('CompressionLevel', varargin, -1);
+    CompressionLevel = 9; % By default, maximum compression
+    if numel(parsed) > 0, CompressionLevel = parsed{1}; end
+    
+    % Parse extra inputs: MaxBlockSize
+    parsed = varargin_dashed_str_datas('MaxBlockSize', varargin, -1);
+    MaxBlockSize = 64.*1024.^2; % By default, 64 MB max blocksize per write
+    if numel(parsed) > 0, MaxBlockSize = parsed{1}; end
     
     % Try compressing the files and datas (or catch error)
     try,
@@ -70,14 +78,23 @@ function myzip(file_zip, files, datas, varargin),
         for ii = 1:numel(files),
             file = files{ii};
             data = typecast(datas{ii}, 'uint8');
+            N_data = numel(data);
             
             % Create a ZIP file entry
             entry = org.apache.tools.zip.ZipEntry(file);
-            entry.setSize(numel(data)); % Set the uncompressed size of the entry data (to allow 64-bit ZIP if needed)
+            entry.setSize(N_data); % Set the uncompressed size of the entry data (to allow 64-bit ZIP if needed)
             
             % Write the ZIP file entry to the ZIP output stream
             jzos.putNextEntry(entry); % Write the entry headers and position the stream to the start of the entry data
-            jzos.write(data); % Write the entry data
+            if N_data <= MaxBlockSize, % Write the entry data at once
+                jzos.write(data);
+            else, % Write the entry data in blocks
+                N_blocks = ceil(N_data ./ MaxBlockSize);
+                for jj = 1:N_blocks,
+                    ind = 1+MaxBlockSize.*(jj-1):min(MaxBlockSize.*jj, N_data);
+                    jzos.write(data(ind));
+                end
+            end
             jzos.closeEntry(); % Finish writing the contents of the entry
         end
         
