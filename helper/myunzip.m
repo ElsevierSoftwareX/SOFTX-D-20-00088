@@ -48,13 +48,18 @@ function [files, datas] = myunzip(file_zip, varargin),
     % although the latest (2) Apache Commons Compress 1.20 (release date
     % 2020-02-08) comes with a useful "split ZIP archive" -feature but
     % MATLAB seriously lags behind the Commons Compress version.
+    %
+    % Also, use ReadableByteChannel of java.nio.channels introduced with
+    % Java 1.4.
     
     % Parse extra inputs: FilterExt
     FilterExt = varargin_dashed_str_datas('FilterExt', varargin);
     
     % Parse extra inputs: MaxBlockSize
     parsed = varargin_dashed_str_datas('MaxBlockSize', varargin, -1);
-    MaxBlockSize = 64.*1024.^2; % By default, 64 MB max blocksize per write
+%     MaxBlockSize = 64.*1024.^2; % By default, 64 MB max blocksize per write
+    MaxBlockSize = ceil(java.lang.Runtime.getRuntime().freeMemory./2); % Consume half of the free Java Heap Memory
+    java_buffer = java.nio.ByteBuffer.allocate(MaxBlockSize); % Preallocate once
     if numel(parsed) > 0, MaxBlockSize = parsed{1}; end
     
     files = {};
@@ -73,6 +78,7 @@ function [files, datas] = myunzip(file_zip, varargin),
         % Loop through each ZIP file entry (and uncompress only if needed)
         while entries.hasMoreElements(), % Stop loop only if no more entries
             entry = entries.nextElement(); % Get the next ZIP file entry
+            if entry.isDirectory(), continue; end % Skip directories
             entry_file = char(entry.getName); % Get its file name (converted to char array)
             
             % Accept entry if it meets the file extension filtering criteria
@@ -80,14 +86,40 @@ function [files, datas] = myunzip(file_zip, varargin),
             if isempty(FilterExt) || any(strcmpi(FilterExt, entry_ext)),
                 files{end+1} = entry_file;
                 
+                entry_size = entry.getSize(); % Get the entry data uncompressed size
+                
                 % Extract entry input stream binary to MATLAB but without:
-                % (a) java.io.ByteArrayOutputStream, and
-                % (b) com.mathworks.mlwidgets.io.InterruptibleStreamCopier.getInterruptibleStreamCopier().copyStream
+                % (a) java.io.ByteArrayOutputStream and com.mathworks.mlwidgets.io.InterruptibleStreamCopier.getInterruptibleStreamCopier().copyStream
+                % (b) org.apache.commons.io.IOUtils().toByteArray % Available at least since R2011a
                 entry_is = jzf.getInputStream(entry); % Get entry input stream
-                datas{end+1} = typecast(org.apache.commons.io.IOUtils().toByteArray(entry_is), 'uint8'); % Available at least since R2011a
+                entry_rbc = java.nio.channels.Channels.newChannel(entry_is); % Get ReadableByteChannel that works with ByteBuffer!
+                if entry_size <= MaxBlockSize, % Read the entry data at once
+                    N_read = entry_rbc.read(java_buffer);
+                    java_buffer.rewind(); % Set position to zero and discard mark
+                    matlab_buffer = java_buffer.array();
+                    data = matlab_buffer(1:N_read);
+                else, % Read the entry data in blocks
+                    data = zeros(entry_size, 1, 'int8'); % Preallocate
+                    N_blocks = ceil(entry_size ./ MaxBlockSize);
+                    ind = 1:MaxBlockSize; % Preallocate once
+                    for jj = 1:N_blocks,
+                        N_read = entry_rbc.read(java_buffer);
+                        java_buffer.rewind(); % Set position to zero and discard mark
+                        matlab_buffer = java_buffer.array();
+                        if jj < N_blocks,
+                            data(ind) = matlab_buffer;
+                            ind = ind + MaxBlockSize; % Update block indices
+                        else,
+                            ind = ind(ind <= entry_size); % Truncate block indices
+                            data(ind) = matlab_buffer(1:N_read);
+                        end
+                    end
+                end
+                datas{end+1} = typecast(data, 'uint8');
             end
         end
     catch ME,
         warning('Cannot uncompress files and datas from ''%s'' for some reason!\n\n%s', file_zip, ME.message);
     end
+    java.lang.Runtime.getRuntime().gc; % Garbage collection
 end

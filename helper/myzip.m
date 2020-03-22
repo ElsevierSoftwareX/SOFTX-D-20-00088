@@ -57,7 +57,8 @@ function myzip(file_zip, files, datas, varargin),
     
     % Parse extra inputs: MaxBlockSize
     parsed = varargin_dashed_str_datas('MaxBlockSize', varargin, -1);
-    MaxBlockSize = 64.*1024.^2; % By default, 64 MB max blocksize per write
+%     MaxBlockSize = 64.*1024.^2; % By default, 64 MB max blocksize per write
+    MaxBlockSize = ceil(java.lang.Runtime.getRuntime().freeMemory./2); % Consume half of the free Java Heap Memory
     if numel(parsed) > 0, MaxBlockSize = parsed{1}; end
     
     % Try compressing the files and datas (or catch error)
@@ -90,9 +91,15 @@ function myzip(file_zip, files, datas, varargin),
                 jzos.write(data);
             else, % Write the entry data in blocks
                 N_blocks = ceil(N_data ./ MaxBlockSize);
+                ind = 1:MaxBlockSize; % Preallocate once
                 for jj = 1:N_blocks,
-                    ind = 1+MaxBlockSize.*(jj-1):min(MaxBlockSize.*jj, N_data);
-                    jzos.write(data(ind));
+                    if jj < N_blocks,
+                        jzos.write(data(ind));
+                        ind = ind + MaxBlockSize; % Update block indices
+                    else,
+                        ind = ind(ind <= N_data); % Truncate block indices
+                        jzos.write(data(ind));
+                    end
                 end
             end
             jzos.closeEntry(); % Finish writing the contents of the entry
@@ -103,4 +110,5 @@ function myzip(file_zip, files, datas, varargin),
     catch ME,
         warning('Cannot compress files and datas to ''%s'' for some reason!\n\n%s', file_zip, ME.message);
     end
+    java.lang.Runtime.getRuntime().gc; % Garbage collection
 end
