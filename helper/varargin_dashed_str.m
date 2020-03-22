@@ -59,8 +59,8 @@ function [B_dashed, ind_dashed_begin, ind_dashed_end] = varargin_dashed_str(str_
     
     % SPECIAL CASE: Interpret negative N as reversing the order
     if N < 0, % Reverse the order making first last and last first
-        ind_dashed_begin = flip(ind_dashed_begin);
-        ind_dashed_end = flip(ind_dashed_end);
+        ind_dashed_begin = fliplr(ind_dashed_begin);
+        ind_dashed_end = fliplr(ind_dashed_end);
         N = abs(N); % Remove negative
     end
     
