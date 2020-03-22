@@ -10,10 +10,9 @@
 % the files (and datas) that match (case-insensitively) the given file
 % extensions. Generates a cell array of char arrays (i.e. '.zip') from the
 % consecutive inputs.
-% '-Regexp' (= disabled by default): If enabled, then uncompress only
-% the files (and datas) that regexp-match (case-insensitively) the given
-% file name. Generates a cell array of char arrays (i.e. '.zip') from the
-% consecutive inputs.
+% '-MaxBlockSize' (= 67108864 or 64 MB by default): Set maximum blocksize
+% per write to allow writing in smaller blocks and avoid Java Heap Memory
+% limitation.
 function [files, datas] = myunzip(file_zip, varargin),
     % It is noteworthy that the 64-bit ZIP archives (with individual
     % entries and archives larger than 4 GB or with more than 65536
@@ -53,6 +52,11 @@ function [files, datas] = myunzip(file_zip, varargin),
     % Parse extra inputs: FilterExt
     FilterExt = varargin_dashed_str_datas('FilterExt', varargin);
     
+    % Parse extra inputs: MaxBlockSize
+    parsed = varargin_dashed_str_datas('MaxBlockSize', varargin, -1);
+    MaxBlockSize = 64.*1024.^2; % By default, 64 MB max blocksize per write
+    if numel(parsed) > 0, MaxBlockSize = parsed{1}; end
+    
     files = {};
     datas = {};
     % Try uncompressing the files and datas (or catch error)
@@ -80,7 +84,7 @@ function [files, datas] = myunzip(file_zip, varargin),
                 % (a) java.io.ByteArrayOutputStream, and
                 % (b) com.mathworks.mlwidgets.io.InterruptibleStreamCopier.getInterruptibleStreamCopier().copyStream
                 entry_is = jzf.getInputStream(entry); % Get entry input stream
-                datas{end+1} = uint8(org.apache.commons.io.IOUtils().toByteArray(entry_is)); % Available at least since R2011a
+                datas{end+1} = typecast(org.apache.commons.io.IOUtils().toByteArray(entry_is), 'uint8'); % Available at least since R2011a
             end
         end
     catch ME,
