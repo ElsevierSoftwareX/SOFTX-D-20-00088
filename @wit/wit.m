@@ -154,9 +154,9 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             % Validate the given input
             if isa(Parent, 'wit'),
                 if numel(Parent) <= 1,
-                    if obj.Parent ~= Parent, % Do something only if changed
+                    if isempty(Parent) || isempty(obj.Parent) || obj.Parent ~= Parent, % Do something only if empty or changed
                         % Test if this becomes a root
-                        if numel(Parent) == 0,
+                        if isempty(Parent),
                             obj.Magic = obj.Root.Magic; % If true, then inherit the magic string of the old root
                         end
                         
