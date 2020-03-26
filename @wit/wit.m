@@ -65,7 +65,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
     % File-specific parameters
     properties % READ-WRITE
         % Accepts only fixed-length (8 bytes) char array as magic string, used in the beginning of the file
-        Magic = 'WIT_TREE'; % Only one value per tree allowed!
+        Magic = 'WIT_TREE'; % Only the root value is used!
     end
     properties (SetAccess = private) % READ-ONLY
         % Other file-format parameters
