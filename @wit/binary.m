@@ -32,8 +32,11 @@ function buffer = binary(obj, swapEndianess),
     % Write Magic string if root
     if isempty(obj.Parent),
         ind_end = ind_begin-1 + 8;
-        uint8_array = uint8(obj.Magic); % String is a char row vector
-        buffer(ind_begin:ind_end) = uint8_array;
+        Magic = obj.Magic;
+        if ~isempty(Magic),
+            uint8_array = uint8(obj.Magic); % String is a char row vector
+            buffer(ind_begin:ind_end) = uint8_array;
+        end
         ind_begin = ind_end + 1; % Set next begin index
     end
     

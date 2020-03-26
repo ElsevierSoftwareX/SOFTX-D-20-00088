@@ -29,43 +29,59 @@
 
 % Class for tree tags
 classdef wit < handle, % Since R2008a and Octave-compatible
-    properties
-        % Main file-format parameters
+    %% MAIN PROPERTIES
+    properties (SetAccess = private) % READ-ONLY
+        File = '';
+    end
+    
+    % Main file-format parameters
+    properties % READ-WRITE
         Name = '';
         Data; % = wit.empty; % latter is Octave-incompatible!
-        % References to other relevant tags
+    end
+    properties (SetAccess = private) % READ-ONLY
+        Type = uint32(0); % Always updated before writing!
+    end
+    
+    %% OTHER PROPERTIES
+    % References to other relevant tags
+    properties % READ-WRITE
         Parent; % = wit.empty; % latter is Octave-incompatible!
     end
-
-    % Depend either on Data (for Children) or Parent (for the others)
-    properties (SetAccess = private, Dependent) % READ-ONLY
-        % Depends on Data
+    properties (SetAccess = private, Dependent) % READ-ONLY, DEPENDENT
+        % Dependent on Data
         Children;
-        % Depend on Parent
+        % Dependent on Parent
         Root;
         Siblings;
         Next; % Next sibling
         Prev; % Previous sibling
-        % Depends on Name and Parent
+    end
+    properties (SetAccess = private, Dependent) % READ-ONLY, DEPENDENT
+        % Dependent on Name and Parent
         FullName;
     end
-
-    % File-specific read-only parameters
-    properties (SetAccess = private)
-        % Extra file-format parameters
+    
+    % File-specific parameters
+    properties % READ-WRITE
+        % Accepts only fixed-length (8 bytes) char array as magic string, used in the beginning of the file
+        Magic = 'WIT_TREE'; % Only one value per tree allowed!
+    end
+    properties (SetAccess = private) % READ-ONLY
+        % Other file-format parameters
         NameLength = uint32(0); % Always updated before writing!
-        Type = uint32(0); % Always updated before writing!
         Start = uint64(0); % Always updated before writing!
         End = uint64(0); % Always updated before writing!
-        % Other extra parameters
+        % Helper parameters
         Header = uint64(0); % Always updated before writing!
         HasData = false; % Useful flag for the reloading cases
-        File = ''; % NOTE: IS THE CURRENT IMPLEMENTATION BUG FREE? (1.7.2017)
     end
     
-    properties
-        Magic = 'WIT_TREE'; % Practically only the Magic string of Root matters
-        IsValid = true; % Used internally by fread and binaryread functions
+    % Handle-specific internal parameters
+    properties % READ-WRITE
+        IsValid = true; % Used internally by binaryread, copy and fread functions
+    end
+    properties (SetAccess = private) % READ-ONLY
         Id = uint64(0); % Used internally enable handle-like comparison in Octave
     end
     
@@ -103,15 +119,26 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             end
         end
         
-        %% READ-WRITE
-        % Validate the given input
+        
+        
+        %% MAIN PROPERTIES
+        % File (READ-ONLY)
+        function File = get.File(obj),
+            % Inherit this property from the root when not specified
+            if ~isempty(obj.File), File = obj.File; % If available, obtain it from this
+            else, File = obj.Root.File; end % Otherwise, obtain it from the root
+        end
+        
+        % Name (READ-WRITE)
         function set.Name(obj, Name),
+            % Validate the given input
             if ischar(Name), obj.Name = reshape(Name, 1, []);
             else, error('Only a char array can be a name!'); end
         end
         
-        % Needed to handle special case of adding Children to the obj
+        % Data (READ-WRITE)
         function set.Data(obj, Data),
+            % Handle special case of adding Children to the obj
             if isa(Data, 'wit'), % If Children, then add Parent to them
                 for ii = 1:numel(Data), Data(ii).Parent = obj; end
             end
@@ -119,25 +146,40 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             obj.HasData = ~isempty(Data);
         end
         
-        % Validate the given input
+        % Type (READ-ONLY)
+        
+        %% OTHER PROPERTIES
+        % Parent (READ-WRITE)
         function set.Parent(obj, Parent),
+            % Validate the given input
             if isa(Parent, 'wit'),
-                if numel(Parent) <= 1, obj.Parent = Parent; % But parent wont be notified!
+                if numel(Parent) <= 1,
+                    if obj.Parent ~= Parent, % Do something only if changed
+                        % Test if this becomes a root
+                        if numel(Parent) == 0,
+                            obj.Magic = obj.Root.Magic; % If true, then inherit the magic string of the old root
+                        end
+                        
+                        % Set parent but do NOT notify parent!
+                        obj.Parent = Parent;
+                    end
                 else, error('A tag cannot have more than one parent!'); end
             else, error('Only a wit-tag can be a parent!'); end
         end
         
-        %% READ-ONLY
+        % Children (READ-ONLY, DEPENDENT)
         function Children = get.Children(obj),
             Children = wit.empty;
             if isa(obj.Data, 'wit'), Children = obj.Data; end
         end
         
+        % Root (READ-ONLY, DEPENDENT)
         function Root = get.Root(obj),
             Root = obj;
             while ~isempty(Root.Parent), Root = Root.Parent; end
         end
         
+        % Siblings (READ-ONLY, DEPENDENT)
         function Siblings = get.Siblings(obj),
             Siblings = wit.empty;
             if ~isempty(obj.Parent),
@@ -146,6 +188,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             end
         end
         
+        % Next (READ-ONLY, DEPENDENT)
         function Next = get.Next(obj),
             Next = wit.empty;
             if ~isempty(obj.Parent),
@@ -155,6 +198,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             end
         end
         
+        % Prev (READ-ONLY, DEPENDENT)
         function Prev = get.Prev(obj),
             Prev = wit.empty;
             if ~isempty(obj.Parent),
@@ -164,42 +208,43 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             end
         end
         
+        % FullName (READ-ONLY, DEPENDENT)
         function FullName = get.FullName(obj), % Potential bottleneck!
             FullName = obj.Name;
             while ~isempty(obj.Parent),
                 FullName = [FullName '<' obj.Parent.Name];
                 obj = obj.Parent;
             end
-%             % Buffered version (slower)
-%             FullName(4096) = char(0);
-%             str = obj.Name;
-%             FullName(1:numel(str)) = str;
-%             N = numel(str);
-%             while ~isempty(obj.Parent),
-%                 FullName(N+1) = '<';
-%                 str = obj.Parent.Name; % Bottleneck!
-%                 FullName(N+1+(1:numel(str))) = str;
-%                 N = N + 1 + numel(str);
-%                 obj = obj.Parent;
-%             end
-%             FullName = FullName(1:N); % Discard buffered zeros
         end
         
-        %% READ-WRITE
-        % Needed to inherit this property from the root when not specified
-        function File = get.File(obj),
-            if ~isempty(obj.File), File = obj.File; % If available, obtain it from this
-            else, File = obj.Root.File; end % Otherwise, obtain it from the root
-        end
-        
-        % Needed to inherit this property from the root when not specified
+        % Magic (READ-WRITE)
         function Magic = get.Magic(obj),
-            if ~isempty(obj.Magic), Magic = obj.Magic; % If available, obtain it from this
-            else, Magic = obj.Root.Magic; end % Otherwise, obtain it from the root
+            % Always inherit this property from the root (that may be this)
+            Magic = obj.Root.Magic;
+        end
+        function set.Magic(obj, Magic),
+            % Validate the given input and modify this property from the root
+            if ischar(Magic) && numel(Magic) == 8, obj.Root.Magic = reshape(Magic, 1, []);
+            else, error('Only an 8-bytes-long char array can be a magic string!'); end
         end
         
+        % NameLength (READ-ONLY)
+        
+        % Start (READ-ONLY)
+        
+        % End (READ-ONLY)
+        
+        % Header (READ-ONLY)
+        
+        % HasData (READ-ONLY)
+        
+        % IsValid (READ-WRITE)
+        
+        % Id (READ-ONLY)
         
         
+        
+        %% METHODS
         % Define Octave-compatible handle-like eq, ne, lt, le, gt and ge:
         % https://se.mathworks.com/help/matlab/ref/handle.relationaloperators.html
         function tf = compare(O1, O2, fun, default),

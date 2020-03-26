@@ -42,7 +42,7 @@ function update(obj),
     elseif ~isempty(obj.Parent),
         obj.Start = obj.Parent.Start + obj.Header; % Add offset from Parent if child
     else,
-        obj.Start = numel(obj.Magic) + obj.Header; % Add Magic offset if root
+        obj.Start = 8 + obj.Header; % Add Magic offset if root
     end
 
     % End (8 bytes)
