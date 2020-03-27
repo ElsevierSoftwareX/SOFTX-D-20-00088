@@ -27,9 +27,9 @@ function write(obj, File),
     obj.Root.update();
     
     % Then write the root
-    % Consider using 'W'-flag instead? http://undocumentedmatlab.com/blog/improving-fwrite-performance
+    % Disable automatic flushing using 'W'-flag instead of 'w'-flag: http://undocumentedmatlab.com/blog/improving-fwrite-performance
     obj.Root.File = File;
-    fid = fopen(File, 'w');
+    fid = fopen(File, 'W'); % Instead of 'w'!
     if fid == -1 || isempty(fid), error('File (''%s'') cannot be opened for writing!', obj.Root.File); end
     
     % Close the file ONLY WHEN out of the function scope
