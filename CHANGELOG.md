@@ -2,7 +2,13 @@
 All **notable** changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**Release.Breaking.Feature.Fix**][ExpVer,badge,1]][ExpVer,2] or [![**Disruptive.Incompatible.Compatible.Fix**][ExpVer,badge,2]][ExpVer,3] numbering definitions, where any trailing zeros may be omitted.
+
+[ExpVer,1]: https://github.com/exadra37-versioning/explicit-versioning
+[ExpVer,2]: https://medium.com/p/92fc1f6bc73c
+[ExpVer,3]: https://github.com/exadra37-versioning/explicit-versioning/blob/master/TERMS_SCOPE.md
+[ExpVer,badge,1]: https://img.shields.io/badge/version-Release.Breaking.Feature.Fix-0000ff.svg
+[ExpVer,badge,2]: https://img.shields.io/badge/version-Disruptive.Incompatible.Compatible.Fix-ff0000.svg
 
 ### Types of changes:
 - **Added** for new features.
