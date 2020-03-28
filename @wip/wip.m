@@ -132,7 +132,60 @@ classdef wip < handle, % Since R2008a
             Type = obj.Tree.Name;
         end
         function set.Type(obj, Type),
-            obj.Tree.Name = Type;
+            % Validate the given input
+            if ischar(Type), Type = reshape(Type, 1, []);
+            else, error('Only a char array can be a type!'); end
+            
+            % Do nothing if no change
+            if strcmp(Type, obj.Tree.Name), return; end
+            
+            % Sort prior children by names
+            Tree_prior = obj.Tree;
+            Children_prior = Tree_prior.Children;
+            [names_prior, ind_prior] = sort({Children_prior.Name});
+            Children_prior = Children_prior(ind_prior);
+            
+            % Generate new tree structure template
+            Tree = wit.empty;
+            switch(Type),
+                case 'WITec Project',
+                    Tree = wip.new(obj.Version);
+                case 'WITec Data',
+                    Tree = wid.new(obj.Version);
+                otherwise,
+                    obj.Tree.Name = Type;
+            end
+            
+            % Use the new tree structure if generated
+            if ~isempty(Tree),
+                % Sort posterior children by names
+                Children = Tree.Children;
+                [names, ind] = sort({Children.Name});
+                Children = Children(ind);
+                % Find prior children by matching child names and adopt them
+                jj_begin = 1;
+                for ii = 1:numel(names),
+                    for jj = jj_begin:numel(names_prior),
+                        if strcmp(names{ii}, names_prior{jj}),
+                            % Adopt the prior child and destroy template
+                            delete(Children(ii));
+                            Children(ii) = Children_prior(jj);
+                            break;
+                        elseif strcmp(names{ii}, 'NextDataID'),
+                            offset = max([Tree_prior.regexp('^ID<TData<Data \d+(<Data)?$').Data])+1;
+                            if isempty(offset), offset = 1; end % No data yet
+                            Children(ii).Data = int32(offset);
+                        end
+                    end
+                    jj_begin = jj+1; % Due to sorting, we can skip the previously matched prior children
+                end
+                % Update posterior tree children
+                Children(ind) = Children; % Unsort posterior children
+                Tree.Data = Children;
+                % Use the new tree and destroy the old tree
+                obj.Tree = Tree;
+                delete(Tree_prior); % Destroy whatever remains of the old tree
+            end
         end
         
         %% OTHER PROPERTIES
