@@ -19,7 +19,6 @@ function new = copy(obj),
             new(ii).Magic = obj(ii).Magic; % Sufficient but not an exact copy
             new(ii).Header = obj(ii).Header;
             new(ii).File = obj(ii).File; % Sufficient but not an exact copy
-            new(ii).IsValid = obj(ii).IsValid;
             
             % But do not copy Parent in order to preserve the tree
             % consistency!

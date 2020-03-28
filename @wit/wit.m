@@ -78,9 +78,6 @@ classdef wit < handle, % Since R2008a and Octave-compatible
     end
     
     % Handle-specific internal parameters
-    properties % READ-WRITE
-        IsValid = true; % Used internally by binaryread, copy and fread functions
-    end
     properties (SetAccess = private) % READ-ONLY
         Id = uint64(0); % Used internally enable handle-like comparison in Octave
     end
@@ -119,6 +116,19 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             end
         end
         
+        function delete(obj), % Delete tag and all its contents (including its children)
+            % Disconnect parent and all descendants from each other and
+            % delete this and its descendants permanently. Although this
+            % uses recursion, it is unlikely to become a problem within the
+            % WIT-tag formatted files.
+            obj.Parent = wit.empty; % Disconnect parent
+            delete(obj.Children); % Disconnect and delete descendants
+            % Useful resources:
+            % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
+            % https://se.mathworks.com/help/matlab/matlab_oop/example-implementing-linked-lists.html
+            % https://blogs.mathworks.com/loren/2013/07/23/deconstructing-destructors/
+        end
+        
         
         
         %% MAIN PROPERTIES
@@ -138,11 +148,41 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         
         % Data (READ-WRITE)
         function set.Data(obj, Data),
-            % Handle special case of adding Children to the obj
-            if isa(Data, 'wit'), % If Children, then add Parent to them
-                for ii = 1:numel(Data), Data(ii).Parent = obj; end
+            if ~isa(Data, 'wit'), % GENERAL CASE: Add new data to the obj
+                obj.Data = Data;
+            else, % SPECIAL CASE: Add new children to the obj
+                % Error if the new children are not unique
+                for ii = 1:numel(Data),
+                    if any(Data(ii) == Data(ii+1:end)),
+                        error('A parent can adopt a child only once! A wit tree object at index %d has duplicates!', ii);
+                    end
+                end
+                % Remove parent of those old children that are not found among the new children
+                Data_prior = obj.Data;
+                if isa(Data_prior, 'wit'),
+                    for ii = 1:numel(Data_prior),
+                        % Skip if parenting has already been changed elsewhere
+                        if Data_prior(ii).Parent ~= obj,
+                            continue; % Avoid infinite recursive loop
+                        end
+                        % Remove parent of an old child if it is not found among the new children
+                        if all(Data_prior(ii) ~= Data),
+                            Data_prior(ii).Parent = wit.empty;
+                        end
+                    end
+                end
+                % Parent the new children
+                obj.Data = reshape(Data, 1, []); % This must be done before setting parent
+                for ii = 1:numel(Data),
+                    % Skip if parenting has already been changed elsewhere
+                    if ~isempty(Data(ii).Parent) && Data(ii).Parent == obj,
+                        continue; % Avoid infinite recursive loop
+                    end
+                    % Parent a new child
+                    Data(ii).Parent = obj;
+                end
             end
-            obj.Data = Data;
+            % Update HasData-flag
             obj.HasData = ~isempty(Data);
         end
         
@@ -152,19 +192,28 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         % Parent (READ-WRITE)
         function set.Parent(obj, Parent),
             % Validate the given input
-            if isa(Parent, 'wit'),
-                if numel(Parent) <= 1,
-                    if isempty(Parent) || isempty(obj.Parent) || obj.Parent ~= Parent, % Do something only if empty or changed
-                        % Test if this becomes a root
-                        if isempty(Parent),
-                            obj.Magic = obj.Root.Magic; % If true, then inherit the magic string of the old root
-                        end
-                        
-                        % Set parent but do NOT notify parent!
-                        obj.Parent = Parent;
-                    end
-                else, error('A tag cannot have more than one parent!'); end
-            else, error('Only a wit-tag can be a parent!'); end
+            if ~isa(Parent, 'wit') || numel(Parent) > 1,
+                error('Only an empty or single wit tree object can be a parent!');
+            end
+            Parent_prior = obj.Parent;
+            % If this becomes a root, then inherit the old root key properties
+            if isempty(Parent) && ~isempty(Parent_prior),
+                obj.File = obj.File; % Inherit the file string from this or the old root
+                obj.Magic = obj.Magic; % Inherit the magic string from the old root
+            end
+            % Continue only if either parent is empty or different
+            if isempty(Parent) || isempty(Parent_prior) || Parent ~= Parent_prior,
+                % Set the new parent
+                obj.Parent = Parent; % Set this before adoption!
+                % Adopt this by the new non-empty parent if not already done elsewhere
+                if ~isempty(Parent) && all(Parent.Children ~= obj), % Avoid infinite recursive loop
+                    Parent.Data = [Parent.Children obj];
+                end
+                % Remove this from the old non-empty parent if not already done elsewhere
+                if ~isempty(Parent_prior) && any(Parent_prior.Children == obj), % Avoid infinite recursive loop
+                    Parent_prior.Data = Parent_prior.Data(Parent_prior.Data ~= obj);
+                end
+            end
         end
         
         % Children (READ-ONLY, DEPENDENT)
@@ -237,8 +286,6 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         % Header (READ-ONLY)
         
         % HasData (READ-ONLY)
-        
-        % IsValid (READ-WRITE)
         
         % Id (READ-ONLY)
         
@@ -315,13 +362,15 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         %% OTHER METHODS
         % Object copying, destroying, writing, reloading
         new = copy(obj); % Copy obj
-        destroy(obj, skipParent); % Delete obj
+        destroy(obj); % Delete obj
         write(obj, File); % Write obj to file
         update(obj); % Update file format header information
         reload(obj); % Reload obj.Data from file
         
-        % Add new children
-        adopt(obj, varargin);
+        % Add/remove children
+        add(obj, varargin);
+        remove(obj, varargin);
+        adopt(obj, varargin); % Deprecated! Use add instead!
         
         % Conversion to/from binary form
         buffer = binary(obj, swapEndianess);

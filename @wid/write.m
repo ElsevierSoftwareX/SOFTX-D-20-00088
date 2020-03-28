@@ -21,7 +21,7 @@ function write(obj, File) % For saving WIT-formatted WID-files!
             end
             O_wit = wip.append(O_wit, unique(O_wits));
             O_wit.write(File{ii});
-            O_wit.destroy();
+            delete(O_wit);
         end
     elseif ischar(File), % If only one filename specified for all, then save all to the same
         Version = wip.get_Root_Version(obj(1));
@@ -44,6 +44,6 @@ function write(obj, File) % For saving WIT-formatted WID-files!
         end
         O_wit = wip.append(O_wit, unique(O_wits));
         O_wit.write(File);
-        O_wit.destroy();
+        delete(O_wit);
     end
 end

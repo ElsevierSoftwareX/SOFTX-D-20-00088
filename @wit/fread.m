@@ -12,32 +12,32 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
     if nargin < 6, error_criteria_for_obj = []; end % By default: no criteria!
     
     % Test the file stream
-    if isempty(fid) || fid == -1, obj.IsValid = false; return; end
+    if isempty(fid) || fid == -1, delete(obj); return; end
 
     % Read Magic (8 bytes) (only if Root)
     if isempty(obj.Parent),
-        if feof(fid), obj.IsValid = false; return; end % Abort, if file stream has reached the end
+        if feof(fid), delete(obj); return; end % Abort, if file stream has reached the end
         obj.Magic = reshape(fread(fid, 8, 'uint8=>char', 0, 'l'), 1, []); % Force ascii-conversion
     end
 
     % Read NameLength (4 bytes)
-    if feof(fid), obj.IsValid = false; return; end % Abort, if file stream has reached the end
+    if feof(fid), delete(obj); return; end % Abort, if file stream has reached the end
     obj.NameLength = fread(fid, 1, 'uint32=>uint32', 0, 'l');
 
     % Read Name (NameLength # of bytes)
-    if feof(fid), obj.IsValid = false; return; end % Abort, if file stream has reached the end
+    if feof(fid), delete(obj); return; end % Abort, if file stream has reached the end
     obj.Name = reshape(fread(fid, double(obj.NameLength), 'uint8=>char', 0, 'l'), 1, []); % String is a char row vector % Double OFFSET for compability!
 
     % Read Type (4 bytes)
-    if feof(fid), obj.IsValid = false; return; end % Abort, if file stream has reached the end
+    if feof(fid), delete(obj); return; end % Abort, if file stream has reached the end
     obj.Type = fread(fid, 1, 'uint32=>uint32', 0, 'l');
 
     % Read Start (8 bytes)
-    if feof(fid), obj.IsValid = false; return; end % Abort, if file stream has reached the end
+    if feof(fid), delete(obj); return; end % Abort, if file stream has reached the end
     obj.Start = fread(fid, 1, 'uint64=>uint64', 0, 'l');
 
     % Read End (8 bytes)
-    if feof(fid), obj.IsValid = false; return; end % Abort, if file stream has reached the end
+    if feof(fid), delete(obj); return; end % Abort, if file stream has reached the end
     obj.End = fread(fid, 1, 'uint64=>uint64', 0, 'l');
     
     % Update the flag used for the reloading cases
@@ -53,14 +53,10 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
     if skip_Data, % Handle Data skipping
         fseek(fid, double(obj.End), 'bof'); % Double OFFSET for compability!
     elseif obj.Type == 0, % Read the children
-        children = wit.empty;
         while(ftell(fid) < obj.End), % Continue reading until DataEnd
-            child = wit(obj);
-            child.fread(fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj);
-            if child.IsValid, children(end+1) = child; % Append only if valid
-            else, child.destroy(true); end % Otherwise destroy the child (and skip unnotified Parent)
+            child = wit(obj); % Adopt new child
+            child.fread(fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj); % Read the new child contents (or destroy it on failure)
         end
-        obj.Data = children;
     else, obj.fread_Data(fid, N_bytes_max, swapEndianess); end % Otherwise, read the Data
     
     % SPECIAL CASE: Abort if obj meets the given error criteria.

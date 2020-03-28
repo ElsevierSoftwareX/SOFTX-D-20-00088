@@ -65,7 +65,7 @@ function DataTree_set(parent, in, format),
             child = children(ind_to_C_from_P(ii));
         else, % No child was found,
             child = wit(name);
-            parent.adopt(child); % Append it to the WIT-tree
+            parent.add(child); % Append it to the WIT-tree
         end
 
         if isempty(value) || size(value, 2) == 3, % CASE: empty OR YES subformat
@@ -81,12 +81,12 @@ function DataTree_set(parent, in, format),
             parser_read = value{2}; % Read-parser
             empty_default_value = parser_read([]); % Get write-compatible but empty default value
             if ind_to_I_from_P(ii), % CASE: YES found in-struct field
-                child.Children.destroy; % Destroy the underlying wit-tree
+                delete(child.Children); % Destroy the underlying wit-tree
                 % Try to apply parser to in-struct value
                 try, child.Data = parser_write(in_values{ind_to_I_from_P(ii)});
                 catch, child.Data = parser_write(empty_default_value); end
             elseif ~ind_to_C_from_P(ii), % CASE: NO found in-struct field
-                child.Children.destroy; % Destroy the underlying wit-tree
+                delete(child.Children); % Destroy the underlying wit-tree
                 child.Data = parser_write(empty_default_value);
             end
         end
@@ -128,13 +128,13 @@ function DataTree_set(parent, in, format),
             child = children_no_link_sorted(ind_to_C_from_I(ii));
         else, % No child was found,
             child = wit(field); % Non-linked in-struct field string is name
-            parent.adopt(child); % Append it to the WIT-tree
+            parent.add(child); % Append it to the WIT-tree
         end
 
         if isstruct(value),
             wit.DataTree_set(child, value, {});
         else,
-            child.Children.destroy; % Destroy the underlying wit-tree
+            delete(child.Children); % Destroy the underlying wit-tree
             child.Data = value;
         end
     end
