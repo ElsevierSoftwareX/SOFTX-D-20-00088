@@ -48,7 +48,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
     properties % READ-WRITE
         Parent; % = wit.empty; % latter is Octave-incompatible!
     end
-    properties (SetAccess = private, Dependent) % READ-ONLY, DEPENDENT
+    properties (Dependent) % READ-WRITE, DEPENDENT
         % Dependent on Data
         Children;
         % Dependent on Parent
@@ -193,7 +193,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         function set.Parent(obj, Parent),
             % Validate the given input
             if ~isa(Parent, 'wit') || numel(Parent) > 1,
-                error('Only an empty or single wit tree object can be a parent!');
+                error('Parent can be set by either an empty or a single wit tree object!');
             end
             Parent_prior = obj.Parent;
             % If this becomes a root, then inherit the old root key properties
@@ -216,19 +216,33 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             end
         end
         
-        % Children (READ-ONLY, DEPENDENT)
+        % Children (READ-WRITE, DEPENDENT)
         function Children = get.Children(obj),
             Children = wit.empty;
             if isa(obj.Data, 'wit'), Children = obj.Data; end
         end
+        function set.Children(obj, Children),
+            % Validate the given input
+            if ~isa(Children, 'wit'),
+                error('Children can be set an array of wit tree objects!');
+            end
+            obj.Data = Children; % Try to update this object children
+        end
         
-        % Root (READ-ONLY, DEPENDENT)
+        % Root (READ-WRITE, DEPENDENT)
         function Root = get.Root(obj),
             Root = obj;
             while ~isempty(Root.Parent), Root = Root.Parent; end
         end
+        function set.Root(obj, Root),
+            % Validate the given input
+            if ~isa(Root, 'wit') && numel(Root) ~= 1,
+                error('Root can be set by a single wit tree object!');
+            end
+            Root.Data = obj.Root.Data; % Transfer data (that may be children) of the old root to the new root
+        end
         
-        % Siblings (READ-ONLY, DEPENDENT)
+        % Siblings (READ-WRITE, DEPENDENT)
         function Siblings = get.Siblings(obj),
             Siblings = wit.empty;
             if ~isempty(obj.Parent),
@@ -236,8 +250,17 @@ classdef wit < handle, % Since R2008a and Octave-compatible
                 Siblings = Siblings(Siblings ~= obj); % Exclude itself
             end
         end
+        function set.Siblings(obj, Siblings),
+            % Validate the given input
+            if ~isa(Siblings, 'wit'),
+                error('Siblings can be set by an array of wit tree objects! It can optionally include the main object to choose its position within its new siblings. Otherwise, the main object will be first!');
+            end
+            ind = find(Siblings == obj, 1); % Get index of this object
+            if isempty(ind), Siblings = [obj Siblings]; end % SPECIAL CASE: Make this object first if its position was not chosen
+            obj.Parent.Data = Siblings; % Try to update parent children
+        end
         
-        % Next (READ-ONLY, DEPENDENT)
+        % Next (READ-WRITE, DEPENDENT)
         function Next = get.Next(obj),
             Next = wit.empty;
             if ~isempty(obj.Parent),
@@ -246,8 +269,18 @@ classdef wit < handle, % Since R2008a and Octave-compatible
                 if ind_Next <= numel(Siblings), Next = Siblings(ind_Next); end
             end
         end
+        function set.Next(obj, Next),
+            % Validate the given input
+            if ~isa(Next, 'wit'),
+                error('Next can be set by an array of wit tree objects!');
+            end
+            Children = obj.Parent.Data; % Get parent children
+            ind = find(Children == obj, 1); % Get index of this object
+            Children = [Children(1:ind) reshape(Next, 1, [])]; % Keep the previous siblings and replace the next siblings
+            obj.Parent.Data = Children; % Try to update parent children
+        end
         
-        % Prev (READ-ONLY, DEPENDENT)
+        % Prev (READ-WRITE, DEPENDENT)
         function Prev = get.Prev(obj),
             Prev = wit.empty;
             if ~isempty(obj.Parent),
@@ -255,6 +288,16 @@ classdef wit < handle, % Since R2008a and Octave-compatible
                 ind_Prev = find(Siblings == obj, 1) - 1;
                 if ind_Prev >= 1, Prev = Siblings(ind_Prev); end
             end
+        end
+        function set.Prev(obj, Prev),
+            % Validate the given input
+            if ~isa(Prev, 'wit'),
+                error('Prev can be set by an array of wit tree objects! Its content will be added in reversed order.');
+            end
+            Children = obj.Parent.Data; % Get parent children
+            ind = find(Children == obj, 1); % Get index of this object
+            Children = [fliplr(reshape(Prev, 1, [])) Children(ind:end)]; % Keep the next siblings and replace the previous siblings
+            obj.Parent.Data = Children; % Try to update parent children
         end
         
         % FullName (READ-ONLY, DEPENDENT)
