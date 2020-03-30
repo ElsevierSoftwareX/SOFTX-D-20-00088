@@ -151,10 +151,29 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             if ~isa(Data, 'wit'), % GENERAL CASE: Add new data to the obj
                 obj.Data = Data;
             else, % SPECIAL CASE: Add new children to the obj
-                % Error if the new children are not unique
+                % Error if the new children are not unique (and also check
+                % if already parented)
+                B_objIsParent = false(size(Data)); % Avoid infinite recursive loop
                 for ii = 1:numel(Data),
                     if any(Data(ii) == Data(ii+1:end)),
                         error('A parent can adopt a child only once! A wit tree object at index %d has duplicates!', ii);
+                    end
+                    % Test if this was called from set.Parent
+                    if ~isempty(Data(ii).Parent) && Data(ii).Parent == obj,
+                        B_objIsParent(ii) = true;
+                    end
+                end
+                % Get subsets of already and not already parented new children
+                Data_objIsParent = Data(B_objIsParent);
+                Data_objIsNotParent = Data(~B_objIsParent);
+                % Error if a loop is being created
+                if ~isempty(Data_objIsNotParent),
+                    Ancestor = obj;
+                    while ~isempty(Ancestor),
+                        if any(Ancestor == Data_objIsNotParent),
+                            error('Loops cannot be created with wit tree objects!');
+                        end
+                        Ancestor = Ancestor.Parent;
                     end
                 end
                 % Remove parent of those old children that are not found among the new children
@@ -166,20 +185,15 @@ classdef wit < handle, % Since R2008a and Octave-compatible
                             continue; % Avoid infinite recursive loop
                         end
                         % Remove parent of an old child if it is not found among the new children
-                        if all(Data_prior(ii) ~= Data),
+                        if all(Data_prior(ii) ~= Data_objIsParent),
                             Data_prior(ii).Parent = wit.empty;
                         end
                     end
                 end
                 % Parent the new children
                 obj.Data = reshape(Data, 1, []); % This must be done before setting parent
-                for ii = 1:numel(Data),
-                    % Skip if parenting has already been changed elsewhere
-                    if ~isempty(Data(ii).Parent) && Data(ii).Parent == obj,
-                        continue; % Avoid infinite recursive loop
-                    end
-                    % Parent a new child
-                    Data(ii).Parent = obj;
+                for ii = 1:numel(Data_objIsNotParent),
+                    Data_objIsNotParent(ii).Parent = obj; % Set parent only if not already set elsewhere
                 end
             end
             % Update HasData-flag
@@ -195,24 +209,46 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             if ~isa(Parent, 'wit') || numel(Parent) > 1,
                 error('Parent can be set by either an empty or a single wit tree object!');
             end
+            % Get prior parent
             Parent_prior = obj.Parent;
-            % If this becomes a root, then inherit the old root key properties
-            if isempty(Parent) && ~isempty(Parent_prior),
+            % Stop if both prior and posterior parents are empty
+            if isempty(Parent) && isempty(Parent_prior),
+                if ~isa(Parent_prior, 'wit'),
+                    obj.Parent = Parent;
+                end
+                return;
+            end
+            % Stop if both prior and posterior parents are same
+            if ~isempty(Parent) && ~isempty(Parent_prior) && Parent == Parent_prior,
+                return;
+            end
+            % Test if this was called from set.Data
+            updateParentData = false; % Avoid infinite recursive loop
+            if ~isempty(Parent) && all(Parent.Children ~= obj), updateParentData = true; end
+            % Error if a loop is being created
+            if updateParentData,
+                Ancestor = Parent;
+                while ~isempty(Ancestor),
+                    if Ancestor == obj,
+                        error('Loops cannot be created with wit tree objects!');
+                    end
+                    Ancestor = Ancestor.Parent;
+                end
+            end
+            % If this becomes a root, then inherit the old root's key properties
+            if isempty(Parent),
                 obj.File = obj.File; % Inherit the file string from this or the old root
                 obj.Magic = obj.Magic; % Inherit the magic string from the old root
             end
-            % Continue only if either parent is empty or different
-            if isempty(Parent) || isempty(Parent_prior) || Parent ~= Parent_prior,
-                % Set the new parent
-                obj.Parent = Parent; % Set this before adoption!
-                % Adopt this by the new non-empty parent if not already done elsewhere
-                if ~isempty(Parent) && all(Parent.Children ~= obj), % Avoid infinite recursive loop
-                    Parent.Data = [Parent.Children obj];
-                end
-                % Remove this from the old non-empty parent if not already done elsewhere
-                if ~isempty(Parent_prior) && any(Parent_prior.Children == obj), % Avoid infinite recursive loop
-                    Parent_prior.Data = Parent_prior.Data(Parent_prior.Data ~= obj);
-                end
+            % Set the new parent
+            obj.Parent = Parent; % Set this before adoption!
+            % Adopt this by the new non-empty parent if not already done elsewhere
+            if updateParentData, % Avoid infinite recursive loop
+                Parent.Data = [Parent.Children obj];
+            end
+            % Remove this from the old non-empty parent if not already done elsewhere
+            if ~isempty(Parent_prior) && any(Parent_prior.Children == obj), % Avoid infinite recursive loop
+                Parent_prior.Data = Parent_prior.Data(Parent_prior.Data ~= obj);
             end
         end
         
