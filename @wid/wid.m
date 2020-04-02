@@ -436,10 +436,10 @@ classdef wid < handle, % Since R2008a
     
     %% PRIVATE METHODS
     methods (Access = private)
-        Data = wid_get_LineValid(obj, Data);
+        Data = wid_Data_get_LineValid(obj, Data);
         
-        Data = wid_get_DataType(obj, Data);
-        Data = wid_set_DataType(obj, Data);
+        Data = wid_Data_get_DataType(obj, Data);
+        Data = wid_Data_set_DataType(obj, Data);
         
         out = wid_DataTree_get(obj, varargin); % For (un)formatted structs
         wid_DataTree_set(obj, in, varargin); % For (un)formatted structs
