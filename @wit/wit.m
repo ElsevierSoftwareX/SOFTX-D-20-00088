@@ -207,8 +207,8 @@ classdef wit < handle, % Since R2008a and Octave-compatible
                     end
                 end
                 % Parent the new children
-                obj.Data = Data(reshape(1:N_Data, 1, N_Data)); % Octave-compatible way
-%                 obj.Data = reshape(Data, 1, []);
+                Children(1:N_Data) = Data; % Octave-compatible way to generate a row vector of wit objects
+                obj.Data = Children;
             end
             % Update HasData-flag
             obj.HasData = ~isempty(Data);
