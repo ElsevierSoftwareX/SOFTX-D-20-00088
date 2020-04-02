@@ -85,6 +85,12 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     % * Implement '-NLineshapes' (number of lineshapes) to allow simpler
     % fun-input. For instance, one could simply give a single lineshape
     % fun, which is then used for N lineshapes. (25.6.2019)
+    % * Implement robust least squares ROUT-method described in ref. [2]
+    % that removes dataset outliers on the fly. (2.4.2020)
+    % [2] H. J. Motulsky and R. E. Brown (2006), 'Detecting outliers when
+    % fitting data with nonlinear regression – a new method based on robust
+    % nonlinear regression and the false discovery rate',
+    % https://doi.org/10.1186/1471-2105-7-123
     
     if nargin < 5, dim = 3; end % By default, operate 3rd or spectral dimension
     T_begin = now.*86400; % [s]
