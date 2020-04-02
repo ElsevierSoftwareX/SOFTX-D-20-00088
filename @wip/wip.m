@@ -35,7 +35,7 @@ classdef wip < handle, % Since R2008a
         Name;
     end
     properties % READ-WRITE
-        Data = wid.Empty;
+        Data = wid.empty;
     end
     properties (Dependent) % READ-WRITE, DEPENDENT
         Type;

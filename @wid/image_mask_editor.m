@@ -12,7 +12,7 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
     if isempty(Project), AutoCreateObj = false;
     else, AutoCreateObj = Project.popAutoCreateObj; end % Get the latest value (may be temporary or permanent or default)
     
-    new_obj = wid.Empty;
+    new_obj = wid.empty;
     
     % MASK GENERATION IF NO MASK INPUT / MASK EDITING IF NO MAIN INPUT
     if ~isempty(obj) || nargin > 1,

@@ -4,7 +4,7 @@
 
 % Make hard copy of the wid and all its linked objects and append to wip.
 function new = copy(obj),
-    new = wid.Empty; % Return empty if no obj given
+    new = wid.empty; % Return empty if no obj given
     for ii = numel(obj):-1:1,
         if ~obj(ii).isvalid, continue; end % Skip deleted
         new(ii).Project = obj(ii).Project; % Calls wid()-constructor!

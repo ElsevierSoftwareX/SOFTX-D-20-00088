@@ -25,7 +25,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     % 4) The selected items in Project Manager -window are returned.
     
     % By default, empty output
-    O_wid = wid.Empty;
+    O_wid = wid.empty;
     O_wip = wip.empty;
     O_wid_HtmlNames = cell.empty;
     
