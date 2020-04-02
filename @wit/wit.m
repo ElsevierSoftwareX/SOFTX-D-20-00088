@@ -460,7 +460,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         %% OTHER METHODS
         % Object copying, destroying, writing, reloading
         new = copy(obj); % Copy obj
-        destroy(obj); % Delete obj
+        destroy(obj); % Deprecated! Use delete instead!
         write(obj, File); % Write obj to file
         update(obj); % Update file format header information
         reload(obj); % Reload obj.Data from file
