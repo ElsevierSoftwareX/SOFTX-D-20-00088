@@ -13,6 +13,12 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
     
     % Test the file stream
     if isempty(fid) || fid == -1, delete(obj); return; end
+    
+    % Do not allow obj to notify its ancestors on modifications
+    obj.notifyAncestors = false;
+    
+    % Set the object itself as its own latest modified object (known beforehand)
+    obj.LatestModification = obj;
 
     % Read Magic (8 bytes) (only if Root)
     if isempty(obj.Parent),
@@ -58,6 +64,9 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
             child.fread(fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj); % Read the new child contents (or destroy it on failure)
         end
     else, obj.fread_Data(fid, N_bytes_max, swapEndianess); end % Otherwise, read the Data
+    
+    % Allow obj to notify its ancestors on modifications
+    obj.notifyAncestors = true;
     
     % SPECIAL CASE: Abort if obj meets the given error criteria.
     if isa(error_criteria_for_obj, 'function_handle'),

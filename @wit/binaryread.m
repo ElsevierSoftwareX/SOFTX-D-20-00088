@@ -19,7 +19,13 @@ function ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndiane
     % Test the data stream
     if isempty(buffer), delete(obj); return; end
     ind_max = numel(buffer);
-
+    
+    % Do not allow obj to notify its ancestors on modifications
+    obj.notifyAncestors = false;
+    
+    % Set the object itself as its own latest modified object (known beforehand)
+    obj.LatestModification = obj;
+    
     % Read Magic (8 bytes) (only if Root)
     if isempty(obj.Parent),
         ind_end = ind_begin-1 + 8;
@@ -80,6 +86,9 @@ function ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndiane
             ind_begin = child.binaryread(buffer, ind_begin, N_bytes_max, swapEndianess, error_criteria_for_obj); % Read the new child contents (or destroy it on failure)
         end
     else, ind_begin = obj.binaryread_Data(buffer, N_bytes_max, swapEndianess); end % Otherwise, read the Data
+    
+    % Allow obj to notify its ancestors on modifications
+    obj.notifyAncestors = true;
     
     % SPECIAL CASE: Abort if obj meets the given error criteria.
     if isa(error_criteria_for_obj, 'function_handle'),

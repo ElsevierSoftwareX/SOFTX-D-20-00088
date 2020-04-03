@@ -77,6 +77,17 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         HasData = false; % Useful flag for the reloading cases
     end
     
+    % Tree-specific internal parameters
+    properties (SetAccess = private) % READ-ONLY
+        % Modifications is incremented once per successful set.Name,
+        % set.Data or set.Parent for each affected object
+        Modifications = uint64(0); % Number of modifications
+        LatestModification;
+    end
+    properties (SetAccess = private, Hidden) % READ-ONLY
+        notifyAncestors = true;
+    end
+    
     % Handle-specific internal parameters
     properties (SetAccess = private) % READ-ONLY
         Id = uint64(0); % Used internally enable handle-like comparison in Octave
@@ -99,12 +110,15 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             
             % Set empty objects to Data and Parent in Octave-compatible way
             empty_obj = obj([]); % Octave-compatible way to construct empty array of objects
+            obj.skipRedundant = true; % Speed-up set.Data
             obj.Data = empty_obj; % Avoiding wit.empty due to infinite loop
+            obj.skipRedundant = true; % Speed-up set.Parent
             obj.Parent = empty_obj; % Avoiding wit.empty due to infinite loop
             
             % Parse input
             if nargin > 0,
                 if isa(ParentOrName, 'wit'), % Set new Parent
+                    obj.notifyAncestors = ParentOrName.notifyAncestors; % Inherit this property from parent
                     obj.Parent = ParentOrName;
                 elseif isa(ParentOrName, 'char'), % Set new Name
                     if nargin > 2, error('Too many input arguments.'); end
@@ -128,18 +142,15 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             % WIT-tag formatted files.
             persistent skipRedundant;
             if isempty(skipRedundant), skipRedundant = false; end
-            % If called from delete, then skip all redundant code
+            % If called from within delete, then skip all redundant code
             if ~skipRedundant,
                 obj.Parent = wit.empty; % Disconnect parent (only for the first)
                 % Delete descendants
                 skipRedundant = true; % Speed-up next delete-calls
-                Descendants = obj.Children;
-                while ~isempty(Descendants),
-                    NextDescendants = [Descendants.Children];
-                    delete(Descendants);
-                    Descendants = NextDescendants;
-                end
+                delete(obj.Children);
                 skipRedundant = false;
+            else,
+                delete(obj.Children);
             end
             % Useful resources:
             % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
@@ -157,17 +168,26 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             else, File = obj.Root.File; end % Otherwise, obtain it from the root
         end
         
-        % Name (READ-WRITE)
+        % Name (READ-WRITE) % Changes counted by obj.Root.Modifications-property!
         function set.Name(obj, Name),
             % Validate the given input
-            if ischar(Name), obj.Name = reshape(Name, 1, []);
-            else, error('Only a char array can be a name!'); end
+            if ischar(Name),
+                % Do nothing if no difference
+                if strcmp(Name, obj.Name), return; end
+                obj.Name = reshape(Name, 1, []);
+                % Update obj's Modifications and notify its ancestors
+                obj.modification;
+            else,
+                error('Only a char array can be a name!');
+            end
         end
         
-        % Data (READ-WRITE)
+        % Data (READ-WRITE) % Changes counted by obj.Root.Modifications-property!
         function set.Data(obj, Data),
             if ~isa(Data, 'wit'), % GENERAL CASE: Add new data to the obj
                 obj.Data = Data;
+                % Update obj's Modifications and notify its ancestors
+                obj.modification;
             else, % SPECIAL CASE: Add new children to the obj
                 N_Data = numel(Data);
                 % If called from set.Parent, then skip all redundant code
@@ -190,21 +210,36 @@ classdef wit < handle, % Since R2008a and Octave-compatible
                         Ancestor = Ancestor.Parent;
                     end
                     % Remove parent of those old children that are not found among the new children
+                    B_old = false(size(Data));
                     Data_old = obj.Data;
                     if isa(Data_old, 'wit'),
                         for ii = 1:numel(Data_old),
                             % Remove parent of an old child if it is not found among the new children
-                            if all(Data_old(ii).Id ~= Data_Id), % Same as Data_old(ii) ~= Data but Octave-compatible way
+                            B_old_ii = Data_old(ii).Id == Data_Id; % Same as Data_old(ii) == Data but Octave-compatible way
+                            if any(B_old_ii),
+                                B_old = B_old | B_old_ii;
+                            else,
                                 Data_old(ii).skipRedundant = true; % Speed-up and avoid infinite recursive loop
                                 Data_old(ii).Parent = wit.empty;
+                                % Update old child's Modifications but do not notify its ancestors
+                                Data_old(ii).notifyAncestors = false;
+                                Data_old(ii).modification;
+                                Data_old(ii).notifyAncestors = true;
                             end
                         end
                     end
                     % Set parent
                     for ii = 1:N_Data,
+                        if B_old(ii), continue; end % Skip if already parented
                         Data(ii).skipRedundant = true; % Speed-up and avoid infinite recursive loop
                         Data(ii).Parent = obj;
+                        % Update new child's Modifications but do not notify its ancestors
+                        Data(ii).notifyAncestors = false;
+                        Data(ii).modification;
+                        Data(ii).notifyAncestors = true;
                     end
+                    % Update obj's Modifications and notify its ancestors
+                    obj.modification;
                 end
                 % Parent the new children
                 Children(1:N_Data) = Data; % Octave-compatible way to generate a row vector of wit objects
@@ -217,7 +252,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         % Type (READ-ONLY)
         
         %% OTHER PROPERTIES
-        % Parent (READ-WRITE)
+        % Parent (READ-WRITE) % Changes counted by obj.Root.Modifications-property!
         function set.Parent(obj, Parent),
             % If called from set.Data, then skip all redundant code
             if obj.skipRedundant, % Speed-up and avoid infinite recursive loop
@@ -260,15 +295,22 @@ classdef wit < handle, % Since R2008a and Octave-compatible
                 if ~isempty(Parent_old),
                     Parent_old.skipRedundant = true; % Speed-up and avoid infinite recursive loop
                     Parent_old.Data = Parent_old.Data(Parent_old.Data ~= obj);
+                    % Update old parent's Modifications and notify its ancestors
+                    Parent_old.modification;
                 end
             end
             % If this object becomes a root, then inherit the old root's key properties
-            if isempty(Parent),
+            if isempty(Parent) && ~isempty(obj.Parent),
                 obj.File = obj.File; % Inherit the file string from this or the old root
                 obj.Magic = obj.Magic; % Inherit the magic string from the old root
             end
             % Set the new parent
             obj.Parent = Parent;
+            
+            if ~obj.skipRedundant,
+                % Update obj's Modifications and notify its ancestors
+                obj.modification;
+            end
         end
         
         % Children (READ-WRITE, DEPENDENT)
@@ -384,6 +426,8 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         % Header (READ-ONLY)
         
         % HasData (READ-ONLY)
+        
+        % Modifications (READ-ONLY)
         
         % Id (READ-ONLY)
         
@@ -512,5 +556,20 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         fwrite(obj, fid, swapEndianess);
         fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj);
         fread_Data(obj, fid, N_bytes_max, swapEndianess);
+        
+        % Increments obj's Modifications-property by one and notifies
+        % ancestors if permitted
+        function modification(obj),
+            obj.Modifications = obj.Modifications+1;
+            if obj.notifyAncestors,
+                latest_modification = obj;
+                while ~isempty(obj),
+                    obj.LatestModification = latest_modification;
+                    obj = obj.Parent;
+                end
+            else,
+                obj.LatestModification = obj;
+            end
+        end
     end
 end
