@@ -3,15 +3,17 @@
 % All rights reserved.
 
 function write(obj, File),
+    Root = obj.Root; % Get Root only once
+    
     % Test the input
     if nargin > 1,
         if ~ischar(File) || isempty(File),
             error('File must be a non-empty string!');
         end
-    elseif isempty(obj.Root.File),
+    elseif isempty(Root.File),
         error('Root has no File specified!');
     else,
-        File = obj.Root.File;
+        File = Root.File;
     end
     
     isLittleEndian = true; % By default: Write as little endian
@@ -24,13 +26,13 @@ function write(obj, File),
     end
     
     % Update the root first
-    obj.Root.update();
+    Root.update();
     
     % Then write the root
     % Disable automatic flushing using 'W'-flag instead of 'w'-flag: http://undocumentedmatlab.com/blog/improving-fwrite-performance
-    obj.Root.File = File;
+    Root.File = File;
     fid = fopen(File, 'W'); % Instead of 'w'!
-    if fid == -1 || isempty(fid), error('File (''%s'') cannot be opened for writing!', obj.Root.File); end
+    if fid == -1 || isempty(fid), error('File (''%s'') cannot be opened for writing!', Root.File); end
     
     % Close the file ONLY WHEN out of the function scope
     C = onCleanup(@() fclose(fid)); % https://blogs.mathworks.com/loren/2008/03/10/keeping-things-tidy/
@@ -47,6 +49,6 @@ function write(obj, File),
         fwrite(fid, buffer, 'uint8');
     catch, % OTHERWISE USE LOW-ON MEMORY SCHEME!
         warning('Low on memory... Writing file ''%s'' of %d bytes children-by-children!', FileName, FileSize);
-        obj.Root.fwrite(fid, swapEndianess);
+        Root.fwrite(fid, swapEndianess);
     end
 end
