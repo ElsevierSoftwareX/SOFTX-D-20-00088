@@ -21,10 +21,10 @@ function ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndiane
     ind_max = numel(buffer);
     
     % Do not allow obj to notify its ancestors on modifications
-    obj.notifyAncestors = false;
+    obj.ModificationsToAncestors = false;
     
     % Set the object itself as its own latest modified object (known beforehand)
-    obj.LatestModification = obj;
+    obj.ModificationsLatestAt = obj;
     
     % Read Magic (8 bytes) (only if Root)
     if isempty(obj.Parent),
@@ -88,7 +88,7 @@ function ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndiane
     else, ind_begin = obj.binaryread_Data(buffer, N_bytes_max, swapEndianess); end % Otherwise, read the Data
     
     % Allow obj to notify its ancestors on modifications
-    obj.notifyAncestors = true;
+    obj.ModificationsToAncestors = true;
     
     % SPECIAL CASE: Abort if obj meets the given error criteria.
     if isa(error_criteria_for_obj, 'function_handle'),

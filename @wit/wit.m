@@ -82,10 +82,10 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         % Modifications is incremented once per successful set.Name,
         % set.Data or set.Parent for each affected object
         Modifications = uint64(0); % Number of modifications
-        LatestModification;
+        ModificationsLatestAt;
     end
     properties (SetAccess = private, Hidden) % READ-ONLY
-        notifyAncestors = true;
+        ModificationsToAncestors = true;
     end
     
     % Handle-specific internal parameters
@@ -118,7 +118,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             % Parse input
             if nargin > 0,
                 if isa(ParentOrName, 'wit'), % Set new Parent
-                    obj.notifyAncestors = ParentOrName.notifyAncestors; % Inherit this property from parent
+                    obj.ModificationsToAncestors = ParentOrName.ModificationsToAncestors; % Inherit this property from parent
                     obj.Parent = ParentOrName;
                 elseif isa(ParentOrName, 'char'), % Set new Name
                     if nargin > 2, error('Too many input arguments.'); end
@@ -168,7 +168,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             else, File = obj.Root.File; end % Otherwise, obtain it from the root
         end
         
-        % Name (READ-WRITE) % Changes counted by obj.Root.Modifications-property!
+        % Name (READ-WRITE) % Changes counted by Modifications-property!
         function set.Name(obj, Name),
             % Validate the given input
             if ischar(Name),
@@ -182,7 +182,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             end
         end
         
-        % Data (READ-WRITE) % Changes counted by obj.Root.Modifications-property!
+        % Data (READ-WRITE) % Changes counted by Modifications-property!
         function set.Data(obj, Data),
             if ~isa(Data, 'wit'), % GENERAL CASE: Add new data to the obj
                 obj.Data = Data;
@@ -222,9 +222,9 @@ classdef wit < handle, % Since R2008a and Octave-compatible
                                 Data_old(ii).skipRedundant = true; % Speed-up and avoid infinite recursive loop
                                 Data_old(ii).Parent = wit.empty;
                                 % Update old child's Modifications but do not notify its ancestors
-                                Data_old(ii).notifyAncestors = false;
+                                Data_old(ii).ModificationsToAncestors = false;
                                 Data_old(ii).modification;
-                                Data_old(ii).notifyAncestors = true;
+                                Data_old(ii).ModificationsToAncestors = true;
                             end
                         end
                     end
@@ -234,9 +234,9 @@ classdef wit < handle, % Since R2008a and Octave-compatible
                         Data(ii).skipRedundant = true; % Speed-up and avoid infinite recursive loop
                         Data(ii).Parent = obj;
                         % Update new child's Modifications but do not notify its ancestors
-                        Data(ii).notifyAncestors = false;
+                        Data(ii).ModificationsToAncestors = false;
                         Data(ii).modification;
-                        Data(ii).notifyAncestors = true;
+                        Data(ii).ModificationsToAncestors = true;
                     end
                     % Update obj's Modifications and notify its ancestors
                     obj.modification;
@@ -252,7 +252,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         % Type (READ-ONLY)
         
         %% OTHER PROPERTIES
-        % Parent (READ-WRITE) % Changes counted by obj.Root.Modifications-property!
+        % Parent (READ-WRITE) % Changes counted by Modifications-property!
         function set.Parent(obj, Parent),
             % If called from set.Data, then skip all redundant code
             if obj.skipRedundant, % Speed-up and avoid infinite recursive loop
@@ -561,14 +561,14 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         % ancestors if permitted
         function modification(obj),
             obj.Modifications = obj.Modifications+1;
-            if obj.notifyAncestors,
-                latest_modification = obj;
+            if obj.ModificationsToAncestors,
+                tag = obj;
                 while ~isempty(obj),
-                    obj.LatestModification = latest_modification;
+                    obj.ModificationsLatestAt = tag;
                     obj = obj.Parent;
                 end
             else,
-                obj.LatestModification = obj;
+                obj.ModificationsLatestAt = obj;
             end
         end
     end
