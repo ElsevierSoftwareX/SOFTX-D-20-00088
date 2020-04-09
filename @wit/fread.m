@@ -12,7 +12,11 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
     if nargin < 6, error_criteria_for_obj = []; end % By default: no criteria!
     
     % Test the file stream
-    if isempty(fid) || fid == -1, delete(obj); return; end
+    if isempty(fid) || fid == -1,
+        obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+        delete(obj);
+        return;
+    end
     
     % Do not allow obj to notify its ancestors on modifications
     obj.ModificationsToAncestors = false;
@@ -22,28 +26,52 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
 
     % Read Magic (8 bytes) (only if Root)
     if isempty(obj.Parent),
-        if feof(fid), delete(obj); return; end % Abort, if file stream has reached the end
+        if feof(fid), % Abort, if file stream has reached the end
+            obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+            delete(obj);
+            return;
+        end
         obj.Magic = reshape(fread(fid, 8, 'uint8=>char', 0, 'l'), 1, []); % Force ascii-conversion
     end
 
     % Read NameLength (4 bytes)
-    if feof(fid), delete(obj); return; end % Abort, if file stream has reached the end
+    if feof(fid), % Abort, if file stream has reached the end
+        obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+        delete(obj);
+        return;
+    end
     obj.NameLength = fread(fid, 1, 'uint32=>uint32', 0, 'l');
 
     % Read Name (NameLength # of bytes)
-    if feof(fid), delete(obj); return; end % Abort, if file stream has reached the end
+    if feof(fid), % Abort, if file stream has reached the end
+        obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+        delete(obj);
+        return;
+    end
     obj.Name = reshape(fread(fid, double(obj.NameLength), 'uint8=>char', 0, 'l'), 1, []); % String is a char row vector % Double OFFSET for compability!
 
     % Read Type (4 bytes)
-    if feof(fid), delete(obj); return; end % Abort, if file stream has reached the end
+    if feof(fid), % Abort, if file stream has reached the end
+        obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+        delete(obj);
+        return;
+    end
     obj.Type = fread(fid, 1, 'uint32=>uint32', 0, 'l');
 
     % Read Start (8 bytes)
-    if feof(fid), delete(obj); return; end % Abort, if file stream has reached the end
+    if feof(fid), % Abort, if file stream has reached the end
+        obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+        delete(obj);
+        return;
+    end
     obj.Start = fread(fid, 1, 'uint64=>uint64', 0, 'l');
 
     % Read End (8 bytes)
-    if feof(fid), delete(obj); return; end % Abort, if file stream has reached the end
+    if feof(fid), % Abort, if file stream has reached the end
+        obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+        delete(obj);
+        return;
+    end
     obj.End = fread(fid, 1, 'uint64=>uint64', 0, 'l');
     
     % Update the flag used for the reloading cases
@@ -59,10 +87,16 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
     if skip_Data, % Handle Data skipping
         fseek(fid, double(obj.End), 'bof'); % Double OFFSET for compability!
     elseif obj.Type == 0, % Read the children
+        children = wit.empty;
         while(ftell(fid) < obj.End), % Continue reading until DataEnd
-            child = wit(obj); % Adopt new child
+            child = wit(); % Many times faster than wit(obj) due to redundant code
+            child.skipRedundant = true; % Speed-up set.Parent
+            child.Parent = obj; % Adopt the new child being created
             child.fread(fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj); % Read the new child contents (or destroy it on failure)
+            if isvalid(child), children(end+1) = child; end % Add child if not deleted (but invalid-function is Octave-incompatible)
         end
+        obj.skipRedundant = true; % Speed-up set.Data
+        obj.Data = children; % Adopt the new child being created
     else, obj.fread_Data(fid, N_bytes_max, swapEndianess); end % Otherwise, read the Data
     
     % Allow obj to notify its ancestors on modifications
@@ -70,6 +104,8 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
     
     % SPECIAL CASE: Abort if obj meets the given error criteria.
     if isa(error_criteria_for_obj, 'function_handle'),
+        obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
         error_criteria_for_obj(obj); % EXPECTED TO ERROR if its criteria is met
+        obj.skipRedundant = false;
     end
 end
