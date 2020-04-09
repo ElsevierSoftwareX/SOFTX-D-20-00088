@@ -81,11 +81,22 @@ classdef wit < handle, % Since R2008a and Octave-compatible
     properties (SetAccess = private) % READ-ONLY
         % Modifications is incremented once per successful set.Name,
         % set.Data or set.Parent for each affected object
-        Modifications = uint64(0); % Number of modifications
         ModificationsLatestAt;
+        ModificationsLatestAtId = uint64(0);
+        Modifications = uint64(0); % Number of modifications
     end
     properties (SetAccess = private, Hidden) % READ-ONLY
+        % modification optimizations
         ModificationsToAncestors = true;
+        % get.Root optimizations
+        RootPersistent;
+        RootModificationsLatestAtId = uint64(0);
+        RootModifications = uint64(0);
+        % get.FullName optimizations
+        FullNamePersistent;
+        FullName_RootPersistent;
+        FullName_RootModificationsLatestAtId = uint64(0);
+        FullName_RootModifications = uint64(0);
     end
     
     % Handle-specific internal parameters
@@ -107,6 +118,10 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             if isempty(NextId), NextId = uint64(1);
             else, NextId = NextId + 1; end
             obj.Id = NextId;
+            
+            % Initialize helper properties
+            obj.RootPersistent = obj;
+            obj.FullName_RootPersistent = obj;
             
             % Set empty objects to Data and Parent in Octave-compatible way
             empty_obj = obj([]); % Octave-compatible way to construct empty array of objects
@@ -315,8 +330,8 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         
         % Children (READ-WRITE, DEPENDENT)
         function Children = get.Children(obj),
-            Children = wit.empty;
-            if isa(obj.Data, 'wit'), Children = obj.Data; end
+            if isa(obj.Data, 'wit'), Children = obj.Data;
+            else, Children = wit.empty; end
         end
         function set.Children(obj, Children),
             % Validate the given input
@@ -328,15 +343,31 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         
         % Root (READ-WRITE, DEPENDENT)
         function Root = get.Root(obj),
-            Root = obj;
-            while ~isempty(Root.Parent), Root = Root.Parent; end
+            Root = obj.RootPersistent;
+            % Update returned and stored Root if any change is detected
+            if obj.RootModificationsLatestAtId ~= Root.ModificationsLatestAtId || ...
+                    obj.RootModifications ~= Root.ModificationsLatestAt.Modifications,
+                % Find new Root
+                Root = obj;
+                while ~isempty(Root.Parent), Root = Root.Parent; end
+                % Update the related modification tracking variables
+                obj.RootModificationsLatestAtId = Root.ModificationsLatestAtId;
+                obj.RootModifications = Root.ModificationsLatestAt.Modifications;
+                % Update stored Root
+                obj.RootPersistent = Root;
+            end
         end
         function set.Root(obj, Root),
             % Validate the given input
             if ~isa(Root, 'wit') && numel(Root) ~= 1,
                 error('Root can be set by a single wit tree object!');
             end
-            Root.Data = obj.Root.Data; % Transfer data (that may be children) of the old root to the new root
+            OldRoot = obj.Root; % Call get.Root only once
+            if OldRoot == obj, % SPECIAL CASE: This object is its own root
+                Root.Data = obj; % Make the old root (or this object) the only child of the new root
+            else, % Otherwise, disconnect the old root by transfering its contents to the new root
+                Root.Data = OldRoot.Data; % Transfer children from the old root to the new root
+            end
         end
         
         % Siblings (READ-WRITE, DEPENDENT)
@@ -398,11 +429,26 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         end
         
         % FullName (READ-ONLY, DEPENDENT)
-        function FullName = get.FullName(obj), % Potential bottleneck!
-            FullName = obj.Name;
-            while ~isempty(obj.Parent),
-                FullName = [FullName '<' obj.Parent.Name];
-                obj = obj.Parent;
+        function FullName = get.FullName(obj),
+            Root = obj.FullName_RootPersistent;
+            % Update stored FullName if any change is detected
+            if obj.FullName_RootModificationsLatestAtId ~= Root.ModificationsLatestAtId || ...
+                    obj.FullName_RootModifications ~= Root.ModificationsLatestAt.Modifications,
+                % Find new FullName (and Root)
+                FullName = obj.Name;
+                Root = obj;
+                while ~isempty(Root.Parent),
+                    FullName = [FullName '<' Root.Parent.Name];
+                    Root = Root.Parent;
+                end
+                % Update the related modification tracking variables
+                obj.FullName_RootModificationsLatestAtId = Root.ModificationsLatestAtId;
+                obj.FullName_RootModifications = Root.ModificationsLatestAt.Modifications;
+                % Update obj.FullNamePersistent (and obj.FullName_RootPersistent)
+                obj.FullNamePersistent = FullName;
+                obj.FullName_RootPersistent = Root;
+            else, % Otherwise, return the stored FullName untouched
+                FullName = obj.FullNamePersistent;
             end
         end
         
@@ -563,12 +609,15 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             obj.Modifications = obj.Modifications+1;
             if obj.ModificationsToAncestors,
                 tag = obj;
+                tag_Id = obj.Id;
                 while ~isempty(obj),
                     obj.ModificationsLatestAt = tag;
+                    obj.ModificationsLatestAtId = tag_Id;
                     obj = obj.Parent;
                 end
             else,
                 obj.ModificationsLatestAt = obj;
+                obj.ModificationsLatestAtId = obj.Id;
             end
         end
     end
