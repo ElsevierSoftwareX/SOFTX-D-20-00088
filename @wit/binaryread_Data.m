@@ -97,6 +97,7 @@ function ind_begin = binaryread_Data(obj, buffer, N_bytes_max, swapEndianess),
     end
     warning(old_state); % Restore warning state
     
+    obj.skipRedundant = true; % Speed-up set.Data!
     obj.Data = Data; % Minimized expensive calls to set.Data (and get.Data)
     ind_begin = ind_end + 1; % Set next begin index
     

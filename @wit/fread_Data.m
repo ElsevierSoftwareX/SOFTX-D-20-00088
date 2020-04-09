@@ -95,6 +95,7 @@ function fread_Data(obj, fid, N_bytes_max, swapEndianess),
     end
     warning(old_state); % Restore warning state
     
+    obj.skipRedundant = true; % Speed-up set.Data!
     obj.Data = Data; % Minimized expensive calls to set.Data (and get.Data)
     
     % Implemented an inner function to avoid EXPENSIVE calls to sprintf.

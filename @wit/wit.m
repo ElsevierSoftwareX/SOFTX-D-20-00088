@@ -119,10 +119,6 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             else, NextId = NextId + 1; end
             obj.Id = NextId;
             
-            % Initialize helper properties
-            obj.RootPersistent = obj;
-            obj.FullName_RootPersistent = obj;
-            
             % Set empty objects to Data and Parent in Octave-compatible way
             empty_obj = obj([]); % Octave-compatible way to construct empty array of objects
             obj.skipRedundant = true; % Speed-up set.Data
@@ -139,14 +135,14 @@ classdef wit < handle, % Since R2008a and Octave-compatible
                     if nargin > 2, error('Too many input arguments.'); end
                     obj.Name = ParentOrName;
                 else, error('First input must be either wit-class or char!'); end
-            end
-            if nargin > 1,
-                if isa(ParentOrName, 'wit'), % After new Parent
-                    if isa(NameOrData, 'char'), % Set new Name
-                        obj.Name = NameOrData;
-                        if nargin > 2, obj.Data = DataOrNone; end % Set new Data
-                    else, error('If first input is wit-class, then second must be char!'); end
-                else, obj.Data = NameOrData; end % After new Name set new Data
+                if nargin > 1,
+                    if isa(ParentOrName, 'wit'), % After new Parent
+                        if isa(NameOrData, 'char'), % Set new Name
+                            obj.Name = NameOrData;
+                            if nargin > 2, obj.Data = DataOrNone; end % Set new Data
+                        else, error('If first input is wit-class, then second must be char!'); end
+                    else, obj.Data = NameOrData; end % After new Name set new Data
+                end
             end
         end
         
@@ -187,11 +183,15 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         function set.Name(obj, Name),
             % Validate the given input
             if ischar(Name),
-                % Do nothing if no difference
-                if strcmp(Name, obj.Name), return; end
+                if obj.skipRedundant, % Speed-up
+                    obj.skipRedundant = false; % Toggle the flag
+                else,
+                    % Do nothing if no difference
+                    if strcmp(Name, obj.Name), return; end
+                    % Update obj's Modifications and notify its ancestors
+                    obj.modification;
+                end
                 obj.Name = reshape(Name, 1, []);
-                % Update obj's Modifications and notify its ancestors
-                obj.modification;
             else,
                 error('Only a char array can be a name!');
             end
@@ -201,8 +201,12 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         function set.Data(obj, Data),
             if ~isa(Data, 'wit'), % GENERAL CASE: Add new data to the obj
                 obj.Data = Data;
-                % Update obj's Modifications and notify its ancestors
-                obj.modification;
+                if obj.skipRedundant, % Speed-up
+                    obj.skipRedundant = false; % Toggle the flag
+                else,
+                    % Update obj's Modifications and notify its ancestors
+                    obj.modification;
+                end
             else, % SPECIAL CASE: Add new children to the obj
                 N_Data = numel(Data);
                 % If called from set.Parent, then skip all redundant code
@@ -269,8 +273,9 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         %% OTHER PROPERTIES
         % Parent (READ-WRITE) % Changes counted by Modifications-property!
         function set.Parent(obj, Parent),
+            skipRedundant = obj.skipRedundant;
             % If called from set.Data, then skip all redundant code
-            if obj.skipRedundant, % Speed-up and avoid infinite recursive loop
+            if skipRedundant, % Speed-up and avoid infinite recursive loop
                 obj.skipRedundant = false; % Toggle the flag
             else,
                 % Validate the given input
@@ -322,7 +327,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             % Set the new parent
             obj.Parent = Parent;
             
-            if ~obj.skipRedundant,
+            if ~skipRedundant,
                 % Update obj's Modifications and notify its ancestors
                 obj.modification;
             end
@@ -345,7 +350,8 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         function Root = get.Root(obj),
             Root = obj.RootPersistent;
             % Update returned and stored Root if any change is detected
-            if obj.RootModificationsLatestAtId ~= Root.ModificationsLatestAtId || ...
+            if isempty(Root) || ...
+                    obj.RootModificationsLatestAtId ~= Root.ModificationsLatestAtId || ...
                     obj.RootModifications ~= Root.ModificationsLatestAt.Modifications,
                 % Find new Root
                 Root = obj;
@@ -432,7 +438,8 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         function FullName = get.FullName(obj),
             Root = obj.FullName_RootPersistent;
             % Update stored FullName if any change is detected
-            if obj.FullName_RootModificationsLatestAtId ~= Root.ModificationsLatestAtId || ...
+            if isempty(Root) || ...
+                    obj.FullName_RootModificationsLatestAtId ~= Root.ModificationsLatestAtId || ...
                     obj.FullName_RootModifications ~= Root.ModificationsLatestAt.Modifications,
                 % Find new FullName (and Root)
                 FullName = obj.Name;
@@ -561,8 +568,8 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         adopt(obj, varargin); % Deprecated! Use add instead!
         
         % Conversion to/from binary form
-        buffer = binary(obj, swapEndianess);
-        ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj);
+        buffer = binary(obj, swapEndianess, fun_progress);
+        ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress);
         ind_begin = binaryread_Data(obj, buffer, N_bytes_max, swapEndianess);
         
         % Object search
@@ -599,8 +606,8 @@ classdef wit < handle, % Since R2008a and Octave-compatible
     
     %% PRIVATE METHODS
     methods (Access = private)
-        fwrite(obj, fid, swapEndianess);
-        fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj);
+        fwrite(obj, fid, swapEndianess, fun_progress);
+        fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress);
         fread_Data(obj, fid, N_bytes_max, swapEndianess);
         
         % Increments obj's Modifications-property by one and notifies

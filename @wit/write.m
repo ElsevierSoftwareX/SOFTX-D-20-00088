@@ -42,13 +42,35 @@ function write(obj, File),
     FileName = [name ext];
     FileSize = obj.End; % Get file size
     
+    fun_progress(0);
     try, % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
         % Avoid call to builtin 'memory', which is Octave-incompatible!
         buffer = zeros(FileSize, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
-        buffer = obj.binary(swapEndianess);
+        buffer = obj.binary(swapEndianess, @fun_progress);
         fwrite(fid, buffer, 'uint8');
     catch, % OTHERWISE USE LOW-ON MEMORY SCHEME!
         warning('Low on memory... Writing file ''%s'' of %d bytes children-by-children!', FileName, FileSize);
-        Root.fwrite(fid, swapEndianess);
+        Root.fwrite(fid, swapEndianess, @fun_progress);
+    end
+    fun_progress(FileSize);
+    
+    function fun_progress(N_bytes_read),
+        N_blocks = 50;
+        persistent tictoc N_blocks_read;
+        if isempty(N_blocks_read), N_blocks_read = 0; end
+        if N_bytes_read == 0,
+            fprintf('Writing %d bytes to file: %s\n', FileSize, FileName);
+            fprintf([' 0%%' repmat(' ', [1 ceil(N_blocks./2)-5]) '50%%' repmat(' ', [1 floor(N_blocks./2)-4]) '100%% complete!\n[']);
+            N_blocks_read = 0; % Initialize the progress bar
+            tictoc = tic;
+        elseif N_bytes_read == FileSize,
+            fprintf('.]\n');
+            toc(tictoc);
+        else,
+            while N_bytes_read >= (N_blocks_read+1)./N_blocks.*FileSize,
+                fprintf('.');
+                N_blocks_read = N_blocks_read+1;
+            end
+        end
     end
 end

@@ -3,13 +3,14 @@
 % All rights reserved.
 
 % USE THIS ONLY IF LOW-ON MEMORY OR WHEN READING HUGE FILES!
-function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj),
+function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress),
     % Reads a WIT-formatted tag info from the given file stream.
     % Reading can be limited by N_bytes_max (if low on memory).
     if nargin < 3, N_bytes_max = Inf; end % Default: no read limit!
     if nargin < 4, swapEndianess = false; end % By default: Read without swapping endianess
     if nargin < 5, skip_Data_criteria_for_obj = []; end % By default: no criteria!
     if nargin < 6, error_criteria_for_obj = []; end % By default: no criteria!
+    if nargin < 7, fun_progress = []; end % By default: no progress function
     
     % Test the file stream
     if isempty(fid) || fid == -1,
@@ -48,7 +49,8 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         delete(obj);
         return;
     end
-    obj.Name = reshape(fread(fid, double(obj.NameLength), 'uint8=>char', 0, 'l'), 1, []); % String is a char row vector % Double OFFSET for compability!
+    obj.skipRedundant = true; % Speed-up set.Name!
+    obj.Name = fread(fid, double(obj.NameLength), 'uint8=>char', 0, 'l'); % String is a char row vector % Double OFFSET for compability!
 
     % Read Type (4 bytes)
     if feof(fid), % Abort, if file stream has reached the end
@@ -65,6 +67,10 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         return;
     end
     obj.Start = fread(fid, 1, 'uint64=>uint64', 0, 'l');
+    
+    if isa(fun_progress, 'function_handle'),
+        fun_progress(obj.Start);
+    end
 
     % Read End (8 bytes)
     if feof(fid), % Abort, if file stream has reached the end
@@ -92,7 +98,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
             child = wit(); % Many times faster than wit(obj) due to redundant code
             child.skipRedundant = true; % Speed-up set.Parent
             child.Parent = obj; % Adopt the new child being created
-            child.fread(fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj); % Read the new child contents (or destroy it on failure)
+            child.fread(fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress); % Read the new child contents (or destroy it on failure)
             if isvalid(child), children(end+1) = child; end % Add child if not deleted (but invalid-function is Octave-incompatible)
         end
         obj.skipRedundant = true; % Speed-up set.Data

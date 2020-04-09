@@ -7,7 +7,7 @@
 % once. Due to variations between PC's, this allows swapping endianess. As
 % far as the author knows, the WIT-formatted files are always LITTLE-ENDIAN
 % ORDERED.
-function ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj),
+function ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress),
     % Reads a WIT-formatted tag info from the given file stream.
     % Reading can be limited by N_bytes_max (if low on memory).
     if nargin < 3 || isempty(ind_begin), ind_begin = 1; end
@@ -15,6 +15,7 @@ function ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndiane
     if nargin < 5, swapEndianess = false; end % By default: Read without swapping endianess
     if nargin < 6, skip_Data_criteria_for_obj = []; end % By default: no criteria!
     if nargin < 7, error_criteria_for_obj = []; end % By default: no criteria!
+    if nargin < 8, fun_progress = []; end % By default: no progress function
     
     % Test the data stream
     if isempty(buffer),
@@ -60,7 +61,8 @@ function ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndiane
         delete(obj);
         return;
     end
-    obj.Name = reshape(char(buffer(ind_begin:ind_end)), 1, []);
+    obj.skipRedundant = true; % Speed-up set.Name!
+    obj.Name = char(buffer(ind_begin:ind_end));
     ind_begin = ind_end + 1; % Set next begin index
 
     % Read Type (4 bytes)
@@ -84,7 +86,11 @@ function ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndiane
     if ~swapEndianess, obj.Start = typecast(buffer(ind_begin:ind_end), 'uint64');
     else, obj.Start = typecast(fliplr(buffer(ind_begin:ind_end)), 'uint64'); end
     ind_begin = ind_end + 1; % Set next begin index
-
+    
+    if isa(fun_progress, 'function_handle'),
+        fun_progress(obj.Start);
+    end
+    
     % Read End (8 bytes)
     ind_end = ind_begin-1 + 8;
     if ind_end > ind_max, % Abort, if the end is reached
@@ -114,7 +120,7 @@ function ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndiane
             child = wit(); % Many times faster than wit(obj) due to redundant code
             child.skipRedundant = true; % Speed-up set.Parent
             child.Parent = obj; % Adopt the new child being created
-            ind_begin = child.binaryread(buffer, ind_begin, N_bytes_max, swapEndianess, error_criteria_for_obj); % Read the new child contents (or destroy it on failure)
+            ind_begin = child.binaryread(buffer, ind_begin, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress); % Read the new child contents (or destroy it on failure)
             if isvalid(child), children(end+1) = child; end % Add child if not deleted (but invalid-function is Octave-incompatible)
         end
         obj.skipRedundant = true; % Speed-up set.Data

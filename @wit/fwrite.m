@@ -3,8 +3,9 @@
 % All rights reserved.
 
 % USE THIS ONLY IF LOW-ON MEMORY OR WHEN WRITING HUGE FILES!
-function fwrite(obj, fid, swapEndianess),
+function fwrite(obj, fid, swapEndianess, fun_progress),
     if nargin < 3, swapEndianess = false; end % By default: Write without swapping endianess
+    if nargin < 4, fun_progress = []; end % By default: no progress function
     
     % Test the file stream
     if isempty(fid) || fid == -1, error('File stream is not open!'); end
@@ -56,6 +57,10 @@ function fwrite(obj, fid, swapEndianess),
     buffer(ind_begin:ind_end) = uint8_array;
     ind_begin = ind_end + 1; % Set next begin index
     
+    if isa(fun_progress, 'function_handle'),
+        fun_progress(obj.Start);
+    end
+    
     % Write End (8 bytes)
     ind_end = ind_begin-1 + 8;
     if ~swapEndianess, uint8_array = typecast(obj.End, 'uint8');
@@ -70,7 +75,7 @@ function fwrite(obj, fid, swapEndianess),
         switch(obj.Type),
             case 0, % List of Tags
                 for ii = 1:numel(obj.Data),
-                    obj.Data(ii).fwrite(fid);
+                    obj.Data(ii).fwrite(fid, swapEndianess, fun_progress);
                 end
             case 2, % Double (8 bytes)
                 fwrite(fid, obj.Data, 'double', 0, 'l');

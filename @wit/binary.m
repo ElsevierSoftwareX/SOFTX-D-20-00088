@@ -6,8 +6,9 @@
 % writing to file, because we can call EXPENSIVE fwrite only once. Due to
 % variations between PC's, this allows swapping endianess. As far as the
 % author knows, the WIT-formatted files are always LITTLE-ENDIAN ORDERED.
-function buffer = binary(obj, swapEndianess),
+function buffer = binary(obj, swapEndianess, fun_progress),
     if nargin < 2, swapEndianess = false; end % By default: Binary without swapping endianess
+    if nargin < 3, fun_progress = []; end % By default: no progress function
     
     % Before PREALLOCATIONS, call itself for Type=0 Data and store buffers.
     % In other words, begin this call from the ends of the tree branches.
@@ -15,7 +16,7 @@ function buffer = binary(obj, swapEndianess),
     if ~isempty(obj.Data) && obj.Type == 0,
         buffer_Data = cell(numel(obj.Data), 1);
         for ii = 1:numel(obj.Data),
-            buffer_Data{ii} = obj.Data(ii).binary(swapEndianess);
+            buffer_Data{ii} = obj.Data(ii).binary(swapEndianess, fun_progress);
         end
     end
     
@@ -66,6 +67,10 @@ function buffer = binary(obj, swapEndianess),
     else, uint8_array = fliplr(typecast(obj.Start, 'uint8')); end
     buffer(ind_begin:ind_end) = uint8_array;
     ind_begin = ind_end + 1; % Set next begin index
+    
+    if isa(fun_progress, 'function_handle'),
+        fun_progress(obj.Start);
+    end
     
     % Write End (8 bytes)
     ind_end = ind_begin-1 + 8;
