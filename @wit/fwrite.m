@@ -3,9 +3,10 @@
 % All rights reserved.
 
 % USE THIS ONLY IF LOW-ON MEMORY OR WHEN WRITING HUGE FILES!
-function fwrite(obj, fid, swapEndianess, fun_progress),
+function fwrite(obj, fid, swapEndianess, fun_progress, update),
     if nargin < 3, swapEndianess = false; end % By default: Write without swapping endianess
     if nargin < 4, fun_progress = []; end % By default: no progress function
+    if nargin < 5 || update, obj.update(); end % By default: update wit Tree object
     
     % Test the file stream
     if isempty(fid) || fid == -1, error('File stream is not open!'); end
@@ -75,7 +76,7 @@ function fwrite(obj, fid, swapEndianess, fun_progress),
         switch(obj.Type),
             case 0, % List of Tags
                 for ii = 1:numel(obj.Data),
-                    obj.Data(ii).fwrite(fid, swapEndianess, fun_progress);
+                    obj.Data(ii).fwrite(fid, swapEndianess, fun_progress, false);
                 end
             case 2, % Double (8 bytes)
                 fwrite(fid, obj.Data, 'double', 0, 'l');

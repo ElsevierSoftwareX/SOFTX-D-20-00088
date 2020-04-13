@@ -46,11 +46,11 @@ function write(obj, File),
     try, % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
         % Avoid call to builtin 'memory', which is Octave-incompatible!
         buffer = zeros(FileSize, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
-        buffer = obj.binary(swapEndianess, @fun_progress);
+        buffer = obj.binary(swapEndianess, @fun_progress, false);
         fwrite(fid, buffer, 'uint8');
     catch, % OTHERWISE USE LOW-ON MEMORY SCHEME!
         warning('Low on memory... Writing file ''%s'' of %d bytes children-by-children!', FileName, FileSize);
-        Root.fwrite(fid, swapEndianess, @fun_progress);
+        Root.fwrite(fid, swapEndianess, @fun_progress, false);
     end
     fun_progress(FileSize);
     

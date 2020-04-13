@@ -559,7 +559,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         new = copy(obj); % Copy obj
         destroy(obj); % Deprecated! Use delete instead!
         write(obj, File); % Write obj to file
-        update(obj); % Update file format header information
+        update(obj, Prev); % Update file format header information
         reload(obj); % Reload obj.Data from file
         
         % Add/remove children
@@ -568,7 +568,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         adopt(obj, varargin); % Deprecated! Use add instead!
         
         % Conversion to/from binary form
-        buffer = binary(obj, swapEndianess, fun_progress);
+        buffer = binary(obj, swapEndianess, fun_progress, update);
         ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress);
         ind_begin = binaryread_Data(obj, buffer, N_bytes_max, swapEndianess);
         
@@ -606,7 +606,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
     
     %% PRIVATE METHODS
     methods (Access = private)
-        fwrite(obj, fid, swapEndianess, fun_progress);
+        fwrite(obj, fid, swapEndianess, fun_progress, update);
         fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress);
         fread_Data(obj, fid, N_bytes_max, swapEndianess);
         
