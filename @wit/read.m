@@ -43,14 +43,23 @@ function obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteri
     obj = wit();
     obj.File = File;
     
+    % Determine whether or not to use low-on-memory scheme
+    lowOnMemory = FileSize > N_bytes_max;
+    if ~lowOnMemory,
+        try, % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
+            % Avoid call to builtin 'memory', which is Octave-incompatible!
+            buffer = zeros(FileSize, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
+            clear buffer;
+        catch, % OTHERWISE USE LOW-ON-MEMORY SCHEME!
+            lowOnMemory = true;
+        end
+    end
+    
     fun_progress(0);
-    try, % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
-        if FileSize > N_bytes_max, error('Skip to catch'); end
-        % Avoid call to builtin 'memory', which is Octave-incompatible!
-        buffer = zeros(FileSize, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
+    if ~lowOnMemory, % FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
         buffer = fread(fid, Inf, 'uint8=>uint8'); % Read the file content to the buffer
         obj.binaryread(buffer, [], N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, @fun_progress); % Parse the file content in the buffer
-    catch, % OTHERWISE USE LOW-ON-MEMORY SCHEME!
+    else, % OTHERWISE USE LOW-ON-MEMORY SCHEME!
         if isinf(N_bytes_max),
             warning('Low on memory... Reading file ''%s'' of %d bytes, but skipping over any Data of >%d bytes!', FileName, FileSize, N_bytes_max);
             N_bytes_max = 4096; % Do not obey infinite N_bytes_max here!

@@ -42,13 +42,21 @@ function write(obj, File),
     FileName = [name ext];
     FileSize = obj.End; % Get file size
     
-    fun_progress(0);
+    % Determine whether or not to use low-on-memory scheme
+    lowOnMemory = false;
     try, % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
         % Avoid call to builtin 'memory', which is Octave-incompatible!
         buffer = zeros(FileSize, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
+        clear buffer;
+    catch, % OTHERWISE USE LOW-ON-MEMORY SCHEME!
+        lowOnMemory = true;
+    end
+    
+    fun_progress(0);
+    if ~lowOnMemory, % FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
         buffer = obj.binary(swapEndianess, @fun_progress, false);
         fwrite(fid, buffer, 'uint8');
-    catch, % OTHERWISE USE LOW-ON MEMORY SCHEME!
+    else, % OTHERWISE USE LOW-ON MEMORY SCHEME!
         warning('Low on memory... Writing file ''%s'' of %d bytes children-by-children!', FileName, FileSize);
         Root.fwrite(fid, swapEndianess, @fun_progress, false);
     end
