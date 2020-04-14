@@ -571,6 +571,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         buffer = binary(obj, swapEndianess, fun_progress, update);
         ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress);
         ind_begin = binaryread_Data(obj, buffer, N_bytes_max, swapEndianess);
+        [best_dist, best_obj] = binary_ind2obj(obj, ind); % For debugging
         
         % Object search
         tags = regexp(obj, pattern, FirstOnly, LayersFurther, PrevFullNames);
