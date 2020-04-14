@@ -589,6 +589,13 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         % Read file to obj
         obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteria_for_obj);
         
+        % Default Command Window progress bar for content reading and writing
+        [fun_start, fun_now, fun_end] = progress_bar(N_bytes_max, width_in_characters);
+        
+        % Determine whether or not to swap endianess to achieve little
+        % endian ordering
+        swapEndianess = swap_endianess();
+        
         % Getters and setters for (un)formatted DataTree, also for debugging
         DataTree_set(parent, in, format); % For (un)formatted structs
         out = DataTree_get(parent, format); % For (un)formatted structs

@@ -7,9 +7,16 @@
 % variations between PC's, this allows swapping endianess. As far as the
 % author knows, the WIT-formatted files are always LITTLE-ENDIAN ORDERED.
 function buffer = binary(obj, swapEndianess, fun_progress, update),
-    if nargin < 2, swapEndianess = false; end % By default: Binary without swapping endianess
-    if nargin < 3, fun_progress = []; end % By default: no progress function
+    if nargin < 2 || isempty(swapEndianess), swapEndianess = wit.swap_endianess(); end % By default: Binary with little endianess
+    if nargin < 3 || isempty(fun_progress), fun_progress = @wit.progress_bar; end % By default: verbose progress bar in Command Window
     if nargin < 4 || update, obj.update(); end % By default: update wit Tree object
+    
+    verbose = isa(fun_progress, 'function_handle');
+    if verbose,
+        fprintf('Writing wit Tree objects as %d bytes of binary:\n', obj.End);
+        [fun_start, fun_now, fun_end] = fun_progress(obj.End);
+        fun_start(0);
+    end
     
     % Preallocate the whole buffer once and share it with the nested calls
     buffer = zeros(obj.End, 1, 'uint8');
@@ -27,9 +34,13 @@ function buffer = binary(obj, swapEndianess, fun_progress, update),
     end
     
     % Fill in the buffer
-    binarywrite(obj);
+    binary_helper(obj);
     
-    function binarywrite(obj),
+    if verbose,
+        fun_end();
+    end
+    
+    function binary_helper(obj),
         % Write NameLength (4 bytes)
         ind_end = ind_begin-1 + 4;
         if ~swapEndianess, uint8_array = typecast(obj.NameLength, 'uint8');
@@ -57,8 +68,8 @@ function buffer = binary(obj, swapEndianess, fun_progress, update),
         buffer(ind_begin:ind_end) = uint8_array;
         ind_begin = ind_end + 1; % Set next begin index
         
-        if isa(fun_progress, 'function_handle'),
-            fun_progress(obj.Start);
+        if verbose,
+            fun_now(obj.Start);
         end
         
         % Write End (8 bytes)
@@ -71,7 +82,7 @@ function buffer = binary(obj, swapEndianess, fun_progress, update),
         % Write Data
         if obj.Type == 0, % List of Tags
             for ii = 1:numel(obj.Data),
-                binarywrite(obj.Data(ii));
+                binary_helper(obj.Data(ii));
             end
         elseif ~isempty(obj.Data),
             ind_end = ind_begin-1 + double(obj.End-obj.Start);
