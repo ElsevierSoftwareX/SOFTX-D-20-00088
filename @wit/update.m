@@ -32,9 +32,13 @@ function update(obj, Prev),
         case 'logical', % Bool (1 byte)
             obj.Type = uint32(8);
         case 'char', % Char (1 byte)
-            obj.Type = uint32(9);
+            obj.Type = uint32(9); % A char array
         otherwise,
-            error('Tag(%s): Unsupported Type (%s)!', obj.FullName, class(obj.Data));
+            if iscellstr(obj.Data),
+                obj.Type = uint32(9); % An array of char arrays
+            else,
+                error('Tag(%s): Unsupported Type (%s)!', obj.FullName, class(obj.Data));
+            end
     end
     
     % Start (8 bytes)
@@ -76,7 +80,8 @@ function update(obj, Prev),
             obj.End = obj.Start + uint64(numel(obj.Data));
         case 9, % NameLength (4 bytes) + String (NameLength # of bytes)
             if isempty(obj.Data), obj.End = obj.Start;
-            else, obj.End = obj.Start + uint64(4 + numel(obj.Data)); end
+            elseif ischar(obj.Data), obj.End = obj.Start + uint64(4 + numel(obj.Data)); % A char array
+            elseif iscell(obj.Data), obj.End = obj.Start + uint64(4.*numel(obj.Data) + sum(cellfun(@numel, obj.Data))); end % An array of char arrays
         otherwise,
             error('Tag(%s): Unsupported Type (%d)!', obj.FullName, obj.Type);
     end

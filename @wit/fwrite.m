@@ -79,23 +79,40 @@ function fwrite(obj, fid, swapEndianess, fun_progress, update),
                     obj.Data(ii).fwrite(fid, swapEndianess, fun_progress, false);
                 end
             case 2, % Double (8 bytes)
-                fwrite(fid, obj.Data, 'double', 0, 'l');
+                if ~swapEndianess, fwrite(fid, obj.Data, 'double', 0, 'l');
+                else, fwrite(fid, obj.Data, 'double', 0, 'b'); end
             case 3, % Float (4 bytes)
-                fwrite(fid, obj.Data, 'single', 0, 'l');
+                if ~swapEndianess, fwrite(fid, obj.Data, 'single', 0, 'l');
+                else, fwrite(fid, obj.Data, 'single', 0, 'b'); end
             case 4, % Int64 (8 bytes)
-                fwrite(fid, obj.Data, 'int64', 0, 'l');
+                if ~swapEndianess, fwrite(fid, obj.Data, 'int64', 0, 'l');
+                else, fwrite(fid, obj.Data, 'int64', 0, 'b'); end
             case 5, % Int32 (4 bytes)
-                fwrite(fid, obj.Data, 'int32', 0, 'l');
+                if ~swapEndianess, fwrite(fid, obj.Data, 'int32', 0, 'l');
+                else, fwrite(fid, obj.Data, 'int32', 0, 'b'); end
             case 6, % Uint32 (4 bytes) % SPECIAL CASE: Uint16 for 'Dates'-tag (2 bytes)
-                if isa(obj.Data, 'uint32'), fwrite(fid, obj.Data, 'uint32', 0, 'l');
-                else, fwrite(fid, obj.Data, 'uint16', 0, 'l'); end % SPECIAL CASE: for 'Dates'-tag
-            case 7, % Char (1 byte)
+                if ~swapEndianess,
+                    if isa(obj.Data, 'uint32'), fwrite(fid, obj.Data, 'uint32', 0, 'l');
+                    else, fwrite(fid, obj.Data, 'uint16', 0, 'l'); end % SPECIAL CASE: for 'Dates'-tag
+                else,
+                    if isa(obj.Data, 'uint32'), fwrite(fid, obj.Data, 'uint32', 0, 'b');
+                    else, fwrite(fid, obj.Data, 'uint16', 0, 'b'); end % SPECIAL CASE: for 'Dates'-tag
+                end
+            case 7, % Uint8 (1 byte)
                 fwrite(fid, obj.Data, 'uint8', 0, 'l');
             case 8, % Bool (1 byte)
                 fwrite(fid, obj.Data, 'uint8', 0, 'l');
             case 9, % NameLength (4 bytes) + String (NameLength # of bytes)
-                fwrite(fid, numel(obj.Data), 'uint32', 0, 'l');
-                fwrite(fid, obj.Data, 'uint8', 0, 'l');
+                strs = obj.Data;
+                if ~isempty(strs),
+                    if ~iscell(strs), strs = {strs}; end
+                    for ii = 1:numel(strs),
+                        str_ii = strs{ii};
+                        if ~swapEndianess, fwrite(fid, numel(str_ii), 'uint32', 0, 'l');
+                        else, fwrite(fid, numel(str_ii), 'uint32', 0, 'b'); end
+                        fwrite(fid, str_ii, 'char*1', 0, 'l');
+                    end
+                end
             otherwise,
                 old_state = warning('query', 'backtrace'); % Store warning state
                 warning off backtrace; % Disable the stack trace

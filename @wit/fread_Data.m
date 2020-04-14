@@ -59,8 +59,20 @@ function fread_Data(obj, fid, N_bytes_max, swapEndianess),
             case 8, % Bool (1 byte)
                 Data = cast(Data, 'logical'); % Cast instead of logical for compability!
             case 9, % NameLength (4 bytes) + String (NameLength # of bytes)
-                % Length = typecast(Data(4:-1:1), 'uint32');
-                Data = char(Data(5:end));
+                strs = {''};
+                N_strs = 0;
+                subind_begin = uint32(1);
+                while subind_begin < numel(Data),
+                    N_strs = N_strs + 1; % Set number of strings
+                    subind_end = subind_begin-1 + 4;
+                    str_len = typecast(Data(subind_begin:subind_end), 'uint32');
+                    subind_begin = subind_end + 1; % Set next begin index
+                    subind_end = subind_begin-1 + str_len;
+                    strs{N_strs,1} = char(Data(subind_begin:subind_end));
+                    subind_begin = subind_end + 1; % Set next begin index
+                end
+                if numel(strs) == 1, Data = strs{1};
+                else, Data = strs; end;
             otherwise,
                 warning('Tag(%s): Unsupported Type (%d)!', obj.FullName, obj.Type);
         end
@@ -87,8 +99,20 @@ function fread_Data(obj, fid, N_bytes_max, swapEndianess),
             case 8, % Bool (1 byte)
                 Data = cast(Data, 'logical'); % Cast instead of logical for compability!
             case 9, % NameLength (4 bytes) + String (NameLength # of bytes)
-                % Length = typecast(Data(1:4), 'uint32');
-                Data = char(Data(5:end));
+                strs = {''};
+                N_strs = 0;
+                subind_begin = uint32(1);
+                while subind_begin < numel(Data),
+                    N_strs = N_strs + 1; % Set number of strings
+                    subind_end = subind_begin-1 + 4;
+                    str_len = typecast(Data(subind_begin:subind_end), 'uint32');
+                    subind_begin = subind_end + 1; % Set next begin index
+                    subind_end = subind_begin-1 + str_len;
+                    strs{N_strs,1} = char(Data(subind_begin:subind_end));
+                    subind_begin = subind_end + 1; % Set next begin index
+                end
+                if numel(strs) == 1, Data = strs{1};
+                else, Data = strs; end;
             otherwise,
                 warning('Tag(%s): Unsupported Type (%d)!', obj.FullName, obj.Type);
         end

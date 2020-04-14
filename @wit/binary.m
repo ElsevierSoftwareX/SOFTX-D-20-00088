@@ -94,14 +94,22 @@ function buffer = binary(obj, swapEndianess, fun_progress, update),
                     else, bytes = 2; end % SPECIAL CASE: for 'Dates'-tag
                     if ~swapEndianess, uint8_array = typecast(obj.Data(:), 'uint8');
                     else, uint8_array = flipud(reshape(typecast(obj.Data(:), 'uint8'), bytes, [])); end
-                case 7, % Char (1 byte)
+                case 7, % Uint8 (1 byte)
                     uint8_array = uint8(obj.Data(:));
                 case 8, % Bool (1 byte)
                     uint8_array = uint8(obj.Data(:));
                 case 9, % NameLength (4 bytes) + String (NameLength # of bytes)
-                    if ~swapEndianess, uint8_array_NameLength = typecast(uint32(numel(obj.Data(:))), 'uint8');
-                    else, uint8_array_NameLength = fliplr(typecast(uint32(numel(obj.Data(:))), 'uint8')); end
-                    uint8_array = [uint8_array_NameLength(:); uint8(obj.Data(:))];
+                    strs = obj.Data;
+                    if ~isempty(strs),
+                        if ~iscell(strs), strs = {strs}; end
+                        uint8_array = [];
+                        for ii = 1:numel(strs),
+                            str_ii = strs{ii};
+                            if ~swapEndianess, uint8_array_NameLength = typecast(uint32(numel(str_ii)), 'uint8');
+                            else, uint8_array_NameLength = fliplr(typecast(uint32(numel(str_ii)), 'uint8')); end
+                            uint8_array = [uint8_array; uint8_array_NameLength(:); uint8(str_ii(:))];
+                        end
+                    end
                 otherwise,
                     old_state = warning('query', 'backtrace'); % Store warning state
                     warning off backtrace; % Disable the stack trace
