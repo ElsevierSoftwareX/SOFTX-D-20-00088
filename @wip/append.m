@@ -16,13 +16,16 @@ function [O_wit, varargout] = append(varargin),
     if ~isempty(ind_notwit), error('Input #%d expected to be a wit-class!', ind_notwit); end
     
     % Exclude all empty
-    varargin = varargin(~cellfun(@isempty, varargin));
+    bw_notempty = ~cellfun(@isempty, varargin);
+    bw = bw(bw_notempty);
+    varargin = varargin(bw_notempty);
     
     % Exit if no non-empty input remaining
     O_wit = wit.empty;
     if numel(varargin) == 0, return; end % Exit here if no inputs
     
     % Append everything to the first non-empty object
+    
     O_wit = varargin{1}.Root; % Get the root
     varargin = varargin(2:end); % Exclude the first
     bw = bw(2:end); % Exclude the first
