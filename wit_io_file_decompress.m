@@ -17,6 +17,9 @@
 % '-MaxBlockSize' (= 67108864 or 64 MB by default): Set maximum blocksize
 % per read to allow reading in smaller blocks and to reduce risk of
 % exceeding Java Heap Memory (>= 128 MB for R2011a or newer) limit.
+% '-ProgressBar' (= none): Use verbose wit.progress_bar in Command
+% Window. If a function handle (with equivalent output arguments) is
+% provided, then use it instead.
 function [files, datas] = wit_io_file_decompress(file, varargin),
     % It is noteworthy that the 64-bit ZIP archives (with individual
     % entries and archives larger than 4 GB or with more than 65536
@@ -74,6 +77,12 @@ function [files, datas] = wit_io_file_decompress(file, varargin),
     % Parse extra inputs: FilterRegexp
     FilterRegexp = varargin_dashed_str_datas('FilterRegexp', varargin);
     
+    % Parse extra inputs: ProgressBar
+    [ProgressBar, parsed] = varargin_dashed_str_exists_and_datas('ProgressBar', varargin, -1);
+    if ProgressBar, ProgressBar = @wit.progress_bar; end
+    if numel(parsed) > 0, ProgressBar = parsed{1}; end
+    verbose = isa(ProgressBar, 'function_handle');
+    
     % Try uncompressing the files and datas (or catch error)
     try,
         % Open the ZIP file for reading
@@ -106,6 +115,13 @@ function [files, datas] = wit_io_file_decompress(file, varargin),
             files{end+1} = entry_file;
             entry_size = entry.getSize(); % Get the entry data uncompressed size
             
+            if verbose,
+                fprintf('Decompressing %d bytes of binary from file entry: %s\n', entry_size, entry_file);
+                [fun_start, fun_now, fun_end] = ProgressBar(entry_size);
+                fun_start(0);
+                ocu = onCleanup(fun_end); % Automatically call fun_end whenever end of function is reached
+            end
+            
             % Extract entry input stream binary to MATLAB but without:
             % (a) java.io.ByteArrayOutputStream and com.mathworks.mlwidgets.io.InterruptibleStreamCopier.getInterruptibleStreamCopier().copyStream
             % (b) org.apache.commons.io.IOUtils().toByteArray % Available at least since R2011a
@@ -118,6 +134,9 @@ function [files, datas] = wit_io_file_decompress(file, varargin),
                 matlab_buffer = java_buffer.array(); % Extract buffer content to MATLAB
                 java_buffer.rewind(); % Reset buffer position to zero and discard mark
                 data = matlab_buffer(1:N_read);
+                if verbose,
+                    fun_now(entry_size);
+                end
             else, % Read the entry data in blocks
                 data = zeros(entry_size, 1, 'int8'); % Preallocate
                 N_blocks = ceil(entry_size ./ MaxBlockSize);
@@ -133,9 +152,15 @@ function [files, datas] = wit_io_file_decompress(file, varargin),
                         ind = ind(ind <= entry_size); % Truncate block indices for last read
                         data(ind) = matlab_buffer(1:N_read);
                     end
+                    if verbose,
+                        fun_now(ind(end));
+                    end
                 end
             end
             datas{end+1} = typecast(data, 'uint8');
+            if verbose,
+                clear ocu;
+            end
         end
         
         clear c_jzf; % Ensure the underlying stream is closed before the ZipFile object is cleared to avoid "Cleaning up unclosed ZipFile for archive"-warning (except when file does not exist due to bug)

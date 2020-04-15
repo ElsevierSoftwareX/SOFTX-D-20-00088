@@ -11,6 +11,9 @@
 % '-MaxBlockSize' (= 67108864 or 64 MB by default): Set maximum blocksize
 % per write to allow writing in smaller blocks and to reduce risk of
 % exceeding Java Heap Memory (>= 128 MB for R2011a or newer) limit.
+% '-ProgressBar' (= none): Use verbose wit.progress_bar in Command
+% Window. If a function handle (with equivalent output arguments) is
+% provided, then use it instead.
 function wit_io_file_compress(file, files, datas, varargin),
     % It is noteworthy that the 64-bit ZIP archives (with individual
     % entries and archives larger than 4 GB or with more than 65536
@@ -69,6 +72,12 @@ function wit_io_file_compress(file, files, datas, varargin),
     CompressionLevel = 9; % By default, maximum compression
     if numel(parsed) > 0, CompressionLevel = parsed{1}; end
     
+    % Parse extra inputs: ProgressBar
+    [ProgressBar, parsed] = varargin_dashed_str_exists_and_datas('ProgressBar', varargin, -1);
+    if ProgressBar, ProgressBar = @wit.progress_bar; end
+    if numel(parsed) > 0, ProgressBar = parsed{1}; end
+    verbose = isa(ProgressBar, 'function_handle');
+    
     % Try compressing the files and datas (or catch error)
     try,
         % Open or create the file for writing
@@ -93,10 +102,20 @@ function wit_io_file_compress(file, files, datas, varargin),
             entry_size = numel(data);
             entry.setSize(entry_size); % Set the uncompressed size of the entry data (to allow 64-bit ZIP if needed)
             
+            if verbose,
+                fprintf('Compressing %d bytes of binary to file entry: %s\n', entry_size, file);
+                [fun_start, fun_now, fun_end] = ProgressBar(entry_size);
+                fun_start(0);
+                ocu = onCleanup(fun_end); % Automatically call fun_end whenever end of function is reached
+            end
+            
             % Write the ZIP file entry to the ZIP output stream
             jzos.putNextEntry(entry); % Write the entry headers and position the stream to the start of the entry data
             if entry_size <= MaxBlockSize, % Write the entry data at once
                 jzos.write(data);
+                if verbose,
+                    fun_now(entry_size);
+                end
             else, % Write the entry data in blocks
                 N_blocks = ceil(entry_size ./ MaxBlockSize);
                 ind = 1:MaxBlockSize; % Preallocate block indices once
@@ -108,9 +127,15 @@ function wit_io_file_compress(file, files, datas, varargin),
                         ind = ind(ind <= entry_size); % Truncate block indices for last write
                         jzos.write(data(ind));
                     end
+                    if verbose,
+                        fun_now(ind(end));
+                    end
                 end
             end
             jzos.closeEntry(); % Finish writing the contents of the entry
+            if verbose,
+                clear ocu;
+            end
         end
         
         % Finish writing the contents of the ZIP output stream (and close the underlying stream on exit)
