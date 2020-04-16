@@ -6,9 +6,10 @@
 % implementation can only compress ZIP archives. This requires a running
 % Java Virtual Machine. The following case-insensitive extra inputs are
 % parsed:
-% '-CompressionLevel' (= 9 by default): Compression level ranges for
-% DEFLATED from 0 (= none) to 9 (= maximum).
-% '-MaxBlockSize' (= 67108864 or 64 MB by default): Set maximum blocksize
+% '-CompressionLevel' (= 1 by default): Compression level ranges for
+% DEFLATED from 0 (= none) to 9 (= maximum). Provide [] to prefer Java's
+% default compression level.
+% '-MaxBlockSize' (= 1048576 or 1 MB by default): Set maximum blocksize
 % per write to allow writing in smaller blocks and to reduce risk of
 % exceeding Java Heap Memory (>= 128 MB for R2011a or newer) limit.
 % '-ProgressBar' (= none): Use verbose wit.progress_bar in Command
@@ -60,8 +61,9 @@ function wit_io_file_compress(file, files, datas, varargin),
     
     % Parse extra inputs: MaxBlockSize
     parsed = varargin_dashed_str_datas('MaxBlockSize', varargin, -1);
-    MaxBlockSize = 64.*1024.^2; % By default, 64 MB max blocksize per write
+    MaxBlockSize = 1024.^2; % By default, 1 MB max blocksize per write
     if numel(parsed) > 0, MaxBlockSize = parsed{1}; end
+    java_buffer = java.nio.ByteBuffer.allocate(MaxBlockSize); % Preallocate once
     
     % Make 'files' and 'datas' a cell arrays if not so
     if ~iscell(files), files = {files}; end
@@ -69,7 +71,7 @@ function wit_io_file_compress(file, files, datas, varargin),
     
     % Parse extra inputs: CompressionLevel
     parsed = varargin_dashed_str_datas('CompressionLevel', varargin, -1);
-    CompressionLevel = 9; % By default, maximum compression
+    CompressionLevel = 1; % By default, minimum compression
     if numel(parsed) > 0, CompressionLevel = parsed{1}; end
     
     % Parse extra inputs: ProgressBar
@@ -87,15 +89,19 @@ function wit_io_file_compress(file, files, datas, varargin),
         oc = onCleanup(@() jfos.close());
         
         % Create a ZIP output stream
-        jzos = org.apache.tools.zip.ZipOutputStream(jfos);
+        jbos = java.io.BufferedOutputStream(jfos); % Required for faster performance!
+        jzos = org.apache.tools.zip.ZipOutputStream(jbos);
+        jwbc = java.nio.channels.Channels.newChannel(jzos); % Get WriteableByteChannel that works with ByteBuffer!
         
         % Set DEFLATED compression level from 0 (= none) to 9 (= maximum)
-        jzos.setLevel(CompressionLevel);
+        if ~isempty(CompressionLevel), % If empty, then use built-in default
+            jzos.setLevel(CompressionLevel);
+        end
         
         % Compress the given files and datas in loop
         for ii = 1:numel(files),
             file = files{ii};
-            data = typecast(datas{ii}, 'uint8');
+            data = typecast(datas{ii}, 'int8');
             
             % Create a ZIP file entry
             entry = org.apache.tools.zip.ZipEntry(file);
@@ -112,7 +118,10 @@ function wit_io_file_compress(file, files, datas, varargin),
             % Write the ZIP file entry to the ZIP output stream
             jzos.putNextEntry(entry); % Write the entry headers and position the stream to the start of the entry data
             if entry_size <= MaxBlockSize, % Write the entry data at once
-                jzos.write(data);
+                java_buffer.clear(); % Reset position to zero, limit to capacity and discard mark
+                java_buffer.put(data);
+                java_buffer.rewind(); % Reset position to zero and discard mark
+                jwbc.write(java_buffer); % User-interruptible on Java side
                 if verbose,
                     fun_now(entry_size);
                 end
@@ -121,11 +130,17 @@ function wit_io_file_compress(file, files, datas, varargin),
                 ind = 1:MaxBlockSize; % Preallocate block indices once
                 for jj = 1:N_blocks,
                     if jj < N_blocks,
-                        jzos.write(data(ind));
+                        java_buffer.clear(); % Reset position to zero, limit to capacity and discard mark
+                        java_buffer.put(data(ind));
+                        java_buffer.rewind(); % Reset position to zero and discard mark
+                        jwbc.write(java_buffer); % User-interruptible on Java side
                         ind = ind + MaxBlockSize; % Update block indices for next write
                     else,
                         ind = ind(ind <= entry_size); % Truncate block indices for last write
-                        jzos.write(data(ind));
+                        java_buffer.clear(); % Reset position to zero, limit to capacity and discard mark
+                        java_buffer.put(data(ind));
+                        java_buffer.rewind(); % Reset position to zero and discard mark
+                        jwbc.write(java_buffer); % User-interruptible on Java side
                     end
                     if verbose,
                         fun_now(ind(end));
@@ -140,6 +155,7 @@ function wit_io_file_compress(file, files, datas, varargin),
         
         % Finish writing the contents of the ZIP output stream (and close the underlying stream on exit)
         jzos.finish();
+        jzos.close();
     catch ME,
         warning('Cannot compress files and datas to ''%s'' for some reason!\n\n%s', file, ME.message);
     end

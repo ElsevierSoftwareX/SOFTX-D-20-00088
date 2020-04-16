@@ -14,7 +14,7 @@
 % full file names using consecutive char arrays (i.e. '\.wi[dp]$' and
 % 'ignorecase' or '\.[wW][iI][dDpP]$'), where first input is the pattern
 % and the rest are extra options to regexp-function.
-% '-MaxBlockSize' (= 67108864 or 64 MB by default): Set maximum blocksize
+% '-MaxBlockSize' (= 1048576 or 1 MB by default): Set maximum blocksize
 % per read to allow reading in smaller blocks and to reduce risk of
 % exceeding Java Heap Memory (>= 128 MB for R2011a or newer) limit.
 % '-ProgressBar' (= none): Use verbose wit.progress_bar in Command
@@ -63,7 +63,7 @@ function [files, datas] = wit_io_file_decompress(file, varargin),
     
     % Parse extra inputs: MaxBlockSize
     parsed = varargin_dashed_str_datas('MaxBlockSize', varargin, -1);
-    MaxBlockSize = 64.*1024.^2; % By default, 64 MB max blocksize per read
+    MaxBlockSize = 1024.^2; % By default, 1 MB max blocksize per read
     if numel(parsed) > 0, MaxBlockSize = parsed{1}; end
     java_buffer = java.nio.ByteBuffer.allocate(MaxBlockSize); % Preallocate once
     
