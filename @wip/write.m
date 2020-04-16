@@ -40,10 +40,12 @@ function write(obj, varargin),
     compressed_ext = '.zip';
     
     % Add the required file extension if it is missing nor is compression used
-    [~, ~, ext] = fileparts(File);
+    [path, name, ext] = fileparts(File);
     OnWriteCompress = strcmpi(ext, compressed_ext);
     if OnWriteCompress,
-        File_uncompressed = regexprep(File, ['(\' compressed_ext ')$'], required_ext, 'ignorecase');
+        [~, name2, ext2] = fileparts(name);
+        if strcmpi(ext2, required_ext), File_uncompressed = fullfile(path, name);
+        else, File_uncompressed = fullfile(path, [name2 required_ext]); end
     elseif ~strcmpi(ext, required_ext),
         File = [File required_ext];
         warning('Adding expected ''%s'' file extension!', required_ext);
