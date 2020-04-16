@@ -93,10 +93,6 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         end
         obj.End = fread(fid, 1, 'uint64=>uint64', 0, 'l');
         
-        if verbose,
-            fun_now(obj.Start);
-        end
-        
         % Update the flag used for the reloading cases
         obj.HasData = obj.End > obj.Start;
         
@@ -121,6 +117,10 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
             obj.skipRedundant = true; % Speed-up set.Data
             obj.Data = children; % Adopt the new child being created
         else, obj.fread_Data(fid, N_bytes_max, swapEndianess); end % Otherwise, read the Data
+        
+        if verbose,
+            fun_now(obj.End);
+        end
         
         % Allow obj to notify its ancestors on modifications
         obj.ModificationsToAncestors = true;

@@ -72,10 +72,6 @@ function buffer = bwrite(obj, swapEndianess, fun_progress_bar),
         buffer(ind_begin:ind_end) = uint8_array;
         ind_begin = ind_end + 1; % Set next begin index
         
-        if verbose,
-            fun_now(obj.Start);
-        end
-        
         % Write Data
         if obj.Type == 0, % List of Tags
             for ii = 1:numel(obj.Data),
@@ -126,6 +122,10 @@ function buffer = bwrite(obj, swapEndianess, fun_progress_bar),
             end
             buffer(ind_begin:ind_end) = uint8_array;
             ind_begin = ind_end + 1; % Set next begin index
+        end
+        
+        if verbose,
+            fun_now(obj.End);
         end
     end
 end

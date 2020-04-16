@@ -78,10 +78,6 @@ function fwrite(obj, fid, swapEndianess, fun_progress_bar),
         else, uint8_array = fliplr(typecast(obj.End, 'uint8')); end
         buffer(ind_begin:ind_end) = uint8_array;
 
-        if verbose,
-            fun_now(obj.Start);
-        end
-
         fwrite(fid, buffer, 'uint8', 0, 'l');
 
         % Write Data
@@ -133,6 +129,10 @@ function fwrite(obj, fid, swapEndianess, fun_progress_bar),
                     warning('Tag(%s): Unsupported Type (%d)!', obj.FullName, obj.Type);
                     warning(old_state); % Restore warning state
             end
+        end
+        
+        if verbose,
+            fun_now(obj.End);
         end
     end
 end

@@ -112,10 +112,6 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         else, obj.End = typecast(fliplr(buffer(ind_begin:ind_end)), 'uint64'); end
         ind_begin = ind_end + 1; % Set next begin index
         
-        if verbose,
-            fun_now(obj.Start);
-        end
-        
         % Update the flag used for the reloading cases
         obj.HasData = obj.End > obj.Start;
         
@@ -143,6 +139,10 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
             obj.bread_Data(buffer, N_bytes_max, swapEndianess);
             ind_begin = double(obj.End)+1; % Double OFFSET for compability!
         end % Otherwise, read the Data
+        
+        if verbose,
+            fun_now(obj.End);
+        end
         
         % Allow obj to notify its ancestors on modifications
         obj.ModificationsToAncestors = true;
