@@ -120,7 +120,7 @@ function wit_io_file_compress(file, files, datas, varargin),
             if entry_size <= MaxBlockSize, % Write the entry data at once
                 java_buffer.clear(); % Reset position to zero, limit to capacity and discard mark
                 java_buffer.put(data);
-                java_buffer.rewind(); % Reset position to zero and discard mark
+                java_buffer.flip(); % Set limit to the current position and position to zero and discard mark
                 jwbc.write(java_buffer); % User-interruptible on Java side
                 if verbose,
                     fun_now(entry_size);
@@ -132,18 +132,21 @@ function wit_io_file_compress(file, files, datas, varargin),
                     if jj < N_blocks,
                         java_buffer.clear(); % Reset position to zero, limit to capacity and discard mark
                         java_buffer.put(data(ind));
-                        java_buffer.rewind(); % Reset position to zero and discard mark
+                        java_buffer.flip(); % Set limit to the current position and position to zero and discard mark
                         jwbc.write(java_buffer); % User-interruptible on Java side
+                        if verbose,
+                            fun_now(ind(end));
+                        end
                         ind = ind + MaxBlockSize; % Update block indices for next write
                     else,
                         ind = ind(ind <= entry_size); % Truncate block indices for last write
                         java_buffer.clear(); % Reset position to zero, limit to capacity and discard mark
                         java_buffer.put(data(ind));
-                        java_buffer.rewind(); % Reset position to zero and discard mark
+                        java_buffer.flip(); % Set limit to the current position and position to zero and discard mark
                         jwbc.write(java_buffer); % User-interruptible on Java side
-                    end
-                    if verbose,
-                        fun_now(ind(end));
+                        if verbose,
+                            fun_now(ind(end));
+                        end
                     end
                 end
             end
