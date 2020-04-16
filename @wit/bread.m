@@ -2,9 +2,11 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% USE THIS ONLY IF LOW-ON MEMORY OR WHEN READING HUGE FILES!
-function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress_bar),
-    % Reads a WIT-formatted tag info from the given file stream.
+% This function was implemented to enable unzip/zip-utilities and provide
+% SPEED-UP when reading file, because we can call EXPENSIVE fread only
+% once.
+function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress_bar),
+    % Reads a WIT-formatted tag info from the given buffer stream.
     % Reading can be limited by N_bytes_max (if low on memory).
     if nargin < 3, N_bytes_max = Inf; end % Default: no read limit!
     if nargin < 4 || isempty(swapEndianess), swapEndianess = wit.swap_endianess(); end % By default: Binary with little endianess
@@ -12,29 +14,30 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
     if nargin < 6, error_criteria_for_obj = []; end % By default: no criteria!
     if nargin < 7, fun_progress_bar = @wit.progress_bar; end % By default: verbose progress bar in Command Window
     
+    ind_begin = 1;
+    
     verbose = isa(fun_progress_bar, 'function_handle');
     if verbose,
-        % Get file size
-        fseek(fid, 0, 'eof'); % Go to end of file
-        FileSize = ftell(fid); % Get file size
-        fseek(fid, 0, 'bof'); % Return to beginning of file
+        % Get buffer size
+        BufferSize = uint64(numel(buffer));
         
-        fprintf('Reading %d bytes of binary as wit Tree objects:\n', FileSize);
-        [fun_start, fun_now, fun_end] = fun_progress_bar(FileSize);
+        fprintf('Reading %d bytes of binary as wit Tree objects:\n', BufferSize);
+        [fun_start, fun_now, fun_end] = fun_progress_bar(BufferSize);
         fun_start(0);
         ocu = onCleanup(fun_end); % Automatically call fun_end whenever end of function is reached
     end
     
     % Read wit Tree objects
-    fread_helper(obj);
+    bread_helper(obj);
     
-    function fread_helper(obj),
-        % Test the file stream
-        if isempty(fid) || fid == -1,
+    function bread_helper(obj),
+        % Test the data stream
+        if isempty(buffer),
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
             delete(obj);
             return;
         end
+        ind_max = numel(buffer);
         
         % Do not allow obj to notify its ancestors on modifications
         obj.ModificationsToAncestors = false;
@@ -44,54 +47,70 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         
         % Read Magic (8 bytes) (only if Root)
         if isempty(obj.Parent),
-            if feof(fid), % Abort, if file stream has reached the end
+            ind_end = ind_begin-1 + 8;
+            if ind_end > ind_max, % Abort, if the end is reached
                 obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
                 delete(obj);
                 return;
             end
-            obj.Magic = reshape(fread(fid, 8, 'uint8=>char', 0, 'l'), 1, []); % Force ascii-conversion
+            obj.Magic = reshape(char(buffer(ind_begin:ind_end)), 1, []); % Force ascii-conversion
+            ind_begin = ind_end + 1; % Set next begin index
         end
         
         % Read NameLength (4 bytes)
-        if feof(fid), % Abort, if file stream has reached the end
+        ind_end = ind_begin-1 + 4;
+        if ind_end > ind_max, % Abort, if the end is reached
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
             delete(obj);
             return;
         end
-        obj.NameLength = fread(fid, 1, 'uint32=>uint32', 0, 'l');
+        if ~swapEndianess, obj.NameLength = typecast(buffer(ind_begin:ind_end), 'uint32');
+        else, obj.NameLength = typecast(fliplr(buffer(ind_begin:ind_end)), 'uint32'); end
+        ind_begin = ind_end + 1; % Set next begin index
         
         % Read Name (NameLength # of bytes)
-        if feof(fid), % Abort, if file stream has reached the end
+        ind_end = ind_begin-1 + double(obj.NameLength);
+        if ind_end > ind_max, % Abort, if the end is reached
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
             delete(obj);
             return;
         end
         obj.skipRedundant = true; % Speed-up set.Name!
-        obj.Name = fread(fid, double(obj.NameLength), 'uint8=>char', 0, 'l'); % String is a char row vector % Double OFFSET for compability!
+        obj.Name = char(buffer(ind_begin:ind_end));
+        ind_begin = ind_end + 1; % Set next begin index
         
         % Read Type (4 bytes)
-        if feof(fid), % Abort, if file stream has reached the end
+        ind_end = ind_begin-1 + 4;
+        if ind_end > ind_max, % Abort, if the end is reached
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
             delete(obj);
             return;
         end
-        obj.Type = fread(fid, 1, 'uint32=>uint32', 0, 'l');
+        if ~swapEndianess, obj.Type = typecast(buffer(ind_begin:ind_end), 'uint32');
+        else, obj.Type = typecast(fliplr(buffer(ind_begin:ind_end)), 'uint32'); end
+        ind_begin = ind_end + 1; % Set next begin index
         
         % Read Start (8 bytes)
-        if feof(fid), % Abort, if file stream has reached the end
+        ind_end = ind_begin-1 + 8;
+        if ind_end > ind_max, % Abort, if the end is reached
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
             delete(obj);
             return;
         end
-        obj.Start = fread(fid, 1, 'uint64=>uint64', 0, 'l');
+        if ~swapEndianess, obj.Start = typecast(buffer(ind_begin:ind_end), 'uint64');
+        else, obj.Start = typecast(fliplr(buffer(ind_begin:ind_end)), 'uint64'); end
+        ind_begin = ind_end + 1; % Set next begin index
         
         % Read End (8 bytes)
-        if feof(fid), % Abort, if file stream has reached the end
+        ind_end = ind_begin-1 + 8;
+        if ind_end > ind_max, % Abort, if the end is reached
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
             delete(obj);
             return;
         end
-        obj.End = fread(fid, 1, 'uint64=>uint64', 0, 'l');
+        if ~swapEndianess, obj.End = typecast(buffer(ind_begin:ind_end), 'uint64');
+        else, obj.End = typecast(fliplr(buffer(ind_begin:ind_end)), 'uint64'); end
+        ind_begin = ind_end + 1; % Set next begin index
         
         if verbose,
             fun_now(obj.Start);
@@ -108,19 +127,22 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         
         % Data reading
         if skip_Data, % Handle Data skipping
-            fseek(fid, double(obj.End), 'bof'); % Double OFFSET for compability!
+            ind_begin = double(obj.End)+1; % Double OFFSET for compability!
         elseif obj.Type == 0, % Read the children
             children = wit.empty;
-            while(ftell(fid) < obj.End), % Continue reading until DataEnd
+            while(ind_begin < obj.End), % Continue reading until DataEnd
                 child = wit(); % Many times faster than wit(obj) due to redundant code
                 child.skipRedundant = true; % Speed-up set.Parent
                 child.Parent = obj; % Adopt the new child being created
-                fread_helper(child); % Read the new child contents (or destroy it on failure)
+                bread_helper(child); % Read the new child contents (or destroy it on failure)
                 if isvalid(child), children(end+1) = child; end % Add child if not deleted (but invalid-function is Octave-incompatible)
             end
             obj.skipRedundant = true; % Speed-up set.Data
             obj.Data = children; % Adopt the new child being created
-        else, obj.fread_Data(fid, N_bytes_max, swapEndianess); end % Otherwise, read the Data
+        else,
+            obj.bread_Data(buffer, N_bytes_max, swapEndianess);
+            ind_begin = double(obj.End)+1; % Double OFFSET for compability!
+        end % Otherwise, read the Data
         
         % Allow obj to notify its ancestors on modifications
         obj.ModificationsToAncestors = true;

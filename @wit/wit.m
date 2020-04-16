@@ -558,19 +558,24 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         % Object copying, destroying, writing, reloading
         new = copy(obj); % Copy obj
         destroy(obj); % Deprecated! Use delete instead!
-        write(obj, File); % Write obj to file
-        update(obj, Prev); % Update file format header information
+        write(obj, varargin); % Write obj to file
+        update(obj); % Update file format header information
         reload(obj); % Reload obj.Data from file
         
         % Add/remove children
         add(obj, varargin);
         remove(obj, varargin);
-        adopt(obj, varargin); % Deprecated! Use add instead!
+        adopt(obj, varargin); % DEPRECATED! Use add instead!
         
         % Conversion to/from binary form
-        buffer = binary(obj, swapEndianess, fun_progress, update);
-        ind_begin = binaryread(obj, buffer, ind_begin, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress);
-        ind_begin = binaryread_Data(obj, buffer, N_bytes_max, swapEndianess);
+        buffer = binary(obj, swapEndianess); % DEPRECATED! Use bwrite instead!
+        binaryread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj); % DEPRECATED! Use bread instead!
+        ind_begin = binaryread_Data(obj, buffer, N_bytes_max, swapEndianess); % DEPRECATED! Use bread_Data instead!
+        
+        buffer = bwrite(obj, swapEndianess, fun_progress_bar);
+        bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress_bar);
+        bread_Data(obj, buffer, N_bytes_max, swapEndianess);
+        
         [best_dist, best_obj] = binary_ind2obj(obj, ind); % For debugging
         
         % Object search
@@ -587,9 +592,9 @@ classdef wit < handle, % Since R2008a and Octave-compatible
     %% STATIC METHODS
     methods (Static)
         % Read file to obj
-        obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteria_for_obj);
+        obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteria_for_obj, varargin);
         
-        % Default Command Window progress bar for content reading and writing
+        % Default Command Window progress bar used in content reading and writing
         [fun_start, fun_now, fun_end] = progress_bar(N_bytes_max, width_in_characters);
         
         % Determine whether or not to swap endianess to achieve little
@@ -614,8 +619,8 @@ classdef wit < handle, % Since R2008a and Octave-compatible
     
     %% PRIVATE METHODS
     methods (Access = private)
-        fwrite(obj, fid, swapEndianess, fun_progress, update);
-        fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress);
+        fwrite(obj, fid, swapEndianess, fun_progress_bar);
+        fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress_bar);
         fread_Data(obj, fid, N_bytes_max, swapEndianess);
         
         % Increments obj's Modifications-property by one and notifies

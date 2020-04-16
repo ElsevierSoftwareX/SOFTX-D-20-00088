@@ -2,37 +2,39 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function fread_Data(obj, fid, N_bytes_max, swapEndianess),
-    % Reads a WIT-formatted tag data from the given file stream.
+function bread_Data(obj, buffer, N_bytes_max, swapEndianess),
+    % Reads a WIT-formatted tag data from the given buffer stream.
     % Reading can be limited by N_bytes_max (if low on memory).
     if nargin < 3, N_bytes_max = Inf; end % Default: no read limit!
     if nargin < 4 || isempty(swapEndianess), swapEndianess = wit.swap_endianess(); end % By default: Binary with little endianess
 
-    % Test if the file stream exists or abort
-    if isempty(fid) || fid == -1, return; end
+    % Test the data stream
+    if isempty(buffer), return; end
+    ind_max = numel(buffer);
 
     % Test if Type is not 0 or abort
     if obj.Type == 0, return; end
 
     % Go to starting location of read
-    fseek(fid, double(obj.Start), 'bof'); % Double OFFSET for compability!
-
-    % Abort, if file stream has reached the end
-    if feof(fid), return; end
+    ind_begin = double(obj.Start)+1; % Double OFFSET for compability!
 
     % Calculate Length (byte length of data)
     Length = double(obj.End-obj.Start); % Double OFFSET for compability!
+    ind_end = ind_begin-1 + Length;
+
+    % Abort, if the end is reached
+    if ind_end > ind_max, return; end
 
     % Skip, if upper read limit is reached.
     if Length > N_bytes_max,
         obj.File = obj.File; % Save the parent filename for the later
-        fseek(fid, double(obj.End), 'bof'); % Double OFFSET for compability!
+        ind_begin = double(obj.End)+1; % Double OFFSET for compability!
         return;
     end
 
     % Read data within [Start, End] in uint8 format
-    Data = reshape(fread(fid, Length, 'uint8=>uint8', 0, 'l'), 1, []); % Row vector
-
+    Data = reshape(buffer(ind_begin:ind_end), 1, []); % Row vector
+    
     % Convert the read data to proper type specified by Type
     old_state = warning('query', 'backtrace'); % Store warning state
     warning off backtrace; % Disable the stack trace

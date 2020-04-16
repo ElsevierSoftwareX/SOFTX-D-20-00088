@@ -2,83 +2,66 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function write(obj, File),
-    Root = obj.Root; % Get Root only once
+% Tree can be saved to any file. First non-dashed char array input is
+% always taken as target file. If not given, then Root's File is used.
+% This can be customized with the following case-insensitive extra inputs:
+% '-CustomFun' (= none by default): Can be used to provide call custom
+% function for writing wit Tree object. This is used in wip-class write.
+function write(obj, varargin),
+    % Get Root only once
+    Root = obj.Root;
     
-    % Test the input
-    if nargin > 1,
-        if ~ischar(File) || isempty(File),
-            error('File must be a non-empty string!');
+    % First char array input is always File if non-dashed
+    if nargin > 1 && ischar(varargin{1}) && ~strncmp(varargin{1}, '-', 1),
+        File = varargin{1};
+        if isempty(File),
+            error('File must be a non-empty char array!');
         end
-    elseif isempty(Root.File),
-        error('Root has no File specified!');
-    else,
+    else, % If not found, then use Root's File-property
         File = Root.File;
+        if isempty(File),
+            error('Root has no File specified! Provide File as a char array!');
+        end
     end
     
-    isLittleEndian = true; % By default: Write as little endian
-    % Decide if endianess should be swapped
-    [~, ~, endian] = computer;
-    if strcmp(endian, 'B'), % Computer uses BIG-ENDIAN ORDERING
-        swapEndianess = isLittleEndian; % Swap if to write little endian
-    else, % Otherwise ASSUME computer to use LITTLE-ENDIAN ORDERING
-        swapEndianess = ~isLittleEndian; % Swap if to write big endian
-    end
+    % Check if CustomFun was specified
+    datas = varargin_dashed_str_datas('CustomFun', varargin, -1);
+    CustomFun = [];
+    if numel(datas) > 0, CustomFun = datas{1}; end
     
-    % Update the root first
-    Root.update();
-    
-    % Then write the root
-    % Disable automatic flushing using 'W'-flag instead of 'w'-flag: http://undocumentedmatlab.com/blog/improving-fwrite-performance
-    Root.File = File;
-    fid = fopen(File, 'W'); % Instead of 'w'!
-    if fid == -1 || isempty(fid), error('File (''%s'') cannot be opened for writing!', Root.File); end
-    
-    % Close the file ONLY WHEN out of the function scope
-    C = onCleanup(@() fclose(fid)); % https://blogs.mathworks.com/loren/2008/03/10/keeping-things-tidy/
-    
-    % Get file name and size
+    % Get file name
     [~, name, ext] = fileparts(File);
     FileName = [name ext];
-    FileSize = obj.End; % Get file size
     
-    % Determine whether or not to use low-on-memory scheme
-    lowOnMemory = false;
-    try, % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
-        % Avoid call to builtin 'memory', which is Octave-incompatible!
-        buffer = zeros(FileSize, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
-        clear buffer;
-    catch, % OTHERWISE USE LOW-ON-MEMORY SCHEME!
-        lowOnMemory = true;
-    end
-    
-    fun_progress(0);
-    if ~lowOnMemory, % FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
-        buffer = obj.binary(swapEndianess, @fun_progress, false);
-        fwrite(fid, buffer, 'uint8');
-    else, % OTHERWISE USE LOW-ON MEMORY SCHEME!
-        warning('Low on memory... Writing file ''%s'' of %d bytes children-by-children!', FileName, FileSize);
-        Root.fwrite(fid, swapEndianess, @fun_progress, false);
-    end
-    fun_progress(FileSize);
-    
-    function fun_progress(N_bytes_read),
-        N_blocks = 50;
-        persistent tictoc N_blocks_read;
-        if isempty(N_blocks_read), N_blocks_read = 0; end
-        if N_bytes_read == 0,
-            fprintf('Writing %d bytes to file: %s\n', FileSize, FileName);
-            fprintf([' 0%%' repmat(' ', [1 ceil(N_blocks./2)-5]) '50%%' repmat(' ', [1 floor(N_blocks./2)-4]) '100%% complete!\n[']);
-            N_blocks_read = 0; % Initialize the progress bar
-            tictoc = tic;
-        elseif N_bytes_read == FileSize,
-            fprintf('.]\n');
-            toc(tictoc);
-        else,
-            while N_bytes_read >= (N_blocks_read+1)./N_blocks.*FileSize,
-                fprintf('.');
-                N_blocks_read = N_blocks_read+1;
-            end
+    % Then write the root
+    fprintf('Writing to file: %s\n', FileName);
+    if isa(CustomFun, 'function_handle'),
+        CustomFun(Root, File);
+    else,
+        % Disable automatic flushing using 'W'-flag instead of 'w'-flag: http://undocumentedmatlab.com/blog/improving-fwrite-performance
+        fid = fopen(File, 'W'); % Instead of 'w'!
+        if fid == -1 || isempty(fid), error('File (''%s'') cannot be opened for writing!', File); end
+        
+        % Close the file ONLY WHEN out of the function scope
+        C = onCleanup(@() fclose(fid)); % https://blogs.mathworks.com/loren/2008/03/10/keeping-things-tidy/
+        
+        % Determine whether or not to use low-on-memory scheme
+        lowOnMemory = false;
+        try, % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
+            % Avoid call to builtin 'memory', which is Octave-incompatible!
+            buffer = zeros(FileSize, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
+            clear buffer;
+        catch, % OTHERWISE USE LOW-ON-MEMORY SCHEME!
+            lowOnMemory = true;
+        end
+        
+        if ~lowOnMemory, % FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
+            fwrite(fid, obj.bwrite(), 'uint8');
+        else, % OTHERWISE USE LOW-ON MEMORY SCHEME!
+            Root.fwrite(fid);
         end
     end
+    
+    % On success, update wit Tree object root File-property
+    Root.File = File;
 end
