@@ -2,6 +2,10 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
+% Tree can be loaded from any file. This can be customized with the
+% following case-insensitive extra inputs:
+% '-CustomFun' (= none by default): Can be used to provide call custom
+% function for writing wit Tree object. This is used in wip-class read.
 function obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteria_for_obj, varargin),
     % Reads a WIP-formatted tag from the given file stream.
     % Reading can be limited by N_bytes_max (if low on memory).
@@ -30,7 +34,7 @@ function obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteri
     
     % Then read the file
     if ~Silent,
-        fprintf('Reading from file: %s\n', FileName);
+        fprintf('\n\n\nReading from file: %s\n', FileName);
     end
     if isa(CustomFun, 'function_handle'),
         CustomFun(obj, File);
