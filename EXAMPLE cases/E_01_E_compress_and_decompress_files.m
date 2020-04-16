@@ -47,16 +47,44 @@ if ishandle(h), figure(h); uiwait(h); end
 %-------------------------------------------------------------------------%
 % Load example file as uncompressed
 [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all');
+%-------------------------------------------------------------------------%
 
-% Compress
-O_wip.write('E_v5.wip.zip'); % By default, use compression level of 1
-% O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', []); % Built-in default compression level
-% O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', 9); % Maximum compression level
+
+
+%-------------------------------------------------------------------------%
+% Compress the example file
+O_wip.write('E_v5.wip.zip'); % By default, use minimum compression
+
+% Minimum compression level of 1 already achieve significant space savings
+% for some WITec software files. At best, the compressed files has been
+% seen to reduce down to 20% of their original uncompressed sizes, even
+% when they contain hyperspectral Image Scan datas!
+
+% The compression level can be changed as shown below as commented lines:
+% O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', 0); % No compression
+% O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', 1); % Minimum compression
+% O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', []); % Built-in default compression
+% O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', 9); % Maximum compression
 
 % For more customization details, see to wit_io_file_compress.m.
+%-------------------------------------------------------------------------%
 
-% Decompress
+
+
+%-------------------------------------------------------------------------%
+% Decompress the compressed example file
 [O_wid2, O_wip2, O_wid_HtmlNames2] = wip.read('E_v5.wip.zip', '-all');
+
+% Only the *.wid and *.wip are decompressed from the zip archive file and
+% all the others are ignored. If there are multiple files, then they are
+% all loaded and merged into one wip Project object.
+
+% If it is important to load only certain files in the zip archive, then
+% filter the files extra parameter '--FilterRegexp' like commeted below:
+% [O_wid2, O_wip2, O_wid_HtmlNames2] = wip.read('E_v5.wip.zip', '-all', '-Params', '--FilterRegexp', '^E\_v5\.wip$'); % Find and load 'E_v5.wip'
+
+% See MATLAB's regexp documentation for more details:
+% https://www.mathworks.com/help/matlab/ref/regexp.html
 
 % For more customization details, see to wit_io_file_decompress.m.
 %-------------------------------------------------------------------------%
