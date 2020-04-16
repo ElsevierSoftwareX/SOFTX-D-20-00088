@@ -46,9 +46,11 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
         if numel(datas) > 0, LimitedRead = datas{1}; end % Customized limited read
     end
     
+    % Check if Params was specified
+    Params = varargin_dashed_str_datas('Params', varargin);
+    
     if isempty(files),
-        [filename, folder] = uigetfile({'*.wip;*.wiP;*.wIp;*.wIP;*.Wip;*.WiP;*.WIp;*.WIP;*.wid;*.wiD;*.wId;*.wID;*.Wid;*.WiD;*.WId;*.WID', 'WITec Project/Data Files (*.wip/*.wid)'}, 'Open Project', wit_io_pref_get('latest_folder', cd), 'MultiSelect', 'on');
-%         [filename, folder] = uigetfile({'*.wip;*.wid;*.zip', 'WITec Project/Data Files (*.wip/*.wid [or *.zip if compressed])'}, 'Open Project', latest_folder, 'MultiSelect', 'on'); % Considered implementing either indirect or direct unzipping scheme. It appears that WIT-formatted files can potentially be significantly compressed. (16.1.2019)
+        [filename, folder] = uigetfile({'*.wip;*.wiP;*.wIp;*.wIP;*.Wip;*.WiP;*.WIp;*.WIP;*.wid;*.wiD;*.wId;*.wID;*.Wid;*.WiD;*.WId;*.WID;*.zip;*.ziP;*.zIp;*.zIP;*.Zip;*.ZiP;*.ZIp;*.ZIP', 'WITec Project/Data Files (*.wip/*.wid) or Zip Archives (*.zip)'}, 'Open Project', wit_io_pref_get('latest_folder', cd), 'MultiSelect', 'on');
         if ~iscell(filename), filename = {filename}; end
         if folder ~= 0,
             files = fullfile(folder, filename);
@@ -56,13 +58,26 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
         else, return; end % Abort as no file was selected!
     end
     
+    % Determine the compressed file extension
+    compressed_ext = '.zip';
+    
     % Read all files preferring limited read and append them together
     O_wit = wit.empty;
     h = waitbar(0, 'Please wait...');
     for ii = 1:numel(files),
         if ~ishandle(h), return; end % Abort if cancelled!
         waitbar((ii-1)/numel(files), h, sprintf('Loading file %d/%d. Please wait...', ii, numel(files)));
-        O_wit = wip.append(O_wit, wit.read(files{ii}, LimitedRead));
+        
+        % Add the required file extension if it is missing nor is compression used
+        [~, ~, ext] = fileparts(files{ii});
+        OnReadDecompress = strcmpi(ext, compressed_ext);
+        
+        if OnReadDecompress, % Read compressed
+            O_wit = OnReadDecompress_loop(O_wit, files{ii});
+        else, % Read uncompressed
+            O_wit_new = wit.read(files{ii}, LimitedRead);
+            O_wit = wip.append(O_wit, O_wit_new);
+        end
     end
     if ~ishandle(h), return; end % Abort if cancelled!
     waitbar(1, h, 'Completed!');
@@ -99,4 +114,21 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     % Force output to column (More user-friendly!)
     O_wid = O_wid(:);
     O_wid_HtmlNames = O_wid_HtmlNames(:); % Much more user-friendly this way!
+    
+    function obj = OnReadDecompress_loop(obj, File),
+        % Get file name
+        [~, name, ext] = fileparts(File);
+        FileName = [name ext];
+        fprintf('Reading from file: %s\n', FileName);
+        % Decompress
+        [~, zip_datas] = wit_io_file_decompress(File, '-FilterExtension', '.wip', '.wid', '-ProgressBar', Params{:}); % Decompress binary from zip archive
+        % Loop through data entries
+        for jj = 1:numel(zip_datas),
+            obj_new = wit.read(File, LimitedRead, [], [], '-CustomFun', @OnReadDecompress_helper, '-Silent');
+            obj = wip.append(obj, obj_new);
+        end
+        function OnReadDecompress_helper(obj, File),
+            obj.bread(zip_datas{jj});
+        end
+    end
 end

@@ -223,7 +223,7 @@ classdef wip < handle, % Since R2008a
         O_wid = manager(obj, varargin);
         
         % File writer
-        write(obj, File);
+        write(obj, varargin);
         
         % Update Data-property according to Tree-property contents
         update(obj);
