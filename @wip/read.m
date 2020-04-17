@@ -82,6 +82,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     if ~ishandle(h), return; end % Abort if cancelled!
     waitbar(1, h, 'Completed!');
     delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Avoids the closing issues with close-function!
+    if isempty(O_wit), return; end % Abort if no file to read!
     O_wip = wip(O_wit);
     
     % Force DataUnit, SpaceUnit, SpectralUnit, TimeUnit:
