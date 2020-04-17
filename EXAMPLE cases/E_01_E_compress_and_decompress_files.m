@@ -66,7 +66,17 @@ O_wip.write('E_v5.wip.zip'); % By default, use minimum compression
 % O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', []); % Built-in default compression
 % O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', 9); % Maximum compression
 
-% For more customization details, see to wit_io_file_compress.m.
+% For more customization details, see to wit_io_file_compress.m. The
+% second dash '-' in front, like in '--CompressionLevel', is needed because
+% the function is not called directly. For direct calls,
+% '-CompressionLevel' is the correct way.
+
+% It is worth noting that the above uses wit_io_file_compress.m that
+% performs dataset compression directly in memory.
+
+% The commented lines below demonstrates another way to do the same:
+% binary = O_wip.Tree.bwrite(); % First convert wip Project object to binary
+% wit_io_file_compress('E_v5.wip.zip', 'E_v5.wip', binary); % Then compress the binary into zip archive
 %-------------------------------------------------------------------------%
 
 
@@ -79,14 +89,21 @@ O_wip.write('E_v5.wip.zip'); % By default, use minimum compression
 % all the others are ignored. If there are multiple files, then they are
 % all loaded and merged into one wip Project object.
 
-% If it is important to load only certain files in the zip archive, then
-% filter the files extra parameter '--FilterRegexp' like commeted below:
-% [O_wid2, O_wip2, O_wid_HtmlNames2] = wip.read('E_v5.wip.zip', '-all', '-Params', '--FilterRegexp', '^E\_v5\.wip$'); % Find and load 'E_v5.wip'
+% If it is important to load only certain files from the zip archive, then
+% filter the files extra parameter '--Files' like commented below:
+% [O_wid2, O_wip2, O_wid_HtmlNames2] = wip.read('E_v5.wip.zip', '-all', '-Params', '--Files', 'E_v5.wip'); % Find and load 'E_v5.wip'
 
-% See MATLAB's regexp documentation for more details:
-% https://www.mathworks.com/help/matlab/ref/regexp.html
+% For more customization details, see to wit_io_file_decompress.m. The
+% second dash '-' in front, like in '--Files', is needed because the
+% function is not called directly. For direct calls, '-Files' is the
+% correct way.
 
-% For more customization details, see to wit_io_file_decompress.m.
+% The zip archive file names can also be loaded with one of the following lines:
+files_in_zip = wit_io_file_decompress('E_v5.wip.zip'); % This loads files BUT SKIPS DATA DECOMPRESSION
+[files_in_zip, datasizes_in_zip] = wit_io_file_decompress('E_v5.wip.zip', '-DataSizes'); % This loads files and data sizes BUT SKIPS DATA DECOMPRESSION
+
+% The commented lines below demonstrates the actual decompression call:
+% [files_in_zip, datas_in_zip] = wit_io_file_decompress('E_v5.wip.zip'); % This loads files and their DECOMPRESSED datas
 %-------------------------------------------------------------------------%
 
 
