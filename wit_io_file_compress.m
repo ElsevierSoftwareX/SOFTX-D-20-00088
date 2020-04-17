@@ -63,7 +63,6 @@ function wit_io_file_compress(file, files, datas, varargin),
     parsed = varargin_dashed_str_datas('MaxBlockSize', varargin, -1);
     MaxBlockSize = 1024.^2; % By default, 1 MB max blocksize per write
     if numel(parsed) > 0, MaxBlockSize = parsed{1}; end
-    java_buffer = java.nio.ByteBuffer.allocate(MaxBlockSize); % Preallocate once
     
     % Make 'files' and 'datas' a cell arrays if not so
     if ~iscell(files), files = {files}; end
@@ -86,7 +85,7 @@ function wit_io_file_compress(file, files, datas, varargin),
         jfos = java.io.FileOutputStream(file);
         
         % Ensure safe closing of all the output streams in the end
-        oc = onCleanup(@() jfos.close());
+        c_jfos = onCleanup(@() jfos.close());
         
         % Create a ZIP output stream
         jbos = java.io.BufferedOutputStream(jfos); % Required for faster performance!
@@ -97,6 +96,9 @@ function wit_io_file_compress(file, files, datas, varargin),
         if ~isempty(CompressionLevel), % If empty, then use built-in default
             jzos.setLevel(CompressionLevel);
         end
+        
+        % Preallocate Java buffer once
+        java_buffer = java.nio.ByteBuffer.allocate(MaxBlockSize);
         
         % Compress the given files and datas in loop
         for ii = 1:numel(files),
@@ -156,13 +158,14 @@ function wit_io_file_compress(file, files, datas, varargin),
             end
         end
         
+        % Invoke Java's garbage collection
+        clear java_buffer; % Free variable from Java Heap Memory
+        java.lang.Runtime.getRuntime().gc;
+        
         % Finish writing the contents of the ZIP output stream (and close the underlying stream on exit)
         jzos.finish();
         jzos.close();
     catch ME,
         warning('Cannot compress files and datas to ''%s'' for some reason!\n\n%s', file, ME.message);
     end
-    
-    % Invoke Java's garbage collection
-    java.lang.Runtime.getRuntime().gc;
 end
