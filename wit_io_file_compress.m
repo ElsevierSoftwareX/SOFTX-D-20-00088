@@ -3,19 +3,26 @@
 % All rights reserved.
 
 % This compresses file contents in blocks to local disk using Java. Current
-% implementation can only compress ZIP archives. This requires a running
-% Java Virtual Machine. The following case-insensitive extra inputs are
-% parsed:
-% '-CompressionLevel' (= 1 by default): Compression level ranges for
-% DEFLATED from 0 (= none) to 9 (= maximum). Provide [] to prefer Java's
-% default compression level.
-% '-MaxBlockSize' (= 1048576 or 1 MB by default): Set maximum blocksize
-% per write to allow writing in smaller blocks and to reduce risk of
-% exceeding Java Heap Memory (>= 128 MB for R2011a or newer) limit.
+% implementation can only compress to .zip and .zst (Zstd or Zstandard).
+% Compression algorithm is automatically determined by the file extension.
+% Zstandard is inherently multi-threaded and state-of-the-art algorithm.
+% This requires a running Java Virtual Machine. The following case-
+% insensitive extra inputs are parsed:
+% '-Compressor' (= from file extension): Can be set to '.zip' or '.zst'.
+% '-CompressionLevel' (= 1 by default): For .zip, compression level ranges
+% from 0 (= none) to 9 (= maximum). For .zst, compression level ranges from
+% 1 (= minimum) to 22 (= maximum).
+% Provide [] to prefer Java library's default compression level.
+% '-MaxBlockSize' (= from compressor): Set maximum blocksize per write to
+% allow writing in smaller blocks and to reduce risk of exceeding Java Heap
+% Memory (>= 128 MB for R2011a or newer) limit. For .zip, default value is
+% 1048576 or 1 MB. For .zst, default value is 4194304 or 4 MB.
 % '-ProgressBar' (= none): Use verbose wit.progress_bar in Command
 % Window. If a function handle (with equivalent output arguments) is
 % provided, then use it instead.
 function wit_io_file_compress(file, files, datas, varargin),
+    % Notes on zipping using Java:
+    %
     % It is noteworthy that the 64-bit ZIP archives (with individual
     % entries and archives larger than 4 GB or with more than 65536
     % entries) are supported since Apache Ant 1.9.0 (release date
@@ -59,14 +66,57 @@ function wit_io_file_compress(file, files, datas, varargin),
     % 2020-02-08) comes with a useful "split ZIP archive" -feature but
     % MATLAB seriously lags behind the Commons Compress version.
     
+    jrt = java.lang.Runtime.getRuntime();
+    
+    % Parse extra inputs: Compressor
+    parsed = varargin_dashed_str_datas('Compressor', varargin, -1);
+    Compressor = []; % By default, determine compressor from the file extension
+    if numel(parsed) > 0, Compressor = parsed{1}; end
+    if isempty(Compressor), [~, ~, Compressor] = fileparts(file); end
+    
+    persistent zst_library;
+    
+    % Use ZIP compression
+    if strcmpi('.zip', Compressor),
+        MaxBlockSize = 1024.^2; % By default, 1 MB max subblocksize per write
+        compressor_multiple_files = true;
+        compressor_constructor = @compress_zip_construct;
+        compressor = @compress_zip;
+        compressor_finish = @compress_zip_finish;
+    % Use ZST or Zstandard or Zstd compression
+    elseif strcmpi('.zst', Compressor),
+        MaxBlockSize = 4.*1024.^2; % By default, 4 MB max subblocksize per write
+        % Documentation: https://www.javadoc.io/doc/com.github.luben/zstd-jni/latest/index.html
+        if isempty(zst_library), % Load java library only once per session
+            compressor_library = {'helper', '3rd party', 'zstd-jni', 'zstd-jni-1.4.4-9.jar'};
+            zst_library = fullfile(fileparts(mfilename('fullpath')), compressor_library{:});
+            javaaddpath(zst_library);
+        end
+        compressor_multiple_files = false;
+        compressor_constructor = @compress_zst_construct;
+        compressor = @compress_zst;
+        compressor_finish = @compress_zst_finish;
+    % Otherwise ERROR
+    else,
+        error('Specified compressor, ''%s'' is not yet implemented!', Compressor);
+    end
+    
     % Parse extra inputs: MaxBlockSize
     parsed = varargin_dashed_str_datas('MaxBlockSize', varargin, -1);
-    MaxBlockSize = 1024.^2; % By default, 1 MB max blocksize per write
+    if numel(parsed) > 0, MaxBlockSize = parsed{1}; end
+    
+    % Parse extra inputs: MaxSubBlockSize
+    parsed = varargin_dashed_str_datas('MaxSubBlockSize', varargin, -1);
     if numel(parsed) > 0, MaxBlockSize = parsed{1}; end
     
     % Make 'files' and 'datas' a cell arrays if not so
     if ~iscell(files), files = {files}; end
     if ~iscell(datas), datas = {datas}; end
+    
+    % Error if trying to compress multiple files when not supported
+    if ~compressor_multiple_files && numel(files) ~= 1,
+        error('This compressor, ''%s'' can only compress a single file!', Compressor);
+    end
     
     % Parse extra inputs: CompressionLevel
     parsed = varargin_dashed_str_datas('CompressionLevel', varargin, -1);
@@ -80,92 +130,136 @@ function wit_io_file_compress(file, files, datas, varargin),
     verbose = isa(ProgressBar, 'function_handle');
     
     % Try compressing the files and datas (or catch error)
+    [jco, jbo, jfo] = deal([]);
+    ocuo = {};
     try,
         % Open or create the file for writing
-        jfos = java.io.FileOutputStream(file);
+        compressor_constructor();
         
-        % Ensure safe closing of all the output streams in the end
-        c_jfos = onCleanup(@() jfos.close());
+        % Compress the given files and datas
+        compressor();
         
-        % Create a ZIP output stream
-        jbos = java.io.BufferedOutputStream(jfos); % Required for faster performance!
-        jzos = org.apache.tools.zip.ZipOutputStream(jbos);
-        jwbc = java.nio.channels.Channels.newChannel(jzos); % Get WriteableByteChannel that works with ByteBuffer!
+        % Finish writing the contents of the compressing output stream (and close the underlying stream on exit)
+        compressor_finish();
         
-        % Set DEFLATED compression level from 0 (= none) to 9 (= maximum)
-        if ~isempty(CompressionLevel), % If empty, then use built-in default
-            jzos.setLevel(CompressionLevel);
-        end
-        
-        % Preallocate Java buffer once
-        java_buffer = java.nio.ByteBuffer.allocate(MaxBlockSize);
-        
-        % Compress the given files and datas in loop
-        for ii = 1:numel(files),
-            file = files{ii};
-            data = typecast(datas{ii}, 'int8');
-            
-            % Create a ZIP file entry
-            entry = org.apache.tools.zip.ZipEntry(file);
-            entry_size = numel(data);
-            entry.setSize(entry_size); % Set the uncompressed size of the entry data (to allow 64-bit ZIP if needed)
-            
-            if verbose,
-                fprintf('Compressing %d bytes of binary to file entry: %s\n', entry_size, file);
-                [fun_start, fun_now, fun_end] = ProgressBar(entry_size);
-                fun_start(0);
-                ocu = onCleanup(fun_end); % Automatically call fun_end whenever end of function is reached
-            end
-            
-            % Write the ZIP file entry to the ZIP output stream
-            jzos.putNextEntry(entry); % Write the entry headers and position the stream to the start of the entry data
-            if entry_size <= MaxBlockSize, % Write the entry data at once
-                java_buffer.clear(); % Reset position to zero, limit to capacity and discard mark
-                java_buffer.put(data);
-                java_buffer.flip(); % Set limit to the current position and position to zero and discard mark
-                jwbc.write(java_buffer); % User-interruptible on Java side
-                if verbose,
-                    fun_now(entry_size);
-                end
-            else, % Write the entry data in blocks
-                N_blocks = ceil(entry_size ./ MaxBlockSize);
-                ind = 1:MaxBlockSize; % Preallocate block indices once
-                for jj = 1:N_blocks,
-                    if jj < N_blocks,
-                        java_buffer.clear(); % Reset position to zero, limit to capacity and discard mark
-                        java_buffer.put(data(ind));
-                        java_buffer.flip(); % Set limit to the current position and position to zero and discard mark
-                        jwbc.write(java_buffer); % User-interruptible on Java side
-                        if verbose,
-                            fun_now(ind(end));
-                        end
-                        ind = ind + MaxBlockSize; % Update block indices for next write
-                    else,
-                        ind = ind(ind <= entry_size); % Truncate block indices for last write
-                        java_buffer.clear(); % Reset position to zero, limit to capacity and discard mark
-                        java_buffer.put(data(ind));
-                        java_buffer.flip(); % Set limit to the current position and position to zero and discard mark
-                        jwbc.write(java_buffer); % User-interruptible on Java side
-                        if verbose,
-                            fun_now(ind(end));
-                        end
-                    end
-                end
-            end
-            jzos.closeEntry(); % Finish writing the contents of the entry
-            if verbose,
-                clear ocu;
-            end
-        end
-        
-        % Invoke Java's garbage collection
-        clear java_buffer; % Free variable from Java Heap Memory
-        java.lang.Runtime.getRuntime().gc;
-        
-        % Finish writing the contents of the ZIP output stream (and close the underlying stream on exit)
-        jzos.finish();
-        jzos.close();
+        % Free variable for garbage collection
+        clear ocuo;
     catch ME,
         warning('Cannot compress files and datas to ''%s'' for some reason!\n\n%s', file, ME.message);
+    end
+    
+    % Invoke Java's garbage collection
+    jrt.gc;
+    
+    %% .zst compressor
+    function compress_zst_construct(),
+        jfo = java.io.FileOutputStream(file);
+        ocuo{end+1} = onCleanup(@() jfo.close()); % Ensure safe closing of the compressed file in the end
+        
+        jbo = java.io.BufferedOutputStream(jfo); % Required for faster performance!
+        ocuo{end+1} = onCleanup(@() jbo.close()); % Ensure safe closing of the compressed file in the end
+        
+        jco = com.github.luben.zstd.ZstdOutputStream(jbo);
+        ocuo{end+1} = onCleanup(@() jco.close()); % Ensure safe closing of the compressed file in the end
+        
+        % Set workers
+        jco.setWorkers(jrt.availableProcessors()); % Use all processors as workers
+        
+        % Set compression level
+        if ~isempty(CompressionLevel), % If empty, then use built-in default
+            jco.setLevel(CompressionLevel);
+        end
+    end
+    function compress_zst_finish(),
+        jco.close();
+        jbo.close();
+        jfo.close();
+    end
+    function compress_zst(),
+        % Compress the given file and data
+        entry_file = files{1};
+        entry_data = typecast(datas{1}, 'int8'); % Java-friendly int8
+
+        % Compress entry data
+        compress_entry(entry_file, entry_data);
+    end
+    
+    %% .zip compressor
+    function compress_zip_construct(),
+        jfo = java.io.FileOutputStream(file);
+        ocuo{end+1} = onCleanup(@() jfo.close()); % Ensure safe closing of the compressed file in the end
+        
+        jbo = java.io.BufferedOutputStream(jfo); % Required for faster performance!
+        ocuo{end+1} = onCleanup(@() jbo.close()); % Ensure safe closing of the compressed file in the end
+        
+        jco = org.apache.tools.zip.ZipOutputStream(jbo);
+        ocuo{end+1} = onCleanup(@() jco.close()); % Ensure safe closing of the compressed file in the end
+        
+        % Set compression level
+        if ~isempty(CompressionLevel), % If empty, then use built-in default
+            jco.setLevel(CompressionLevel);
+        end
+    end
+    function compress_zip_finish(),
+        jco.finish();
+        jco.close();
+        jbo.close();
+        jfo.close();
+    end
+    function compress_zip(),
+        % Compress the given files and datas in loop
+        for ii = 1:numel(files),
+            entry_file = files{ii};
+            entry_data = typecast(datas{ii}, 'int8'); % Java-friendly int8
+            
+            % Create a file entry
+            entry = org.apache.tools.zip.ZipEntry(entry_file);
+            entry.setSize(numel(entry_data)); % Set the uncompressed size of the entry data (i.e. to allow 64-bit ZIP if needed)
+            
+            % Write the entry headers and position the stream to the start of the entry data
+            jco.putNextEntry(entry);
+            
+            % Compress entry data
+            compress_entry(entry_file, entry_data);
+            
+            % Finish writing the contents of the entry
+            jco.closeEntry();
+        end
+    end
+    
+    %% Common helper functions
+    function compress_entry(entry_file, entry_data),
+        N_data = numel(entry_data);
+        N_data_end = mod(N_data, MaxBlockSize);
+        entry_data_end = entry_data(N_data-N_data_end+1:end);
+        entry_data = reshape(entry_data(1:N_data-N_data_end), MaxBlockSize, []);
+        N_blocks = size(entry_data, 2);
+        
+        if verbose,
+            fprintf('Compressing %d bytes of uncompressed binary to file entry: %s\n', N_data, entry_file);
+            [fun_start, fun_now, fun_end] = ProgressBar(N_data, '-OnlyIncreasing');
+            fun_start(0);
+            ocu = onCleanup(fun_end); % Automatically call fun_end whenever end of function is reached
+        end
+        
+        % Write the entry data in blocks
+        for jj = 1:N_blocks,
+            jco.write(entry_data(:,jj)); % Faster than ByteBuffer
+            if verbose,
+                fun_now(jj.*MaxBlockSize);
+            end
+        end
+        
+        % Write end of entry
+        if N_data_end > 0,
+            jco.write(entry_data_end); % Faster than ByteBuffer
+            if verbose,
+                fun_now(N_data);
+            end
+        end
+        
+        if verbose,
+            clear ocu;
+        end
     end
 end

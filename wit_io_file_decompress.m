@@ -8,6 +8,7 @@
 % MATLAB's built-in unzip, this can also filter which file contents to
 % decompress. This requires a running Java Virtual Machine. The following
 % case-insensitive extra inputs are parsed:
+% '-Decompressor' (= from file extension): Can be set to '.zip' or '.zst'.
 % '-Files': Read only the specified files (unless modified by the filters
 % below). It is recommended to first read all the files (with second output
 % omitted) and parse them and provide the parsed files with this option.
@@ -20,13 +21,19 @@
 % full file names using consecutive char arrays (i.e. '\.wi[dp]$' and
 % 'ignorecase' or '\.[wW][iI][dDpP]$'), where first input is the pattern
 % and the rest are extra options to regexp-function.
-% '-MaxBlockSize' (= 1048576 or 1 MB by default): Set maximum blocksize
-% per read to allow reading in smaller blocks and to reduce risk of
-% exceeding Java Heap Memory (>= 128 MB for R2011a or newer) limit.
+% '-MaxBlockSize' (= 67108864 or 64 MB): Set maximum blocksize per read to
+% allow reading in smaller blocks and to reduce risk of exceeding Java Heap
+% Memory (>= 128 MB for R2011a or newer) limit.
+% '-MaxSubBlockSize' (= from decompressor): Each block is read in sub
+% blocks in order to allow smoother user interrupts and less communication
+% with MATLAB. MaxBlockSize should be divisible by this. For .zip, default
+% value is 1048576 or 1 MB. For .zst, default value is 4194304 or 4 MB.
 % '-ProgressBar' (= none): Use verbose wit.progress_bar in Command
-% Window. If a function handle (with equivalent output arguments) is
+% Window. If a function handle (with equivalent input/output arguments) is
 % provided, then use it instead.
 function [files, datas] = wit_io_file_decompress(file, varargin),
+    % Notes on unzipping using Java:
+    %
     % It is noteworthy that the 64-bit ZIP archives (with individual
     % entries and archives larger than 4 GB or with more than 65536
     % entries) are supported since Apache Ant 1.9.0 (release date
@@ -69,7 +76,8 @@ function [files, datas] = wit_io_file_decompress(file, varargin),
     
     % Initialize return values
     files = {};
-    if nargout > 1,
+    decompress = nargout > 1;
+    if decompress,
         datas = {};
     end
     
@@ -77,10 +85,45 @@ function [files, datas] = wit_io_file_decompress(file, varargin),
     jf = java.io.File(file);
     if ~jf.exists(), return; end % Abort if does not exist
     
+    % Parse extra inputs: Decompressor
+    parsed = varargin_dashed_str_datas('Decompressor', varargin, -1);
+    Decompressor = []; % By default, determine decompressor from the file extension
+    if numel(parsed) > 0, Decompressor = parsed{1}; end
+    if isempty(Decompressor), [~, ~, Decompressor] = fileparts(file); end
+    
+    persistent zst_library;
+    
+    % Use ZIP compression
+    if strcmpi('.zip', Decompressor),
+        MaxSubBlockSize = 1024.^2; % By default, 1 MB max subblocksize per read
+        decompressor_constructor = @decompress_zip_construct;
+        decompressor = @decompress_zip;
+    % Use ZST or Zstandard or Zstd compression
+    elseif strcmpi('.zst', Decompressor),
+        MaxSubBlockSize = 4.*1024.^2; % By default, 4 MB max subblocksize per read
+        % Documentation: https://www.javadoc.io/doc/com.github.luben/zstd-jni/latest/index.html
+        if isempty(zst_library), % Load java library only once per session
+            decompressor_library = {'helper', '3rd party', 'zstd-jni', 'zstd-jni-1.4.4-9.jar'};
+            zst_library = fullfile(fileparts(mfilename('fullpath')), decompressor_library{:});
+            javaaddpath(zst_library);
+        end
+        decompressor_constructor = @decompress_zst_construct;
+        decompressor = @decompress_zst;
+    % Otherwise ERROR
+    else,
+        error('Specified decompressor, ''%s'' is not yet implemented!', Decompressor);
+    end
+    
+    jrt = java.lang.Runtime.getRuntime();
+    
     % Parse extra inputs: MaxBlockSize
     parsed = varargin_dashed_str_datas('MaxBlockSize', varargin, -1);
-    MaxBlockSize = 1024.^2; % By default, 1 MB max blocksize per read
+    MaxBlockSize = 64.*1024.^2; % By default, 64 MB max blocksize per read
     if numel(parsed) > 0, MaxBlockSize = parsed{1}; end
+    
+    % Parse extra inputs: MaxSubBlockSize
+    parsed = varargin_dashed_str_datas('MaxSubBlockSize', varargin, -1);
+    if numel(parsed) > 0, MaxSubBlockSize = parsed{1}; end
     
     % Parse extra inputs: Files
     Files = varargin_dashed_str_datas('Files', varargin);
@@ -106,57 +149,95 @@ function [files, datas] = wit_io_file_decompress(file, varargin),
     verbose = isa(ProgressBar, 'function_handle');
     
     % Try uncompressing the files and datas (or catch error)
+    [jci, jbi, jfi] = deal([]);
+    ocui = {};
     try,
-        % Open the ZIP file for reading
-        jzf = org.apache.tools.zip.ZipFile(jf);
+        % Open the compressed file for reading
+        decompressor_constructor();
         
-        % Ensure safe closing of the ZIP file in the end
-        c_jzf = onCleanup(@() jzf.close());
-        
-        % Get the ZIP file entries
-        entries = jzf.getEntries();
-        
-        if nargout > 1,
+        if decompress,
             % Preallocate Java buffer once
             java_buffer = java.nio.ByteBuffer.allocate(MaxBlockSize);
         end
         
-        % Loop through each ZIP file entry (and decompress only if needed)
+        % Load compressor-specific entries
+        decompressor();
+        
+        if decompress,
+            % Invoke Java's garbage collection
+            clear java_buffer; % Free variable from Java Heap Memory
+        end
+        
+        clear ocui; % Close the file
+    catch ME,
+        warning('Cannot uncompress files and datas from ''%s'' for some reason!\n\n%s', file, ME.message);
+    end
+    
+    % Invoke Java's garbage collection
+    jrt.gc;
+    
+    %% .zst decompressor
+    function decompress_zst_construct(),
+        jfi = java.io.FileInputStream(jf);
+        ocui{end+1} = onCleanup(@() jfi.close()); % Ensure safe closing of the compressed file in the end
+        
+        jbi = java.io.BufferedInputStream(jfi); % Required for faster performance!
+        ocui{end+1} = onCleanup(@() jbi.close()); % Ensure safe closing of the compressed file in the end
+        
+        jci = com.github.luben.zstd.ZstdInputStream(jbi);
+        ocui{end+1} = onCleanup(@() jci.close()); % Ensure safe closing of the compressed file in the end
+    end
+    function decompress_zst(),
+        [~, entry_file, ~] = fileparts(file);
+            
+        % Test entry
+        if ~accept_entry(entry_file),
+            return;
+        end
+        
+        % Accept entry
+        files{end+1} = entry_file;
+        
+        if decompress,
+            entry_size = NaN; % Get the entry data uncompressed size
+            if DataSizes, % If true, then return only entry size and skip data decompression
+                datas{end+1} = entry_size;
+            else,
+                entry_is = jci; % Get entry input stream
+                datas{end+1} = decompress_entry(entry_is, entry_file, entry_size);
+            end
+        end
+    end
+    
+    %% .zip decompressor
+    function decompress_zip_construct(),
+        jci = org.apache.tools.zip.ZipFile(jf);
+        % Ensure safe closing of the compressed file in the end
+        ocui{end+1} = onCleanup(@() jci.close());
+    end
+    function decompress_zip(),
+        % Get the compressed file entries
+        entries = jci.getEntries();
+        
+        % Loop through each file entry (and decompress only if needed)
         while entries.hasMoreElements(), % Stop loop only if no more entries
-            entry = entries.nextElement(); % Get the next ZIP file entry
+            entry = entries.nextElement(); % Get the next file entry
             if entry.isDirectory(), continue; end % Skip directories
             entry_file = char(entry.getName); % Get its file name (converted to char array)
             
-            % Skip entry if it does not meet the files filtering criteria
-            if ~isempty(Files) && all(~strcmp(Files, entry_file)), % Test the file
-                continue;
-            end
-            
-            % Skip entry if it does not meet the file extension filtering criteria
-            [~, ~, entry_ext] = fileparts(entry_file); % Extract its file extension
-            if ~isempty(FilterExtension) && all(~strcmpi(FilterExtension, entry_ext)), % Test the file extension
-                continue;
-            end
-            
-            % Skip entry if it does not meet the file regexp filtering criteria
-            if ~isempty(FilterRegexp) && isempty(regexp(entry_file, FilterRegexp{1}, 'start', 'once', FilterRegexp{2:end})), % Test the file
+            % Test entry
+            if ~accept_entry(entry_file),
                 continue;
             end
             
             % Accept entry
             files{end+1} = entry_file;
-            if nargout > 1,
+            
+            if decompress,
                 entry_size = entry.getSize(); % Get the entry data uncompressed size
                 if DataSizes, % If true, then return only entry size and skip data decompression
                     datas{end+1} = entry_size;
                     continue;
-                end
-                
-                if verbose,
-                    fprintf('Decompressing %d bytes of binary from file entry: %s\n', entry_size, entry_file);
-                    [fun_start, fun_now, fun_end] = ProgressBar(entry_size);
-                    fun_start(0);
-                    ocu = onCleanup(fun_end); % Automatically call fun_end whenever end of function is reached
                 end
                 
                 % Extract entry input stream binary to MATLAB but without:
@@ -164,51 +245,118 @@ function [files, datas] = wit_io_file_decompress(file, varargin),
                 % (b) org.apache.commons.io.IOUtils().toByteArray % Available at least since R2011a
                 % Instead use ReadableByteChannel of java.nio.channels
                 % introduced with Java 1.4.
-                entry_is = jzf.getInputStream(entry); % Get entry input stream
-                entry_rbc = java.nio.channels.Channels.newChannel(entry_is); % Get ReadableByteChannel that works with ByteBuffer!
-                if entry_size <= MaxBlockSize, % Read the entry data at once
-                    N_read = entry_rbc.read(java_buffer); % Takes in ByteBuffer instead of byte []!
-                    matlab_buffer = java_buffer.array(); % Extract buffer content to MATLAB
-                    java_buffer.rewind(); % Reset buffer position to zero and discard mark
-                    data = matlab_buffer(1:N_read);
-                    if verbose,
-                        fun_now(entry_size);
-                    end
-                else, % Read the entry data in blocks
-                    data = zeros(entry_size, 1, 'int8'); % Preallocate
-                    N_blocks = ceil(entry_size ./ MaxBlockSize);
-                    ind = 1:MaxBlockSize; % Preallocate block indices once
-                    for jj = 1:N_blocks,
-                        N_read = entry_rbc.read(java_buffer); % Takes in ByteBuffer instead of byte []!
-                        matlab_buffer = java_buffer.array(); % Extract buffer content to MATLAB
-                        java_buffer.rewind(); % Reset position to zero and discard mark
-                        if jj < N_blocks,
-                            data(ind) = matlab_buffer;
-                            ind = ind + MaxBlockSize; % Update block indices for next read
-                        else,
-                            ind = ind(ind <= entry_size); % Truncate block indices for last read
-                            data(ind) = matlab_buffer(1:N_read);
-                        end
-                        if verbose,
-                            fun_now(ind(end));
-                        end
-                    end
-                end
-                datas{end+1} = typecast(data, 'uint8');
-                if verbose,
-                    clear ocu;
-                end
+                entry_is = jci.getInputStream(entry); % Get entry input stream
+                datas{end+1} = decompress_entry(entry_is, entry_file, entry_size);
+            end
+        end
+    end
+    
+    %% Common helper functions
+    function tf = accept_entry(entry_file),
+        tf = true;
+        
+        % Skip entry if it does not meet the files filtering criteria
+        if ~isempty(Files) && all(~strcmp(Files, entry_file)), % Test the file
+            tf = false;
+            return;
+        end
+
+        % Skip entry if it does not meet the file extension filtering criteria
+        [~, ~, entry_ext] = fileparts(entry_file); % Extract its file extension
+        if ~isempty(FilterExtension) && all(~strcmpi(FilterExtension, entry_ext)), % Test the file extension
+            tf = false;
+            return;
+        end
+
+        % Skip entry if it does not meet the file regexp filtering criteria
+        if ~isempty(FilterRegexp) && isempty(regexp(entry_file, FilterRegexp{1}, 'start', 'once', FilterRegexp{2:end})), % Test the file
+            tf = false;
+            return;
+        end
+    end
+    function entry_data = decompress_entry(entry_is, entry_file, entry_size),
+        if nargin < 3 || isnan(entry_size),
+            isknown = false;
+            entry_size = jfi.available();
+            if verbose,
+                fprintf('Decompressing %d bytes of compressed binary from file entry: %s\n', entry_size, entry_file);
+                [fun_start, fun_now, fun_end] = ProgressBar(entry_size, '-OnlyIncreasing', '-FlipStartEnd');
+                fun_start(entry_size);
+                ocu = onCleanup(fun_end); % Automatically call fun_end whenever end of function is reached
+            end
+        else,
+            isknown = true;
+            if verbose,
+                fprintf('Decompressing %d bytes of uncompressed binary from file entry: %s\n', entry_size, entry_file);
+                [fun_start, fun_now, fun_end] = ProgressBar(entry_size, '-OnlyIncreasing');
+                fun_start(0);
+                ocu = onCleanup(fun_end); % Automatically call fun_end whenever end of function is reached
             end
         end
         
-        if nargout > 1,
-            % Invoke Java's garbage collection
-            clear java_buffer; % Free variable from Java Heap Memory
-            java.lang.Runtime.getRuntime().gc;
+        entry_rbc = java.nio.channels.Channels.newChannel(entry_is); % Get ReadableByteChannel that works with ByteBuffer!
+        
+        N_subblocks = ceil(MaxBlockSize./MaxSubBlockSize);
+        if isknown && entry_size <= MaxBlockSize, % If known and fits in Java buffer, then read the entry data at once
+            for jj = 1:N_subblocks,
+                java_buffer.limit(java_buffer.position()+MaxSubBlockSize); % Limit read to MaxSubBlockSize
+                N_read_subblock = entry_rbc.read(java_buffer); % Takes in ByteBuffer instead of byte []!
+                if verbose,
+                    fun_now(jfi.limit());
+                end
+                if N_read_subblock < MaxSubBlockSize, % Stop loop if last read
+                    break;
+                end
+            end
+            matlab_buffer = java_buffer.array(); % Extract buffer content to MATLAB
+            java_buffer.clear(); % Reset position to zero, limit to capacity and discard mark
+            entry_data = matlab_buffer(1:N_read);
+        else,
+            % Read the entry data in blocks
+            available = entry_size; % May or may not be exact
+            N_blocks_allocated = ceil(available./MaxBlockSize);
+            entry_data = zeros(MaxBlockSize, N_blocks_allocated, 'int8'); % First allocation
+            N_read = 0;
+            N_blocks = 0;
+            while available > 0,
+                N_blocks = N_blocks + 1;
+                prev_available = available;
+                for jj = 1:N_subblocks,
+                    java_buffer.limit(java_buffer.position()+MaxSubBlockSize); % Limit read to MaxSubBlockSize
+                    N_read_subblock = entry_rbc.read(java_buffer); % Takes in ByteBuffer instead of byte []!
+                    if isknown, available = N_read + java_buffer.limit();
+                    else, available = jfi.available(); end
+                    if verbose,
+                        fun_now(available);
+                    end
+                    if N_read_subblock < MaxSubBlockSize, % Stop loop if last read
+                        break;
+                    end
+                end
+                java_buffer.flip(); % Set limit to the current position and position to zero and discard mark
+                N_read_block = java_buffer.remaining();
+                java_buffer.clear(); % Reset position to zero, limit to capacity and discard mark
+                N_read = N_read + N_read_block;
+                if N_blocks > N_blocks_allocated,
+                    ratio_global = N_read ./ (entry_size-available);
+                    ratio_block = N_read_block ./ (prev_available-available);
+                    ratio = sqrt(ratio_global.*ratio_block); % Geometric mean of global and local ratios
+                    N_blocks_unallocated = ceil((N_read_block+available.*ratio)./MaxBlockSize);
+                    entry_data(:,end+1:end+N_blocks_unallocated) = 0; % Reallocate
+                    N_blocks_allocated = N_blocks_allocated + N_blocks_unallocated;
+                end
+                entry_data(:,N_blocks) = java_buffer.array(); % Extract buffer content to MATLAB
+                if N_read_block ~= MaxBlockSize, break; end
+            end
+            
+            % Truncate collected dataset on completion
+            entry_data = [reshape(entry_data(:,1:N_blocks-1), [], 1); entry_data(1:N_read_block,N_blocks)];
         end
         
-        clear c_jzf; % Ensure the underlying stream is closed before the ZipFile object is cleared to avoid "Cleaning up unclosed ZipFile for archive"-warning (except when file does not exist due to bug)
-    catch ME,
-        warning('Cannot uncompress files and datas from ''%s'' for some reason!\n\n%s', file, ME.message);
+        entry_data = typecast(entry_data, 'uint8'); % From Java-friendly int8 to uint8
+        
+        if verbose,
+            clear ocu;
+        end
     end
 end
