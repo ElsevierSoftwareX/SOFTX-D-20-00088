@@ -595,7 +595,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteria_for_obj, varargin);
         
         % Default Command Window progress bar used in content reading and writing
-        [fun_start, fun_now, fun_end] = progress_bar(N_bytes_max, width_in_characters);
+        [fun_start, fun_now, fun_end] = progress_bar(N_bytes_max, varargin);
         
         % Determine whether or not to swap endianess to achieve little
         % endian ordering
