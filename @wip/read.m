@@ -50,7 +50,12 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     Params = varargin_dashed_str_datas('Params', varargin);
     
     if isempty(files),
-        [filename, folder] = uigetfile({'*.wip;*.wiP;*.wIp;*.wIP;*.Wip;*.WiP;*.WIp;*.WIP;*.wid;*.wiD;*.wId;*.wID;*.Wid;*.WiD;*.WId;*.WID;*.zip;*.ziP;*.zIp;*.zIP;*.Zip;*.ZiP;*.ZIp;*.ZIP', 'WITec Project/Data Files (*.wip/*.wid) or Zip Archives (*.zip)'}, 'Open Project', wit_io_pref_get('latest_folder', cd), 'MultiSelect', 'on');
+        filter = {'*.wip;*.wiP;*.wIp;*.wIP;*.Wip;*.WiP;*.WIp;*.WIP;*.wid;*.wiD;*.wId;*.wID;*.Wid;*.WiD;*.WId;*.WID;*.zip;*.ziP;*.zIp;*.zIP;*.Zip;*.ZiP;*.ZIp;*.ZIP;*.zst;*.zsT;*.zSt;*.zST;*.Zst;*.ZsT;*.ZSt;*.ZST', 'WITec Project/Data Files (*.wip/*.wid) or Compressed Files (*.zip/*.zst)'; ...
+            '*.wip;*.wiP;*.wIp;*.wIP;*.Wip;*.WiP;*.WIp;*.WIP', 'WITec Project Files (*.wip)'; ...
+            '*.wid;*.wiD;*.wId;*.wID;*.Wid;*.WiD;*.WId;*.WID', 'WITec Data Files (*.wid)'; ...
+            '*.zip;*.ziP;*.zIp;*.zIP;*.Zip;*.ZiP;*.ZIp;*.ZIP', 'Compressed Files (*.zip)'; ...
+            '*.zst;*.zsT;*.zSt;*.zST;*.Zst;*.ZsT;*.ZSt;*.ZST', 'Compressed Files (*.zst)'};
+        [filename, folder] = uigetfile(filter, 'Open Project', wit_io_pref_get('latest_folder', cd), 'MultiSelect', 'on');
         if ~iscell(filename), filename = {filename}; end
         if folder ~= 0,
             files = fullfile(folder, filename);
@@ -59,7 +64,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     end
     
     % Determine the compressed file extension
-    compressed_ext = '.zip';
+    compressed_ext = {'.zip', '.zst'};
     
     % Read all files preferring limited read and append them together
     O_wit = wit.empty;
@@ -70,7 +75,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
         
         % Add the required file extension if it is missing nor is compression used
         [~, ~, ext] = fileparts(files{ii});
-        OnReadDecompress = strcmpi(ext, compressed_ext);
+        OnReadDecompress = any(strcmpi(compressed_ext, ext));
         
         if OnReadDecompress, % Read compressed
             O_wit = OnReadDecompress_loop(O_wit, files{ii});

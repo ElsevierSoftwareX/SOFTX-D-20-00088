@@ -2,12 +2,12 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Project can be saved as *.wip, *.wid (and compressed as *.zip). File
-% extensions are case-insensitive. First non-dashed char array input is
-% always taken as target file. If not given, then Project's File is used.
-% This can be customized with the following case-insensitive extra inputs:
-% '-Params' (= none by default): Can be used to provide parameters to the
-% underlying writing function, i.e. wit_io_file_compress.m. See its
+% Project can be saved as *.wip, *.wid (and compressed as *.zip, *.zst).
+% File extensions are case-insensitive. First non-dashed char array input
+% is always taken as target file. If not given, then Project's File is
+% used. This can be customized with the following case-insensitive extra
+% inputs: '-Params' (= none by default): Can be used to provide parameters
+% to the underlying writing function, i.e. wit_io_file_compress.m. See its
 % documentation for more details.
 function write(obj, varargin),
     % First char array input is always File if non-dashed
@@ -37,11 +37,11 @@ function write(obj, varargin),
     end
     
     % Determine the compressed file extension
-    compressed_ext = '.zip';
+    compressed_ext = {'.zip', '.zst'};
     
     % Add the required file extension if it is missing nor is compression used
     [path, name, ext] = fileparts(File);
-    OnWriteCompress = strcmpi(ext, compressed_ext);
+    OnWriteCompress = any(strcmpi(compressed_ext, ext));
     if OnWriteCompress,
         [~, name2, ext2] = fileparts(name);
         if strcmpi(ext2, required_ext), File_uncompressed = fullfile(path, name);
@@ -66,6 +66,6 @@ function write(obj, varargin),
     end
     
     function OnWriteCompress_helper(obj, File),
-        wit_io_file_compress(File, File_uncompressed, obj.bwrite(), '-ProgressBar', Params{:}); % Compress binary to zip archive
+        wit_io_file_compress(File, File_uncompressed, obj.bwrite(), '-ProgressBar', Params{:}); % Compress binary as *.zip/*.zst file
     end
 end
