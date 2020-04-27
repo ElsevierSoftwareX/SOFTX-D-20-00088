@@ -3,12 +3,15 @@
 % All rights reserved.
 
 % This uses java.util.ArrayList to convert varargin to (1) java.lang.Object
-% array, (2) java.lang.Class array, and (3) class names array. First output
-% can be used as pass-by-reference when used with method invoking! Second
-% output can be used to find method with a matching signature! Third output
-% reveals what class types Java side receives. Read the reference [1] to
-% understand how MATLAB types are mapped to Java types. Idea for this code
-% was inspired by the reference [2].
+% array, and (2) java.lang.Class array. Output (1) can be used i.e. as
+% second input to the Java method's invoke-call. It is noteworthy that this
+% way any modifications to its arrays, i.e. primitive type arrays, can be
+% collected and used at the MATLAB side after the invoke-call! Output (2)
+% can be used i.e. to find a method with the matching signature! Output (3)
+% can be used i.e. to quickly inspect what class types Java side has
+% obtained in human-readable form. Read the reference [1] to understand how
+% MATLAB types are mapped to Java types. Idea for this code was inspired by
+% the reference [2].
 % [1] https://www.mathworks.com/help/matlab/matlab_external/passing-data-to-java-methods.html
 % [2] https://www.mathworks.com/matlabcentral/answers/66227-syntax-for-call-to-java-library-function-with-byte-reference-parameter#answer_416021
 function [jObjects, jClasses, classnames] = java_objects_from_varargin(varargin),
