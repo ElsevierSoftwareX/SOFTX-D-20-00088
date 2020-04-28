@@ -154,13 +154,13 @@ function wit_io_file_compress(file, files, datas, varargin),
     %% .zst compressor
     function compress_zst_construct(),
         jfo = java.io.FileOutputStream(file);
-        ocuo{end+1} = onCleanup(@() jfo.close()); % Ensure safe closing of the compressed file in the end
+        ocuo{3} = onCleanup(@() jfo.close()); % Ensure safe closing of the compressed file in the end
         
         jbo = java.io.BufferedOutputStream(jfo); % Required for faster performance!
-        ocuo{end+1} = onCleanup(@() jbo.close()); % Ensure safe closing of the compressed file in the end
+        ocuo{2} = onCleanup(@() jbo.close()); % Ensure safe closing of the compressed file in the end
         
         jco = com.github.luben.zstd.ZstdOutputStream(jbo);
-        ocuo{end+1} = onCleanup(@() jco.close()); % Ensure safe closing of the compressed file in the end
+        ocuo{1} = onCleanup(@() jco.close()); % Ensure safe closing of the compressed file in the end
         
         % Set workers
         jco.setWorkers(jrt.availableProcessors()); % Use all processors as workers
@@ -171,9 +171,7 @@ function wit_io_file_compress(file, files, datas, varargin),
         end
     end
     function compress_zst_finish(),
-        jco.close();
-        jbo.close();
-        jfo.close();
+        
     end
     function compress_zst(),
         % Compress the given file and data
@@ -187,13 +185,13 @@ function wit_io_file_compress(file, files, datas, varargin),
     %% .zip compressor
     function compress_zip_construct(),
         jfo = java.io.FileOutputStream(file);
-        ocuo{end+1} = onCleanup(@() jfo.close()); % Ensure safe closing of the compressed file in the end
+        ocuo{3} = onCleanup(@() jfo.close()); % Ensure safe closing of the compressed file in the end
         
         jbo = java.io.BufferedOutputStream(jfo); % Required for faster performance!
-        ocuo{end+1} = onCleanup(@() jbo.close()); % Ensure safe closing of the compressed file in the end
+        ocuo{2} = onCleanup(@() jbo.close()); % Ensure safe closing of the compressed file in the end
         
         jco = org.apache.tools.zip.ZipOutputStream(jbo);
-        ocuo{end+1} = onCleanup(@() jco.close()); % Ensure safe closing of the compressed file in the end
+        ocuo{1} = onCleanup(@() jco.close()); % Ensure safe closing of the compressed file in the end
         
         % Set compression level
         if ~isempty(CompressionLevel), % If empty, then use built-in default
@@ -201,10 +199,7 @@ function wit_io_file_compress(file, files, datas, varargin),
         end
     end
     function compress_zip_finish(),
-        jco.finish();
-        jco.close();
-        jbo.close();
-        jfo.close();
+%         jco.finish();
     end
     function compress_zip(),
         % Compress the given files and datas in loop
