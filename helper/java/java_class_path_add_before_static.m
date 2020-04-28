@@ -5,8 +5,9 @@
 % Add a file to custom URL ClassLoader, which is set as a new ancestor of
 % Java's System ClassLoader. In effect, its classes are found first before
 % those of System ClassLoader during the class search. For instance, some
-% of the MATLAB's built-in jar files can now be updated to newer version
-% without conflicts. This also tries to make the file classes available
+% of the MATLAB's built-in jar files can perhaps be updated to newer
+% version without conflicts. Unfortunately, this test has failed for
+% commons-compress.jar. This also tries to make the file classes available
 % on MATLAB side without need for external calls like importing. The
 % following website has inspired developing this code:
 % http://undocumentedmatlab.com/articles/static-java-classpath-hacks
