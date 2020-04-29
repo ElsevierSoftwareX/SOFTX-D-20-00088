@@ -302,15 +302,17 @@ function [files, datas] = wit_io_file_decompress(file, varargin),
                 java_buffer.limit(java_buffer.position()+MaxSubBlockSize); % Limit read to MaxSubBlockSize
                 N_read_subblock = entry_rbc.read(java_buffer); % Takes in ByteBuffer instead of byte []!
                 if verbose,
-                    fun_now(jfi.limit());
+                    fun_now(java_buffer.limit());
                 end
                 if N_read_subblock < MaxSubBlockSize, % Stop loop if last read
                     break;
                 end
             end
-            matlab_buffer = java_buffer.array(); % Extract buffer content to MATLAB
+            java_buffer.flip(); % Set limit to the current position and position to zero and discard mark
+            N_read_block = java_buffer.remaining();
             java_buffer.clear(); % Reset position to zero, limit to capacity and discard mark
-            entry_data = matlab_buffer(1:N_read);
+            matlab_buffer = java_buffer.array(); % Extract buffer content to MATLAB
+            entry_data = matlab_buffer(1:N_read_block);
         else,
             % Read the entry data in blocks
             available = entry_size; % May or may not be exact
