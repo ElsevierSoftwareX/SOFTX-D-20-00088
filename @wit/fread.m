@@ -25,6 +25,11 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         ocu = onCleanup(fun_end); % Automatically call fun_end whenever end of function is reached
     end
     
+    % Temporarily adjust warning settings
+    old_state = warning('query', 'backtrace'); % Get current warning state
+    warning off backtrace; % Disable the stack trace
+    ocu_restore_warning = onCleanup(@() warning(old_state)); % Restore warning state on exit
+    
     % Read wit Tree objects
     fread_helper(obj);
     

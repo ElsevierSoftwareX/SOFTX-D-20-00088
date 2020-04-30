@@ -34,8 +34,6 @@ function fread_Data(obj, fid, N_bytes_max, swapEndianess),
     Data = reshape(fread(fid, Length, 'uint8=>uint8', 0, 'l'), 1, []); % Row vector
 
     % Convert the read data to proper type specified by Type
-    old_state = warning('query', 'backtrace'); % Store warning state
-    warning off backtrace; % Disable the stack trace
     if swapEndianess, % Swap endianess using built-in flipud and reshape
         switch(obj.Type),
             case 2, % Double (8 bytes)
@@ -117,7 +115,6 @@ function fread_Data(obj, fid, N_bytes_max, swapEndianess),
                 warning('Tag(%s): Unsupported Type (%d)!', obj.FullName, obj.Type);
         end
     end
-    warning(old_state); % Restore warning state
     
     obj.skipRedundant = true; % Speed-up set.Data!
     obj.Data = Data; % Minimized expensive calls to set.Data (and get.Data)
