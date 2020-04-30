@@ -28,7 +28,13 @@
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 % Class for tree tags
-classdef wit < handle, % Since R2008a and Octave-compatible
+classdef wit < handle, % Since R2008a and Octave-compatible (except events)
+    %% MAIN EVENTS (not Octave-compatible)
+    events % May be subject to change in some future release if full Octave-compatibility is pursued!
+        Deletion;
+        Modification;
+    end
+    
     %% MAIN PROPERTIES
     properties (SetAccess = private) % READ-ONLY
         File = '';
@@ -67,7 +73,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
         % Accepts only fixed-length (8 bytes) char array as magic string, used in the beginning of the file
         Magic = 'WIT_TREE'; % Only the root value is used!
     end
-    properties (SetAccess = private) % READ-ONLY
+    properties (SetAccess = private, Hidden) % READ-ONLY
         % Other file-format parameters
         NameLength = uint32(0); % Always updated before writing!
         Start = uint64(0); % Always updated before writing!
@@ -101,7 +107,10 @@ classdef wit < handle, % Since R2008a and Octave-compatible
     
     % Handle-specific internal parameters
     properties (SetAccess = private) % READ-ONLY
-        Id = uint64(0); % Used internally enable handle-like comparison in Octave
+        Id = uint64(0); % Used internally to enable handle-like comparison in Octave
+    end
+    properties (SetAccess = private, Hidden) % READ-ONLY
+        IsValid = true; % Used internally to mark object invalid and that it should be deleted
     end
     
     % Class-specific internal parameters
@@ -153,6 +162,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible
             % WIT-tag formatted files.
             persistent skipRedundant;
             if isempty(skipRedundant), skipRedundant = false; end
+            notify(obj, 'Deletion'); % Trigger attached events
             % If called from within delete, then skip all redundant code
             if ~skipRedundant,
                 obj.Parent = wit.empty; % Disconnect parent (only for the first)
@@ -633,11 +643,13 @@ classdef wit < handle, % Since R2008a and Octave-compatible
                 while ~isempty(obj),
                     obj.ModificationsLatestAt = tag;
                     obj.ModificationsLatestAtId = tag_Id;
+                    notify(obj, 'Modification'); % Trigger attached events
                     obj = obj.Parent;
                 end
             else,
                 obj.ModificationsLatestAt = obj;
                 obj.ModificationsLatestAtId = obj.Id;
+                notify(obj, 'Modification'); % Trigger attached events
             end
         end
     end

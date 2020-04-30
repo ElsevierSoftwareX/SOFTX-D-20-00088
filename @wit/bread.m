@@ -34,7 +34,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         % Test the data stream
         if isempty(buffer),
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-            delete(obj);
+            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
         ind_max = numel(buffer);
@@ -50,7 +50,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
             ind_end = ind_begin-1 + 8;
             if ind_end > ind_max, % Abort, if the end is reached
                 obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-                delete(obj);
+                obj.IsValid = false; % Mark this object for deletion!
                 return;
             end
             obj.Magic = reshape(char(buffer(ind_begin:ind_end)), 1, []); % Force ascii-conversion
@@ -61,7 +61,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         ind_end = ind_begin-1 + 4;
         if ind_end > ind_max, % Abort, if the end is reached
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-            delete(obj);
+            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
         if ~swapEndianess, obj.NameLength = typecast(buffer(ind_begin:ind_end), 'uint32');
@@ -72,7 +72,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         ind_end = ind_begin-1 + double(obj.NameLength);
         if ind_end > ind_max, % Abort, if the end is reached
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-            delete(obj);
+            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
         obj.skipRedundant = true; % Speed-up set.Name!
@@ -83,7 +83,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         ind_end = ind_begin-1 + 4;
         if ind_end > ind_max, % Abort, if the end is reached
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-            delete(obj);
+            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
         if ~swapEndianess, obj.Type = typecast(buffer(ind_begin:ind_end), 'uint32');
@@ -94,7 +94,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         ind_end = ind_begin-1 + 8;
         if ind_end > ind_max, % Abort, if the end is reached
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-            delete(obj);
+            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
         if ~swapEndianess, obj.Start = typecast(buffer(ind_begin:ind_end), 'uint64');
@@ -105,7 +105,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         ind_end = ind_begin-1 + 8;
         if ind_end > ind_max, % Abort, if the end is reached
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-            delete(obj);
+            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
         if ~swapEndianess, obj.End = typecast(buffer(ind_begin:ind_end), 'uint64');
@@ -131,7 +131,8 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
                 child.skipRedundant = true; % Speed-up set.Parent
                 child.Parent = obj; % Adopt the new child being created
                 bread_helper(child); % Read the new child contents (or destroy it on failure)
-                if isvalid(child), children(end+1) = child; end % Add child if not deleted (but invalid-function is Octave-incompatible)
+                if child.IsValid, children(end+1) = child; % Add child if valid (and avoid Octave-incompatible isvalid-function)
+                else, delete(child); end % Delete child if not valid (and avoid Octave-incompatible isvalid-function)
             end
             obj.skipRedundant = true; % Speed-up set.Data
             obj.Data = children; % Adopt the new child being created

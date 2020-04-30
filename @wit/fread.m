@@ -32,7 +32,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         % Test the file stream
         if isempty(fid) || fid == -1,
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-            delete(obj);
+            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
         
@@ -46,7 +46,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         if isempty(obj.Parent),
             if feof(fid), % Abort, if file stream has reached the end
                 obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-                delete(obj);
+                obj.IsValid = false; % Mark this object for deletion!
                 return;
             end
             obj.Magic = reshape(fread(fid, 8, 'uint8=>char', 0, 'l'), 1, []); % Force ascii-conversion
@@ -55,7 +55,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         % Read NameLength (4 bytes)
         if feof(fid), % Abort, if file stream has reached the end
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-            delete(obj);
+            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
         obj.NameLength = fread(fid, 1, 'uint32=>uint32', 0, 'l');
@@ -63,7 +63,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         % Read Name (NameLength # of bytes)
         if feof(fid), % Abort, if file stream has reached the end
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-            delete(obj);
+            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
         obj.skipRedundant = true; % Speed-up set.Name!
@@ -72,7 +72,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         % Read Type (4 bytes)
         if feof(fid), % Abort, if file stream has reached the end
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-            delete(obj);
+            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
         obj.Type = fread(fid, 1, 'uint32=>uint32', 0, 'l');
@@ -80,7 +80,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         % Read Start (8 bytes)
         if feof(fid), % Abort, if file stream has reached the end
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-            delete(obj);
+            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
         obj.Start = fread(fid, 1, 'uint64=>uint64', 0, 'l');
@@ -88,7 +88,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         % Read End (8 bytes)
         if feof(fid), % Abort, if file stream has reached the end
             obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-            delete(obj);
+            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
         obj.End = fread(fid, 1, 'uint64=>uint64', 0, 'l');
@@ -112,7 +112,8 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
                 child.skipRedundant = true; % Speed-up set.Parent
                 child.Parent = obj; % Adopt the new child being created
                 fread_helper(child); % Read the new child contents (or destroy it on failure)
-                if isvalid(child), children(end+1) = child; end % Add child if not deleted (but invalid-function is Octave-incompatible)
+                if child.IsValid, children(end+1) = child; % Add child if valid (and avoid Octave-incompatible isvalid-function)
+                else, delete(child); end % Delete child if not valid (and avoid Octave-incompatible isvalid-function)
             end
             obj.skipRedundant = true; % Speed-up set.Data
             obj.Data = children; % Adopt the new child being created
