@@ -28,7 +28,10 @@
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 % Class for tree tags
-classdef wit < handle, % Since R2008a and Octave-compatible (except events)
+classdef wit < handle, % Since R2008a
+    % This class is Octave-compatible (except events) but it has been
+    % disabled by comming the related code segments for best performance
+    % with big datas.
     %% MAIN EVENTS (not Octave-compatible)
     events % May be subject to change in some future release if full Octave-compatibility is pursued!
         Deletion;
@@ -43,10 +46,10 @@ classdef wit < handle, % Since R2008a and Octave-compatible (except events)
     % Main file-format parameters
     properties % READ-WRITE
         Name = '';
-        Data; % = wit.empty; % latter is Octave-incompatible!
+        Data = [];
     end
     properties (SetAccess = private) % READ-ONLY
-        Type = uint32(0); % Always updated before writing!
+        Type = uint32(2); % Always updated before writing!
     end
     
     %% OTHER PROPERTIES
@@ -127,13 +130,6 @@ classdef wit < handle, % Since R2008a and Octave-compatible (except events)
             if isempty(NextId), NextId = uint64(1);
             else, NextId = NextId + 1; end
             obj.Id = NextId;
-            
-            % Set empty objects to Data and Parent in Octave-compatible way
-            empty_obj = obj([]); % Octave-compatible way to construct empty array of objects
-            obj.skipRedundant = true; % Speed-up set.Data
-            obj.Data = empty_obj; % Avoiding wit.empty due to infinite loop
-            obj.skipRedundant = true; % Speed-up set.Parent
-            obj.Parent = empty_obj; % Avoiding wit.empty due to infinite loop
             
             % Parse input
             if nargin > 0,
@@ -499,68 +495,68 @@ classdef wit < handle, % Since R2008a and Octave-compatible (except events)
         %% METHODS
         % Define Octave-compatible handle-like eq, ne, lt, le, gt and ge:
         % https://se.mathworks.com/help/matlab/ref/handle.relationaloperators.html
-        function tf = compare(O1, O2, fun, default),
-            if numel(O1) == 1 || numel(O2) == 1 || ... % Either O1 or O2 is scalar
-                    ndims(O1) == ndims(O2) && all(size(O1) == size(O2)), % Or size(O1) == size(O2)
-                if isa(O2, 'wit'), tf = fun(reshape([O1.Id], size(O1)), reshape([O2.Id], size(O2)));
-                elseif numel(O1) == 1, tf = repmat(default, size(O2));
-                else, tf = repmat(default, size(O1)); end
-            else, error('Matrix dimensions must agree.'); end
-        end
-        function tf = eq(O1, O2), tf = O1.compare(O2, @eq, false); end % Equal
-        function tf = ne(O1, O2), tf = O1.compare(O2, @ne, true); end % Not equal
-        function tf = lt(O1, O2), tf = O1.compare(O2, @lt, false); end % Less than
-        function tf = le(O1, O2), tf = O1.compare(O2, @le, false); end % Less than or equal
-        function tf = gt(O1, O2), tf = O1.compare(O2, @gt, false); end % Greater than
-        function tf = ge(O1, O2), tf = O1.compare(O2, @ge, false); end % Greater than or equal
+%         function tf = compare(O1, O2, fun, default),
+%             if numel(O1) == 1 || numel(O2) == 1 || ... % Either O1 or O2 is scalar
+%                     ndims(O1) == ndims(O2) && all(size(O1) == size(O2)), % Or size(O1) == size(O2)
+%                 if isa(O2, 'wit'), tf = fun(reshape([O1.Id], size(O1)), reshape([O2.Id], size(O2)));
+%                 elseif numel(O1) == 1, tf = repmat(default, size(O2));
+%                 else, tf = repmat(default, size(O1)); end
+%             else, error('Matrix dimensions must agree.'); end
+%         end
+%         function tf = eq(O1, O2), tf = O1.compare(O2, @eq, false); end % Equal
+%         function tf = ne(O1, O2), tf = O1.compare(O2, @ne, true); end % Not equal
+%         function tf = lt(O1, O2), tf = O1.compare(O2, @lt, false); end % Less than
+%         function tf = le(O1, O2), tf = O1.compare(O2, @le, false); end % Less than or equal
+%         function tf = gt(O1, O2), tf = O1.compare(O2, @gt, false); end % Greater than
+%         function tf = ge(O1, O2), tf = O1.compare(O2, @ge, false); end % Greater than or equal
         
         % Define horzcat, vertcat, reshape missing in Octave
-        function obj = horzcat(varargin), % Enables [O1 O2 ...]
-            if ~is_octave(), obj = builtin('horzcat', varargin{:}); % MATLAB-way
-            else, % Octave-way
-                obj = wit.empty;
-                varargin = varargin(~cellfun(@isempty, varargin)); % Skip empty
-                if ~isempty(varargin),
-                    D = max(cellfun(@ndims, varargin)); % Number of dimensions
-                    obj = varargin{1}; % Get the 1st non-empty object array
-                    [S{1:D}] = size(obj); % and its size
-                    for ii = 2:numel(varargin),
-                        obj_ii = varargin{ii}; % Get the ii'th non-empty object array
-                        [S_ii{1:D}] = size(obj_ii); % and its size
-                        if any([S{[1 3:D]}] ~= [S_ii{[1 3:D]}]), % Test if the sizes are compatible
-                            error('Dimensions of arrays being concatenated are not consistent.');
-                        end
-                        obj(end+1:end+numel(obj_ii)) = obj_ii; % Append to the 1st non-empty object array
-                    end
-                    obj = reshape(obj, S{1}, [], S{3:D}); % Restore the shape accordingly
-                end
-            end
-        end
-        function obj = vertcat(varargin), % Enables [O1; O2; ...]
-            if ~is_octave(), obj = builtin('vertcat', varargin{:}); % MATLAB-way
-            else, % Octave-way
-                obj = wit.empty;
-                varargin = varargin(~cellfun(@isempty, varargin)); % Skip empty
-                if ~isempty(varargin),
-                    D = max(cellfun(@ndims, varargin)); % Number of dimensions
-                    obj = varargin{1}; % Get the 1st non-empty object array
-                    [S{1:D}] = size(obj); % and its size
-                    for ii = 2:numel(varargin),
-                        obj_ii = varargin{ii}; % Get the ii'th non-empty object array
-                        [S_ii{1:D}] = size(obj_ii); % and its size
-                        if any([S{2:D}] ~= [S_ii{2:D}]), % Test if the sizes are compatible
-                            error('Dimensions of arrays being concatenated are not consistent.');
-                        end
-                        obj(end+1:end+numel(obj_ii)) = obj_ii; % Append to the 1st non-empty object array
-                    end
-                    obj = reshape(obj, [], S{2:D}); % Restore the shape accordingly
-                end
-            end
-        end
-        function obj = reshape(obj, varargin), % Enables object array reshaping
-            if ~is_octave(), obj = builtin('reshape', obj, varargin{:}); % MATLAB-way
-            else, obj = obj(reshape(1:numel(obj), varargin{:})); end % Octave-way
-        end
+%         function obj = horzcat(varargin), % Enables [O1 O2 ...]
+%             if ~is_octave(), obj = builtin('horzcat', varargin{:}); % MATLAB-way
+%             else, % Octave-way
+%                 obj = wit.empty;
+%                 varargin = varargin(~cellfun(@isempty, varargin)); % Skip empty
+%                 if ~isempty(varargin),
+%                     D = max(cellfun(@ndims, varargin)); % Number of dimensions
+%                     obj = varargin{1}; % Get the 1st non-empty object array
+%                     [S{1:D}] = size(obj); % and its size
+%                     for ii = 2:numel(varargin),
+%                         obj_ii = varargin{ii}; % Get the ii'th non-empty object array
+%                         [S_ii{1:D}] = size(obj_ii); % and its size
+%                         if any([S{[1 3:D]}] ~= [S_ii{[1 3:D]}]), % Test if the sizes are compatible
+%                             error('Dimensions of arrays being concatenated are not consistent.');
+%                         end
+%                         obj(end+1:end+numel(obj_ii)) = obj_ii; % Append to the 1st non-empty object array
+%                     end
+%                     obj = reshape(obj, S{1}, [], S{3:D}); % Restore the shape accordingly
+%                 end
+%             end
+%         end
+%         function obj = vertcat(varargin), % Enables [O1; O2; ...]
+%             if ~is_octave(), obj = builtin('vertcat', varargin{:}); % MATLAB-way
+%             else, % Octave-way
+%                 obj = wit.empty;
+%                 varargin = varargin(~cellfun(@isempty, varargin)); % Skip empty
+%                 if ~isempty(varargin),
+%                     D = max(cellfun(@ndims, varargin)); % Number of dimensions
+%                     obj = varargin{1}; % Get the 1st non-empty object array
+%                     [S{1:D}] = size(obj); % and its size
+%                     for ii = 2:numel(varargin),
+%                         obj_ii = varargin{ii}; % Get the ii'th non-empty object array
+%                         [S_ii{1:D}] = size(obj_ii); % and its size
+%                         if any([S{2:D}] ~= [S_ii{2:D}]), % Test if the sizes are compatible
+%                             error('Dimensions of arrays being concatenated are not consistent.');
+%                         end
+%                         obj(end+1:end+numel(obj_ii)) = obj_ii; % Append to the 1st non-empty object array
+%                     end
+%                     obj = reshape(obj, [], S{2:D}); % Restore the shape accordingly
+%                 end
+%             end
+%         end
+%         function obj = reshape(obj, varargin), % Enables object array reshaping
+%             if ~is_octave(), obj = builtin('reshape', obj, varargin{:}); % MATLAB-way
+%             else, obj = obj(reshape(1:numel(obj), varargin{:})); end % Octave-way
+%         end
         
         
         
@@ -616,7 +612,7 @@ classdef wit < handle, % Since R2008a and Octave-compatible (except events)
         out = DataTree_get(parent, format); % For (un)formatted structs
         
         % Define Octave-compatible empty-function
-        function empty = empty(),
+        function empty = empty(), % Faster than MATLAB's built-in empty!
             persistent empty_obj;
             if ~isa(empty_obj, 'wit'), % Do only once to achieve best performance
                 dummy_obj = wit(); % Create a dummy wit-class
