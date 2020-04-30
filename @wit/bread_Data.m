@@ -28,7 +28,6 @@ function bread_Data(obj, buffer, N_bytes_max, swapEndianess),
     % Skip, if upper read limit is reached.
     if Length > N_bytes_max,
         obj.File = obj.File; % Save the parent filename for the later
-        ind_begin = double(obj.End)+1; % Double OFFSET for compability!
         return;
     end
 
