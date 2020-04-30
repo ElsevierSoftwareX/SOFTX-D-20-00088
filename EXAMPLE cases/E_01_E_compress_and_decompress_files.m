@@ -30,11 +30,13 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before
 %-------------------------------------------------------------------------%
 h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E1E)} Compress and decompress files:}' ...
     '' ...
-    '\bullet Decompressing is done automatically if ''.zip''-extension is detected:' ...
+    '\bullet Decompressing is done automatically if ''.zip'' or ''.zst'' extension is detected:' ...
     '{\bf\fontname{Courier}[O\_wid, O\_wip, O\_wid\_HtmlNames] = wip.read(''example.wip.zip'', ''-all'');}' ...
     '' ...
-    '\bullet Compressing is done automatically if ''.zip''-extension is detected:' ...
-    '{\bf\fontname{Courier} O\_wip.write(''example.wip.zip'');}' ...
+    '\bullet Compressing is done automatically if ''.zip'' or ''.zst'' extension is detected:' ...
+    '{\bf\fontname{Courier}O\_wip.write(''example.wip.zip'');}' ...
+    '' ...
+    '\bullet The latter ''.zst'' stands for {\bf\fontname{Courier}ZStandard} and is a modern real-time compression algorithm that has both high compression ratios and high compression speed. It is {\bf\fontname{Courier}highly recommended} for big datas due to its speed superiority over *.zip format with comparable compression ratios.' ...
     '' ...
     '\bullet Read the code for more details.' ...
     '' ...
@@ -46,6 +48,7 @@ if ishandle(h), figure(h); uiwait(h); end
 
 %-------------------------------------------------------------------------%
 % Load example file as uncompressed
+fprintf('\n\n'); % Two additional newlines for more clarity
 [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all');
 %-------------------------------------------------------------------------%
 
@@ -53,7 +56,9 @@ if ishandle(h), figure(h); uiwait(h); end
 
 %-------------------------------------------------------------------------%
 % Compress the example file
-O_wip.write('E_v5.wip.zip'); % By default, use minimum compression
+fprintf('\n\n'); % Two additional newlines for more clarity
+O_wip.write('E_v5.wip.zip'); % By default, use minimum compression for *.zip
+% O_wip.write('E_v5.wip.zst'); % By default, use minimum compression for *.zst
 
 % Minimum compression level of 1 already achieve significant space savings
 % for some WITec software files. At best, the compressed files has been
@@ -61,10 +66,13 @@ O_wip.write('E_v5.wip.zip'); % By default, use minimum compression
 % when they contain hyperspectral Image Scan datas!
 
 % The compression level can be changed as shown below as commented lines:
-% O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', 0); % No compression
-% O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', 1); % Minimum compression
-% O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', []); % Built-in default compression
-% O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', 9); % Maximum compression
+% O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', 0); % No compression for *.zip
+% O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', 1); % Minimum compression for *.zip
+% O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', []); % Built-in default compression for *.zip
+% O_wip.write('E_v5.wip.zip', '-Params', '--CompressionLevel', 9); % Maximum compression for *.zip
+% O_wip.write('E_v5.wip.zst', '-Params', '--CompressionLevel', 1); % Minimum compression for *.zst
+% O_wip.write('E_v5.wip.zst', '-Params', '--CompressionLevel', []); % Built-in default compression for *.zst
+% O_wip.write('E_v5.wip.zst', '-Params', '--CompressionLevel', 22); % Maximum compression for *.zst
 
 % For more customization details, see to wit_io_file_compress.m. The
 % second dash '-' in front, like in '--CompressionLevel', is needed because
@@ -76,20 +84,25 @@ O_wip.write('E_v5.wip.zip'); % By default, use minimum compression
 
 % The commented lines below demonstrates another way to do the same:
 % binary = O_wip.Tree.bwrite(); % First convert wip Project object to binary
-% wit_io_file_compress('E_v5.wip.zip', 'E_v5.wip', binary); % Then compress the binary into zip archive
+% wit_io_file_compress('E_v5.wip.zip', 'E_v5.wip', binary); % Then compress the binary as *.zip
+% wit_io_file_compress('E_v5.wip.zst', 'E_v5.wip', binary); % Then compress the binary as *.zst
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
 % Decompress the compressed example file
+fprintf('\n\n'); % Two additional newlines for more clarity
 [O_wid2, O_wip2, O_wid_HtmlNames2] = wip.read('E_v5.wip.zip', '-all');
+% [O_wid2, O_wip2, O_wid_HtmlNames2] = wip.read('E_v5.wip.zst', '-all');
 
-% Only the *.wid and *.wip are decompressed from the zip archive file and
-% all the others are ignored. If there are multiple files, then they are
-% all loaded and merged into one wip Project object.
+% By default, only the *.wid and *.wip are decompressed from *.zip and
+% *.zst files and all the others are ignored. For *.zip, if there are
+% multiple files, then they are all loaded and merged into one wip Project
+% object. This does not apply to *.zst, because it only contains a single
+% file in it.
 
-% If it is important to load only certain files from the zip archive, then
+% If it is important to load only certain files from *.zip file, then
 % filter the files extra parameter '--Files' like commented below:
 % [O_wid2, O_wip2, O_wid_HtmlNames2] = wip.read('E_v5.wip.zip', '-all', '-Params', '--Files', 'E_v5.wip'); % Find and load 'E_v5.wip'
 
@@ -98,7 +111,7 @@ O_wip.write('E_v5.wip.zip'); % By default, use minimum compression
 % function is not called directly. For direct calls, '-Files' is the
 % correct way.
 
-% The zip archive file names can also be loaded with one of the following lines:
+% The compressed file names can also be loaded with one of the following lines:
 files_in_zip = wit_io_file_decompress('E_v5.wip.zip'); % This loads files BUT SKIPS DATA DECOMPRESSION
 [files_in_zip, datasizes_in_zip] = wit_io_file_decompress('E_v5.wip.zip', '-DataSizes'); % This loads files and data sizes BUT SKIPS DATA DECOMPRESSION
 
