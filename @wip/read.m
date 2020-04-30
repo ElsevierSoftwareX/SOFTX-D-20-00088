@@ -125,7 +125,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
         % Get file name
         [~, name, ext] = fileparts(File);
         FileName = [name ext];
-        fprintf('\n\n\nReading from file: %s\n', FileName);
+        fprintf('\nReading from file: %s\n', FileName);
         % Decompress
         [~, zip_datas] = wit_io_file_decompress(File, '-FilterExtension', '.wip', '.wid', '-ProgressBar', Params{:}); % Decompress binary from zip archive
         % Loop through data entries

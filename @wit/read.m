@@ -34,7 +34,7 @@ function obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteri
     
     % Then read the file
     if ~Silent,
-        fprintf('\n\n\nReading from file: %s\n', FileName);
+        fprintf('\nReading from file: %s\n', FileName);
     end
     if isa(CustomFun, 'function_handle'),
         CustomFun(obj, File);

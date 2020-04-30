@@ -34,7 +34,7 @@ function write(obj, varargin),
     FileName = [name ext];
     
     % Then write the root
-    fprintf('\n\n\nWriting to file: %s\n', FileName);
+    fprintf('\nWriting to file: %s\n', FileName);
     if isa(CustomFun, 'function_handle'),
         CustomFun(Root, File);
     else,
