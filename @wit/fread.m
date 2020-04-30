@@ -30,32 +30,30 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
     warning off backtrace; % Disable the stack trace
     ocu_restore_warning = onCleanup(@() warning(old_state)); % Restore warning state on exit
     
-    % Read wit Tree objects
-    fread_helper(obj);
-    
-    function fread_helper(obj),
-        % Test the file stream
-        if isempty(fid) || fid == -1,
-            obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-            obj.IsValid = false; % Mark this object for deletion!
-            return;
-        end
+    % Test the file stream
+    if isempty(fid) || fid == -1, obj.IsValid = false; end % Mark this object for deletion!
         
+    % Set the object itself as its own latest modified object (known beforehand)
+    obj.ModificationsLatestAt = obj;
+    
+    % Read Magic (8 bytes) (only if Root)
+    if obj.IsValid && isempty(obj.Parent),
+        % Abort, if file stream has reached the end
+        if feof(fid), obj.IsValid = false; end % Mark this object for deletion!
+        obj.Magic = reshape(fread(fid, 8, 'uint8=>char', 0, 'l'), 1, []); % Force ascii-conversion
+    end
+    
+    % Read wit Tree objects
+    if obj.IsValid, fread_helper(obj); end
+    
+    % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
+    if ~obj.IsValid, delete(obj); end
+    function fread_helper(obj),
         % Do not allow obj to notify its ancestors on modifications
         obj.ModificationsToAncestors = false;
         
         % Set the object itself as its own latest modified object (known beforehand)
         obj.ModificationsLatestAt = obj;
-        
-        % Read Magic (8 bytes) (only if Root)
-        if isempty(obj.Parent),
-            if feof(fid), % Abort, if file stream has reached the end
-                obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-                obj.IsValid = false; % Mark this object for deletion!
-                return;
-            end
-            obj.Magic = reshape(fread(fid, 8, 'uint8=>char', 0, 'l'), 1, []); % Force ascii-conversion
-        end
         
         % Read NameLength (4 bytes)
         if feof(fid), % Abort, if file stream has reached the end

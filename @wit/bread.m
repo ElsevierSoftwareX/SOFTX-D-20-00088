@@ -15,11 +15,12 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
     if nargin < 7, fun_progress_bar = @wit.progress_bar; end % By default: verbose progress bar in Command Window
     
     ind_begin = 1;
+    ind_max = numel(buffer);
     
     verbose = isa(fun_progress_bar, 'function_handle');
     if verbose,
         % Get buffer size
-        BufferSize = uint64(numel(buffer));
+        BufferSize = uint64(ind_max);
         
         fprintf('Reading %d bytes of binary as wit Tree objects:\n', BufferSize);
         [fun_start, fun_now, fun_end] = fun_progress_bar(BufferSize);
@@ -32,35 +33,33 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
     warning off backtrace; % Disable the stack trace
     ocu_restore_warning = onCleanup(@() warning(old_state)); % Restore warning state on exit
     
+    % Test the data stream
+    if isempty(buffer), obj.IsValid = false; end % Mark this object for deletion!
+        
+    % Set the object itself as its own latest modified object (known beforehand)
+    obj.ModificationsLatestAt = obj;
+    
+    % Read Magic (8 bytes) (only if Root)
+    if obj.IsValid && isempty(obj.Parent),
+        ind_end = ind_begin-1 + 8;
+        % Abort, if the end is reached
+        if ind_end > ind_max, obj.IsValid = false; end % Mark this object for deletion!
+        obj.Magic = reshape(char(buffer(ind_begin:ind_end)), 1, []); % Force ascii-conversion
+        ind_begin = ind_end + 1; % Set next begin index
+    end
+    
     % Read wit Tree objects
-    bread_helper(obj);
+    if obj.IsValid, bread_helper(obj); end
+    
+    % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
+    if ~obj.IsValid, delete(obj); end
     
     function bread_helper(obj),
-        % Test the data stream
-        if isempty(buffer),
-            obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-            obj.IsValid = false; % Mark this object for deletion!
-            return;
-        end
-        ind_max = numel(buffer);
-        
         % Do not allow obj to notify its ancestors on modifications
         obj.ModificationsToAncestors = false;
         
         % Set the object itself as its own latest modified object (known beforehand)
         obj.ModificationsLatestAt = obj;
-        
-        % Read Magic (8 bytes) (only if Root)
-        if isempty(obj.Parent),
-            ind_end = ind_begin-1 + 8;
-            if ind_end > ind_max, % Abort, if the end is reached
-                obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
-                obj.IsValid = false; % Mark this object for deletion!
-                return;
-            end
-            obj.Magic = reshape(char(buffer(ind_begin:ind_end)), 1, []); % Force ascii-conversion
-            ind_begin = ind_end + 1; % Set next begin index
-        end
         
         % Read NameLength (4 bytes)
         ind_end = ind_begin-1 + 4;
