@@ -38,8 +38,8 @@ function [O_wit, varargout] = append(varargin),
         if isempty(offset), offset = 1; end % No data yet
     else, offset = Tag_ID.Data; end
     if isempty(offset), offset = 1; end % In case of empty NextDataId
-    Tag_ND = O_wit.regexp('^NumberOfData<Data(<[^<]*)*$', true);
-    Tag_Data = Tag_ND.Parent;
+    Tag_Data = O_wit.regexp('^Data(<WITec (Project|Data))?$', true);
+    Tag_ND = Tag_Data.search('NumberOfData', 'Data');
     ND = Tag_ND.Data;
     Tag_Viewer = O_wit.regexp('^Viewer(<WITec (Project|Data))?$', true);
     if ~isempty(Tag_Viewer), % Does not exist for WITec Data

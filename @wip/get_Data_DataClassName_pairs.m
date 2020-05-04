@@ -11,7 +11,7 @@ function Pairs = get_Data_DataClassName_pairs(O_wit),
         if isempty(regexp(C_ii.FullName, '^([^<]*<)*Data(ClassName)? \d+<Data(<WITec (Project|Data))?$', 'once')),
             % If not, then consider only the WIP/WID-formatted DataClassName and Data -pairs
             Root = [C_ii.Root];
-            Tag_Data = Root.regexp('^NumberOfData<Data(<[^<]*)*$', true).Parent;
+            Tag_Data = Root.regexp('^Data(<WITec (Project|Data))?$', true);
             Tags_1 = Tag_Data.search({'^DataClassName \d+$'}, 'Data');
             Tags_2 = Tag_Data.search({'^Data \d+$'}, 'Data');
             strs_1 = strrep({Tags_1.Name}, 'DataClassName ', '');
