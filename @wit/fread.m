@@ -70,7 +70,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
             return;
         end
         obj.skipRedundant = true; % Speed-up set.Name!
-        obj.Name = fread(fid, double(obj.NameLength), 'uint8=>char', 0, 'l'); % String is a char row vector % Double OFFSET for compability!
+        obj.Name = reshape(fread(fid, double(obj.NameLength), 'uint8=>char', 0, 'l'), 1, []); % String is a char row vector % Double OFFSET for compability!
         
         % Read Type (4 bytes)
         if feof(fid), % Abort, if file stream has reached the end

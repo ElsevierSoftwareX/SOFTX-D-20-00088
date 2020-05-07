@@ -80,7 +80,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
             return;
         end
         obj.skipRedundant = true; % Speed-up set.Name!
-        obj.Name = char(buffer(ind_begin:ind_end));
+        obj.Name = reshape(char(buffer(ind_begin:ind_end)), 1, []);
         ind_begin = ind_end + 1; % Set next begin index
         
         % Read Type (4 bytes)
