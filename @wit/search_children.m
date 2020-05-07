@@ -5,25 +5,26 @@
 % Finds matching children by the specified names (= varargin). This can be
 % chained and can be much faster than .search or .regexp.
 function varargout = search_children(obj, varargin),
-    N_varargin = numel(varargin); % Number of inputs
-    varargout(1:N_varargin) = {wit.empty}; % Initialize outputs
-    if isempty(obj), return; end % Stop if obj is empty
-    [varargin, ii2ind] = sort(varargin);
-    Children = obj.Children;
-    N_Children = numel(Children);
+    % Preallocate outputs
+    varargout = cell(size(varargin));
+    % Get wit Tree object Children
+    if isempty(obj), Children = wit.empty;
+    else, Children = [obj.Children]; end
+    % Sort both children and input Name strings
     [Names_sorted, jj2ind] = sort({Children.Name});
-    jj_begin = 1;
-    for ii = 1:N_varargin,
-        name = varargin{ii};
-        match_found = false;
-        for jj = jj_begin:N_Children,
-            if strcmp(name, Names_sorted{jj}),
-                varargout{ii2ind(ii)} = Children(jj2ind(jj));
-                match_found = true;
-                jj_begin = jj+1;
-                break;
-            end
+    [varargin, ii2ind] = sort(varargin);
+    % Loop to match them
+    jj = 1;
+    N_Children = numel(Children);
+    B_matches = false(size(Children));
+    for ii = 1:numel(varargin),
+        while jj <= N_Children,
+            if strcmp(varargin{ii}, Names_sorted{jj}),
+                B_matches(jj2ind(jj)) = true;
+            elseif any(B_matches), break; end
+            jj = jj + 1;
         end
-        if ~match_found, break; end % Stop because no more matches exist
+        varargout{ii2ind(ii)} = Children(B_matches);
+        B_matches(B_matches) = false; % Reset boolean map
     end
 end
