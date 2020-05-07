@@ -584,6 +584,7 @@ classdef wit < handle, % Since R2008a
         
         % Object search
         varargout = search_children(obj, varargin);
+        tags = regexp_all_Names(obj, pattern);
         tags = regexp(obj, pattern, FirstOnly, LayersFurther, PrevFullNames);
         tags = search(obj, varargin);
         tags = regexp_ancestors(obj, pattern, FirstOnly, LayersFurther);
