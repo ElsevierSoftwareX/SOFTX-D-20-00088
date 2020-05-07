@@ -187,17 +187,15 @@ classdef wit < handle, % Since R2008a
         
         % Name (READ-WRITE) % Changes counted by Modifications-property!
         function set.Name(obj, Name),
-            % Validate the given input
-            if ischar(Name),
-                if obj.skipRedundant, % Speed-up
-                    obj.skipRedundant = false; % Toggle the flag
-                else,
-                    % Do nothing if no difference
-                    if strcmp(Name, obj.Name), return; end
-                    % Update obj's Modifications and notify its ancestors
-                    obj.modification;
-                end
+            if obj.skipRedundant, % Speed-up
+                obj.skipRedundant = false; % Toggle the flag
+                obj.Name = Name;
+            elseif ischar(Name), % Validate the given input
+                % Do nothing if no difference
+                if strcmp(Name, obj.Name), return; end
                 obj.Name = reshape(Name, 1, []);
+                % Update obj's Modifications and notify its ancestors
+                obj.modification;
             else,
                 error('Only a char array can be a name!');
             end
@@ -206,21 +204,25 @@ classdef wit < handle, % Since R2008a
         % Data (READ-WRITE) % Changes counted by Modifications-property!
         function set.Data(obj, Data),
             if ~isa(Data, 'wit'), % GENERAL CASE: Add new data to the obj
-                obj.Data = Data;
                 if obj.skipRedundant, % Speed-up
                     obj.skipRedundant = false; % Toggle the flag
+                    obj.Data = Data;
                 else,
+                    obj.Data = Data;
+                    % Update HasData-flag
+                    obj.HasData = ~isempty(Data);
                     % Update obj's Modifications and notify its ancestors
                     obj.modification;
                 end
             else, % SPECIAL CASE: Add new children to the obj
-                N_Data = numel(Data);
                 % If called from set.Parent, then skip all redundant code
                 if obj.skipRedundant, % Speed-up and avoid infinite recursive loop
                     obj.skipRedundant = false; % Toggle the flag
+                    obj.Data = Data;
                 else,
                     Data_Id = [Data.Id]; % Load once
                     % Error if the new children are not unique
+                    N_Data = numel(Data);
                     for ii = 1:N_Data,
                         if any(Data_Id(ii) == Data_Id(ii+1:end)), % Same as Data(ii) == Data(ii+1:end) but Octave-compatible way
                             error('A parent can adopt a child only once! A duplicate was found at index %d!', ii);
@@ -263,15 +265,15 @@ classdef wit < handle, % Since R2008a
                         Data(ii).modification;
                         Data(ii).ModificationsToAncestors = true;
                     end
+                    % Parent the new children
+                    Children(1:N_Data) = Data; % Octave-compatible way to generate a row vector of wit objects
+                    obj.Data = Children;
+                    % Update HasData-flag
+                    obj.HasData = ~isempty(Children);
                     % Update obj's Modifications and notify its ancestors
                     obj.modification;
                 end
-                % Parent the new children
-                Children(1:N_Data) = Data; % Octave-compatible way to generate a row vector of wit objects
-                obj.Data = Children;
             end
-            % Update HasData-flag
-            obj.HasData = ~isempty(Data);
         end
         
         % Type (READ-ONLY)
@@ -279,10 +281,10 @@ classdef wit < handle, % Since R2008a
         %% OTHER PROPERTIES
         % Parent (READ-WRITE) % Changes counted by Modifications-property!
         function set.Parent(obj, Parent),
-            skipRedundant = obj.skipRedundant;
             % If called from set.Data, then skip all redundant code
-            if skipRedundant, % Speed-up and avoid infinite recursive loop
+            if obj.skipRedundant, % Speed-up and avoid infinite recursive loop
                 obj.skipRedundant = false; % Toggle the flag
+                obj.Parent = Parent;
             else,
                 % Validate the given input
                 if ~isa(Parent, 'wit') || numel(Parent) > 1,
@@ -324,16 +326,13 @@ classdef wit < handle, % Since R2008a
                     % Update old parent's Modifications and notify its ancestors
                     Parent_old.modification;
                 end
-            end
-            % If this object becomes a root, then inherit the old root's key properties
-            if isempty(Parent) && ~isempty(obj.Parent),
-                obj.File = obj.File; % Inherit the file string from this or the old root
-                obj.Magic = obj.Magic; % Inherit the magic string from the old root
-            end
-            % Set the new parent
-            obj.Parent = Parent;
-            
-            if ~skipRedundant,
+                % If this object becomes a root, then inherit the old root's key properties
+                if isempty(Parent) && ~isempty(obj.Parent),
+                    obj.File = obj.File; % Inherit the file string from this or the old root
+                    obj.Magic = obj.Magic; % Inherit the magic string from the old root
+                end
+                % Set the new parent
+                obj.Parent = Parent;
                 % Update obj's Modifications and notify its ancestors
                 obj.modification;
             end
