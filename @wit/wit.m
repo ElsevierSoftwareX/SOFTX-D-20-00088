@@ -34,7 +34,7 @@ classdef wit < handle, % Since R2008a
     % with big datas.
     %% MAIN EVENTS (not Octave-compatible)
     events % May be subject to change in some future release if full Octave-compatibility is pursued!
-        Deletion;
+        % ObjectBeingDestroyed; % Automatically defined by the handle class
         Modification;
     end
     
@@ -158,7 +158,6 @@ classdef wit < handle, % Since R2008a
             % WIT-tag formatted files.
             persistent skipRedundant;
             if isempty(skipRedundant), skipRedundant = false; end
-            notify(obj, 'Deletion'); % Trigger attached events
             % If called from within delete, then skip all redundant code
             if ~skipRedundant,
                 obj.Parent = wit.empty; % Disconnect parent (only for the first)
