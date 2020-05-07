@@ -4,11 +4,10 @@
 
 function tags = regexp_all_Names(obj, pattern),
     % Finds Tag(s) by specified Name-pattern.
-    objs = obj;
+    tags = obj(~cellfun(@isempty, regexp({obj.Name}, pattern, 'once'))); % Benefit from cell-array speed-up
     Descendants = [obj.Children];
     while ~isempty(Descendants),
-        objs = [objs Descendants];
+        tags = [tags Descendants(~cellfun(@isempty, regexp({Descendants.Name}, pattern, 'once')))]; % Benefit from cell-array speed-up];
         Descendants = [Descendants.Children];
     end
-    tags = objs(~cellfun(@isempty, regexp({objs.Name}, pattern, 'once'))); % Benefit from cell-array speed-up
 end
