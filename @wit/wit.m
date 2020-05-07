@@ -585,6 +585,7 @@ classdef wit < handle, % Since R2008a
         [best_dist, best_obj] = binary_ind2obj(obj, ind); % For debugging
         
         % Object search
+        varargout = search_children(obj, varargin);
         tags = regexp(obj, pattern, FirstOnly, LayersFurther, PrevFullNames);
         tags = search(obj, varargin);
         tags = regexp_ancestors(obj, pattern, FirstOnly, LayersFurther);
