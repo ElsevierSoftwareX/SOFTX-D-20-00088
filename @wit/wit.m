@@ -30,7 +30,7 @@
 % Class for tree tags
 classdef wit < handle, % Since R2008a
     % This class is Octave-compatible (except events) but it has been
-    % disabled by comming the related code segments for best performance
+    % disabled by commenting the related code segments for best performance
     % with big datas.
     %% MAIN EVENTS (not Octave-compatible)
     events % May be subject to change in some future release if full Octave-compatibility is pursued!
@@ -44,9 +44,9 @@ classdef wit < handle, % Since R2008a
     end
     
     % Main file-format parameters
-    properties % READ-WRITE
-        Name = '';
-        Data = [];
+    properties (Dependent) % READ-WRITE, DEPENDENT
+        Name; % Rely on internal NameNow
+        Data; % Rely on internal DataNow
     end
     properties (SetAccess = private) % READ-ONLY
         Type = uint32(2); % Always updated before writing!
@@ -54,21 +54,19 @@ classdef wit < handle, % Since R2008a
     
     %% OTHER PROPERTIES
     % References to other relevant tags
-    properties % READ-WRITE
-        Parent; % = wit.empty; % latter is Octave-incompatible!
-    end
     properties (Dependent) % READ-WRITE, DEPENDENT
+        Parent; % Rely on internal ParentNow
         % Dependent on Data
-        Children;
+        Children; % Rely on internal ChildrenNow
         % Dependent on Parent
-        Root;
+        Root; % Rely on internal RootNow
         Siblings;
         Next; % Next sibling
         Prev; % Previous sibling
     end
     properties (SetAccess = private, Dependent) % READ-ONLY, DEPENDENT
         % Dependent on Name and Parent
-        FullName;
+        FullName; % Rely on internal FullNameNow
     end
     
     % File-specific parameters
@@ -86,6 +84,14 @@ classdef wit < handle, % Since R2008a
         HasData = false; % Useful flag for the reloading cases
     end
     
+    % Internal parameters for maximum performance due to use of big datas
+    properties (SetAccess = private, Hidden) % READ-ONLY
+        NameNow = '';
+        DataNow = [];
+        ParentNow = []; % = wit.empty; % Only [] is Octave-compatible!
+        ChildrenNow = []; % = wit.empty; % Only [] is Octave-compatible!
+    end
+    
     % Tree-specific internal parameters
     properties (SetAccess = private) % READ-ONLY
         % Modifications is incremented once per successful set.Name,
@@ -98,12 +104,12 @@ classdef wit < handle, % Since R2008a
         % modification optimizations
         ModificationsToAncestors = true;
         % get.Root optimizations
-        RootPersistent;
+        RootNow;
         RootModificationsLatestAtId = uint64(0);
         RootModifications = uint64(0);
         % get.FullName optimizations
-        FullNamePersistent;
-        FullName_RootPersistent;
+        FullNameNow;
+        FullName_RootNow;
         FullName_RootModificationsLatestAtId = uint64(0);
         FullName_RootModifications = uint64(0);
     end
@@ -114,11 +120,6 @@ classdef wit < handle, % Since R2008a
     end
     properties (SetAccess = private, Hidden) % READ-ONLY
         IsValid = true; % Used internally to mark object invalid and that it should be deleted
-    end
-    
-    % Class-specific internal parameters
-    properties (SetAccess = private, Hidden) % READ-ONLY
-        skipRedundant = false; % Used internally to speed-up set.Data and set.Parent
     end
     
     %% PUBLIC METHODS
@@ -156,17 +157,17 @@ classdef wit < handle, % Since R2008a
             % delete this and its descendants permanently. Although this
             % uses recursion, it is unlikely to become a problem within the
             % WIT-tag formatted files.
-            persistent skipRedundant;
-            if isempty(skipRedundant), skipRedundant = false; end
+            persistent subdelete;
+            if isempty(subdelete), subdelete = false; end
             % If called from within delete, then skip all redundant code
-            if ~skipRedundant,
+            if subdelete,
+                delete(obj.Children);
+            else,
                 obj.Parent = wit.empty; % Disconnect parent (only for the first)
                 % Delete descendants
-                skipRedundant = true; % Speed-up next delete-calls
+                subdelete = true; % Speed-up next delete-calls
                 delete(obj.Children);
-                skipRedundant = false;
-            else,
-                delete(obj.Children);
+                subdelete = false;
             end
             % Useful resources:
             % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
@@ -184,15 +185,15 @@ classdef wit < handle, % Since R2008a
             else, File = obj.Root.File; end % Otherwise, obtain it from the root
         end
         
-        % Name (READ-WRITE) % Changes counted by Modifications-property!
+        % Name (READ-WRITE, DEPENDENT) % Changes counted by Modifications-property!
+        function Name = get.Name(obj),
+            Name = obj.NameNow;
+        end
         function set.Name(obj, Name),
-            if obj.skipRedundant, % Speed-up
-                obj.skipRedundant = false; % Toggle the flag
-                obj.Name = Name;
-            elseif ischar(Name), % Validate the given input
+            if ischar(Name), % Validate the given input
                 % Do nothing if no difference
-                if strcmp(Name, obj.Name), return; end
-                obj.Name = reshape(Name, 1, []);
+                if strcmp(Name, obj.NameNow), return; end
+                obj.NameNow = reshape(Name, 1, []);
                 % Update obj's Modifications and notify its ancestors
                 obj.modification;
             else,
@@ -200,147 +201,134 @@ classdef wit < handle, % Since R2008a
             end
         end
         
-        % Data (READ-WRITE) % Changes counted by Modifications-property!
+        % Data (READ-WRITE, DEPENDENT) % Changes counted by Modifications-property!
+        function Data = get.Data(obj),
+            Data = obj.DataNow;
+        end
         function set.Data(obj, Data),
             if ~isa(Data, 'wit'), % GENERAL CASE: Add new data to the obj
-                if obj.skipRedundant, % Speed-up
-                    obj.skipRedundant = false; % Toggle the flag
-                    obj.Data = Data;
-                else,
-                    obj.Data = Data;
-                    % Update HasData-flag
-                    obj.HasData = ~isempty(Data);
-                    % Update obj's Modifications and notify its ancestors
-                    obj.modification;
-                end
+                obj.DataNow = Data;
+                obj.ChildrenNow = wit.empty;
+                % Update HasData-flag
+                obj.HasData = ~isempty(Data);
+                % Update obj's Modifications and notify its ancestors
+                obj.modification;
             else, % SPECIAL CASE: Add new children to the obj
                 % If called from set.Parent, then skip all redundant code
-                if obj.skipRedundant, % Speed-up and avoid infinite recursive loop
-                    obj.skipRedundant = false; % Toggle the flag
-                    obj.Data = Data;
-                else,
-                    Data_Id = [Data.Id]; % Load once
-                    % Error if the new children are not unique
-                    N_Data = numel(Data);
-                    for ii = 1:N_Data,
-                        if any(Data_Id(ii) == Data_Id(ii+1:end)), % Same as Data(ii) == Data(ii+1:end) but Octave-compatible way
-                            error('A parent can adopt a child only once! A duplicate was found at index %d!', ii);
-                        end
+                Data_Id = [Data.Id]; % Load once
+                % Error if the new children are not unique
+                N_Data = numel(Data);
+                for ii = 1:N_Data,
+                    if any(Data_Id(ii) == Data_Id(ii+1:end)), % Same as Data(ii) == Data(ii+1:end) but Octave-compatible way
+                        error('A parent can adopt a child only once! A duplicate was found at index %d!', ii);
                     end
-                    % Error if a loop is being created
-                    Ancestor = obj;
-                    while ~isempty(Ancestor),
-                        if any(Ancestor.Id == Data_Id), % Same as Ancestor == Data but Octave-compatible way
-                            error('Loops cannot be created with wit tree objects!');
-                        end
-                        Ancestor = Ancestor.Parent;
-                    end
-                    % Remove parent of those old children that are not found among the new children
-                    B_old = false(size(Data));
-                    Data_old = obj.Data;
-                    if isa(Data_old, 'wit'),
-                        for ii = 1:numel(Data_old),
-                            % Remove parent of an old child if it is not found among the new children
-                            B_old_ii = Data_old(ii).Id == Data_Id; % Same as Data_old(ii) == Data but Octave-compatible way
-                            if any(B_old_ii),
-                                B_old = B_old | B_old_ii;
-                            else,
-                                Data_old(ii).skipRedundant = true; % Speed-up and avoid infinite recursive loop
-                                Data_old(ii).Parent = wit.empty;
-                                % Update old child's Modifications but do not notify its ancestors
-                                Data_old(ii).ModificationsToAncestors = false;
-                                Data_old(ii).modification;
-                                Data_old(ii).ModificationsToAncestors = true;
-                            end
-                        end
-                    end
-                    % Set parent
-                    for ii = 1:N_Data,
-                        if B_old(ii), continue; end % Skip if already parented
-                        Data(ii).skipRedundant = true; % Speed-up and avoid infinite recursive loop
-                        Data(ii).Parent = obj;
-                        % Update new child's Modifications but do not notify its ancestors
-                        Data(ii).ModificationsToAncestors = false;
-                        Data(ii).modification;
-                        Data(ii).ModificationsToAncestors = true;
-                    end
-                    % Parent the new children
-                    Children(1:N_Data) = Data; % Octave-compatible way to generate a row vector of wit objects
-                    obj.Data = Children;
-                    % Update HasData-flag
-                    obj.HasData = ~isempty(Children);
-                    % Update obj's Modifications and notify its ancestors
-                    obj.modification;
                 end
+                % Error if a loop is being created
+                Ancestor = obj;
+                while ~isempty(Ancestor),
+                    if any(Ancestor.Id == Data_Id), % Same as Ancestor == Data but Octave-compatible way
+                        error('Loops cannot be created with wit tree objects!');
+                    end
+                    Ancestor = Ancestor.ParentNow;
+                end
+                % Remove parent of those old children that are not found among the new children
+                B_old = false(size(Data));
+                Data_old = obj.ChildrenNow;
+                for ii = 1:numel(Data_old),
+                    % Remove parent of an old child if it is not found among the new children
+                    B_old_ii = Data_old(ii).Id == Data_Id; % Same as Data_old(ii) == Data but Octave-compatible way
+                    if any(B_old_ii),
+                        B_old = B_old | B_old_ii;
+                    else,
+                        Data_old(ii).ParentNow = wit.empty;
+                        % Update old child's Modifications but do not notify its ancestors
+                        Data_old(ii).ModificationsToAncestors = false;
+                        Data_old(ii).modification;
+                        Data_old(ii).ModificationsToAncestors = true;
+                    end
+                end
+                % Set parent
+                for ii = 1:N_Data,
+                    if B_old(ii), continue; end % Skip if already parented
+                    Data(ii).ParentNow = obj;
+                    % Update new child's Modifications but do not notify its ancestors
+                    Data(ii).ModificationsToAncestors = false;
+                    Data(ii).modification;
+                    Data(ii).ModificationsToAncestors = true;
+                end
+                % Parent the new children
+                Children(1:N_Data) = Data; % Octave-compatible way to generate a row vector of wit objects
+                obj.DataNow = Children;
+                obj.ChildrenNow = Children;
+                % Update HasData-flag
+                obj.HasData = ~isempty(Children);
+                % Update obj's Modifications and notify its ancestors
+                obj.modification;
             end
         end
         
         % Type (READ-ONLY)
         
         %% OTHER PROPERTIES
-        % Parent (READ-WRITE) % Changes counted by Modifications-property!
+        % Parent (READ-WRITE, DEPENDENT) % Changes counted by Modifications-property!
+        function Parent = get.Parent(obj),
+            Parent = obj.ParentNow;
+        end
         function set.Parent(obj, Parent),
             % If called from set.Data, then skip all redundant code
-            if obj.skipRedundant, % Speed-up and avoid infinite recursive loop
-                obj.skipRedundant = false; % Toggle the flag
-                obj.Parent = Parent;
-            else,
-                % Validate the given input
-                if ~isa(Parent, 'wit') || numel(Parent) > 1,
-                    error('Parent can be set by either an empty or a single wit tree object!');
-                end
-                % Get old parent
-                Parent_old = obj.Parent;
-                % Stop if both old and new parents are empty
-                if isempty(Parent) && isempty(Parent_old),
-                    if ~isa(Parent_old, 'wit'),
-                        obj.Parent = Parent;
-                    end
-                    return;
-                end
-                % Stop if both old and new parents are same
-                if ~isempty(Parent) && ~isempty(Parent_old) && Parent.Id == Parent_old.Id, % Same as Parent == Parent_old but Octave-compatible way
-                    return;
-                end
-                % Error if a loop is being created
-                Ancestor = Parent;
-                obj_Id = obj.Id; % Load once
-                while ~isempty(Ancestor),
-                    if Ancestor.Id == obj_Id, % Same as Ancestor == obj but Octave-compatible way
-                        error('Loops cannot be created with wit tree objects!');
-                    end
-                    Ancestor = Ancestor.Parent;
-                end
-                % Adopt this object by the new non-empty parent
-                if ~isempty(Parent),
-                    Parent.skipRedundant = true; % Speed-up and avoid infinite recursive loop
-                    if isa(Parent.Data, 'wit'), Parent.Data(end+1) = obj; % Octave-compatible way
-                    else, Parent.Data = obj; end % Octave-compatible way
-%                     Parent.Data = [Parent.Children obj];
-                end
-                % Remove this object from the old non-empty parent
-                if ~isempty(Parent_old),
-                    Parent_old.skipRedundant = true; % Speed-up and avoid infinite recursive loop
-                    Parent_old.Data = Parent_old.Data(Parent_old.Data ~= obj);
-                    % Update old parent's Modifications and notify its ancestors
-                    Parent_old.modification;
-                end
-                % If this object becomes a root, then inherit the old root's key properties
-                if isempty(Parent) && ~isempty(obj.Parent),
-                    obj.File = obj.File; % Inherit the file string from this or the old root
-                    obj.Magic = obj.Magic; % Inherit the magic string from the old root
-                end
-                % Set the new parent
-                obj.Parent = Parent;
-                % Update obj's Modifications and notify its ancestors
-                obj.modification;
+            % Validate the given input
+            if ~isa(Parent, 'wit') || numel(Parent) > 1,
+                error('Parent can be set by either an empty or a single wit tree object!');
             end
+            % Get old parent
+            Parent_old = obj.ParentNow;
+            % Stop if both old and new parents are empty
+            if isempty(Parent) && isempty(Parent_old),
+                if ~isa(Parent_old, 'wit'),
+                    obj.ParentNow = Parent;
+                end
+                return;
+            end
+            % Stop if both old and new parents are same
+            if ~isempty(Parent) && ~isempty(Parent_old) && Parent.Id == Parent_old.Id, % Same as Parent == Parent_old but Octave-compatible way
+                return;
+            end
+            % Error if a loop is being created
+            Ancestor = Parent;
+            obj_Id = obj.Id; % Load once
+            while ~isempty(Ancestor),
+                if Ancestor.Id == obj_Id, % Same as Ancestor == obj but Octave-compatible way
+                    error('Loops cannot be created with wit tree objects!');
+                end
+                Ancestor = Ancestor.ParentNow;
+            end
+            % Adopt this object by the new non-empty parent
+            if ~isempty(Parent),
+                if isempty(Parent.ChildrenNow), Parent.ChildrenNow = obj;
+                else, Parent.ChildrenNow(end+1) = obj; end % Octave-compatible way
+                Parent.DataNow = Parent.ChildrenNow;
+            end
+            % Remove this object from the old non-empty parent
+            if ~isempty(Parent_old),
+                Parent_old.DataNow = Parent_old.DataNow(Parent_old.DataNow ~= obj);
+                Parent_old.ChildrenNow = Parent_old.DataNow;
+                % Update old parent's Modifications and notify its ancestors
+                Parent_old.modification;
+            end
+            % If this object becomes a root, then inherit the old root's key properties
+            if isempty(Parent) && ~isempty(obj.ParentNow),
+                obj.File = obj.File; % Inherit the file string from this or the old root
+                obj.Magic = obj.Magic; % Inherit the magic string from the old root
+            end
+            % Set the new parent
+            obj.ParentNow = Parent;
+            % Update obj's Modifications and notify its ancestors
+            obj.modification;
         end
         
         % Children (READ-WRITE, DEPENDENT)
         function Children = get.Children(obj),
-            if isa(obj.Data, 'wit'), Children = obj.Data;
-            else, Children = wit.empty; end
+            Children = obj.ChildrenNow;
         end
         function set.Children(obj, Children),
             % Validate the given input
@@ -352,19 +340,19 @@ classdef wit < handle, % Since R2008a
         
         % Root (READ-WRITE, DEPENDENT)
         function Root = get.Root(obj),
-            Root = obj.RootPersistent;
+            Root = obj.RootNow;
             % Update returned and stored Root if any change is detected
             if isempty(Root) || ...
                     obj.RootModificationsLatestAtId ~= Root.ModificationsLatestAtId || ...
                     obj.RootModifications ~= Root.ModificationsLatestAt.Modifications,
                 % Find new Root
                 Root = obj;
-                while ~isempty(Root.Parent), Root = Root.Parent; end
+                while ~isempty(Root.ParentNow), Root = Root.ParentNow; end
                 % Update the related modification tracking variables
                 obj.RootModificationsLatestAtId = Root.ModificationsLatestAtId;
                 obj.RootModifications = Root.ModificationsLatestAt.Modifications;
                 % Update stored Root
-                obj.RootPersistent = Root;
+                obj.RootNow = Root;
             end
         end
         function set.Root(obj, Root),
@@ -376,15 +364,15 @@ classdef wit < handle, % Since R2008a
             if OldRoot == obj, % SPECIAL CASE: This object is its own root
                 Root.Data = obj; % Make the old root (or this object) the only child of the new root
             else, % Otherwise, disconnect the old root by transfering its contents to the new root
-                Root.Data = OldRoot.Data; % Transfer children from the old root to the new root
+                Root.Data = OldRoot.DataNow; % Transfer children from the old root to the new root
             end
         end
         
         % Siblings (READ-WRITE, DEPENDENT)
         function Siblings = get.Siblings(obj),
             Siblings = wit.empty;
-            if ~isempty(obj.Parent),
-                Siblings = obj.Parent.Data; % Including itself
+            if ~isempty(obj.ParentNow),
+                Siblings = obj.ParentNow.DataNow; % Including itself
                 Siblings = Siblings(Siblings ~= obj); % Exclude itself
             end
         end
@@ -395,14 +383,14 @@ classdef wit < handle, % Since R2008a
             end
             ind = find(Siblings == obj, 1); % Get index of this object
             if isempty(ind), Siblings = [obj Siblings]; end % SPECIAL CASE: Make this object first if its position was not chosen
-            obj.Parent.Data = Siblings; % Try to update parent children
+            obj.ParentNow.Data = Siblings; % Try to update parent children
         end
         
         % Next (READ-WRITE, DEPENDENT)
         function Next = get.Next(obj),
             Next = wit.empty;
-            if ~isempty(obj.Parent),
-                Siblings = obj.Parent.Data; % Including itself
+            if ~isempty(obj.ParentNow),
+                Siblings = obj.ParentNow.DataNow; % Including itself
                 ind_Next = find(Siblings == obj, 1) + 1;
                 if ind_Next <= numel(Siblings), Next = Siblings(ind_Next); end
             end
@@ -412,17 +400,17 @@ classdef wit < handle, % Since R2008a
             if ~isa(Next, 'wit'),
                 error('Next can be set by an array of wit tree objects!');
             end
-            Children = obj.Parent.Data; % Get parent children
+            Children = obj.ParentNow.DataNow; % Get parent children
             ind = find(Children == obj, 1); % Get index of this object
             Children = [Children(1:ind) reshape(Next, 1, [])]; % Keep the previous siblings and replace the next siblings
-            obj.Parent.Data = Children; % Try to update parent children
+            obj.ParentNow.Data = Children; % Try to update parent children
         end
         
         % Prev (READ-WRITE, DEPENDENT)
         function Prev = get.Prev(obj),
             Prev = wit.empty;
-            if ~isempty(obj.Parent),
-                Siblings = obj.Parent.Data; % Including itself
+            if ~isempty(obj.ParentNow),
+                Siblings = obj.ParentNow.DataNow; % Including itself
                 ind_Prev = find(Siblings == obj, 1) - 1;
                 if ind_Prev >= 1, Prev = Siblings(ind_Prev); end
             end
@@ -432,34 +420,34 @@ classdef wit < handle, % Since R2008a
             if ~isa(Prev, 'wit'),
                 error('Prev can be set by an array of wit tree objects! Its content will be added in reversed order.');
             end
-            Children = obj.Parent.Data; % Get parent children
+            Children = obj.ParentNow.DataNow; % Get parent children
             ind = find(Children == obj, 1); % Get index of this object
             Children = [fliplr(reshape(Prev, 1, [])) Children(ind:end)]; % Keep the next siblings and replace the previous siblings
-            obj.Parent.Data = Children; % Try to update parent children
+            obj.ParentNow.Data = Children; % Try to update parent children
         end
         
         % FullName (READ-ONLY, DEPENDENT)
         function FullName = get.FullName(obj),
-            Root = obj.FullName_RootPersistent;
+            Root = obj.FullName_RootNow;
             % Update stored FullName if any change is detected
             if isempty(Root) || ...
                     obj.FullName_RootModificationsLatestAtId ~= Root.ModificationsLatestAtId || ...
                     obj.FullName_RootModifications ~= Root.ModificationsLatestAt.Modifications,
                 % Find new FullName (and Root)
-                FullName = obj.Name;
+                FullName = obj.NameNow;
                 Root = obj;
-                while ~isempty(Root.Parent),
-                    FullName = [FullName '<' Root.Parent.Name];
-                    Root = Root.Parent;
+                while ~isempty(Root.ParentNow),
+                    FullName = [FullName '<' Root.ParentNow.NameNow];
+                    Root = Root.ParentNow;
                 end
                 % Update the related modification tracking variables
                 obj.FullName_RootModificationsLatestAtId = Root.ModificationsLatestAtId;
                 obj.FullName_RootModifications = Root.ModificationsLatestAt.Modifications;
-                % Update obj.FullNamePersistent (and obj.FullName_RootPersistent)
-                obj.FullNamePersistent = FullName;
-                obj.FullName_RootPersistent = Root;
+                % Update obj.FullNameNow (and obj.FullName_RootNow)
+                obj.FullNameNow = FullName;
+                obj.FullName_RootNow = Root;
             else, % Otherwise, return the stored FullName untouched
-                FullName = obj.FullNamePersistent;
+                FullName = obj.FullNameNow;
             end
         end
         
@@ -640,7 +628,7 @@ classdef wit < handle, % Since R2008a
                     obj.ModificationsLatestAt = tag;
                     obj.ModificationsLatestAtId = tag_Id;
                     notify(obj, 'Modification'); % Trigger attached events
-                    obj = obj.Parent;
+                    obj = obj.ParentNow;
                 end
             else,
                 obj.ModificationsLatestAt = obj;

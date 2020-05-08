@@ -117,8 +117,8 @@ function bread_Data(obj, buffer, N_bytes_max, swapEndianess),
         end
     end
     
-    obj.skipRedundant = true; % Speed-up set.Data!
-    obj.Data = Data; % Minimized expensive calls to set.Data (and get.Data)
+    obj.DataNow = Data; % Minimized expensive calls to set.Data (and get.Data)
+    obj.ChildrenNow = wit.empty;
     
     % Implemented an inner function to avoid EXPENSIVE calls to sprintf.
     function str = warning_msg(),

@@ -64,7 +64,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         % Read NameLength (4 bytes)
         ind_end = ind_begin-1 + 4;
         if ind_end > ind_max, % Abort, if the end is reached
-            obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+            obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
             obj.IsValid = false; % Mark this object for deletion!
             return;
         end
@@ -75,18 +75,17 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         % Read Name (NameLength # of bytes)
         ind_end = ind_begin-1 + double(obj.NameLength);
         if ind_end > ind_max, % Abort, if the end is reached
-            obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+            obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
             obj.IsValid = false; % Mark this object for deletion!
             return;
         end
-        obj.skipRedundant = true; % Speed-up set.Name!
-        obj.Name = reshape(char(buffer(ind_begin:ind_end)), 1, []);
+        obj.NameNow = reshape(char(buffer(ind_begin:ind_end)), 1, []); % Speed-up
         ind_begin = ind_end + 1; % Set next begin index
         
         % Read Type (4 bytes)
         ind_end = ind_begin-1 + 4;
         if ind_end > ind_max, % Abort, if the end is reached
-            obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+            obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
             obj.IsValid = false; % Mark this object for deletion!
             return;
         end
@@ -97,7 +96,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         % Read Start (8 bytes)
         ind_end = ind_begin-1 + 8;
         if ind_end > ind_max, % Abort, if the end is reached
-            obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+            obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
             obj.IsValid = false; % Mark this object for deletion!
             return;
         end
@@ -108,7 +107,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         % Read End (8 bytes)
         ind_end = ind_begin-1 + 8;
         if ind_end > ind_max, % Abort, if the end is reached
-            obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+            obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
             obj.IsValid = false; % Mark this object for deletion!
             return;
         end
@@ -132,14 +131,13 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
             children = wit.empty;
             while(ind_begin < obj.End), % Continue reading until DataEnd
                 child = wit(); % Many times faster than wit(obj) due to redundant code
-                child.skipRedundant = true; % Speed-up set.Parent
-                child.Parent = obj; % Adopt the new child being created
+                child.ParentNow = obj; % Adopt the new child being created
                 bread_helper(child); % Read the new child contents (or destroy it on failure)
                 if child.IsValid, children(end+1) = child; % Add child if valid (and avoid Octave-incompatible isvalid-function)
                 else, delete(child); end % Delete child if not valid (and avoid Octave-incompatible isvalid-function)
             end
-            obj.skipRedundant = true; % Speed-up set.Data
-            obj.Data = children; % Adopt the new child being created
+            obj.DataNow = children; % Adopt the new child being created
+            obj.ChildrenNow = children; % Adopt the new child being created
         else,
             obj.bread_Data(buffer, N_bytes_max, swapEndianess);
             ind_begin = double(obj.End)+1; % Double OFFSET for compability!
@@ -154,9 +152,10 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         
         % SPECIAL CASE: Abort if obj meets the given error criteria.
         if isa(error_criteria_for_obj, 'function_handle'),
-            obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+            temp = obj.ParentNow;
+            obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
             error_criteria_for_obj(obj); % EXPECTED TO ERROR if its criteria is met
-            obj.skipRedundant = false;
+            obj.ParentNow = temp;
         end
     end
 end

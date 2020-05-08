@@ -22,16 +22,19 @@ function new = copy(obj),
             % Set the object itself as its own latest modified object (known beforehand)
             new_ii.ModificationsLatestAt = new_ii;
             
-            new_ii.skipRedundant = true; % Speed-up set.Name
-            new_ii.Name = obj_ii.Name;
+            new_ii.NameNow = obj_ii.NameNow; % Speed-up
             
-            new_ii.skipRedundant = true; % Speed-up set.Parent
-            new_ii.Parent = Parent;
+            new_ii.ParentNow = Parent; % Speed-up
             
             % Test if a data tag or a list of tags
-            new_ii.skipRedundant = true; % Speed-up set.Data
-            if ~isa(obj_ii.Data, 'wit'), new_ii.Data = obj_ii.Data; % Data
-            else, new_ii.Data = copy_children(obj_ii.Data, new_ii); end % Children
+            if isempty(obj_ii.ChildrenNow), % Data
+                new_ii.DataNow = obj_ii.DataNow;
+                new_ii.ChildrenNow = obj_ii.ChildrenNow;
+            else, % Children
+                copies = copy_children(obj_ii.ChildrenNow, new_ii);
+                new_ii.ChildrenNow = copies;
+                new_ii.DataNow = copies;
+            end
             new_ii.HasData = obj_ii.HasData;
             
             new_children(ii) = new_ii;

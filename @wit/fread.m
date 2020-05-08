@@ -57,7 +57,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         
         % Read NameLength (4 bytes)
         if feof(fid), % Abort, if file stream has reached the end
-            obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+            obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
             obj.IsValid = false; % Mark this object for deletion!
             return;
         end
@@ -65,16 +65,15 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         
         % Read Name (NameLength # of bytes)
         if feof(fid), % Abort, if file stream has reached the end
-            obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+            obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
             obj.IsValid = false; % Mark this object for deletion!
             return;
         end
-        obj.skipRedundant = true; % Speed-up set.Name!
-        obj.Name = reshape(fread(fid, double(obj.NameLength), 'uint8=>char', 0, 'l'), 1, []); % String is a char row vector % Double OFFSET for compability!
+        obj.NameNow = reshape(fread(fid, double(obj.NameLength), 'uint8=>char', 0, 'l'), 1, []); % String is a char row vector % Double OFFSET for compability!
         
         % Read Type (4 bytes)
         if feof(fid), % Abort, if file stream has reached the end
-            obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+            obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
             obj.IsValid = false; % Mark this object for deletion!
             return;
         end
@@ -82,7 +81,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         
         % Read Start (8 bytes)
         if feof(fid), % Abort, if file stream has reached the end
-            obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+            obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
             obj.IsValid = false; % Mark this object for deletion!
             return;
         end
@@ -90,7 +89,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         
         % Read End (8 bytes)
         if feof(fid), % Abort, if file stream has reached the end
-            obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+            obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
             obj.IsValid = false; % Mark this object for deletion!
             return;
         end
@@ -112,14 +111,13 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
             children = wit.empty;
             while(ftell(fid) < obj.End), % Continue reading until DataEnd
                 child = wit(); % Many times faster than wit(obj) due to redundant code
-                child.skipRedundant = true; % Speed-up set.Parent
-                child.Parent = obj; % Adopt the new child being created
+                child.ParentNow = obj; % Adopt the new child being created
                 fread_helper(child); % Read the new child contents (or destroy it on failure)
                 if child.IsValid, children(end+1) = child; % Add child if valid (and avoid Octave-incompatible isvalid-function)
                 else, delete(child); end % Delete child if not valid (and avoid Octave-incompatible isvalid-function)
             end
-            obj.skipRedundant = true; % Speed-up set.Data
-            obj.Data = children; % Adopt the new child being created
+            obj.DataNow = children; % Adopt the new child being created
+            obj.ChildrenNow = children; % Adopt the new child being created
         else, obj.fread_Data(fid, N_bytes_max, swapEndianess); end % Otherwise, read the Data
         
         if verbose,
@@ -131,9 +129,10 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         
         % SPECIAL CASE: Abort if obj meets the given error criteria.
         if isa(error_criteria_for_obj, 'function_handle'),
-            obj.skipRedundant = true; % Do not touch obj.Parent.Data on deletion!
+            temp = obj.ParentNow;
+            obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
             error_criteria_for_obj(obj); % EXPECTED TO ERROR if its criteria is met
-            obj.skipRedundant = false;
+            obj.ParentNow = temp;
         end
     end
 end
