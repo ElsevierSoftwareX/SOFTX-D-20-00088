@@ -50,13 +50,12 @@ function [O_wit, varargout] = append(varargin),
     ViewerOrViewerClassNames = wit.empty;
     varargout = cell(size(varargin));
     for ii = 1:numel(varargin),
-        O_wit_ii = varargin{ii}.copy(); % Get copy of the given wit-tree
+        O_wit_ii = varargin{ii}.copy(); % Get copy of the given wit Tree objects
         varargout{ii} = O_wit_ii; % Save copies also as output
-        [Data_ii, Viewer_ii] = O_wit_ii.search_children('Data', 'Viewer');
-        Both_ii = [Data_ii Viewer_ii];
         
         Data_Pairs = wip.get_Data_DataClassName_pairs(O_wit_ii);
         Viewer_Pairs = wip.get_Viewer_ViewerClassName_pairs(O_wit_ii);
+        Both_Pairs = [Data_Pairs; Viewer_Pairs];
         
         if ~isempty(Data_Pairs),
             % Repopulate all TData IDs first (TO ENSURE THAT INT32 IS ENOUGH!)
@@ -68,7 +67,7 @@ function [O_wit, varargout] = append(varargin),
             end
             % Use sparse mapper from old to new Id
             old2new = sparse(double(old), ones(size(old)), double(new));
-            Tags_with_ID = Both_ii.regexp_all_Names('.+ID(List)?'); % List all other the IDs (except NextDataID) under Data and Viewer
+            Tags_with_ID = Both_Pairs.regexp_all_Names('.+ID(List)?'); % List all other the IDs (except NextDataID) under Data and Viewer
             for jj = 1:numel(Tags_with_ID),
                 if isa(Tags_with_ID(jj).Data, 'wit'), % SPECIAL CASE: ID list
                     ID_list = Tags_with_ID(jj).search_children('Data');
@@ -123,11 +122,11 @@ function [O_wit, varargout] = append(varargin),
     end
     
     % Set new Children only once
-    Tag_Data.Data = [Tag_ND.Siblings DataOrDataClassNames Tag_ND]; % MAJOR bottleneck
+    if ~isempty(Tag_Data), Tag_Data.Data = [Tag_ND.Siblings DataOrDataClassNames Tag_ND]; end % MAJOR bottleneck
     if ~isempty(Tag_Viewer), Tag_Viewer.Data = [Tag_NV.Siblings ViewerOrViewerClassNames Tag_NV]; end % Does not exist for WITec Data
     
     % Update the counters
     if ~isempty(Tag_ID), Tag_ID.Data = int32(offset); end % Must be int32! % Does not exist for WITec Data
-    Tag_ND.Data = ND;
+    if ~isempty(Tag_Data), Tag_ND.Data = ND; end
     if ~isempty(Tag_Viewer), Tag_NV.Data = NV; end % Does not exist for WITec Data
 end
