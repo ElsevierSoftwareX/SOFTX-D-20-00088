@@ -276,9 +276,9 @@ classdef wip < handle, % Since R2008a
         O_wit = new(Version); % WITec Project WIT-tree
         O_wit = new_TData(Version, Caption); % Only TData WIT-tree
         
-        % Get valid DataClassName-Data pairs from the given WIT-tree
-        [Pairs, Root] = get_Data_DataClassName_pairs(O_wit);
-        [Pairs, Root] = get_Viewer_ViewerClassName_pairs(O_wit);
+        % Get valid pairs within the given wit Tree objects
+        [Pairs, Roots] = get_Data_DataClassName_pairs(O_wit);
+        [Pairs, Roots] = get_Viewer_ViewerClassName_pairs(O_wit);
         
         % Appender of multiple WIT-trees (or Projects)
         [O_wit, varargout] = append(varargin);
