@@ -8,6 +8,7 @@ function new = copy(obj),
     new = copy_children(obj, wit.empty); % Define as Root objects
     % Set Root properties
     for jj = 1:numel(obj),
+        new(jj).OrdinalNumber = 1;
         new(jj).Magic = obj(jj).Magic; % Sufficient but not an exact copy
         new(jj).File = obj(jj).File; % Sufficient but not an exact copy
     end
@@ -18,9 +19,6 @@ function new = copy(obj),
         for ii = 1:numel(children),
             obj_ii = children(ii);
             new_ii = wit(); % Avoids same-Id-bug when using Octave-compatible NextId-scheme!
-            
-            % Set the object itself as its own latest modified object (known beforehand)
-            new_ii.ModificationsLatestAt = new_ii;
             
             new_ii.NameNow = obj_ii.NameNow; % Speed-up
             
@@ -34,6 +32,9 @@ function new = copy(obj),
                 copies = copy_children(obj_ii.ChildrenNow, new_ii);
                 new_ii.ChildrenNow = copies;
                 new_ii.DataNow = copies;
+                for kk = 1:numel(copies),
+                    copies(kk).OrdinalNumber = kk;
+                end
             end
             new_ii.HasData = obj_ii.HasData;
             

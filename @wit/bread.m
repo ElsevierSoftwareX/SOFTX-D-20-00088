@@ -35,9 +35,6 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
     
     % Test the data stream
     if isempty(buffer), obj.IsValid = false; end % Mark this object for deletion!
-        
-    % Set the object itself as its own latest modified object (known beforehand)
-    obj.ModificationsLatestAt = obj;
     
     % Read Magic (8 bytes) (only if Root)
     if obj.IsValid && isempty(obj.Parent),
@@ -56,10 +53,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
     
     function bread_helper(obj),
         % Do not allow obj to notify its ancestors on modifications
-        obj.ModificationsToAncestors = false;
-        
-        % Set the object itself as its own latest modified object (known beforehand)
-        obj.ModificationsLatestAt = obj;
+        obj.ModifiedAncestors = false;
         
         % Read NameLength (4 bytes)
         ind_end = ind_begin-1 + 4;
@@ -133,7 +127,9 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
                 child = wit(); % Many times faster than wit(obj) due to redundant code
                 child.ParentNow = obj; % Adopt the new child being created
                 bread_helper(child); % Read the new child contents (or destroy it on failure)
-                if child.IsValid, children(end+1) = child; % Add child if valid (and avoid Octave-incompatible isvalid-function)
+                if child.IsValid,
+                    children(end+1) = child; % Add child if valid (and avoid Octave-incompatible isvalid-function)
+                    child.OrdinalNumber = numel(children);
                 else, delete(child); end % Delete child if not valid (and avoid Octave-incompatible isvalid-function)
             end
             obj.DataNow = children; % Adopt the new child being created
@@ -148,7 +144,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         end
         
         % Allow obj to notify its ancestors on modifications
-        obj.ModificationsToAncestors = true;
+        obj.ModifiedAncestors = true;
         
         % SPECIAL CASE: Abort if obj meets the given error criteria.
         if isa(error_criteria_for_obj, 'function_handle'),

@@ -29,13 +29,13 @@
 
 % Class for tree tags
 classdef wit < handle, % Since R2008a
-    % This class is Octave-compatible (except events) but it has been
-    % disabled by commenting the related code segments for best performance
-    % with big datas.
-    %% MAIN EVENTS (not Octave-compatible)
-    events % May be subject to change in some future release if full Octave-compatibility is pursued!
+    % This class becomes Octave-compatible (except for events) by
+    % uncommenting the related code segments. This compatibility has been
+    % disabled for best performance with big datas.
+    %% MAIN EVENTS (not used internally to preserve Octave-compatibility)
+    events (ListenAccess = private, NotifyAccess = private) % May be subject to change in some future release if full Octave-compatibility is pursued!
         % ObjectBeingDestroyed; % Automatically defined by the handle class
-        Modification;
+        ObjectModified;
     end
     
     %% MAIN PROPERTIES
@@ -87,6 +87,7 @@ classdef wit < handle, % Since R2008a
     % Internal parameters for maximum performance due to use of big datas
     properties (SetAccess = private, Hidden) % READ-ONLY
         NameNow = '';
+        % Update the following along with OrdinalNumber-property!
         DataNow = [];
         ParentNow = []; % = wit.empty; % Only [] is Octave-compatible!
         ChildrenNow = []; % = wit.empty; % Only [] is Octave-compatible!
@@ -94,29 +95,36 @@ classdef wit < handle, % Since R2008a
     
     % Tree-specific internal parameters
     properties (SetAccess = private) % READ-ONLY
-        % Modifications is incremented once per successful set.Name,
-        % set.Data or set.Parent for each affected object
-        ModificationsLatestAt;
-        ModificationsLatestAtId = uint64(0);
-        Modifications = uint64(0); % Number of modifications
+        Listeners = {}; % Storage of all listeners attached to this object
+        % ModifiedCount is incremented once per successful set.Name,
+        % set.Data or set.Parent for each affected object. By default, when
+        % obj.ModifiedAncestors == true, then also the ancestors are
+        % updated as well.
+        ModifiedCount = 0; % Number of modifications % Use of double is faster than uint64
+        ModifiedDescendantProperty = ''; % 'Name', 'Data', 'Children' or 'Parent'
+        ModifiedDescendantMeta; % Empty unless obj.ModifiedDescendantProperty is 'Children'
+        ModifiedDescendantIndices = []; % Related to OrdinalNumber-property
+        ModifiedDescendantIds = []; % Related to Id-property
     end
     properties (SetAccess = private, Hidden) % READ-ONLY
         % modification optimizations
-        ModificationsToAncestors = true;
+        ModifiedAncestors = true;
+        ModifiedEvents = false; % Used for optimizations and is automatically set true when addlistener is called with 'ObjectModified'
         % get.Root optimizations
         RootNow;
-        RootModificationsLatestAtId = uint64(0);
-        RootModifications = uint64(0);
+        RootModifiedCount = 0;
         % get.FullName optimizations
         FullNameNow;
         FullName_RootNow;
-        FullName_RootModificationsLatestAtId = uint64(0);
-        FullName_RootModifications = uint64(0);
+        FullName_RootModifiedCount = 0;
     end
     
     % Handle-specific internal parameters
     properties (SetAccess = private) % READ-ONLY
-        Id = uint64(0); % Used internally to enable handle-like comparison in Octave
+        % Use of double is faster than uint64
+        ChildrenIdToOrdinalNumber = spalloc(0, 1, 0); % Sparse map from Id to OrdinalNumber
+        OrdinalNumber; % Array index among its Parent's Children
+        Id = 0; % Used internally to enable handle-like comparison in Octave
     end
     properties (SetAccess = private, Hidden) % READ-ONLY
         IsValid = true; % Used internally to mark object invalid and that it should be deleted
@@ -128,14 +136,14 @@ classdef wit < handle, % Since R2008a
         function obj = wit(ParentOrName, NameOrData, DataOrNone),
             % Store object Id in order to enable handle-like comparisons
             persistent NextId;
-            if isempty(NextId), NextId = uint64(1);
+            if isempty(NextId), NextId = 1; % Use of double is faster than uint64
             else, NextId = NextId + 1; end
             obj.Id = NextId;
             
             % Parse input
             if nargin > 0,
                 if isa(ParentOrName, 'wit'), % Set new Parent
-                    obj.ModificationsToAncestors = ParentOrName.ModificationsToAncestors; % Inherit this property from parent
+                    obj.ModifiedAncestors = ParentOrName.ModifiedAncestors; % Inherit this property from parent
                     obj.Parent = ParentOrName;
                 elseif isa(ParentOrName, 'char'), % Set new Name
                     if nargin > 2, error('Too many input arguments.'); end
@@ -185,23 +193,21 @@ classdef wit < handle, % Since R2008a
             else, File = obj.Root.File; end % Otherwise, obtain it from the root
         end
         
-        % Name (READ-WRITE, DEPENDENT) % Changes counted by Modifications-property!
+        % Name (READ-WRITE, DEPENDENT) % Changes counted by ModifiedCount-property!
         function Name = get.Name(obj),
             Name = obj.NameNow;
         end
         function set.Name(obj, Name),
             if ischar(Name), % Validate the given input
-                % Do nothing if no difference
-                if strcmp(Name, obj.NameNow), return; end
                 obj.NameNow = reshape(Name, 1, []);
-                % Update obj's Modifications and notify its ancestors
-                obj.modification;
+                % Update obj's ModifiedCount and notify its ancestors
+                obj.modification('Name');
             else,
                 error('Only a char array can be a name!');
             end
         end
         
-        % Data (READ-WRITE, DEPENDENT) % Changes counted by Modifications-property!
+        % Data (READ-WRITE, DEPENDENT) % Changes counted by ModifiedCount-property!
         function Data = get.Data(obj),
             Data = obj.DataNow;
         end
@@ -211,50 +217,88 @@ classdef wit < handle, % Since R2008a
                 obj.ChildrenNow = wit.empty;
                 % Update HasData-flag
                 obj.HasData = ~isempty(Data);
-                % Update obj's Modifications and notify its ancestors
-                obj.modification;
+                % Update obj's ModifiedCount and notify its ancestors
+                obj.modification('Data');
             else, % SPECIAL CASE: Add new children to the obj
-                % If called from set.Parent, then skip all redundant code
+                Data_old = obj.ChildrenNow;
+                if isempty(Data_old), Data_old_Id = [];
+                else, Data_old_Id = [Data_old.Id]; end % Load once
+                ones_old = ones(size(Data_old_Id));
+                % Get new and old Children Ids
                 Data_Id = [Data.Id]; % Load once
+                ones_new = ones(size(Data_Id));
+                % Get maximum Id
+                max_Id = max([max(Data_Id) max(Data_old_Id) 1]);
                 % Error if the new children are not unique
-                N_Data = numel(Data);
-                for ii = 1:N_Data,
-                    if any(Data_Id(ii) == Data_Id(ii+1:end)), % Same as Data(ii) == Data(ii+1:end) but Octave-compatible way
-                        error('A parent can adopt a child only once! A duplicate was found at index %d!', ii);
-                    end
+                sparse_count_new_Ids = sparse(Data_Id, ones_new, ones_new, max_Id, 1); % Use sparse vectors that are fast and suitable for big datas
+                B_duplicates = sparse_count_new_Ids > 1;
+                if any(B_duplicates),
+                    error('A parent can adopt a child only once! A duplicate was found at index %d!', find(B_duplicates));
                 end
                 % Error if a loop is being created
                 Ancestor = obj;
                 while ~isempty(Ancestor),
-                    if any(Ancestor.Id == Data_Id), % Same as Ancestor == Data but Octave-compatible way
+                    Ancestor_Id = Ancestor.Id;
+                    if Ancestor_Id <= max_Id && sparse_count_new_Ids(Ancestor_Id) > 0, % Same as Ancestor == Data but Octave-compatible way
                         error('Loops cannot be created with wit tree objects!');
                     end
                     Ancestor = Ancestor.ParentNow;
                 end
                 % Remove parent of those old children that are not found among the new children
-                B_old = false(size(Data));
-                Data_old = obj.ChildrenNow;
+                sparse_count_old_Ids = sparse(Data_old_Id, ones_old, ones_old, max_Id, 1); % Use sparse vectors that are fast and suitable for big datas
+                B_old_at_new = sparse_count_new_Ids(Data_old_Id) > 0;
+                B_new_at_old = sparse_count_old_Ids(Data_Id) > 0;
                 for ii = 1:numel(Data_old),
                     % Remove parent of an old child if it is not found among the new children
-                    B_old_ii = Data_old(ii).Id == Data_Id; % Same as Data_old(ii) == Data but Octave-compatible way
-                    if any(B_old_ii),
-                        B_old = B_old | B_old_ii;
-                    else,
-                        Data_old(ii).ParentNow = wit.empty;
-                        % Update old child's Modifications but do not notify its ancestors
-                        Data_old(ii).ModificationsToAncestors = false;
-                        Data_old(ii).modification;
-                        Data_old(ii).ModificationsToAncestors = true;
-                    end
+                    if B_old_at_new(ii), continue; end % Skip if among new
+                    Data_old(ii).ParentNow = wit.empty;
+                    Data_old(ii).OrdinalNumber = 1;
+                    % Update old child's ModifiedCount but do not notify its ancestors
+                    Data_old(ii).ModifiedAncestors = false;
+                    Data_old(ii).modification('Parent');
+                    Data_old(ii).ModifiedAncestors = true;
                 end
-                % Set parent
+                % Collect old parents and OrdinalNumbers
+                N_Data = numel(Data);
+                OD_old = ones(size(Data));
+                Parent_old = cell(size(Data));
+                Parent_old_Id = zeros(size(Data));
                 for ii = 1:N_Data,
-                    if B_old(ii), continue; end % Skip if already parented
+                    OD_old(ii) = Data(ii).OrdinalNumber;
+                    Parent_old{ii} = Data(ii).ParentNow;
+                    if ~isempty(Parent_old{ii}), Parent_old_Id(ii) = Parent_old{ii}.Id; end
+                end
+                [Parent_old_Id_unique, ind_unique, ind_Parent_old_unique] = unique(Parent_old_Id); % Store unique old Parents
+                if Parent_old_Id_unique(1) == 0,
+                    ind_unique = ind_unique(2:end); % Discard zero Id
+                    ind_Parent_old_unique = ind_Parent_old_unique - 1; % Shift due to discarding zero Id
+                end
+                Parent_old_unique = [Parent_old{ind_unique}];
+                % Set new parent
+                for ii = 1:N_Data,
+                    Data(ii).OrdinalNumber = ii;
+                    if B_new_at_old(ii), continue; end % Skip if already parented
                     Data(ii).ParentNow = obj;
-                    % Update new child's Modifications but do not notify its ancestors
-                    Data(ii).ModificationsToAncestors = false;
-                    Data(ii).modification;
-                    Data(ii).ModificationsToAncestors = true;
+                    % Update new child's ModifiedCount but do not notify its ancestors
+                    Data(ii).ModifiedAncestors = false;
+                    Data(ii).modification('Parent');
+                    Data(ii).ModifiedAncestors = true;
+                end
+                % Remove old Parent's transferred children and update all OrdinalNumbers
+                for ii = 1:numel(Parent_old_unique),
+                    Parent_old = Parent_old_unique(ii);
+                    B_transferred = ind_Parent_old_unique == ii;
+                    B_old = true(size(Parent_old.DataNow));
+                    B_old(OD_old(B_transferred)) = false;
+                    Children_old = Parent_old.DataNow(B_old);
+                    Parent_old.DataNow = Children_old;
+                    Parent_old.ChildrenNow = Children_old;
+                    for jj = 1:numel(Children_old),
+                        Children_old(jj).OrdinalNumber = jj;
+                    end
+                    % Update old parent's ModifiedCount and notify its ancestors
+                    meta = {'added Ids', []; 'removed Ids', Data_Id(B_transferred)}; % Meta of added and removed Ids
+                    Parent_old.modification('Children', meta);
                 end
                 % Parent the new children
                 Children(1:N_Data) = Data; % Octave-compatible way to generate a row vector of wit objects
@@ -262,15 +306,16 @@ classdef wit < handle, % Since R2008a
                 obj.ChildrenNow = Children;
                 % Update HasData-flag
                 obj.HasData = ~isempty(Children);
-                % Update obj's Modifications and notify its ancestors
-                obj.modification;
+                % Update obj's ModifiedCount and notify its ancestors
+                meta = {'added Ids', Data_Id(~B_new_at_old); 'removed Ids', Data_old_Id(~B_old_at_new)}; % Meta of added and removed Ids
+                obj.modification('Children', meta);
             end
         end
         
         % Type (READ-ONLY)
         
         %% OTHER PROPERTIES
-        % Parent (READ-WRITE, DEPENDENT) % Changes counted by Modifications-property!
+        % Parent (READ-WRITE, DEPENDENT) % Changes counted by ModifiedCount-property!
         function Parent = get.Parent(obj),
             Parent = obj.ParentNow;
         end
@@ -307,13 +352,21 @@ classdef wit < handle, % Since R2008a
                 if isempty(Parent.ChildrenNow), Parent.ChildrenNow = obj;
                 else, Parent.ChildrenNow(end+1) = obj; end % Octave-compatible way
                 Parent.DataNow = Parent.ChildrenNow;
+                obj.OrdinalNumber = numel(Parent.ChildrenNow);
             end
             % Remove this object from the old non-empty parent
             if ~isempty(Parent_old),
-                Parent_old.DataNow = Parent_old.DataNow(Parent_old.DataNow ~= obj);
-                Parent_old.ChildrenNow = Parent_old.DataNow;
-                % Update old parent's Modifications and notify its ancestors
-                Parent_old.modification;
+                B_obj = Parent_old.DataNow == obj;
+                ind_obj = find(B_old, 1);
+                Children_old = Parent_old.DataNow(~B_obj);
+                Parent_old.DataNow = Children_old;
+                Parent_old.ChildrenNow = Children_old;
+                for ii = ind_obj:numel(Children_old),
+                    Children_old(ii).OrdinalNumber = ii;
+                end
+                % Update old parent's ModifiedCount and notify its ancestors
+                meta = {'added Ids', []; 'removed Ids', obj_Id}; % Meta of added and removed Ids
+                Parent_old.modification('Children', meta);
             end
             % If this object becomes a root, then inherit the old root's key properties
             if isempty(Parent) && ~isempty(obj.ParentNow),
@@ -322,8 +375,8 @@ classdef wit < handle, % Since R2008a
             end
             % Set the new parent
             obj.ParentNow = Parent;
-            % Update obj's Modifications and notify its ancestors
-            obj.modification;
+            % Update obj's ModifiedCount and notify its ancestors
+            obj.modification('Parent');
         end
         
         % Children (READ-WRITE, DEPENDENT)
@@ -343,14 +396,12 @@ classdef wit < handle, % Since R2008a
             Root = obj.RootNow;
             % Update returned and stored Root if any change is detected
             if isempty(Root) || ...
-                    obj.RootModificationsLatestAtId ~= Root.ModificationsLatestAtId || ...
-                    obj.RootModifications ~= Root.ModificationsLatestAt.Modifications,
+                    obj.RootModifiedCount ~= Root.ModifiedCount && ~strcmp(Root.ModifiedDescendantProperty, 'Name'),
                 % Find new Root
                 Root = obj;
                 while ~isempty(Root.ParentNow), Root = Root.ParentNow; end
                 % Update the related modification tracking variables
-                obj.RootModificationsLatestAtId = Root.ModificationsLatestAtId;
-                obj.RootModifications = Root.ModificationsLatestAt.Modifications;
+                obj.RootModifiedCount = Root.ModifiedCount;
                 % Update stored Root
                 obj.RootNow = Root;
             end
@@ -431,8 +482,7 @@ classdef wit < handle, % Since R2008a
             Root = obj.FullName_RootNow;
             % Update stored FullName if any change is detected
             if isempty(Root) || ...
-                    obj.FullName_RootModificationsLatestAtId ~= Root.ModificationsLatestAtId || ...
-                    obj.FullName_RootModifications ~= Root.ModificationsLatestAt.Modifications,
+                    obj.FullName_RootModifiedCount ~= Root.ModifiedCount,
                 % Find new FullName (and Root)
                 FullName = obj.NameNow;
                 Root = obj;
@@ -441,8 +491,7 @@ classdef wit < handle, % Since R2008a
                     Root = Root.ParentNow;
                 end
                 % Update the related modification tracking variables
-                obj.FullName_RootModificationsLatestAtId = Root.ModificationsLatestAtId;
-                obj.FullName_RootModifications = Root.ModificationsLatestAt.Modifications;
+                obj.FullName_RootModifiedCount = Root.ModifiedCount;
                 % Update obj.FullNameNow (and obj.FullName_RootNow)
                 obj.FullNameNow = FullName;
                 obj.FullName_RootNow = Root;
@@ -472,7 +521,7 @@ classdef wit < handle, % Since R2008a
         
         % HasData (READ-ONLY)
         
-        % Modifications (READ-ONLY)
+        % ModifiedCount (READ-ONLY)
         
         % Id (READ-ONLY)
         
@@ -582,6 +631,16 @@ classdef wit < handle, % Since R2008a
         
         % Object debugging
         S = collapse(obj);
+        
+        % Override built-in addlistener to include some optimizations
+        function event_listener = addlistener(obj, varargin),
+            event_listener = event.listener(obj, varargin{:}); % This line is incompatible with Octave
+            isObjectModified = strcmp(varargin{1}, 'ObjectModified');
+            for ii = 1:numel(obj),
+                obj(ii).Listeners{end+1,1} = event_listener; % By default, bound to this object's lifetime
+                if isObjectModified, obj(ii).ModifiedEvents = true; end % Required for optimizations
+            end
+        end
     end
     
     %% STATIC METHODS
@@ -618,23 +677,35 @@ classdef wit < handle, % Since R2008a
         fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress_bar);
         fread_Data(obj, fid, N_bytes_max, swapEndianess);
         
-        % Increments obj's Modifications-property by one and notifies
-        % ancestors if permitted
-        function modification(obj),
-            obj.Modifications = obj.Modifications+1;
-            if obj.ModificationsToAncestors,
-                tag = obj;
-                tag_Id = obj.Id;
-                while ~isempty(obj),
-                    obj.ModificationsLatestAt = tag;
-                    obj.ModificationsLatestAtId = tag_Id;
-                    notify(obj, 'Modification'); % Trigger attached events
+        % Increments obj's ModifiedCount-property by one and notifies
+        % ancestors if permitted. This carefully avoids creating references
+        % to wit Tree objects, what seems to be extremely cumbersome.
+        function modification(obj, property, meta),
+            % Initialize arrays
+            Indices = obj.ModifiedDescendantIndices([]);
+            Ids = obj.ModifiedDescendantIds([]);
+            if obj.ModifiedAncestors,
+                while true,
+                    obj.ModifiedCount = obj.ModifiedCount + 1;
+                    obj.ModifiedDescendantProperty = property;
+                    if nargin > 2, obj.ModifiedDescendantMeta = meta; end
+                    obj.ModifiedDescendantIndices = Indices;
+                    obj.ModifiedDescendantIds = Ids;
+                    if obj.ModifiedEvents, notify(obj, 'ObjectModified'); end % Trigger attached events % This line is Octave-incompatible!
+                    % Update arrays
+                    Indices = [obj.OrdinalNumber Indices];
+                    Ids = [obj.Id Ids];
+                    % Get next ancestor and exit if none exists
                     obj = obj.ParentNow;
+                    if isempty(obj), break; end
                 end
             else,
-                obj.ModificationsLatestAt = obj;
-                obj.ModificationsLatestAtId = obj.Id;
-                notify(obj, 'Modification'); % Trigger attached events
+                obj.ModifiedCount = obj.ModifiedCount + 1;
+                obj.ModifiedDescendantProperty = property;
+                if nargin > 2, obj.ModifiedDescendantMeta = meta; end
+                obj.ModifiedDescendantIndices = Indices;
+                obj.ModifiedDescendantIds = Ids;
+                if obj.ModifiedEvents, notify(obj, 'ObjectModified'); end % Trigger attached events % This line is Octave-incompatible!
             end
         end
     end
