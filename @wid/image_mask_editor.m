@@ -5,8 +5,12 @@
 % REQUIREMENTS: Image Processing Toolbox (due to usage of 'imellipse',
 % 'imfreehand', 'imline', 'impoint', 'impoly', 'imrect' and 'imroi').
 function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
+    if numel(obj) > 1, error('Provide either an empty or a single wit Tree object!'); end
+    
     % Pop states (even if not used to avoid push-pop bugs)
-    AutoCreateObj = obj.Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
+    Project = [obj.Project];
+    if isempty(Project), AutoCreateObj = false;
+    else, AutoCreateObj = Project.popAutoCreateObj; end % Get the latest value (may be temporary or permanent or default)
     
     new_obj = wid.Empty;
     
@@ -14,11 +18,12 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
     if ~isempty(obj) || nargin > 1,
         Fig = figure('Name', 'Mask Editor', 'NumberTitle', 'off');
         if ~isempty(obj),
+            obj_Info = obj.Info; % Load only once
             if strcmp('TDBitmap', obj.Type) || (strcmp('TDGraph', obj.Type) && strcmp('Image', obj.SubType)) || strcmp('TDImage', obj.Type),
                 obj.plot('-nopreview', '-nocursor');
                 set(Fig, 'Name', sprintf('Mask Editor: %s', get(Fig, 'Name')));
-                if nargin == 1 || any(size(image_mask) ~= [obj.Info.XSize obj.Info.YSize]),
-                    image_mask = true(obj.Info.XSize, obj.Info.YSize);
+                if nargin == 1 || any(size(image_mask) ~= [obj_Info.XSize obj_Info.YSize]),
+                    image_mask = true(obj_Info.XSize, obj_Info.YSize);
                 end
             else,
                 warning('Invalid Type! Image mask editor is only for TDBitmap, Image<TDGraph and TDImage. ABORTING...');
@@ -42,15 +47,15 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
         new_obj.Data = image_mask;
         
         % Give it the same transformations and interpretations
-        new_obj.Tag.Data.regexp('^PositionTransformationID<TDImage<', true).Data = int32(max([obj.Info.XTransformation.Id 0])); % Must be int32!
+        new_obj.Tag.Data.regexp('^PositionTransformationID<TDImage<', true).Data = int32(max([obj_Info.XTransformation.Id 0])); % Must be int32!
         if wip.get_Root_Version(obj) == 7,
-            new_obj.Tag.Data.regexp('^SecondaryTransformationID<TDImage<', true).Data = int32(max([obj.Info.XSecondaryTransformation.Id 0])); %v7 % Must be int32!
+            new_obj.Tag.Data.regexp('^SecondaryTransformationID<TDImage<', true).Data = int32(max([obj_Info.SecondaryXTransformation.Id 0])); %v7 % Must be int32!
         end
     end
     
     % Add new object to current Project, modifying its Project-property.
-    if ~isempty(obj.Project) && ~isempty(new_obj),
-        obj.Project.Data = [obj.Project.Data; new_obj];
+    if ~isempty(Project) && ~isempty(new_obj),
+        Project.Data = [Project.Data; new_obj];
     end
     
     function isShown = show_mask(),
