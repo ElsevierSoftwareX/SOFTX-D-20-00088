@@ -73,24 +73,34 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     % spatial areas fit one parameter per area. Each area are marked with
     % an integer. Uses sparse-functionality to reduce Jr2 and Hr2 problem
     % spaces by summing. (23.8.2018)
+    %
     % * Consider implementing '-groups', what would generalize '-locks'
     % feature to the specified labelled or indexed regions. This would be
     % particularly useful if dataset is known to have a single shared
     % parameter in such regions. (20.9.2018)
+    %
     % * Consider implementing Semi-Implicit Root (SIR) solver, what is
     % claimed to possess superior global convergence properties over GN and
     % NR, or even LMA [1]. (3.4.2019)
     % [1] J. Scheffel and K. Lindvall (2018), 'SIR - An efficient solver
     % for systems of equation', https://doi.org/10.1016/j.softx.2018.01.003
+    %
     % * Implement '-NLineshapes' (number of lineshapes) to allow simpler
     % fun-input. For instance, one could simply give a single lineshape
     % fun, which is then used for N lineshapes. (25.6.2019)
+    %
     % * Implement robust least squares ROUT-method described in ref. [2]
     % that removes dataset outliers on the fly. (2.4.2020)
     % [2] H. J. Motulsky and R. E. Brown (2006), 'Detecting outliers when
     % fitting data with nonlinear regression – a new method based on robust
     % nonlinear regression and the false discovery rate',
     % https://doi.org/10.1186/1471-2105-7-123
+    %
+    % * Implement Simultaneous Multiple Robust Fitting (SMRF) described in
+    % ref. [3] that allows multiple peak fitting with outliers. (8.6.2020)
+    % [3] J.-P. Tarel and P. Charbonnier (2010), 'A Lagrangian Half-
+    % Quadratic approach to robust estimation and its applications to road
+    % scene analysis', https://doi.org/10.1016/j.patrec.2010.05.011
     
     if nargin < 5, dim = 3; end % By default, operate 3rd or spectral dimension
     T_begin = now.*86400; % [s]
