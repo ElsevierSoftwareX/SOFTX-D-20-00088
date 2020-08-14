@@ -67,7 +67,7 @@ for ii = 1:numel(variables),
     daspect([1 O_Info.XLength/O_Info.YLength 1]);
 
     % Choose perceptually uniform colormap (https://bids.github.io/colormap/)
-    colormap(colormap_mpl([], 'inferno')); % Possible options are 'magma', 'inferno', 'plasma', 'viridis'
+    colormap(perceptually_uniform_colormap('inferno')); % Possible options are 'magma', 'inferno', 'plasma', 'viridis', 'cividis', 'graymagma', 'grayinferno', 'grayplasma', 'grayviridis', 'graycividis', 'gray'
 
     h_cb = colorbar('Location', 'EastOutside');
     h_cb.Label.String = units{ii};
