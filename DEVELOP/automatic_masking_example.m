@@ -91,6 +91,6 @@ for ii = 1:numel(variables),
         export_opt = {'-r300', ... % Dots Per Inch (DPI), ...
         '-nofontswap', ... % Preserves original fonts for vector formats
         '-q101'}; % Quality: q > 100 ensures lossless compression!
-        export_fig(sprintf('1_%s.png', variables{ii}), fig, export_opt{:});
+        export_fig(sprintf('1_%s.png', variables{ii}), fig, export_opt{:}, '-silent');
     end
 end
