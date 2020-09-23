@@ -6,6 +6,7 @@
 % Simple examples of data post processing like (E2A i.) filtering and
 % (E2A ii.) fitting.
 
+edit([mfilename('fullpath') '.m']); % Open this code in Editor
 clear all; % Clear workspace
 close all; % Close figures
 
