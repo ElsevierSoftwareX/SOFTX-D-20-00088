@@ -101,6 +101,11 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     % [3] J.-P. Tarel and P. Charbonnier (2010), 'A Lagrangian Half-
     % Quadratic approach to robust estimation and its applications to road
     % scene analysis', https://doi.org/10.1016/j.patrec.2010.05.011
+    %
+    % * Implement Conjugate Gradient (CG) method described in
+    % ref. [4] with PRECONDITIONING. (3.9.2020)
+    % [4] J. R. Shewchuk (1994) 'An Introduction to the Conjugate
+    % Gradient Method Without the Agonizing Pain', https://www.cs.cmu.edu/~quake-papers/painless-conjugate-gradient.pdf
     
     if nargin < 5, dim = 3; end % By default, operate 3rd or spectral dimension
     T_begin = now.*86400; % [s]
