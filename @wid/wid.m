@@ -361,6 +361,9 @@ classdef wid < handle, % Since R2008a
     
     %% STATIC PUBLIC METHODS
     methods (Static)
+        % File reader
+        varargout = read(varargin); % Simple wrapper for wip.read
+        
         % Constructor WID-formatted WIT-tree
         O_wit = new(Version); % WITec Data WIT-tree
         
