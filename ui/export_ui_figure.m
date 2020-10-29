@@ -46,6 +46,7 @@ function export_ui_figure(Fig),
         if filterindex <= N_formats,
             export_opt{end+1} = '-nocrop'; % Add option: Do not crop the figure
         end
+        setpref('export_fig', 'promo_time', now); % Stop export_fig from promoting consulting services once a week!
         export_fig(file, Fig, export_opt{:}, '-silent');
         waitbar(1, h_waitbar);
         delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Solves the closing issues with close(h_Waitbar);
