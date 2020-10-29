@@ -21,6 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## [1.2.1] - 2020-10-29
+
+### Fixed
+- Hotfix to properly add paths upon toolbox installation by wit_io.mltbx.
+
+
+
 ## [1.2.0] - 2020-03-19
 
 ### Added
@@ -297,7 +304,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.0...develop
+[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.1...develop
+[1.2.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.0...v1.2.1
 [1.2.0]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.1.2...v1.2.0
 [1.1.2]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.1.1...v1.1.2
 [1.1.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.1.0...v1.1.1

@@ -49,6 +49,7 @@ fclose(fid);
 
 % Get all relevant subfolders
 [toolbox_dev_path, ~, ~] = fileparts([mfilename('fullpath') '.m']);
+toolbox_dev_path = toolbox_dev_path(1:end-4); % Remove \dev from the end
 toolbox_paths_wo_git = regexprep(genpath(toolbox_dev_path), '[^;]*(?<=\.git)[^;]*;', ''); % Exclude all .git folders from addpath
 strs = strrep(toolbox_paths_wo_git, toolbox_dev_path, ''); % From absolute to relative paths
 strs = strrep(strs, '\', '/'); % Convert \'s to /'s
