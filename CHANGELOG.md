@@ -21,6 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## [1.2.2] - 2020-10-29
+
+### Fixed
+- Hotfix reported error on local disks. (Code was unintentionally only tuned to network disks.)
+
+
+
 ## [1.2.1] - 2020-10-29
 
 ### Fixed
@@ -304,7 +311,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.1...develop
+[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.2...develop
+[1.2.2]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.1...v1.2.2
 [1.2.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.0...v1.2.1
 [1.2.0]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.1.2...v1.2.0
 [1.1.2]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.1.1...v1.1.2
