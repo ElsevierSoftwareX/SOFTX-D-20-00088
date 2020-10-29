@@ -23,6 +23,7 @@ function HtmlName = get_HtmlName(obj, isWorkspaceOptimized),
     % Construct html string(s)
     folder_reader = regexprep(mfilename('fullpath'), '[\\\/]+[^\\\/]+[\\\/]+[^\\\/]+$', ''); % Step back one folder, assuming file://-case first
     folder_reader = regexprep(folder_reader, '^([^\\\/])', '\\$1'); % Handle file:/// local file -case
+    folder_reader = ['file:' folder_reader]; % Append 'file:'
     for ii = 1:numel(obj),
         Type = obj(ii).Type; % Read the raw type
         if any(strcmp(Type, {'TDSpectralCursor', 'TDSpaceCursor', 'TDZCursor'})), Type = 'TDCursor'; end % Special case: Cursors
@@ -35,7 +36,7 @@ function HtmlName = get_HtmlName(obj, isWorkspaceOptimized),
             end
             % Wrap icon and name in html-table and set their vertical alignment
             % to middle and add 1px cell spacing around the table.
-            HtmlName{ii} = sprintf('<html><img height="16" width="16" src="file:%s"/>&nbsp;%s</html>', ImageFile, HtmlName{ii}); % height and width are required by R2019b and onwards
+            HtmlName{ii} = sprintf('<html><img height="16" width="16" src="%s"/>&nbsp;%s</html>', ImageFile, HtmlName{ii}); % height and width are required by R2019b and onwards
         else, % isProjectManagerOptimized == true
             ImageFile = strrep(fullfile(folder_reader, 'icons', ImageFile), '\', '/'); % Construct its full path
             if exist(ImageFile, 'file') ~= 2, % Revert to Default.png if attempted ImageFile does NOT exist
@@ -45,7 +46,7 @@ function HtmlName = get_HtmlName(obj, isWorkspaceOptimized),
             if verLessThan('matlab', '9.7'), % If older than R2019b
                 % Wrap icon and name in html-table and set their vertical alignment
                 % to middle and add 1px cell spacing around the table.
-                HtmlName{ii} = sprintf('<html><table cellspacing="1" cellpadding="0"><tr valign="middle"><td><img height="%d" width="%d" src="file:%s"/></td><td>&nbsp;%s</td></tr></table></html>', info.Height, info.Width, ImageFile, HtmlName{ii}); % height and width are required by R2019b and onwards
+                HtmlName{ii} = sprintf('<html><table cellspacing="1" cellpadding="0"><tr valign="middle"><td><img height="%d" width="%d" src="%s"/></td><td>&nbsp;%s</td></tr></table></html>', info.Height, info.Width, ImageFile, HtmlName{ii}); % height and width are required by R2019b and onwards
             else, % If R2019b or newer that use uihtml_JList.html via uihtml
                 [~, name, ext] = fileparts(ImageFile);
                 ImageFile = [name ext]; % Remove path, because uihtml_project_manager.html is located in the same folder as the icons
