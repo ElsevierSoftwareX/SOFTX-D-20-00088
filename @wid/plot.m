@@ -89,7 +89,7 @@ function h = plot(obj, varargin),
                         if showSidebar,
                             updateGraphImage([-inf inf]);
                             fun_refresh = ui_sidebar_for_clim(Fig);
-                            ui_sidebar_for_colormap_mpl(Fig);
+                            ui_sidebar_for_perceptually_uniform_colormaps(Fig);
                             ui_sidebar_for_sum_filter(Fig, @updateGraphImage, fun_refresh);
                             if showCursor,
                                 if ~showPreview, ui_sidebar_for_cursor(Fig, [], [], @transform_CP);
@@ -128,7 +128,7 @@ function h = plot(obj, varargin),
                     case 'Volume', % Volume (CUSTOM)
                         if showSidebar,
                             updateGraphVolume([-inf inf]);
-                            ui_sidebar_for_colormap_mpl(Fig);
+                            ui_sidebar_for_perceptually_uniform_colormaps(Fig);
                             ui_sidebar_for_sum_filter(Fig, @updateGraphVolume);
                         else,
                             if numel(varargin) > 0, updateGraphVolume(varargin{1});
@@ -139,7 +139,7 @@ function h = plot(obj, varargin),
                 plot_Image(Data, Info.DataUnit, Info.XUnit, Info.XLength, Info.YLength);
                 if showSidebar,
                     ui_sidebar_for_clim(Fig);
-                    ui_sidebar_for_colormap_mpl(Fig);
+                    ui_sidebar_for_perceptually_uniform_colormaps(Fig);
                     if showCursor, ui_sidebar_for_cursor(Fig, [], [], @transform_CP); end
                 end
             otherwise, % Text OR (un)formatted DataTree
@@ -424,7 +424,7 @@ function h = plot(obj, varargin),
                 if cmin == cmax || isnan(cmin) || isnan(cmax), h = nanimagesc(Data);
                 else, h = nanimagesc(Data, [cmin cmax]); end
             else, h = imagesc(Data); end % Plot logical data
-%             colormap(colormap_mpl([], 'inferno')); % Use inferno by default
+%             colormap(perceptually_uniform_colormap('inferno')); % Use inferno by default
             colorbar('HitTest', 'off'); % HitTest 'off' added for backward compability of ui_sidebar_for_cursor
         elseif size(Data, 3) == 3, h = image(Data); end % Plot colored data
 
