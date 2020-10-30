@@ -5,7 +5,7 @@
 % REQUIREMENTS: Image Processing Toolbox (due to usage of 'imellipse',
 % 'imfreehand', 'imline', 'impoint', 'impoly', 'imrect' and 'imroi').
 function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
-    if numel(obj) > 1, error('Provide either an empty or a single wit Tree object!'); end
+    if numel(obj) > 1, error('Provide either an empty or a single wid Data object!'); end
     
     % Pop states (even if not used to avoid push-pop bugs)
     Project = [obj.Project];
