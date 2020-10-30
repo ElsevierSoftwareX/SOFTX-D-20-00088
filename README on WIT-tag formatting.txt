@@ -308,8 +308,9 @@ UnitKind
 2 StandardUnit (nm) (TDTransformation<TDSpectralTransformation)
 3 StandardUnit (s) (TDTransformation<TDLinearTransformation)
 4 StandardUnit (a.u.) (TDTransformation<TDLinearTransformation)
-5 ?
+5 StandardUnit (Hz) (TDTransformation<TDLinearTransformation)
 6 StandardUnit (1/µm) (TDTransformation<TDSpaceTransformation)
+7 StandardUnit (rad) (TDTransformation<TDLinearTransformation)
 ...
 
 ===========================================================================
