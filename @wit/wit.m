@@ -357,7 +357,7 @@ classdef wit < handle, % Since R2008a
             % Remove this object from the old non-empty parent
             if ~isempty(Parent_old),
                 B_obj = Parent_old.DataNow == obj;
-                ind_obj = find(B_old, 1);
+                ind_obj = find(B_obj, 1);
                 Children_old = Parent_old.DataNow(~B_obj);
                 Parent_old.DataNow = Children_old;
                 Parent_old.ChildrenNow = Children_old;
