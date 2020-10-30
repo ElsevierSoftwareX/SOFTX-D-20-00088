@@ -27,6 +27,39 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
+## [1.2.3] - 2020-10-30
+
+### Added
+- Add more perceptually uniform colormaps like `'cividis'` and grayscale options.
+- Show this toolbox when calling `help`, `doc` or `ver` in Command Window.
+- `wid`-class: Add static `read`-method, equivalent to that of `wip`-class.
+- [`README on WIT-tag formatting.txt`][1.2.3,A1]: More information to `TDTransformation`'s UnitKind-section.
+- Add advanced tools to work with Java classes on MATLAB side on-demand, such as [`java_objects_from_varargin`][1.2.3,A2], [`java_objects_to_varargout`][1.2.3,A3] and [`java_class_method_call`][1.2.3,A4] to mention. These were used to experiment with adding/updating/removing `jar`-libraries at MATLAB.
+
+[1.2.3,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.2.3/README%20on%20WIT-tag%20formatting.txt
+[1.2.3,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.2.3/helper/java/java_objects_from_varargin.m
+[1.2.3,A3]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.2.3/helper/java/java_objects_to_varargout.m
+[1.2.3,A4]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.2.3/helper/java/java_class_method_call.m
+
+### Changed
+- `CHANGELOG.md`: Transition from **Semantic Versioning** to **Explicit Versioning** for more clarity and less rigidity.
+- [`image_mask_editor`][1.2.3,C1]: Fix typos. From now on, error if given more than one wid Data objects.
+
+[1.2.3,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.2.3/@wid/image_mask_editor.m
+
+### Deprecated
+- Deprecate `colormap_mpl` by replacing it with `perceptually_uniform_colormap`. Rename and update related functions like `ui_sidebar_for_perceptually_uniform_colormaps`.
+
+### Removed
+- Delete unused `handle_struct`-class from the project.
+- `export_fig`-library: Remove unused files.
+
+### Fixed
+- Remove unintentional dependency on MATLAB R2013b by changing any occurrence of `flip` to `fliplr`.
+- `export_fig`-library: Update it to v3.12 and stop it from warning about new updates and promoting consulting services once a week!
+
+
+
 ## [1.2.2] - 2020-10-29
 
 ### Fixed
@@ -317,7 +350,8 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
-[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.2...develop
+[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.3...develop
+[1.2.3]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.2...v1.2.3
 [1.2.2]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.1...v1.2.2
 [1.2.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.0...v1.2.1
 [1.2.0]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.1.2...v1.2.0

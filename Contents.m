@@ -1,2 +1,2 @@
 % WIT Input/Output Toolbox
-% Version 1.2.0 (R2011a) 08-Apr-2011
+% Version 1.2.3 (R2011a) 08-Apr-2011
