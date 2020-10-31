@@ -141,7 +141,7 @@ classdef wip < handle, % Since R2008a
             
             % Sort prior children by names
             Tree_prior = obj.Tree;
-            Children_prior = Tree_prior.Children;
+            Children_prior = [Tree_prior.Children wit.empty];
             [names_prior, ind_prior] = sort({Children_prior.Name});
             Children_prior = Children_prior(ind_prior);
             
@@ -159,7 +159,7 @@ classdef wip < handle, % Since R2008a
             % Use the new tree structure if generated
             if ~isempty(Tree),
                 % Sort posterior children by names
-                Children = Tree.Children;
+                Children = [Tree.Children wit.empty];
                 [names, ind] = sort({Children.Name});
                 Children = Children(ind);
                 % Find prior children by matching child names and adopt them
