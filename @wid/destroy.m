@@ -19,7 +19,7 @@ function destroy(obj),
         if ~isempty(Tag_ii),
             Tag_NV = Tag_ii.Data.Parent.search('NumberOfData', 'Data');
             Tag_NV.Data = Tag_NV.Data - 1; % Reduce the number by one
-            destroy([Tag_ii.DataClassName Tag_ii.Data]); % Destroy all related tags
+            delete([Tag_ii.DataClassName Tag_ii.Data]); % Destroy all related tags
         end
     end
     delete(obj); % Delete the object handles

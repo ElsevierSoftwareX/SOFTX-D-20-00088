@@ -20,6 +20,6 @@ function tags = regexp_ancestors(obj, pattern, FirstOnly, LayersFurther),
         tags = reshape(obj(match), 1, []); % Return all matches
     else,
         superobj = {obj.Parent}; % Collect the parents
-        tags = [reshape(obj(match), 1, []) regexp_ancestors(horzcat(superobj{:}), pattern, FirstOnly, LayersFurther-1)]; % Returns always a row vector
+        tags = [reshape(obj(match), 1, []) regexp_ancestors([superobj{:} wit.empty], pattern, FirstOnly, LayersFurther-1)]; % Returns always a row vector
     end
 end

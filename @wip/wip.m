@@ -29,14 +29,27 @@
 
 % Class for project
 classdef wip < handle, % Since R2008a
-    properties (Dependent)
+    %% MAIN PROPERTIES
+    properties (SetAccess = private, Dependent) % READ-ONLY, DEPENDENT
         File;
-        Version; % WIP/WID-file version. See 'README on WIT-tag formatting.txt'.
+        Name;
+    end
+    properties % READ-WRITE
+        Data = wid.Empty;
+    end
+    properties (Dependent) % READ-WRITE, DEPENDENT
+        Type;
     end
     
-    properties % If field names are added or altered, then also update storeState and restoreState!
-        Data = wid.Empty;
+    %% OTHER PROPERTIES
+    properties (Dependent) % READ-WRITE, DEPENDENT
+        Version; % WIP/WID-file version. See 'README on WIT-tag formatting.txt'.
+    end
+    properties % READ-WRITE
         Tree = wit.empty;
+    end
+    
+    properties % READ-WRITE
         % DataUnit, SpaceUnit, SpectralUnit or TimeUnit
         ForceDataUnit = '';
         ForceSpaceUnit = '';
@@ -53,7 +66,7 @@ classdef wip < handle, % Since R2008a
         AutoModifyObj = true; % Automatically modify either the original object or its copy (whenever applicable). If false, then obj output should not be modified.
     end
     
-    properties (Constant)
+    properties (Constant) % READ-ONLY, CONSTANT
         FullStandardUnits = {'Arbitrary Unit (a.u.)', ...
             'Energy (eV)', 'Energy (meV)', 'Femtoseconds (fs)', ...
             'Hours (h)', 'Meters (m)', 'Micrometers (µm)', ...
@@ -92,6 +105,21 @@ classdef wip < handle, % Since R2008a
             obj.AutoModifyObj = wit_io_pref_get('wip_AutoModifyObj', obj.AutoModifyObj);
         end
         
+        
+        
+        %% MAIN PROPERTIES
+        % File (READ-ONLY, DEPENDENT)
+        function File = get.File(obj),
+            File = obj.Tree.File;
+        end
+        
+        % Name (READ-ONLY, DEPENDENT)
+        function Name = get.Name(obj),
+            [~, name, ext] = fileparts(obj.Tree.File);
+            Name = [name ext];
+        end
+        
+        % Data (READ-WRITE)
         function set.Data(obj, Data),
             for ii = 1:numel(Data),
                 Data(ii).Project = obj;
@@ -99,22 +127,26 @@ classdef wip < handle, % Since R2008a
             obj.Data = Data(:); % Force column vector
         end
         
-        function File = get.File(obj),
-            File = obj.Tree.File;
+        % Type (READ-WRITE, DEPENDENT)
+        function Type = get.Type(obj),
+            Type = obj.Tree.Name;
+        end
+        function set.Type(obj, Type),
+            obj.Tree.Name = Type;
         end
         
-        function set.File(obj, File),
-            obj.Tree.File = char(File);
-        end
-        
+        %% OTHER PROPERTIES
+        % Version (READ-WRITE, DEPENDENT)
         function Version = get.Version(obj),
             Version = wip.get_Root_Version(obj.Tree);
         end
-        
         function set.Version(obj, Version),
             wip.set_Root_Version(obj.Tree, Version);
         end
         
+        % Tree (READ-WRITE)
+        
+        % ForceDataUnit (READ-WRITE)
         function set.ForceDataUnit(obj, Value),
             if ~isempty(Value),
                 try, Value = wip.interpret('TDZInterpretation', Value); % Try interpret
@@ -123,6 +155,7 @@ classdef wip < handle, % Since R2008a
             obj.ForceDataUnit = Value;
         end
         
+        % ForceSpaceUnit (READ-WRITE)
         function set.ForceSpaceUnit(obj, Value),
             if ~isempty(Value),
                 try, Value = wip.interpret('TDSpaceInterpretation', Value); % Try interpret
@@ -131,6 +164,7 @@ classdef wip < handle, % Since R2008a
             obj.ForceSpaceUnit = Value;
         end
         
+        % ForceSpectralUnit (READ-WRITE)
         function set.ForceSpectralUnit(obj, Value),
             if ~isempty(Value),
                 try, Value = wip.interpret('TDSpectralInterpretation', Value); % Try interpret
@@ -139,6 +173,7 @@ classdef wip < handle, % Since R2008a
             obj.ForceSpectralUnit = Value;
         end
         
+        % ForceTimeUnit (READ-WRITE)
         function set.ForceTimeUnit(obj, Value),
             if ~isempty(Value),
                 try, Value = wip.interpret('TDTimeInterpretation', Value); % Try interpret

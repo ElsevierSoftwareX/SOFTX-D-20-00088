@@ -27,6 +27,83 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
+## [1.3.0] - 2020-11-01
+
+### Added
+
+- Show file and binary reading/writing progress in Command Window using new documented [`progress_bar`][1.3.0,A1]-function, customizable by extra inputs `'-Width'`, `'-Character'`, `'-FlipStartEnd'`, `'-Reverse'`, `'-OnlyIncreasing'` and `'-OnlyDecreasing'`.
+- `wit`-class: Add new performance-optimized *read-only* `Modified<X>`-properties that allow tracing of branch-related modifications within the `wit` `Tree` object and can be used to determine if and where a change has occurred. These can be used to speed-up `wid`- and `wip`-classes in the upcoming releases.
+- `wit`-class: Add `'ObjectBeingDestroyed'` and `'ObjectModified'` events to `wit`-class, intended for internal use for now. This is preparation to possible transition to *event-oriented programming* in the future.
+- Unify the four main properties of `wit`-, `wid`- and `wip`-classes by adding missing `Name`-property (= the project file name) and `Type`-property (= the project root name) to `wip`-class and `File`-property (= the data full file name) to `wid`-class.
+- [`@wit/search_children`][1.3.0,A2] and [`@wit/regexp_children`][1.3.0,A3]: New rapid methods to find the specific children of `wit` `Tree` objects, being faster than [`@wit/search`][1.3.0,A4] and [`@wit/regexp`][1.3.0,A5]. Conveniently, multiple subsequent calls can be chained with dot-notation. These can be used to speed-up `wid`- and `wip`-classes in the upcoming releases.
+- [`@wit/regexp_all_Names`][1.3.0,A6]: New fast regexp method to find all `wit` `Tree` objects by matching a `Name`-pattern. This can be used to speed-up the ID search of the tree structure in the future.
+- [`@wit/binary_ind2obj`][1.3.0,A7]: New debugging method to find `wit` `Tree` objects that correspond to the given binary positions (= binary buffer indices).
+- [`@wit/read`][1.3.0,A8]: Add missing method documentation.
+- [`dev_update_version`][1.3.0,A9]: New developer's function to quickly update all the files mentioning the toolbox version before the next release.
+
+[1.3.0,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/progress_bar.m
+[1.3.0,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/search_children.m
+[1.3.0,A3]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/regexp_children.m
+[1.3.0,A4]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/search.m
+[1.3.0,A5]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/regexp.m
+[1.3.0,A6]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/regexp_all_Names.m
+[1.3.0,A7]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/binary_ind2obj.m
+[1.3.0,A8]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/read.m
+[1.3.0,A9]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/dev/dev_update_version.m
+
+### Changed
+
+- Make `wit`-class **self-consistent** and **usage-safe** by enforcing **(1)** syncronization of parent-children connections (meaning that the parent now always knows of its children and vice versa), and **(2)** prevention of loop creation within the tree structure. The former removes difficult to detect bugs. The latter quarantees that any `wit` `Tree` object can always be written to a file.
+- Due to optimizations, any new object created by `wit()`-call has `Data = []` and `Type = 2` instead of `Data = wit.empty` and `Type = 0`.
+- `wit`-class: As a side effect of optimization, the initial values for `Children` and `Parent` properties are now `[]`, what can break any code not taking this into account when using these properties.
+- `wid`-class: Make `Info`, `LinksToOthers`, `AllLinksToOthers`, `LinksToThis` and `AllLinksToThis` properties *read-only* as they already effectively were.
+- `wip`-class: Make `File`-property *read-only* to allow its modifications only by the file operations.
+- Allow variable number of inputs to the write/read methods of `wit`-class in order to enable customizations like progress bar and compression/decompression (in the future).
+- Due to format-specific reasons, default to the little endian ordering during the file and binary reading/writing.
+- `wit`-class: Make `Children`, `Root`, `Siblings`, `Next` and `Prev` dependent properties *read-write* to enable more diverse ways to alter the tree structure.
+- `wit`-class: Hide secondary file format properties, namely `NameLength`, `Start` and `End`.
+- [`@wit/update`][1.3.0,C1]: Hide the second input, which was intended only for internal use.
+- By default, auto-update `wit` `Tree` objects right before writing.
+- Reduced Octave-compatibility **at speed-critical components** in order to prioritize the big data performance.
+
+[1.3.0,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/update.m
+
+### Deprecated
+
+- [`@wit/destroy`][1.3.0,D1]: Supersede it by `delete`.
+- [`@wit/adopt`][1.3.0,D2]: To be removed in the future.
+- `wit`-class: Supersede [`binaryread`][1.3.0,D3] and [`binary`][1.3.0,D4] by [`bread`][1.3.0,D5] and [`bwrite`][1.3.0,D6], respectively.
+
+[1.3.0,D1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/destroy.m
+[1.3.0,D2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/adopt.m
+[1.3.0,D3]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/binaryread.m
+[1.3.0,D4]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/binary.m
+[1.3.0,D5]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/bread.m
+[1.3.0,D6]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/bwrite.m
+
+### Fixed
+
+- Fix incomplete support of string arrays (`Type == 9`) in file and binary reading/writing.
+- [`@wit/bread`][1.3.0,F1]: Add unintentionally missing `skip_Data_criteria_for_obj`-feature to binary reading.
+- [`@wit/fwrite`][1.3.0,F2]: Add unintentionally missing `swap_endianess`-feature to file writing.
+- File reading/writing: Fix the low-on-memory scheme so that it properly catches the error messages previously uncaught.
+- From now on, prevent setting of siblings to the root `wit` `Tree` objects.
+- [`wip`][1.3.0,F3]- and [`wid`][1.3.0,F4]-classes: Reorganized their properties in more clean and concise way.
+- Improved Octave-compatibility of file and binary read/write code.
+
+[1.3.0,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/bread.m
+[1.3.0,F2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/fwrite.m
+[1.3.0,F3]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wip/wip.m
+[1.3.0,F4]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wid/wid.m
+
+### Performance
+
+- [`wit`][1.3.0,P1]-class: Towards **big data suitability** by dramatic improvements in the performance of **(1)** file and binary reading/writing of huge files, **(2)** copying of `wit` `Tree` objects, and **(3)** getting and setting values of any `wit`-class property. Vast majority of these were achieved by minimizing redundant code everywhere with help of hidden secondary properties, disabling automatic file stream flushing, avoiding of cell arrays and avoiding of Octave-compatible overloaded functions.
+
+[1.3.0,P1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.0/@wit/wit.m
+
+
+
 ## [1.2.3] - 2020-10-30
 
 ### Added
@@ -350,7 +427,8 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
-[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.3...develop
+[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.0...develop
+[1.3.0]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.3...v1.3.0
 [1.2.3]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.2...v1.2.3
 [1.2.2]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.1...v1.2.2
 [1.2.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.0...v1.2.1
