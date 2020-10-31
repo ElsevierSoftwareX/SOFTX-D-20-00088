@@ -612,10 +612,8 @@ classdef wit < handle, % Since R2008a
         update(obj); % Update file format header information
         reload(obj); % Reload obj.Data from file
         
-        % Add/remove children
-        add(obj, varargin);
-        remove(obj, varargin);
-        adopt(obj, varargin); % DEPRECATED! Use add instead!
+        % Add children
+        adopt(obj, varargin); % DEPRECATED! TO BE REMOVED!
         
         % Conversion to/from binary form
         buffer = binary(obj, swapEndianess); % DEPRECATED! Use bwrite instead!
