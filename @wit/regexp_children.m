@@ -6,8 +6,7 @@
 % can be chained and can be much faster than .search or .regexp.
 function varargout = regexp_children(obj, varargin),
     % Get wit Tree object Children and their Names
-    if isempty(obj), Children = wit.empty;
-    else, Children = [obj.Children]; end
+    Children = [obj.Children wit.empty];
     Names = {Children.Name};
     % Loop to match them
     varargout = cell(size(varargin));

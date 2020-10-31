@@ -15,7 +15,7 @@ function [best_dist, best_obj] = binary_ind2obj(obj, ind),
     for jj = 1:numel(obj),
         for ii = 1:numel(pos),
             if best_dist(jj,ii) > 0,
-                [best_dist(jj,ii), best_obj(jj,ii)] = binary_pos2obj_helper(best_obj(jj,ii).Children, pos(ii), best_dist(jj,ii), best_obj(jj,ii));
+                [best_dist(jj,ii), best_obj(jj,ii)] = binary_pos2obj_helper([best_obj(jj,ii).Children wit.empty], pos(ii), best_dist(jj,ii), best_obj(jj,ii));
             end
         end
     end
@@ -30,7 +30,7 @@ function [best_dist, best_obj] = binary_ind2obj(obj, ind),
             end
         end
         if ~isempty(obj) && ~isempty(best_obj),
-            [best_dist, best_obj] = binary_pos2obj_helper(best_obj.Children, pos, best_dist, best_obj);
+            [best_dist, best_obj] = binary_pos2obj_helper([best_obj.Children wit.empty], pos, best_dist, best_obj);
         end
     end
 end

@@ -6,7 +6,7 @@
 function add(obj, varargin),
     if numel(obj) > 1, error('A tag cannot have more than one parent!'); % Error if more than one parent!
     elseif numel(obj) == 0, return; end % Do nothing if no parents
-    children = obj.Children;
+    children = [obj.Children wit.empty];
     N_children = numel(children);
     for ii = 1:numel(varargin),
         children_ii = varargin{ii};

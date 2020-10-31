@@ -25,7 +25,7 @@ function DataTree_set(parent, in, format),
     predefined_values = format(:,3);
 
     % Get UNSORTED children names
-    children = reshape([parent.Children], [], 1); % Force column
+    children = reshape([parent.Children wit.empty], [], 1); % Force column
     children_names = reshape({children.Name}, [], 1); % Force column
 
     % Get UNSORTED in-struct fields and values AND obey its ordering (SECONDARY)
