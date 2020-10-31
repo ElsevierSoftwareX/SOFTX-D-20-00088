@@ -429,6 +429,9 @@ classdef wit < handle, % Since R2008a
         end
         function set.Siblings(obj, Siblings),
             % Validate the given input
+            if isempty(obj.ParentNow),
+                error('Root cannot have siblings!');
+            end
             if ~isa(Siblings, 'wit'),
                 error('Siblings can be set by an array of wit tree objects! It can optionally include the main object to choose its position within its new siblings. Otherwise, the main object will be first!');
             end
@@ -448,6 +451,9 @@ classdef wit < handle, % Since R2008a
         end
         function set.Next(obj, Next),
             % Validate the given input
+            if isempty(obj.ParentNow),
+                error('Root cannot have next sibling!');
+            end
             if ~isa(Next, 'wit'),
                 error('Next can be set by an array of wit tree objects!');
             end
@@ -468,6 +474,9 @@ classdef wit < handle, % Since R2008a
         end
         function set.Prev(obj, Prev),
             % Validate the given input
+            if isempty(obj.ParentNow),
+                error('Root cannot have previous sibling!');
+            end
             if ~isa(Prev, 'wit'),
                 error('Prev can be set by an array of wit tree objects! Its content will be added in reversed order.');
             end
