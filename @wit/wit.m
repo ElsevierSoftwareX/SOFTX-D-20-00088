@@ -122,8 +122,8 @@ classdef wit < handle, % Since R2008a
     % Handle-specific internal parameters
     properties (SetAccess = private) % READ-ONLY
         % Use of double is faster than uint64
-        ChildrenIdToOrdinalNumber = spalloc(0, 1, 0); % Sparse map from Id to OrdinalNumber
-        OrdinalNumber; % Array index among its Parent's Children
+        % ChildrenIdToOrdinalNumber = spalloc(0, 1, 0); % Sparse map from Id to OrdinalNumber
+        OrdinalNumber = 1; % Array index among its Parent's Children
         Id = 0; % Used internally to enable handle-like comparison in Octave
     end
     properties (SetAccess = private, Hidden) % READ-ONLY
@@ -269,7 +269,7 @@ classdef wit < handle, % Since R2008a
                     if ~isempty(Parent_old{ii}), Parent_old_Id(ii) = Parent_old{ii}.Id; end
                 end
                 [Parent_old_Id_unique, ind_unique, ind_Parent_old_unique] = unique(Parent_old_Id); % Store unique old Parents
-                if Parent_old_Id_unique(1) == 0,
+                if N_Data > 0 && Parent_old_Id_unique(1) == 0,
                     ind_unique = ind_unique(2:end); % Discard zero Id
                     ind_Parent_old_unique = ind_Parent_old_unique - 1; % Shift due to discarding zero Id
                 end
