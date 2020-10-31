@@ -5,31 +5,40 @@
 % Make hard copy of the wit-tree and its nodes. Please note that the links
 % to the root and the parents are destroyed to keep the trees consistent!
 function new = copy(obj),
-    new = wit.empty; % Return empty if no obj given
-    if numel(obj) > 0,
+    new = copy_children(obj, wit.empty); % Define as Root objects
+    % Set Root properties
+    for jj = 1:numel(obj),
+        new(jj).OrdinalNumber = 1;
+        new(jj).Magic = obj(jj).Magic; % Sufficient but not an exact copy
+        new(jj).File = obj(jj).File; % Sufficient but not an exact copy
+    end
+    function new_children = copy_children(children, Parent),
+        new_children = wit.empty; % Return empty if no obj given
         % Using constructor to automatically reset Root and Parent
-%         new(numel(obj)) = wit(); % Causes same-Id-bug when using Octave-compatible NextId-scheme!
-        for ii = 1:numel(obj),
-            new(ii) = wit(); % Avoids same-Id-bug when using Octave-compatible NextId-scheme!
-            new(ii).Name = obj(ii).Name;
-            new(ii).NameLength = obj(ii).NameLength;
-            new(ii).Type = obj(ii).Type;
-            new(ii).Start = obj(ii).Start;
-            new(ii).End = obj(ii).End;
-            new(ii).Magic = obj(ii).Magic; % Sufficient but not an exact copy
-            new(ii).Header = obj(ii).Header;
-            new(ii).File = obj(ii).File; % Sufficient but not an exact copy
-            new(ii).IsValid = obj(ii).IsValid;
+%         new_children(numel(children)) = wit(); % Causes same-Id-bug when using Octave-compatible NextId-scheme!
+        for ii = 1:numel(children),
+            obj_ii = children(ii);
+            new_ii = wit(); % Avoids same-Id-bug when using Octave-compatible NextId-scheme!
             
-            % But do not copy Parent in order to preserve the tree
-            % consistency!
+            new_ii.NameNow = obj_ii.NameNow; % Speed-up
+            
+            new_ii.ParentNow = Parent; % Speed-up
             
             % Test if a data tag or a list of tags
-            if ~isa(obj(ii).Data, 'wit'), new(ii).Data = obj(ii).Data; % Data
-            else, new(ii).Data = obj(ii).Data.copy(); end % Children
+            if isempty(obj_ii.ChildrenNow), % Data
+                new_ii.DataNow = obj_ii.DataNow;
+                new_ii.ChildrenNow = obj_ii.ChildrenNow;
+            else, % Children
+                copies = copy_children(obj_ii.ChildrenNow, new_ii);
+                new_ii.ChildrenNow = copies;
+                new_ii.DataNow = copies;
+                for kk = 1:numel(copies),
+                    copies(kk).OrdinalNumber = kk;
+                end
+            end
+            new_ii.HasData = obj_ii.HasData;
             
-            % Finally, update HasData because it is set false when setting empty Data
-            new(ii).HasData = obj(ii).HasData;
+            new_children(ii) = new_ii;
         end
     end
 end

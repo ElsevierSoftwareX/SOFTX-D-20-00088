@@ -50,7 +50,7 @@ function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin),
     obj = O_wid(1);
     if AutoCreateObj,
         new_obj = obj.copy(); % Copy first object, because all of them must be of same spatial size
-        new_obj.LinksToOthers.XTransformationID.destroy(); % But destroy copied TDSpectralTransformation
+        destroy(new_obj.LinksToOthers.XTransformationID); % But destroy copied TDSpectralTransformation
         
         new_obj.Name = sprintf('Spectral Stitch[%d spectra]<%s', N_TDGraph, new_obj.Name); % Generate new name
         new_obj.Data = Data;

@@ -35,28 +35,42 @@ classdef wid < handle, % Since R2008a
         Empty = wid.empty; % Call wid.empty only once
     end
     
-    properties (Dependent) % Everything rely on the underlying wit-classes
-        Type;
+    %% MAIN PROPERTIES
+    % Everything rely on the underlying wit-classes
+    properties (SetAccess = private, Dependent) % READ-ONLY, DEPENDENT
+        File; % Data-specific full file name
+    end
+    properties (Dependent) % READ-WRITE, DEPENDENT
         Name;
         Data;
-        Info;
-        DataTree;
+        Type;
+    end
+    
+    %% OTHER PROPERTIES
+    % Everything rely on the underlying wit-classes
+    properties (Dependent) % READ-WRITE, DEPENDENT
         Version;
+    end
+    properties (SetAccess = private, Dependent) % READ-WRITE, DEPENDENT
+        Info;
+    end
+    properties (Dependent) % READ-WRITE, DEPENDENT
+        DataTree;
         Id;
         ImageIndex;
         OrdinalNumber;
         SubType;
+    end
+    properties (SetAccess = private, Dependent) % READ-ONLY, DEPENDENT
         LinksToOthers;
         AllLinksToOthers;
         LinksToThis;
         AllLinksToThis;
     end
-    
-    properties (SetAccess = private)
+    properties (SetAccess = private) % READ-ONLY
         Tag = struct.empty; % Either empty OR contains all the fields defined in wid-constructor
     end
-    
-    properties
+    properties % READ-WRITE
         Project = wip.empty;
     end
     
@@ -100,106 +114,119 @@ classdef wid < handle, % Since R2008a
             end
         end
         
-        % GET/SET OF DEPENDENT PROPERTIES
-        function Type = get.Type(obj),
-            Type = '';
-            if ~isempty(obj.Tag) && ~isempty(obj.Tag.DataClassName),
-                Type = obj.Tag.DataClassName.Data;
+        
+        
+        %% MAIN PROPERTIES
+        % File (READ-ONLY, DEPENDENT)
+        function File = get.File(obj),
+            File = '';
+            if ~isempty(obj.Tag) && ~isempty(obj.Tag.Data),
+                % This can differ from obj.Tag.Root.File, when wid-object
+                % content has been merged from another project file to this
+                % project file using wip.append-function, which uses copy-
+                % function of wit-class.
+                File = obj.Tag.Data.File;
             end
         end
         
-        function set.Type(obj, Type),
-            if ~isempty(obj.Tag) && ~isempty(obj.Tag.DataClassName),
-                obj.Tag.DataClassName.Data = char(Type);
-            end
-        end
-        
+        % Name (READ-WRITE, DEPENDENT)
         function Name = get.Name(obj),
             Name = '';
             if ~isempty(obj.Tag) && ~isempty(obj.Tag.Caption),
                 Name = obj.Tag.Caption.Data;
             end
         end
-        
         function set.Name(obj, Name),
             if ~isempty(obj.Tag) && ~isempty(obj.Tag.Caption),
                 obj.Tag.Caption.Data = char(Name);
             end
         end
         
+        % Data (READ-WRITE, DEPENDENT)
         function Data = get.Data(obj),
             Data = [];
             if ~isempty(obj.Tag) && ~isempty(obj.Tag.Data),
                 Data = obj.wid_Data_get();
             end
         end
-        
         function set.Data(obj, Data),
             if ~isempty(obj.Tag) && ~isempty(obj.Tag.Data),
                 obj.wid_Data_set(Data);
             end
         end
         
-        function DataTree = get.DataTree(obj),
-            DataTree = struct.empty;
-            if ~isempty(obj.Tag) && ~isempty(obj.Tag.Data),
-                DataTree = obj.wid_DataTree_get();
+        % Type (READ-WRITE, DEPENDENT)
+        function Type = get.Type(obj),
+            Type = '';
+            if ~isempty(obj.Tag) && ~isempty(obj.Tag.DataClassName),
+                Type = obj.Tag.DataClassName.Data;
+            end
+        end
+        function set.Type(obj, Type),
+            if ~isempty(obj.Tag) && ~isempty(obj.Tag.DataClassName),
+                obj.Tag.DataClassName.Data = char(Type);
             end
         end
         
-        function set.DataTree(obj, DataTree),
-            if ~isempty(obj.Tag) && ~isempty(obj.Tag.Data),
-                obj.wid_DataTree_set(DataTree);
-            end
-        end
-        
-        function Info = get.Info(obj),
-            Info = obj.wid_Info_get();
-        end
-        
-        function set.Info(obj, Info),
-            obj.wid_Info_set(Info);
-        end
-        
+        %% OTHER PROPERTIES
+        % Version (READ-WRITE, DEPENDENT)
         function Version = get.Version(obj),
             Version = [];
             if ~isempty(obj.Tag) && ~isempty(obj.Tag.RootVersion),
                 Version = obj.Tag.RootVersion.Data;
             end
         end
-        
         function set.Version(obj, Version),
             if ~isempty(obj.Tag) && ~isempty(obj.Tag.RootVersion),
                 obj.Tag.RootVersion.Data = int32(Version);
             end
         end
         
+        % Info (READ-ONLY, DEPENDENT)
+        function Info = get.Info(obj),
+            Info = obj.wid_Info_get();
+        end
+        
+        % DataTree (READ-WRITE, DEPENDENT)
+        function DataTree = get.DataTree(obj),
+            DataTree = struct.empty;
+            if ~isempty(obj.Tag) && ~isempty(obj.Tag.Data),
+                DataTree = obj.wid_DataTree_get();
+            end
+        end
+        function set.DataTree(obj, DataTree),
+            if ~isempty(obj.Tag) && ~isempty(obj.Tag.Data),
+                obj.wid_DataTree_set(DataTree);
+            end
+        end
+        
+        % Id (READ-WRITE, DEPENDENT)
         function Id = get.Id(obj),
             Id = [];
             if ~isempty(obj.Tag) && ~isempty(obj.Tag.Id),
                 Id = obj.Tag.Id.Data;
             end
         end
-        
         function set.Id(obj, Id),
             if ~isempty(obj.Tag) && ~isempty(obj.Tag.Id),
                 obj.Tag.Id.Data = int32(Id);
             end
         end
         
+        % ImageIndex (READ-WRITE, DEPENDENT)
         function ImageIndex = get.ImageIndex(obj),
             ImageIndex = [];
             if ~isempty(obj.Tag) && ~isempty(obj.Tag.ImageIndex),
                 ImageIndex = obj.Tag.ImageIndex.Data;
             end
         end
-        
         function set.ImageIndex(obj, ImageIndex),
             if ~isempty(obj.Tag) && ~isempty(obj.Tag.ImageIndex),
                 obj.Tag.ImageIndex.Data = int32(ImageIndex);
             end
         end
         
+        % OrdinalNumber (READ-WRITE, DEPENDENT)
         function OrdinalNumber = get.OrdinalNumber(obj),
             OrdinalNumber = [];
             if ~isempty(obj.Tag), % Sufficient test even if DataClassName or Data were empty!
@@ -209,7 +236,6 @@ classdef wid < handle, % Since R2008a
                 end
             end
         end
-        
         function set.OrdinalNumber(obj, OrdinalNumber),
             if ~isempty(obj.Tag), % Sufficient test even if DataClassName or Data were empty!
                 obj.Tag.DataClassName.Name = sprintf('DataClassName %d', OrdinalNumber);
@@ -217,16 +243,17 @@ classdef wid < handle, % Since R2008a
             end
         end
         
+        % SubType (READ-WRITE, DEPENDENT)
         function SubType = get.SubType(obj),
             SubType = obj.wid_SubType_get();
         end
-        
         function set.SubType(obj, SubType),
             obj.wid_SubType_set(SubType);
         end
         
-        % Struct of linked wid-classes
+        % LinksToOthers (READ-ONLY, DEPENDENT)
         function LinksToOthers = get.LinksToOthers(obj),
+            % Struct of linked wid-classes
             LinksToOthers = struct.empty;
             if isfield(obj.Tag, 'Data'),
                 Tag_Id = obj.Tag.Data.regexp('^[^<]+ID(<[^<]*)*$'); % Should not match with ID under TData!
@@ -239,8 +266,9 @@ classdef wid < handle, % Since R2008a
             end
         end
         
-        % Same as LinksToOthers but includes also the LinksToOthers of LinksToOthers and so on.
+        % AllLinksToOthers (READ-ONLY, DEPENDENT)
         function AllLinksToOthers = get.AllLinksToOthers(obj),
+            % Same as LinksToOthers but includes also the LinksToOthers of LinksToOthers and so on.
             NewLinksToOthers = obj.LinksToOthers;
             N = fieldnames(NewLinksToOthers);
             C = struct2cell(NewLinksToOthers);
@@ -257,15 +285,17 @@ classdef wid < handle, % Since R2008a
             AllLinksToOthers = cell2struct(C, N, 1);
         end
         
-        % Array of linked wid-classes
+        % LinksToThis (READ-ONLY, DEPENDENT)
         function LinksToThis = get.LinksToThis(obj),
+            % Array of linked wid-classes
             linked_tags = wid.find_linked_wits_to_this_wid(obj);
-        	owner_ids = wid.find_owner_id_to_this_wit(linked_tags);
+            owner_ids = wid.find_owner_id_to_this_wit(linked_tags);
             LinksToThis = obj.Project.find_Data(owner_ids);
         end
         
-        % Same as LinksToThis but includes also the LinksToThis of LinksToThis and so on.
+        % AllLinksToThis (READ-ONLY, DEPENDENT)
         function AllLinksToThis = get.AllLinksToThis(obj),
+            % Same as LinksToThis but includes also the LinksToThis of LinksToThis and so on.
             AllLinksToThis = wid.Empty;
             if isfield(obj.Tag, 'Data'),
                 % First get the object's wit-tree parent tag
@@ -433,7 +463,6 @@ classdef wid < handle, % Since R2008a
         wid_Data_set_Text(obj, in);
         
         out = wid_Info_get(obj); % Returns struct for TDBitmap, TDGraph and TDImage
-        wid_Info_set(obj, in);
         
         out = wid_SubType_get(obj);
         wid_SubType_set(obj, in);

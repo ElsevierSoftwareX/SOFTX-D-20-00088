@@ -4,8 +4,10 @@
 
 % Adopts the given wit-class objects under the parent obj.
 function adopt(obj, varargin),
-    if numel(obj) ~= 1, return; end % Do nothing if not a single parent!
-    children = obj.Children;
+    warning('You are using a deprecated version, marked to be deleted in the future!');
+    if numel(obj) > 1, error('A tag cannot have more than one parent!'); % Error if more than one parent!
+    elseif numel(obj) == 0, return; end % Do nothing if no parents
+    children = [obj.Children wit.empty];
     N_children = numel(children);
     for ii = 1:numel(varargin),
         children_ii = varargin{ii};
