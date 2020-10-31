@@ -64,8 +64,7 @@ function DataTree_set(parent, in, format),
         if ind_to_C_from_P(ii),
             child = children(ind_to_C_from_P(ii));
         else, % No child was found,
-            child = wit(name);
-            parent.add(child); % Append it to the WIT-tree
+            child = wit(parent, name); % Append new child to the WIT-tree
         end
 
         if isempty(value) || size(value, 2) == 3, % CASE: empty OR YES subformat
@@ -127,8 +126,7 @@ function DataTree_set(parent, in, format),
         if ind_to_C_from_I(ii),
             child = children_no_link_sorted(ind_to_C_from_I(ii));
         else, % No child was found,
-            child = wit(field); % Non-linked in-struct field string is name
-            parent.add(child); % Append it to the WIT-tree
+            child = wit(parent, field); % Non-linked in-struct field string is name
         end
 
         if isstruct(value),
