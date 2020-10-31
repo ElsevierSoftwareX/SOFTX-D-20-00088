@@ -33,7 +33,7 @@ function [Pairs, Roots] = get_Data_DataClassName_pairs(O_wit),
         else,
             % Step up to get one of the pairs
             while isempty(regexp(O_wit_ii.Name, '^Data(ClassName)? \d+$', 'once')),
-                O_wit_ii = O_wit_ii.Parent;
+                O_wit_ii = [O_wit_ii.Parent wit.empty];
             end
             if strncmp(O_wit_ii.Name, 'DataClassName', 13), Tags_1(end+1) = O_wit_ii;
             else, Tags_2(end+1) = O_wit_ii; end
