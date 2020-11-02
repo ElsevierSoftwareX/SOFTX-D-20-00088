@@ -20,5 +20,5 @@ function obj = new_Interpretation_Time(O_wit),
     [~, Pair] = wip.append(O_wit, [Tag_DataClassName Tag_Data]);
     
     % Create new wid
-    obj = wid(Pair(2));
+    obj = wid(Pair);
 end

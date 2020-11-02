@@ -18,7 +18,7 @@ function Version = read_Version(File),
     end
     
     function error_criteria_for_obj(O_wit),
-        if O_wit.Parent == O_wit.Root && ... % Test if tag's Parent is its Root
+        if ~isempty(O_wit.Parent) && O_wit.Parent == O_wit.Root && ... % Test if tag's Parent is its Root
                 strcmp(O_wit.Name, 'Version'), % Test if tag's name is 'Version'
             Version = O_wit.Data; % Store the Version
             error('File Version was found!'); % Abort the file reading by throwing an error

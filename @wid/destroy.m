@@ -17,7 +17,7 @@ function destroy(obj),
         end
         Tag_ii = obj(ii).Tag; % Get tag struct
         if ~isempty(Tag_ii),
-            Tag_NV = Tag_ii.Data.Parent.search('NumberOfData', 'Data');
+            Tag_NV = search([Tag_ii.Data.Parent wit.empty], 'NumberOfData', 'Data');
             Tag_NV.Data = Tag_NV.Data - 1; % Reduce the number by one
             delete([Tag_ii.DataClassName Tag_ii.Data]); % Destroy all related tags
         end

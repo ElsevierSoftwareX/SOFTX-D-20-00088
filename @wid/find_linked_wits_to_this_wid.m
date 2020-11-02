@@ -9,7 +9,7 @@ function O_wit = find_linked_wits_to_this_wid(obj),
     for ii = 1:numel(obj),
         if isfield(obj(ii).Tag, 'Data'),
             % Get the parent tag of the wid-object's wit-tree branches
-            tags = obj(ii).Tag.Data.Parent;
+            tags = [obj(ii).Tag.Data.Parent wit.empty];
             % List all the project's ID-tags (except NextDataID and
             % ID<TData) under the Data-tag
             tags = tags.regexp('^(?!NextDataID)([^<]+ID(List)?(<[^<]*)*(<Data(<WITec (Project|Data))?)?$)');

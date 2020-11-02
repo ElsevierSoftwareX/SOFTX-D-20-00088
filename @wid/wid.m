@@ -299,7 +299,7 @@ classdef wid < handle, % Since R2008a
             AllLinksToThis = wid.Empty;
             if isfield(obj.Tag, 'Data'),
                 % First get the object's wit-tree parent tag
-                tags = obj.Tag.Data.Parent;
+                tags = [obj.Tag.Data.Parent wit.empty];
                 % List all the project's ID-tags (except NextDataID and
                 % ID<TData) under the Data tree tag
                 tags = tags.regexp('^(?!NextDataID)([^<]+ID(List)?(<[^<]*)*(<Data(<WITec (Project|Data))?)?$)');
