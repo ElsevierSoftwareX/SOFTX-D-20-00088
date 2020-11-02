@@ -48,7 +48,7 @@ if ishandle(h), figure(h); uiwait(h); end
 
 %-------------------------------------------------------------------------%
 % Load example file as uncompressed
-fprintf('\n\n'); % Two additional newlines for more clarity
+fprintf('\n----------------------\nINITIAL PREPARATION...\n----------------------\n');
 [O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all');
 %-------------------------------------------------------------------------%
 
@@ -56,9 +56,12 @@ fprintf('\n\n'); % Two additional newlines for more clarity
 
 %-------------------------------------------------------------------------%
 % Compress the example file
-fprintf('\n\n'); % Two additional newlines for more clarity
+fprintf('\n--------------\nCOMPRESSING...\n--------------\n');
 O_wip.write('E_v5.wip.zip'); % By default, use minimum compression for *.zip
-% O_wip.write('E_v5.wip.zst'); % By default, use minimum compression for *.zst
+O_wip.write('E_v5.wip.zst'); % By default, use minimum compression for *.zst
+
+% Please note that the performance benefits of *.zst become evident with
+% larger file sizes than this.
 
 % Minimum compression level of 1 already achieve significant space savings
 % for some WITec software files. At best, the compressed files has been
@@ -92,9 +95,9 @@ O_wip.write('E_v5.wip.zip'); % By default, use minimum compression for *.zip
 
 %-------------------------------------------------------------------------%
 % Decompress the compressed example file
-fprintf('\n\n'); % Two additional newlines for more clarity
+fprintf('\n----------------\nDECOMPRESSING...\n----------------\n');
 [O_wid2, O_wip2, O_wid_HtmlNames2] = wip.read('E_v5.wip.zip', '-all');
-% [O_wid2, O_wip2, O_wid_HtmlNames2] = wip.read('E_v5.wip.zst', '-all');
+[O_wid2, O_wip2, O_wid_HtmlNames2] = wip.read('E_v5.wip.zst', '-all');
 
 % By default, only the *.wid and *.wip are decompressed from *.zip and
 % *.zst files and all the others are ignored. For *.zip, if there are
