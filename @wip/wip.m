@@ -223,7 +223,7 @@ classdef wip < handle, % Since R2008a
         O_wid = manager(obj, varargin);
         
         % File writer
-        write(obj, File);
+        write(obj, varargin);
         
         % Update Data-property according to Tree-property contents
         update(obj);
@@ -276,8 +276,9 @@ classdef wip < handle, % Since R2008a
         O_wit = new(Version); % WITec Project WIT-tree
         O_wit = new_TData(Version, Caption); % Only TData WIT-tree
         
-        % Get valid DataClassName-Data pairs from the given WIT-tree
-        Pairs = get_Data_DataClassName_pairs(O_wit);
+        % Get valid pairs within the given wit Tree objects
+        [Pairs, Roots] = get_Data_DataClassName_pairs(O_wit);
+        [Pairs, Roots] = get_Viewer_ViewerClassName_pairs(O_wit);
         
         % Appender of multiple WIT-trees (or Projects)
         [O_wit, varargout] = append(varargin);
