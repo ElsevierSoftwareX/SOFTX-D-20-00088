@@ -33,7 +33,7 @@ function [Pairs, Roots] = get_Viewer_ViewerClassName_pairs(O_wit),
         else,
             % Step up to get one of the pairs
             while isempty(regexp(O_wit_ii.Name, '^Viewer(ClassName)? \d+$', 'once')),
-                O_wit_ii = O_wit_ii.Parent;
+                O_wit_ii = [O_wit_ii.Parent wit.empty];
             end
             if strncmp(O_wit_ii.Name, 'ViewerClassName', 15), Tags_1(end+1) = O_wit_ii;
             else, Tags_2(end+1) = O_wit_ii; end
