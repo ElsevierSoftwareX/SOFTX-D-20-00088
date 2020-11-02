@@ -27,6 +27,52 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
+## [1.3.1] - 2020-11-02
+
+### Added
+
+- **Big data space-savings**: Add example case on [file compression and decompression][1.3.1,A1] that uses **new** documented [`wit_io_file_compress`][1.3.1,A2] and [`wit_io_file_decompress`][1.3.1,A3] functions based on Java libraries to demonstrate reproducable 3:1 compression ratios with the WITec software files at minimum compression level.
+- Add ability to read/write `*.wid`/`*.wip` files directly within **new** `*.zip`/`*.zst` formats. Here `*.zip` and `*.zst` rely on *de facto* standard [Zlib Deflate][1.3.1,A4] and modern superior-in-speed [Zstandard][1.3.1,A5] compression algorithms, respectively. More details and benchmarks can be found at [Zstandard's website][1.3.1,A6].
+
+[1.3.1,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.1/EXAMPLE%20cases/E_01_E_compress_and_decompress_files.m
+[1.3.1,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.1/wit_io_file_compress.m
+[1.3.1,A3]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.1/wit_io_file_decompress.m
+[1.3.1,A4]: https://doi.org/10.17487/RFC1950
+[1.3.1,A5]: https://doi.org/10.17487/rfc8478
+[1.3.1,A6]: https://facebook.github.io/zstd/
+
+### Changed
+
+- [`@wip/get_Data_DataClassName_pairs`][1.3.1,C1] (and **new**  [`@wip/get_Viewer_ViewerClassName_pairs`][1.3.1,C2]): Return all found valid pairs as first output and return all found Roots as **new** second output.
+
+[1.3.1,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.1/@wip/get_Data_DataClassName_pairs.m
+[1.3.1,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.1/@wip/get_Viewer_ViewerClassName_pairs.m
+
+### Fixed
+
+- `wid`-class: Fix typo in the [`new_`][1.3.1,F1]-prefixed methods causing errors.
+- [`@wip/append`][1.3.1,F2]: Fix issues with empty inputs and make it more robust to incomplete tree structures.
+- [`@wip/get_Data_DataClassName_pairs`][1.3.1,F3]: Fix bug due to typo.
+- Correct the dot-notated chained use of `wit`-class `Parent`-property, which can be `[]` at times.
+
+[1.3.1,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.1/@wid
+[1.3.1,F2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.1/@wip/append.m
+[1.3.1,F3]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.1/@wip/get_Data_DataClassName_pairs.m
+
+### Performance
+
+- [`@wip/get_Data_DataClassName_pairs`][1.3.1,P1]: Improved performance with huge files by removing a bottleneck within the code that finds `Data`-`DataClassName`-pairs.
+- [`@wip/append`][1.3.1,P2]: Much faster with big datasets, mainly after replacing [`search`][1.3.1,P3]/[`regexp`][1.3.1,P4]-methods with faster [`search_children`][1.3.1,P5]/[`regexp_children`][1.3.1,P6] counterparts where possible.
+
+[1.3.1,P1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.1/@wip/get_Data_DataClassName_pairs.m
+[1.3.1,P2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.1/@wip/append.m
+[1.3.1,P3]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.1/@wit/search.m
+[1.3.1,P4]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.1/@wit/regexp.m
+[1.3.1,P5]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.1/@wit/search_children.m
+[1.3.1,P6]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.1/@wit/regexp_children.m
+
+
+
 ## [1.3.0] - 2020-11-01
 
 ### Added
@@ -427,7 +473,8 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
-[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.0...develop
+[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.1...develop
+[1.3.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.0...v1.3.1
 [1.3.0]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.3...v1.3.0
 [1.2.3]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.2...v1.2.3
 [1.2.2]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.1...v1.2.2
