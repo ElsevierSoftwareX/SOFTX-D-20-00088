@@ -18,7 +18,7 @@ function Pairs = get_Data_DataClassName_pairs(O_wit),
             for jj = 1:numel(Tags_1),
                 Tag_1 = Tags_1(jj);
                 Tag_2 = Tags_2(strcmp({Tags_2.Name}, strrep(Tag_1.Name, 'ClassName', '')));
-                if ~isempty(Tag_2), Pairs(end+1,:) = [Tag_1 Tag_2]; end
+                if ~isempty(Tag_2), Pairs(end+1,:) = [Tag_1 Tag_2(1)]; end
             end
         else, % Continue here if the input is a parent or its child
             % Step up the tree until one of the tag pairs if found
