@@ -61,6 +61,7 @@ function [O_wit, varargout] = append(varargin),
             % Repopulate all TData IDs first (TO ENSURE THAT INT32 IS ENOUGH!)
             Tags_with_TData_ID = Data_Pairs(:,2).search_children('TData').search_children('ID'); % Only TData IDs
             old = [Tags_with_TData_ID.Data];
+            old_max = max(old); % To prevent "Index exceeds array bounds"-error
             new = int32(1:numel(Tags_with_TData_ID)); % Must be int32!
             for jj = 1:numel(Tags_with_TData_ID),
                 Tags_with_TData_ID(jj).Data = new(jj);
@@ -69,15 +70,16 @@ function [O_wit, varargout] = append(varargin),
             old2new = sparse(double(old), ones(size(old)), double(new));
             Tags_with_ID = Both_Pairs.regexp_all_Names('.+ID(List)?'); % List all other the IDs (except NextDataID) under Data and Viewer
             for jj = 1:numel(Tags_with_ID),
-                if isa(Tags_with_ID(jj).Data, 'wit'), % SPECIAL CASE: ID list
+                Data_jj = Tags_with_ID(jj).Data;
+                if isa(Data_jj, 'wit'), % SPECIAL CASE: ID list
                     ID_list = Tags_with_ID(jj).search_children('Data');
                     if ~isempty(ID_list) && ~isempty(ID_list.Data),
                         ID_list_Data = ID_list.Data;
-                        B_nonzero = ID_list_Data ~= 0;
-                        ID_list.Data(B_nonzero) = int32(full(old2new(ID_list_Data(B_nonzero)))); % Must be int32!
+                        B_valid = ID_list_Data ~= 0 && ID_list_Data <= old_max;
+                        ID_list.Data(B_valid) = int32(full(old2new(ID_list_Data(B_valid)))); % Must be int32!
                     end
-                elseif Tags_with_ID(jj).Data ~= 0,
-                    Tags_with_ID(jj).Data = int32(full(old2new(Tags_with_ID(jj).Data))); % Must be int32!
+                elseif Data_jj ~= 0 && Data_jj <= old_max,
+                    Tags_with_ID(jj).Data = int32(full(old2new(Data_jj))); % Must be int32!
                 end
             end
             
