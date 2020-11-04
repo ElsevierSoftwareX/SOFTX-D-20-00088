@@ -75,24 +75,32 @@ function [fun_start, fun_now, fun_end] = progress_bar(N_bytes_max, varargin),
         fprintf([' ' repmat(' ', [1 width_in_characters]) ' \n']); % Reserve next line
         progress_bar_now_either_increase_or_decrease(N_bytes_now);
     end
-    function progress_bar_now_either_increase_or_decrease(N_bytes_now),
+    function progress_bar_now_either_increase_or_decrease(N_bytes_now, fun_before, fun_after),
         % Progress the progress bar
         if N_bytes_now >= N_bytes_upper, % If true, then increase dots
+            if nargin > 1, fun_before(); end
             progress_bar_now_increase(N_bytes_now);
+            if nargin > 2, fun_after(); end
         elseif N_bytes_now < N_bytes_lower, % If true, then decrease dots
+            if nargin > 1, fun_before(); end
             progress_bar_now_decrease(N_bytes_now);
+            if nargin > 2, fun_after(); end
         end
     end
-    function progress_bar_now_only_increase(N_bytes_now),
+    function progress_bar_now_only_increase(N_bytes_now, fun_before, fun_after),
         % Progress the progress bar
         if N_bytes_now >= N_bytes_upper, % If true, then increase dots
+            if nargin > 1, fun_before(); end
             progress_bar_now_increase(N_bytes_now);
+            if nargin > 2, fun_after(); end
         end
     end
-    function progress_bar_now_only_decrease(N_bytes_now),
+    function progress_bar_now_only_decrease(N_bytes_now, fun_before, fun_after),
         % Progress the progress bar
         if N_bytes_now < N_bytes_lower, % If true, then decrease dots
+            if nargin > 1, fun_before(); end
             progress_bar_now_decrease(N_bytes_now);
+            if nargin > 2, fun_after(); end
         end
     end
     function progress_bar_now_increase(N_bytes_now),
