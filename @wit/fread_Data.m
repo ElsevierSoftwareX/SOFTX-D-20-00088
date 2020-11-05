@@ -66,7 +66,7 @@ function fread_Data(obj, fid, N_bytes_max, swapEndianess),
                     str_len = typecast(Data(subind_begin:subind_end), 'uint32');
                     subind_begin = subind_end + 1; % Set next begin index
                     subind_end = subind_begin-1 + str_len;
-                    strs{N_strs,1} = char(Data(subind_begin:subind_end));
+                    strs{1,N_strs} = char(Data(subind_begin:subind_end));
                     subind_begin = subind_end + 1; % Set next begin index
                 end
                 if numel(strs) == 1, Data = strs{1};
@@ -106,7 +106,7 @@ function fread_Data(obj, fid, N_bytes_max, swapEndianess),
                     str_len = typecast(Data(subind_begin:subind_end), 'uint32');
                     subind_begin = subind_end + 1; % Set next begin index
                     subind_end = subind_begin-1 + str_len;
-                    strs{N_strs,1} = char(Data(subind_begin:subind_end));
+                    strs{1,N_strs} = char(Data(subind_begin:subind_end));
                     subind_begin = subind_end + 1; % Set next begin index
                 end
                 if numel(strs) == 1, Data = strs{1};
@@ -117,7 +117,7 @@ function fread_Data(obj, fid, N_bytes_max, swapEndianess),
     end
     
     obj.DataNow = Data; % Minimized expensive calls to set.Data (and get.Data)
-    obj.ChildrenNow = wit.empty;
+    obj.ChildrenNow = obj([]); % Faster than wit.empty
     
     % Implemented an inner function to avoid EXPENSIVE calls to sprintf.
     function str = warning_msg(),

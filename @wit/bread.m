@@ -12,20 +12,31 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
     if nargin < 4 || isempty(swapEndianess), swapEndianess = wit.swap_endianess(); end % By default: Binary with little endianess
     if nargin < 5, skip_Data_criteria_for_obj = []; end % By default: no criteria!
     if nargin < 6, error_criteria_for_obj = []; end % By default: no criteria!
-    if nargin < 7, fun_progress_bar = @wit.progress_bar; end % By default: verbose progress bar in Command Window
+    if nargin < 7, fun_progress_bar = @(x) wit.progress_bar(x, '-OnlyIncreasing'); end % By default: verbose progress bar in Command Window
     
+    % Test the data stream
+    if isempty(buffer),
+        delete(obj); % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
+        return;
+    end
     ind_begin = 1;
     ind_max = numel(buffer);
+    buffer = reshape(buffer, 1, []); % Force row vector (only once!)
     
     verbose = isa(fun_progress_bar, 'function_handle');
     if verbose,
         % Get buffer size
         BufferSize = uint64(ind_max);
         
+        IntervalBlockSize = 1024.^2; % Limit progress updates to every 1 MB
+        IntervalNextLimit = 0;
+        
         fprintf('Reading %d bytes of binary as wit Tree objects:\n', BufferSize);
-        [fun_start, fun_now, fun_end] = fun_progress_bar(BufferSize);
+        [fun_start, fun_now, fun_end, fun_now_text] = fun_progress_bar(BufferSize);
         fun_start(0);
-        ocu = onCleanup(fun_end); % Automatically call fun_end whenever end of function is reached
+        
+        % Automatically call fun_end whenever end of function is reached
+        ocu = onCleanup(fun_end);
     end
     
     % Temporarily adjust warning settings
@@ -33,25 +44,26 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
     warning off backtrace; % Disable the stack trace
     ocu_restore_warning = onCleanup(@() warning(old_state)); % Restore warning state on exit
     
-    % Test the data stream
-    if isempty(buffer), obj.IsValid = false; end % Mark this object for deletion!
-    
     % Read Magic (8 bytes) (only if Root)
-    if obj.IsValid && isempty(obj.Parent),
+    if isempty(obj.Parent),
         ind_end = ind_begin-1 + 8;
         % Abort, if the end is reached
-        if ind_end > ind_max, obj.IsValid = false; end % Mark this object for deletion!
-        obj.Magic = reshape(char(buffer(ind_begin:ind_end)), 1, []); % Force ascii-conversion
+        if ind_end > ind_max,
+            delete(obj); % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
+            return;
+        end
+        obj.Magic = char(buffer(ind_begin:ind_end)); % Force ascii-conversion
         ind_begin = ind_end + 1; % Set next begin index
     end
     
     % Read wit Tree objects
-    if obj.IsValid, bread_helper(obj); end
+    if ~bread_helper(obj, obj.FullName),
+        delete(obj); % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
+    end
     
-    % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
-    if ~obj.IsValid, delete(obj); end
-    
-    function bread_helper(obj),
+    function isDone = bread_helper(obj, FullName),
+        isDone = false; % Needed to properly handle failure cases
+        
         % Do not allow obj to notify its ancestors on modifications
         obj.ModifiedAncestors = false;
         
@@ -59,58 +71,72 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         ind_end = ind_begin-1 + 4;
         if ind_end > ind_max, % Abort, if the end is reached
             obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
-            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
-        if ~swapEndianess, obj.NameLength = typecast(buffer(ind_begin:ind_end), 'uint32');
-        else, obj.NameLength = typecast(fliplr(buffer(ind_begin:ind_end)), 'uint32'); end
+        if ~swapEndianess, obj_NameLength = typecast(buffer(ind_begin:ind_end), 'uint32');
+        else, obj_NameLength = typecast(fliplr(buffer(ind_begin:ind_end)), 'uint32'); end
+        obj.NameLength = obj_NameLength;
         ind_begin = ind_end + 1; % Set next begin index
         
         % Read Name (NameLength # of bytes)
-        ind_end = ind_begin-1 + double(obj.NameLength);
+        ind_end = ind_begin-1 + double(obj_NameLength);
         if ind_end > ind_max, % Abort, if the end is reached
             obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
-            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
-        obj.NameNow = reshape(char(buffer(ind_begin:ind_end)), 1, []); % Speed-up
+        obj_NameNow = char(buffer(ind_begin:ind_end)); % Speed-up
+        obj.NameNow = obj_NameNow;
         ind_begin = ind_end + 1; % Set next begin index
         
         % Read Type (4 bytes)
         ind_end = ind_begin-1 + 4;
         if ind_end > ind_max, % Abort, if the end is reached
             obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
-            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
-        if ~swapEndianess, obj.Type = typecast(buffer(ind_begin:ind_end), 'uint32');
-        else, obj.Type = typecast(fliplr(buffer(ind_begin:ind_end)), 'uint32'); end
+        if ~swapEndianess, obj_Type = typecast(buffer(ind_begin:ind_end), 'uint32');
+        else, obj_Type = typecast(fliplr(buffer(ind_begin:ind_end)), 'uint32'); end
+        obj.Type = obj_Type;
         ind_begin = ind_end + 1; % Set next begin index
         
         % Read Start (8 bytes)
         ind_end = ind_begin-1 + 8;
         if ind_end > ind_max, % Abort, if the end is reached
             obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
-            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
-        if ~swapEndianess, obj.Start = typecast(buffer(ind_begin:ind_end), 'uint64');
-        else, obj.Start = typecast(fliplr(buffer(ind_begin:ind_end)), 'uint64'); end
+        if ~swapEndianess, obj_Start = typecast(buffer(ind_begin:ind_end), 'uint64');
+        else, obj_Start = typecast(fliplr(buffer(ind_begin:ind_end)), 'uint64'); end
+        obj.Start = obj_Start;
         ind_begin = ind_end + 1; % Set next begin index
         
         % Read End (8 bytes)
         ind_end = ind_begin-1 + 8;
         if ind_end > ind_max, % Abort, if the end is reached
             obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
-            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
-        if ~swapEndianess, obj.End = typecast(buffer(ind_begin:ind_end), 'uint64');
-        else, obj.End = typecast(fliplr(buffer(ind_begin:ind_end)), 'uint64'); end
+        if ~swapEndianess, obj_End = typecast(buffer(ind_begin:ind_end), 'uint64');
+        else, obj_End = typecast(fliplr(buffer(ind_begin:ind_end)), 'uint64'); end
+        obj.End = obj_End;
         ind_begin = ind_end + 1; % Set next begin index
         
+        doVerbose = false;
+        if verbose,
+            if obj_Start >= IntervalNextLimit,
+                IntervalNextLimit = obj_Start + IntervalBlockSize;
+                doVerbose = true;
+            end
+        end
+        
+        if isempty(FullName), FullName = obj_NameNow;
+        else, FullName = [FullName '>' obj_NameNow]; end
+        if doVerbose,
+            fun_now_text(FullName);
+        end
+        
         % Update the flag used for the reloading cases
-        obj.HasData = obj.End > obj.Start;
+        obj.HasData = obj_End > obj_Start;
         
         % SPECIAL CASE: Skip if obj meets the given skip Data criteria.
         skip_Data = false;
@@ -120,14 +146,13 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         
         % Data reading
         if skip_Data, % Handle Data skipping
-            ind_begin = double(obj.End)+1; % Double OFFSET for compability!
-        elseif obj.Type == 0, % Read the children
+            ind_begin = double(obj_End)+1; % Double OFFSET for compability!
+        elseif obj_Type == 0, % Read the children
             children = wit.empty;
-            while(ind_begin < obj.End), % Continue reading until DataEnd
+            while(ind_begin < obj_End), % Continue reading until DataEnd
                 child = wit(); % Many times faster than wit(obj) due to redundant code
                 child.ParentNow = obj; % Adopt the new child being created
-                bread_helper(child); % Read the new child contents (or destroy it on failure)
-                if child.IsValid,
+                if bread_helper(child, FullName), % Read the new child contents (or destroy it on failure)
                     children(end+1) = child; % Add child if valid (and avoid Octave-incompatible isvalid-function)
                     child.OrdinalNumber = numel(children);
                 else, delete(child); end % Delete child if not valid (and avoid Octave-incompatible isvalid-function)
@@ -136,11 +161,11 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
             obj.ChildrenNow = children; % Adopt the new child being created
         else,
             obj.bread_Data(buffer, N_bytes_max, swapEndianess);
-            ind_begin = double(obj.End)+1; % Double OFFSET for compability!
+            ind_begin = double(obj_End)+1; % Double OFFSET for compability!
         end % Otherwise, read the Data
         
-        if verbose,
-            fun_now(obj.End);
+        if doVerbose,
+            fun_now(obj_End);
         end
         
         % Allow obj to notify its ancestors on modifications
@@ -153,5 +178,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
             error_criteria_for_obj(obj); % EXPECTED TO ERROR if its criteria is met
             obj.ParentNow = temp;
         end
+        
+        isDone = true; % Needed to properly handle failure cases
     end
 end

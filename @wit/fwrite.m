@@ -5,23 +5,26 @@
 % USE THIS ONLY IF LOW-ON MEMORY OR WHEN WRITING HUGE FILES!
 function fwrite(obj, fid, swapEndianess, fun_progress_bar),
     if nargin < 3 || isempty(swapEndianess), swapEndianess = wit.swap_endianess(); end % By default: Binary with little endianess
-    if nargin < 4, fun_progress_bar = @wit.progress_bar; end % By default: verbose progress bar in Command Window
+    if nargin < 4, fun_progress_bar = @(x) wit.progress_bar(x, '-OnlyIncreasing'); end % By default: verbose progress bar in Command Window
     
     % Update the wit Tree object
     obj.update();
     
     verbose = isa(fun_progress_bar, 'function_handle');
     if verbose,
+        IntervalBlockSize = 1024.^2; % Limit progress updates to every 1 MB
+        IntervalNextLimit = 0;
+        
         fprintf('Writing wit Tree objects as %d bytes of binary:\n', obj.End);
-        [fun_start, fun_now, fun_end] = fun_progress_bar(obj.End);
+        [fun_start, fun_now, fun_end, fun_now_text] = fun_progress_bar(obj.End);
         fun_start(0);
         ocu = onCleanup(fun_end); % Automatically call fun_end whenever end of function is reached
     end
     
     % Write wit Tree objects
-    fwrite_helper(obj);
+    fwrite_helper(obj, obj.FullName);
     
-    function fwrite_helper(obj),
+    function fwrite_helper(obj, FullName),
         % Test the file stream
         if isempty(fid) || fid == -1, error('File stream is not open!'); end
 
@@ -57,6 +60,10 @@ function fwrite(obj, fid, swapEndianess, fun_progress_bar),
         uint8_array = uint8(obj.Name); % String is a char row vector
         buffer(ind_begin:ind_end) = uint8_array;
         ind_begin = ind_end + 1; % Set next begin index
+        
+        if isempty(FullName), FullName = obj.NameNow;
+        else, FullName = [FullName '>' obj.NameNow]; end
+        if verbose, fun_now_text(FullName); end
 
         % Write Type (4 bytes)
         ind_end = ind_begin-1 + 4;
@@ -79,6 +86,20 @@ function fwrite(obj, fid, swapEndianess, fun_progress_bar),
         buffer(ind_begin:ind_end) = uint8_array;
 
         fwrite(fid, buffer, 'uint8', 0, 'l');
+        
+        doVerbose = false;
+        if verbose,
+            if obj.Start >= IntervalNextLimit,
+                IntervalNextLimit = obj.Start + IntervalBlockSize;
+                doVerbose = true;
+            end
+        end
+        
+        if isempty(FullName), FullName = obj.NameNow;
+        else, FullName = [FullName '>' obj.NameNow]; end
+        if doVerbose,
+            fun_now_text(FullName);
+        end
 
         % Write Data
         if ~isempty(obj.Data),
@@ -86,7 +107,7 @@ function fwrite(obj, fid, swapEndianess, fun_progress_bar),
             switch(obj.Type),
                 case 0, % List of Tags
                     for ii = 1:numel(obj.Data),
-                        fwrite_helper(obj.Data(ii));
+                        fwrite_helper(obj.Data(ii), FullName);
                     end
                 case 2, % Double (8 bytes)
                     if ~swapEndianess, fwrite(fid, obj.Data, 'double', 0, 'l');
@@ -131,7 +152,7 @@ function fwrite(obj, fid, swapEndianess, fun_progress_bar),
             end
         end
         
-        if verbose,
+        if doVerbose,
             fun_now(obj.End);
         end
     end
