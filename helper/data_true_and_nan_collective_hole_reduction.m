@@ -2,7 +2,6 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% REQUIREMENTS: Image Processing Toolbox (due to usage of 'regionprops').
 function varargout = data_true_and_nan_collective_hole_reduction(varargin),
     % This collectively reduces holes in invalid regions (= true and NaN
     % input values). Inputs are assumed to be different maps of the same
@@ -44,10 +43,13 @@ function varargout = data_true_and_nan_collective_hole_reduction(varargin),
         L = label(DBWnot, 4);
         clear DBWnot; % Free memory!
     end
-    stats = regionprops(L, D, 'MaxIntensity', 'PixelIdxList', 'Area');
+    stats = myregionprops(L);
+    PixelIdxList = {stats.PixelIdxList};
+    Area = cellfun(@numel, PixelIdxList);
+    MaxIntensity = cellfun(@(pil) max(D(pil)), PixelIdxList);
     for kk = 1:numel(stats),
-        if stats(kk).MaxIntensity >= 2 || stats(kk).Area >= 6,
-            bw_erode(stats(kk).PixelIdxList) = false;
+        if MaxIntensity(kk) >= 2 || Area(kk) >= 6,
+            bw_erode(PixelIdxList{kk}) = false;
         end
     end
     
