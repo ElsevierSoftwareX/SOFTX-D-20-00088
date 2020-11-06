@@ -45,7 +45,6 @@
 % The automated mask generation in this algorithm (and its data-transformed
 % version) heavily rely on the code in clever_statistics_and_outliers.m.
 
-% REQUIREMENTS: Image Processing Toolbox (due to usage of 'bwdist').
 function [out_2D, correction_2D, mask_2D] = apply_CMDLCA(in_2D, dim, mask_2D),
     % CLEVER Median Difference Line Correction by Addition. This ADDITIVE
     % method preserves DIFFERENCES (but does NOT preserve RATIOS)! In order
@@ -105,8 +104,6 @@ function [out_2D, correction_2D, mask_2D] = apply_CMDLCA(in_2D, dim, mask_2D),
     
     %% Output matrix
     correction_2D = repmat(correction_2D, [1 size(out_2D, 2)]);
-    figure; imagesc(mask2); daspect([1 1 1]);
-    figure; imagesc(mask_2D); daspect([1 1 1]);
     
     % Use ADDITIVE correction factor (PRESERVES DIFFERENCES)
     out_2D = out_2D-correction_2D;
@@ -120,7 +117,7 @@ function [out_2D, correction_2D, mask_2D] = apply_CMDLCA(in_2D, dim, mask_2D),
     %% MEMBER FUNCTIONS
     function bw = bw_remove_pixel_noise(bw, bw_noise_type),
         % Safely remove the one-pixel (either true or false) noise
-        D = bwdist(xor(bw, bw_noise_type), 'Euclidean'); % Get the Euclidean distance
+        D = bwdistsc2d(xor(bw, bw_noise_type)); % Get the Euclidean distance
         D_nearby = mynanmaxfilt2(D, 3); % Get maximum of 4-conn neighbours
 %         D_nearby = ordfilt2(D, 9, ones(3)); % Same as above
         bw(D_nearby <= 1) = ~bw_noise_type; % Remove the one-pixel noise (that are surrounded by one-pixel noise)
