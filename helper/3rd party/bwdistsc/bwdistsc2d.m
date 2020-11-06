@@ -53,9 +53,9 @@ function D = bwdistsc2d(BW),
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     %%%%%%%%%%%%% scan along XY %%%%%%%%%%%%%%%%
-    try, % if can, use 2D bwdist from Image Processing Toolbox
+    if license('test', 'image_toolbox') == 1, % if can, use 2D bwdist from Image Processing Toolbox
         D = bwdist(BW, 'Euclidean');
-    catch, % if not, use full XY-scan
+    else, % if not, use full XY-scan
         S = size(BW); % determine geometry of the data
         
         % In order to minimize the workload, swap dimensions if the first
