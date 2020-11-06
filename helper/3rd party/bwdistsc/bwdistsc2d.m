@@ -54,20 +54,30 @@ function D = bwdistsc2d(BW),
     
     %%%%%%%%%%%%% scan along XY %%%%%%%%%%%%%%%%
     try, % if can, use 2D bwdist from Image Processing Toolbox
-        D = bwdist(BW);
+        D = bwdist(BW, 'Euclidean');
     catch, % if not, use full XY-scan
         S = size(BW); % determine geometry of the data
+        
+        % In order to minimize the workload, swap dimensions if the first
+        % dimension is smaller than the second
+        isSwapped = false;
+        if S(1) < S(2),
+            BW = permute(BW, [2 1]); % Permute to swap dimensions
+            S = S(end:-1:1);
+            isSwapped = true;
+        end
+        
+        % Determine the inner variable class
+        innerClass = 'double';
+%         innerClass = 'single';
+%         innerClass = 'uint32';
         
         %%%%%%%%%%%%%%% X-SCAN %%%%%%%%%%%%%%%
         % scan bottow-up (for all y), copy dx-reference from previous row 
         % unless there is "on"-pixel in that point in current row, then 
         % that's the nearest pixel now
-        dxlower = Inf(S); % reference for nearest "on"-pixel in bw in x direction down
-        dxupper = Inf(S); % reference for nearest "on"-pixel in bw in x direction up
-%         dxlower = Inf(S, 'single'); % reference for nearest "on"-pixel in bw in x direction down
-%         dxupper = Inf(S, 'single'); % reference for nearest "on"-pixel in bw in x direction up
-%         dxlower = (2^32-1).*ones(S, 'uint32'); % reference for nearest "on"-pixel in bw in x direction down
-%         dxupper = (2^32-1).*ones(S, 'uint32'); % reference for nearest "on"-pixel in bw in x direction up
+        dxlower = repmat_realmax_or_intmax(S, innerClass); % reference for nearest "on"-pixel in bw in x direction down
+        dxupper = dxlower; % reference for nearest "on"-pixel in bw in x direction up
         dxlower(1,BW(1,:)) = 0; % fill in first row
         dxupper(end,BW(end,:)) = 0; % fill in last row
         for ii = 2:S(1),
@@ -78,24 +88,21 @@ function D = bwdistsc2d(BW),
             dxupper(jj,BW(jj,:)) = 0; % unless there is pixel
         end
         
+        clear BW; % free memory
+        
         % build (X,Y) for points for which distance needs to be calculated
         % update distances as shortest to "on" pixels up/down in the above
-        DXY = zeros(S);
-%         DXY = zeros(S, 'single');
-%         DXY = zeros(S, 'uint32');
-        DXY(~BW) = min(dxlower(~BW).^2, dxupper(~BW).^2);
+        DXY = min(dxlower, dxupper).^2;
         
-        clear dxlower dxupper BW; % free memory
+        clear dxlower dxupper; % free memory
         
         %%%%%%%%%%%%%%% Y-SCAN %%%%%%%%%%%%%%%
+        D2 = repmat_realmax_or_intmax(S, innerClass); % Initialize
         % this will be the envelop of parabolas at different y
-        D2 = Inf(S);
-%         D2 = Inf(S, 'single');
-%         D2 = (2^32-1).*ones(S, 'uint32');
-        II = 1:S(2);
-%         MII = repmat(II, [S(1) 1]); % for (3) and (4)
-%         MII2 = MII.^2; % for (4)
-%         DXY_MII2 = DXY + MII2; % for (4)
+        II = cast(1:S(2), class(DXY));
+%         MII = repmat(II, [S(1) 1]); % for (3a) and (3b)
+%         MII2 = MII.^2; % for (3b)
+%         DXY_MII2 = DXY + MII2; % for (3b)
         for ii = II,
             % selecting starting point for x:
             % * if parabolas are incremented in increasing order of y, 
@@ -114,21 +121,42 @@ function D = bwdistsc2d(BW),
 %                 D2(BW_ii_jj,jj) = DXY(BW_ii_jj,ii) + (jj-ii).^2;
 %                 if all(~BW_ii_jj), break; end
 %             end
-
-            % (2) Modified scheme by avoiding indexing (FASTEST if double, FAST if single, FAST if uint32)
+            
+            % (2a) Modified scheme by avoiding indexing (FASTEST if double, FAST if single, FAST if uint32)
+            DXY_ii = DXY(:,ii);
             for jj = II,
                 % all pixels are to be updated
-                D2(:,jj) = min(D2(:,jj), DXY(:,ii) + (jj-ii).^2); % indices here can be swapped
+                D2(:,jj) = min(D2(:,jj), DXY_ii + (jj-ii).^2); % indices here can be swapped
             end
             
-            % (3) Modified scheme by avoiding indexing and inner loop (SLOW if double, OK if single, GOOD if uint32)
+            % (2b) Modified scheme by avoiding indexing (after swapping the loops) (FASTEST if double, FAST if single, FAST if uint32)
+% %             D2_ii = D2(:,ii);
+%             for jj = II,
+%                 % all pixels are to be updated
+%                 D2(:,ii) = min(D2(:,ii), DXY(:,jj) + (jj-ii).^2); % indices here can be swapped
+% %                 D2_ii = min(D2_ii, DXY(:,jj) + (jj-ii).^2); % indices here can be swapped
+%             end
+% %             D2(:,ii) = D2_ii;
+            
+            % (3a) Modified scheme by avoiding indexing and inner loop (SLOW if double, OK if single, GOOD if uint32)
 %             D2 = min(D2, bsxfun(@plus, DXY(:,ii), (MII-ii).^2)); % all pixels are to be updated
             
-            % (4) Modified scheme by avoiding indexing and inner loop (after swapping the loops) (SLOWISH if double, OK if single, GOOD if uint32)
-%             D2(:,ii) = min(D2(:,ii), min(DXY_MII2 - 2.*ii.*MII, [], 2)+ii.^2); % all pixels are to be updated
+            % (3b) Modified scheme by avoiding indexing and inner loop (after swapping the loops) (SLOWISH if double, FAST if single, SLOW if uint32)
+%             D2(:,ii) = min(DXY_MII2 - 2.*ii.*MII, [], 2) + ii.^2; % all pixels are to be updated
         end
         
         clear DXY; % free memory
         D = sqrt(single(D2)); % output as single like bwdist
+        if isSwapped,
+            D = permute(D, [2 1]); % Swap dimensions to return the original shape
+        end
+    end
+    
+    function D = repmat_realmax_or_intmax(S, classname),
+        if strcmp(classname, 'double') || strcmp(classname, 'single'),
+            D = repmat(realmax(classname), S);
+        else,
+            D = repmat(intmax(classname), S);
+        end
     end
 end
