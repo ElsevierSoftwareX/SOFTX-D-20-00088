@@ -35,6 +35,7 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
         Ax = get(Fig, 'CurrentAxes');
         masking_value = false;
         masking_mode = 0;
+        show_mask();
         ui_sidebar_for_popup(Fig, 'Masking value:', {'False', 'True'}, @update_value, 1, false, [1 -1 1 1]);
         ui_sidebar_for_button(Fig, [], 'Clear mask', @clear, [1 1 1 -1]);
         ui_sidebar_for_button(Fig, [], 'Invert mask', @invert, [1 1 1 -1]);
@@ -78,7 +79,7 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
     end
     
     function clear(varargin),
-        image_mask(:) = false;
+        image_mask(:) = ~masking_value;
         show_mask();
     end
     
