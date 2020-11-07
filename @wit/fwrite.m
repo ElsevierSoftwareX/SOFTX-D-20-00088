@@ -60,10 +60,6 @@ function fwrite(obj, fid, swapEndianess, fun_progress_bar),
         uint8_array = uint8(obj.Name); % String is a char row vector
         buffer(ind_begin:ind_end) = uint8_array;
         ind_begin = ind_end + 1; % Set next begin index
-        
-        if isempty(FullName), FullName = obj.NameNow;
-        else, FullName = [FullName '>' obj.NameNow]; end
-        if verbose, fun_now_text(FullName); end
 
         % Write Type (4 bytes)
         ind_end = ind_begin-1 + 4;
