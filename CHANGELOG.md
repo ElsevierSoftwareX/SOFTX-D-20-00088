@@ -27,6 +27,54 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
+## [1.3.2] - 2020-11-05
+
+### Added
+
+- Add example case on [scanline error correction][1.3.2,A1] that demonstrate the use of median-based [`apply_MDLCA`][1.3.2,A2], [`apply_MRLCM`][1.3.2,A3], [`apply_CMDLCA`][1.3.2,A4] and [`apply_CMRLCM`][1.3.2,A5] algorithms.
+- During the file and binary reading/writing, show the current object's `FullName` below the updating progress bar in Command Window, similar to WITec software.
+- [`@wit/progress_bar`][1.3.2,A6]: Add fourth output `fun_now_text` to optionally display text below the progress bar.
+
+[1.3.2,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.2/EXAMPLE%20cases/E_06_scanline_error_correction.m
+[1.3.2,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.2/helper/corrections/apply_MDLCA.m
+[1.3.2,A3]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.2/helper/corrections/apply_MRLCM.m
+[1.3.2,A4]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.2/helper/corrections/apply_CMDLCA.m
+[1.3.2,A5]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.2/helper/corrections/apply_CMDLCA.m
+[1.3.2,A6]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.2/@wit/progress_bar.m
+
+### Changed
+
+- From now on, automatically open each ran example case in Editor.
+- `wip`-class: Modifying project's `Type`-property will now change the underlying tree structure. For example, `'WITec Project'` and be changed to `'WITec Data'` and vice versa.
+- [`@wit/progress_bar`][1.3.2,C1]: The `fun_now` of built-in progress bar now accepts two optional function inputs to execute them right before and right after the progress bar update.
+- Simplify code by replacing all `wid.Empty` with `wid.empty`.
+- Renamed dozen internal methods of `wid`-class.
+
+[1.3.2,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.2/@wit/progress_bar.m
+
+### Removed
+
+- **Remove `Image Processing Toolbox` dependency**:
+   - Rewrote [`@wid/image_mask_editor`][1.3.2,R1] to include basic `Freehand`, `Contour` and `Fill` masking modes with help of new [`myinpolygon`][1.3.2,R2] function.
+   - Replace use of built-in `bwdist` by the third party [`bwdistsc2d`][1.3.2,R3].
+   - Replace use of built-in `bwlabel` by the third party [`label`][1.3.2,R4].
+   - Replace use of built-in `regionprops` by [`myregionprops`][1.3.2,R5].
+
+[1.3.2,R1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.2/@wid/image_mask_editor.m
+[1.3.2,R2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.2/helper/myinpolygon.m
+[1.3.2,R3]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.2/helper/3rd%20party/bwdistsc/bwdistsc2d.m
+[1.3.2,R4]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.2/helper/3rd%20party/label/label.m
+[1.3.2,R5]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.2/helper/myregionprops.m
+
+### Fixed
+
+- Correct the dot-notated chained use of `wit`-class `Children`-property, which can be `[]` at times.
+- [`@wit/fread`][1.3.2,F1]: Add missing handling of `swap_endianess` at the file stream reading.
+
+[1.3.2,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.2/@wit/fread.m
+
+
+
 ## [1.3.1] - 2020-11-02
 
 ### Added
@@ -272,7 +320,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 [1.2.0,C14]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.2.0/@wid/copy_LinksToOthers.m
 [1.2.0,C15]: https://gitlab.com/jtholmi/wit_io/-/tree/v1.2.0/dev
 [1.2.0,C16]: https://gitlab.com/jtholmi/wit_io/-/tree/develop
-[1.2.0,C17]: https://gitlab.com/jtholmi/wit_io/-/tree/v1.2.0/helper%2F3rd%20party%2Fexport_fig
+[1.2.0,C17]: https://gitlab.com/jtholmi/wit_io/-/tree/v1.2.0/helper/3rd%20party/export_fig
 
 ### Deprecated
 - `@wip/reset_Viewers`: Supercede by [`@wip/destroy_all_Viewers`][1.2.0,D1].
@@ -473,7 +521,8 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
-[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.1...develop
+[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.2...develop
+[1.3.2]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.1...v1.3.2
 [1.3.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.0...v1.3.1
 [1.3.0]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.3...v1.3.0
 [1.2.3]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.2...v1.2.3

@@ -1,8 +1,8 @@
 # [wit_io: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wid) files][file-exchange]
 
-[![wit_io v1.3.1 Changelog Badge][changelog-badge]][changelog] [![BSD License Badge][license-badge]][license]
+[![wit_io v1.3.2 Changelog Badge][changelog-badge]][changelog] [![BSD License Badge][license-badge]][license]
 
-[changelog-badge]: https://img.shields.io/badge/changelog-wit__io_v1.3.1-0000ff.svg
+[changelog-badge]: https://img.shields.io/badge/changelog-wit__io_v1.3.2-0000ff.svg
 
 Toolbox can directly **read**/**write** [WITec] Project/Data (\*.wip/\*.wid)
 files in [MATLAB] with or without GUI. It also provides data analysis tools.
@@ -74,7 +74,7 @@ user, process the relevant file contents and finally write back to the original
 file.
 
 ### Requirements and compatibility:
-* Requires [Image Processing Toolbox](https://se.mathworks.com/products/image.html).
+* Requires [MATLAB](https://www.mathworks.com/products/matlab.html).
 * Compatible with MATLAB R2011a (or newer) in Windows, macOS and Linux operating
 systems.
 
@@ -109,11 +109,14 @@ J. T. Holmi (2019). wit_io: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.w
 * [export_fig](https://se.mathworks.com/matlabcentral/fileexchange/23629-export_fig)
 * [mpl colormaps](https://bids.github.io/colormap/)
 * [The Voigt/complex error function (second version)](https://se.mathworks.com/matlabcentral/fileexchange/47801-the-voigt-complex-error-function-second-version)
+* [3D Euclidean Distance Transform for Variable Data Aspect Ratio](https://www.mathworks.com/matlabcentral/fileexchange/15455-3d-euclidean-distance-transform-for-variable-data-aspect-ratio)
+* [Label connected components in 2-D array](https://www.mathworks.com/matlabcentral/fileexchange/26946-label-connected-components-in-2-d-array)
 
 ### Acknowledgments
-[*] [jtholmi](https://gitlab.com/jtholmi)'s supervisor: [Prof. Harri Lipsanen](https://people.aalto.fi/harri.lipsanen), Aalto University, Finland  
-[1] *'[clever_statistics_and_outliers.m]'*: G. Buzzi-Ferraris and F. Manenti (2011) "Outlier detection in large data sets", http://dx.doi.org/10.1016/j.compchemeng.2010.11.004  
-[2] *'[apply_MRLCM.m]'* (and deprecated *wip_reader*): J. T. Holmi (2016) "Determining the number of graphene layers by Raman-based Si-peak analysis", pp. 27&ndash;28,35, freely available to download at: http://urn.fi/URN:NBN:fi:aalto-201605122027
+[*] [jtholmi](https://gitlab.com/jtholmi)'s supervisor: [Prof. Harri Lipsanen](https://people.aalto.fi/harri.lipsanen), Aalto University, Finland
+[1] *'[clever_statistics_and_outliers.m]'*: G. Buzzi-Ferraris and F. Manenti (2011) "Outlier detection in large data sets", http://dx.doi.org/10.1016/j.compchemeng.2010.11.004
+[2] *'[myinpolygon.m]'*: J. Hao et al. (2018) "Optimal Reliable Point-in-Polygon Test and Differential Coding Boolean Operations on Polygons", https://doi.org/10.3390/sym10100477
+[3] *'[apply_MRLCM.m]'* (and deprecated *wip_reader*): J. T. Holmi (2016) "Determining the number of graphene layers by Raman-based Si-peak analysis", pp. 27&ndash;28,35, freely available to download at: http://urn.fi/URN:NBN:fi:aalto-201605122027
 
 [file-exchange]: https://se.mathworks.com/matlabcentral/fileexchange/70983-wit_io-toolbox-for-witec-project-data-wip-wid-files
 [changelog]: ./CHANGELOG.md
