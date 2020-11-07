@@ -3,8 +3,12 @@
 % All rights reserved.
 
 % Mimics that of built-in inpolygon, but works for self-intersecting
-% polygons as well.
+% polygons as well. This version is not optimized in any way.
 function [in, on, out] = myinpolygon(xq, yq, xv, yv),
+    % Source: J. Hao et al (2018) 'Optimal Reliable Point-in-Polygon Test
+    % and Differential Coding Boolean Operations on Polygons'
+    % https://doi.org/10.3390/sym10100477
+    
     % Algorithm 1: Determine whether P is inside, outside, or on ∂S. It
     % cannot solve the problem of instability that can result from the
     % comparison operations of floating-point numbers.
@@ -14,10 +18,10 @@ function [in, on, out] = myinpolygon(xq, yq, xv, yv),
     
     % Output: Return an integer 1, 0, or −1 depending on whether the point
     % P is within, outside, or on the polygon S, respectively.
-
-    % Source: J. Hao et al (2018) 'Optimal Reliable Point-in-Polygon Test
-    % and Differential Coding Boolean Operations on Polygons'
-    % https://doi.org/10.3390/sym10100477
+    
+    % Force column
+    xv = xv(:);
+    yv = yv(:);
     
     % Close the polygon curve
     xv(end+1) = xv(1);
