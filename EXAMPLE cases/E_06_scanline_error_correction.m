@@ -37,15 +37,43 @@ O_Image = O_wid(7); % Get object of "Raman Si-peak<Sum[500-550]<Image Scan 2" at
 
 figure; O_Image.plot;
 
-% The image plotted above shows clear horizontal scanline errors. The image
-% represents the integrated intensity of Raman Si-peak, which means that
-% the underlying error is multiplicative in nature.
+% This plotted image shows clear horizontal scanline errors. The image
+% represents the integrated intensity of Raman Si-peak, for which reason
+% the underlying error is expected to be multiplicative in nature.
+%-------------------------------------------------------------------------%
 
+
+
+%-------------------------------------------------------------------------%
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E6)} Scanline error correction of images:}' ...
+    '' ...
+    '\bullet This plotted image shows clear horizontal scanline errors. The image represents the integrated intensity of Raman Si-peak, for which reason the underlying error is expected to be multiplicative in nature.' ...
+    '' ...
+    '\bullet These additive and multiplicative scanline errors occur due to glitches of the scanning instrument. The scanning laser based measurements are very sensitive to various environmental effects, even though their sensitivity can be greatly reduced by vibration shielding. In this example case, no shielding was installed.' ...
+    '' ...
+    '\bullet As a solution, this toolbox offers two scanline correction algoritms:' ...
+    '(1) {\bf\fontname{Courier}apply\_MDLCA} for additive errors, where MDLCA stands for Median Difference Line Correction by Addition.' ...
+    '(2) {\bf\fontname{Courier}apply\_MRLCM} for multiplicative errors, where MRLCM stands for Median Difference Line Correction by Addition.' ...
+    '' ...
+    '\bullet Both of these have so called Clever-variants, {\bf\fontname{Courier}apply\_CMDLCA} and {\bf\fontname{Courier}apply\_CMRLCM}, which are designed to handle more problematic outliers.' ...
+    '' ...
+    '\bullet For more details, continue by reading the example case comments and the code documentation.' ...
+    '' ...
+    '\ldots Close this dialog to display the corrected image and END.'});
+if ishandle(h), figure(h); uiwait(h); end % Wait for wit_io_msgbox to be closed before continuing.
+%-------------------------------------------------------------------------%
+
+
+
+%-------------------------------------------------------------------------%
 % This toolbox provides two scanline correction algoritms:
 % (1a) 'apply_MDLCA' for additive errors, where MDLCA stands for Median
 % Difference Line Correction by Addition.
 % (2a) 'apply_MRLCM' for multiplicative errors, where MRLCM stands for
 % Median Difference Line Correction by Addition.
+
+% Median was used because it is one of the most outlier resistant statistic
+% with breakdown point of 50% dataset contamination.
 
 % Both of these have so called Clever-variants, which utilize an outlier
 % detection scheme presented by G. Buzzi-Ferraris and F. Manenti (2011)
@@ -53,9 +81,12 @@ figure; O_Image.plot;
 % (1a) 'apply_CMDLCA' for additive errors and problematic outliers.
 % (2b) 'apply_CMRLCM' for multiplicative errors and problematic outliers.
 
-% For more details, see to their code documentations.
+% These algorithms have already been successfully used in the previously
+% published work [1-2].
+% [1] URL: http://urn.fi/URN:NBN:fi:aalto-201605122027
+% [2] URL: https://doi.org/10.1016/j.jcrysgro.2018.07.024
 
-% In this case, it is enough to apply simple 'apply_MRLCM' to the
+% In the example case, it is enough to apply simple 'apply_MRLCM' to the
 % multiplicative scanline errors seen in the image for the integrated
 % intensity of Raman Si-peak:
 O_Image_2 = O_Image.copy(); % Create copy
@@ -63,18 +94,6 @@ O_Image_2.Name = sprintf('Scanline Corrected<%s', O_Image_2.Name); % Rename it
 O_Image_2.Data = apply_MRLCM(O_Image_2.Data, 2); % Correct the data scanline errors in the 2nd dimension
 
 figure; O_Image_2.plot;
-%-------------------------------------------------------------------------%
-
-
-
-%-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E6)} Scanline correction of images:}' ...
-    '' ...
-    '\bullet Aim is to correct the additive/multiplicative scanline errors due to the scanning instrument glitches. The scanning laser based measurements are very sensitive to various environmental effects, but these can be greatly reduced by vibration shielding. Median is used because it is one of the most outlier resistant statistic with breakdown point of 50% dataset contamination.' ...
-    '' ...
-    '\bullet Read the code documentation for more details.' ...
-    '' ...
-    '\ldots Close this dialog to END.'});
 %-------------------------------------------------------------------------%
 
 
