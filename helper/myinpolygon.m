@@ -5,7 +5,7 @@
 % Mimics that of built-in inpolygon, but works for self-intersecting
 % polygons as well. This version is not optimized in any way.
 function [in, on, out] = myinpolygon(xq, yq, xv, yv),
-    % Source: J. Hao et al (2018) 'Optimal Reliable Point-in-Polygon Test
+    % Source: J. Hao et al. (2018) 'Optimal Reliable Point-in-Polygon Test
     % and Differential Coding Boolean Operations on Polygons'
     % https://doi.org/10.3390/sym10100477
     
