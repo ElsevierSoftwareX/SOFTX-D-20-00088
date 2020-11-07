@@ -38,9 +38,9 @@ function buffer = bwrite(obj, swapEndianess, fun_progress_bar),
     end
     
     % Write wit Tree objects
-    binary_helper(obj, obj.FullName);
+    binary_helper(obj);
     
-    function binary_helper(obj, FullName),
+    function binary_helper(obj),
         % Write NameLength (4 bytes)
         ind_end = ind_begin-1 + 4;
         if ~swapEndianess, uint8_array = typecast(obj.NameLength, 'uint8');
@@ -83,16 +83,14 @@ function buffer = bwrite(obj, swapEndianess, fun_progress_bar),
             end
         end
         
-        if isempty(FullName), FullName = obj.NameNow;
-        else, FullName = [FullName '>' obj.NameNow]; end
         if doVerbose,
-            fun_now_text(FullName);
+            fun_now_text(obj.FullName);
         end
         
         % Write Data
         if obj.Type == 0, % List of Tags
             for ii = 1:numel(obj.Data),
-                binary_helper(obj.Data(ii), FullName);
+                binary_helper(obj.Data(ii));
             end
         elseif ~isempty(obj.Data),
             ind_end = ind_begin-1 + double(obj.End-obj.Start);

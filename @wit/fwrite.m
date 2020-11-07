@@ -22,9 +22,9 @@ function fwrite(obj, fid, swapEndianess, fun_progress_bar),
     end
     
     % Write wit Tree objects
-    fwrite_helper(obj, obj.FullName);
+    fwrite_helper(obj);
     
-    function fwrite_helper(obj, FullName),
+    function fwrite_helper(obj),
         % Test the file stream
         if isempty(fid) || fid == -1, error('File stream is not open!'); end
 
@@ -95,10 +95,8 @@ function fwrite(obj, fid, swapEndianess, fun_progress_bar),
             end
         end
         
-        if isempty(FullName), FullName = obj.NameNow;
-        else, FullName = [FullName '>' obj.NameNow]; end
         if doVerbose,
-            fun_now_text(FullName);
+            fun_now_text(obj.FullName);
         end
 
         % Write Data
@@ -107,7 +105,7 @@ function fwrite(obj, fid, swapEndianess, fun_progress_bar),
             switch(obj.Type),
                 case 0, % List of Tags
                     for ii = 1:numel(obj.Data),
-                        fwrite_helper(obj.Data(ii), FullName);
+                        fwrite_helper(obj.Data(ii));
                     end
                 case 2, % Double (8 bytes)
                     if ~swapEndianess, fwrite(fid, obj.Data, 'double', 0, 'l');

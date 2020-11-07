@@ -57,11 +57,11 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
     end
     
     % Read wit Tree objects
-    if ~bread_helper(obj, obj.FullName),
+    if ~bread_helper(obj),
         delete(obj); % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
     end
     
-    function isDone = bread_helper(obj, FullName),
+    function isDone = bread_helper(obj),
         isDone = false; % Needed to properly handle failure cases
         
         % Do not allow obj to notify its ancestors on modifications
@@ -129,10 +129,8 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
             end
         end
         
-        if isempty(FullName), FullName = obj_NameNow;
-        else, FullName = [FullName '>' obj_NameNow]; end
         if doVerbose,
-            fun_now_text(FullName);
+            fun_now_text(obj.FullName);
         end
         
         % Update the flag used for the reloading cases
@@ -152,7 +150,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
             while(ind_begin < obj_End), % Continue reading until DataEnd
                 child = wit(); % Many times faster than wit(obj) due to redundant code
                 child.ParentNow = obj; % Adopt the new child being created
-                if bread_helper(child, FullName), % Read the new child contents (or destroy it on failure)
+                if bread_helper(child), % Read the new child contents (or destroy it on failure)
                     children(end+1) = child; % Add child if valid (and avoid Octave-incompatible isvalid-function)
                     child.OrdinalNumber = numel(children);
                 else, delete(child); end % Delete child if not valid (and avoid Octave-incompatible isvalid-function)
