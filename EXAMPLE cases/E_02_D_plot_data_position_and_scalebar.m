@@ -6,6 +6,7 @@
 % Simple examples of (E2D) data position and scalebar plotting in order to
 % see their positions with respect to each other.
 
+edit([mfilename('fullpath') '.m']); % Open this code in Editor
 clear all; % Clear workspace
 close all; % Close figures
 

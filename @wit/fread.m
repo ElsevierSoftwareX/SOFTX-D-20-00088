@@ -10,7 +10,16 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
     if nargin < 4 || isempty(swapEndianess), swapEndianess = wit.swap_endianess(); end % By default: Binary with little endianess
     if nargin < 5, skip_Data_criteria_for_obj = []; end % By default: no criteria!
     if nargin < 6, error_criteria_for_obj = []; end % By default: no criteria!
-    if nargin < 7, fun_progress_bar = @wit.progress_bar; end % By default: verbose progress bar in Command Window
+    if nargin < 7, fun_progress_bar = @(x) wit.progress_bar(x, '-OnlyIncreasing'); end % By default: verbose progress bar in Command Window
+    
+    % Test the file stream
+    if isempty(fid) || fid == -1,
+        delete(obj); % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
+    end
+    
+    % Determine fread endianess
+    if ~swapEndianess, endianess = 'l';
+    else, endianess = 'b'; end
     
     verbose = isa(fun_progress_bar, 'function_handle');
     if verbose,
@@ -19,10 +28,15 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         FileSize = ftell(fid); % Get file size
         fseek(fid, 0, 'bof'); % Return to beginning of file
         
+        IntervalBlockSize = 1024.^2; % Limit progress updates to every 1 MB
+        IntervalNextLimit = 0;
+        
         fprintf('Reading %d bytes of binary as wit Tree objects:\n', FileSize);
-        [fun_start, fun_now, fun_end] = fun_progress_bar(FileSize);
+        [fun_start, fun_now, fun_end, fun_now_text] = fun_progress_bar(FileSize);
         fun_start(0);
-        ocu = onCleanup(fun_end); % Automatically call fun_end whenever end of function is reached
+        
+        % Automatically call fun_end whenever end of function is reached
+        ocu = onCleanup(fun_end);
     end
     
     % Temporarily adjust warning settings
@@ -30,67 +44,80 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
     warning off backtrace; % Disable the stack trace
     ocu_restore_warning = onCleanup(@() warning(old_state)); % Restore warning state on exit
     
-    % Test the file stream
-    if isempty(fid) || fid == -1, obj.IsValid = false; end % Mark this object for deletion!
-    
     % Read Magic (8 bytes) (only if Root)
-    if obj.IsValid && isempty(obj.Parent),
+    if isempty(obj.Parent),
         % Abort, if file stream has reached the end
-        if feof(fid), obj.IsValid = false; end % Mark this object for deletion!
-        obj.Magic = reshape(fread(fid, 8, 'uint8=>char', 0, 'l'), 1, []); % Force ascii-conversion
+        if feof(fid),
+            delete(obj); % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
+        end
+        obj.Magic = reshape(fread(fid, 8, 'uint8=>char', 0, endianess), 1, []); % Force ascii-conversion
     end
     
     % Read wit Tree objects
-    if obj.IsValid, fread_helper(obj); end
+    if ~fread_helper(obj),
+        delete(obj); % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
+    end
     
-    % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
-    if ~obj.IsValid, delete(obj); end
-    function fread_helper(obj),
+    function isDone = fread_helper(obj),
+        isDone = false; % Needed to properly handle failure cases
+        
         % Do not allow obj to notify its ancestors on modifications
         obj.ModifiedAncestors = false;
         
         % Read NameLength (4 bytes)
         if feof(fid), % Abort, if file stream has reached the end
             obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
-            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
-        obj.NameLength = fread(fid, 1, 'uint32=>uint32', 0, 'l');
+        obj_NameLength = fread(fid, 1, 'uint32=>uint32', 0, endianess);
+        obj.NameLength = obj_NameLength;
         
         % Read Name (NameLength # of bytes)
         if feof(fid), % Abort, if file stream has reached the end
             obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
-            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
-        obj.NameNow = reshape(fread(fid, double(obj.NameLength), 'uint8=>char', 0, 'l'), 1, []); % String is a char row vector % Double OFFSET for compability!
+        obj_NameNow = reshape(fread(fid, double(obj_NameLength), 'uint8=>char', 0, endianess), 1, []); % String is a char row vector % Double OFFSET for compability!
+        obj.NameNow = obj_NameNow;
         
         % Read Type (4 bytes)
         if feof(fid), % Abort, if file stream has reached the end
             obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
-            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
-        obj.Type = fread(fid, 1, 'uint32=>uint32', 0, 'l');
+        obj_Type = fread(fid, 1, 'uint32=>uint32', 0, endianess);
+        obj.Type = obj_Type;
         
         % Read Start (8 bytes)
         if feof(fid), % Abort, if file stream has reached the end
             obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
-            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
-        obj.Start = fread(fid, 1, 'uint64=>uint64', 0, 'l');
+        obj_Start = fread(fid, 1, 'uint64=>uint64', 0, endianess);
+        obj.Start = obj_Start;
         
         % Read End (8 bytes)
         if feof(fid), % Abort, if file stream has reached the end
             obj.ParentNow = wit.empty; % Do not touch obj.Parent.Data on deletion!
-            obj.IsValid = false; % Mark this object for deletion!
             return;
         end
-        obj.End = fread(fid, 1, 'uint64=>uint64', 0, 'l');
+        obj_End = fread(fid, 1, 'uint64=>uint64', 0, endianess);
+        obj.End = obj_End;
+        
+        doVerbose = false;
+        if verbose,
+            if obj_Start >= IntervalNextLimit,
+                IntervalNextLimit = obj_Start + IntervalBlockSize;
+                doVerbose = true;
+            end
+        end
+        
+        if doVerbose,
+            fun_now_text(obj.FullName);
+        end
         
         % Update the flag used for the reloading cases
-        obj.HasData = obj.End > obj.Start;
+        obj.HasData = obj_End > obj_Start;
         
         % SPECIAL CASE: Skip if obj meets the given skip Data criteria.
         skip_Data = false;
@@ -100,14 +127,13 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         
         % Data reading
         if skip_Data, % Handle Data skipping
-            fseek(fid, double(obj.End), 'bof'); % Double OFFSET for compability!
-        elseif obj.Type == 0, % Read the children
+            fseek(fid, double(obj_End), 'bof'); % Double OFFSET for compability!
+        elseif obj_Type == 0, % Read the children
             children = wit.empty;
-            while(ftell(fid) < obj.End), % Continue reading until DataEnd
+            while(ftell(fid) < obj_End), % Continue reading until DataEnd
                 child = wit(); % Many times faster than wit(obj) due to redundant code
                 child.ParentNow = obj; % Adopt the new child being created
-                fread_helper(child); % Read the new child contents (or destroy it on failure)
-                if child.IsValid,
+                if fread_helper(child), % Read the new child contents (or destroy it on failure)
                     children(end+1) = child; % Add child if valid (and avoid Octave-incompatible isvalid-function)
                     child.OrdinalNumber = numel(children);
                 else, delete(child); end % Delete child if not valid (and avoid Octave-incompatible isvalid-function)
@@ -117,7 +143,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         else, obj.fread_Data(fid, N_bytes_max, swapEndianess); end % Otherwise, read the Data
         
         if verbose,
-            fun_now(obj.End);
+            fun_now(obj_End);
         end
         
         % Allow obj to notify its ancestors on modifications
@@ -130,5 +156,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
             error_criteria_for_obj(obj); % EXPECTED TO ERROR if its criteria is met
             obj.ParentNow = temp;
         end
+        
+        isDone = true; % Needed to properly handle failure cases
     end
 end

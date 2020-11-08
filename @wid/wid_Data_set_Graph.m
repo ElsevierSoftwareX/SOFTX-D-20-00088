@@ -13,10 +13,10 @@ function wid_Data_set_Graph(obj, in),
         % Reshape to writing format
         TDGraph.regexp('^DataFieldInverted<', true).Data = false;
         TDGraph.regexp('^Ranges<GraphData<', true).Data = int32([max(1, size(in, 1)) size(in, 2).*size(in, 3)]); % Ranges
-        TDGraph.regexp('^Data<GraphData<', true).Data = obj.wid_set_DataType(ipermute(in, [3 2 1]));
+        TDGraph.regexp('^Data<GraphData<', true).Data = obj.wid_Data_set_DataType(ipermute(in, [3 2 1]));
 %         TDGraph.regexp('^DataFieldInverted<', true).Data = true;
 %         TDGraph.regexp('^Ranges<GraphData<', true).Data = int32([max(1, size(in, 2)) size(in, 1).*size(in, 3)]); % Ranges
-%         TDGraph.regexp('^Data<GraphData<', true).Data = obj.wid_set_DataType(ipermute(in, [2 3 1]));
+%         TDGraph.regexp('^Data<GraphData<', true).Data = obj.wid_Data_set_DataType(ipermute(in, [2 3 1]));
         % Reset the LineChanged and LineValid states because new Data was set
         TDGraph.regexp('^LineChanged<', true).Data = false(1, size(in, 2));
         TDGraph.regexp('^LineValid<', true).Data = true(1, size(in, 2));
@@ -27,7 +27,7 @@ function wid_Data_set_Graph(obj, in),
         TDGraph.regexp('^SizeGraph<', true).Data = int32(size(in, 3)); % SizeGraph % int32 required by WITec Project 2.10.3.3
         TDGraph.regexp('^Ranges<GraphData<', true).Data = int32([max(1, size(in, 1)) size(in, 2).*size(in, 3)]); % Ranges % int32 required by WITec Project 2.10.3.3
         % Reshape to writing format
-        TDGraph.regexp('^Data<GraphData<', true).Data = obj.wid_set_DataType(ipermute(in, [3 2 1]));
+        TDGraph.regexp('^Data<GraphData<', true).Data = obj.wid_Data_set_DataType(ipermute(in, [3 2 1]));
         % Reset the LineChanged and LineValid states because new Data was set
         TDGraph.regexp('^LineChanged<', true).Data = false(1, size(in, 2));
         TDGraph.regexp('^LineValid<', true).Data = true(1, size(in, 2));

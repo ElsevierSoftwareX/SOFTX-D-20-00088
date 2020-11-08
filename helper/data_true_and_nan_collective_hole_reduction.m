@@ -2,8 +2,6 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% REQUIREMENTS: Image Processing Toolbox (due to usage of 'bwdist',
-% 'bwlabel' and 'regionprops').
 function varargout = data_true_and_nan_collective_hole_reduction(varargin),
     % This collectively reduces holes in invalid regions (= true and NaN
     % input values). Inputs are assumed to be different maps of the same
@@ -28,7 +26,7 @@ function varargout = data_true_and_nan_collective_hole_reduction(varargin),
     end
     
     % Distance to the nearest nonzero
-    D = bwdist(bw, 'Euclidean'); % Get the Euclidean distance
+    D = bwdistsc2d(bw); % Get the Euclidean distance
     
     % Near-safely remove the one-pixel noise. This attempts to avoid
     % eroding away wider one-pixel thick connected regions with Area >= 4
@@ -37,10 +35,21 @@ function varargout = data_true_and_nan_collective_hole_reduction(varargin),
     bw_erode = D_nearby <= 1;
     
     % Restore the areas with the maximum distance >= 2 or areas >= 6
-    stats = regionprops(bwlabel(~bw, 4), D, 'MaxIntensity', 'PixelIdxList', 'Area');
+    try, % Test if Image Processing Toolbox is available
+        L = bwlabel(~bw, 4);
+    catch, % Otherwise use third party function
+        DBWnot = double(~bw);
+        DBWnot(bw) = NaN;
+        L = label(DBWnot, 4);
+        clear DBWnot; % Free memory!
+    end
+    stats = myregionprops(L);
+    PixelIdxList = {stats.PixelIdxList};
+    Area = cellfun(@numel, PixelIdxList);
+    MaxIntensity = cellfun(@(pil) max(D(pil)), PixelIdxList);
     for kk = 1:numel(stats),
-        if stats(kk).MaxIntensity >= 2 || stats(kk).Area >= 6,
-            bw_erode(stats(kk).PixelIdxList) = false;
+        if MaxIntensity(kk) >= 2 || Area(kk) >= 6,
+            bw_erode(PixelIdxList{kk}) = false;
         end
     end
     

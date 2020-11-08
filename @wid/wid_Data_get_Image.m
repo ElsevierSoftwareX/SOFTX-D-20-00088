@@ -16,12 +16,12 @@ function out = wid_Data_get_Image(obj),
         % Reshape to user format
         ImageDataIsInverted = TDImage.regexp('^ImageDataIsInverted<', true).Data;
         if ImageDataIsInverted,
-            out = reshape(obj.wid_get_DataType(in), [SizeX SizeY]);
+            out = reshape(obj.wid_Data_get_DataType(in), [SizeX SizeY]);
         else,
-            out = permute(reshape(obj.wid_get_DataType(in), [SizeY SizeX]), [2 1]);
+            out = permute(reshape(obj.wid_Data_get_DataType(in), [SizeY SizeX]), [2 1]);
         end
         if obj.Project.popUseLineValid, % Get the latest value (may be temporary or permanent or default)
-            out = obj.wid_get_LineValid(out);
+            out = obj.wid_Data_get_LineValid(out);
         end
     elseif Version >= 0 && Version <= 5, % Legacy versions
         TDImage = obj.Tag.Data.regexp('^TDImage<', true);
@@ -32,9 +32,9 @@ function out = wid_Data_get_Image(obj),
         SizeX = TDImage.regexp('^SizeX<', true).Data;
         SizeY = TDImage.regexp('^SizeY<', true).Data;
         % Reshape to user format
-        out = permute(reshape(obj.wid_get_DataType(in), [SizeY SizeX]), [2 1]);
+        out = permute(reshape(obj.wid_Data_get_DataType(in), [SizeY SizeX]), [2 1]);
         if obj.Project.popUseLineValid, % Get the latest value (may be temporary or permanent or default)
-            out = obj.wid_get_LineValid(out);
+            out = obj.wid_Data_get_LineValid(out);
         end
     else, error('Unimplemented Version (%d)!', Version); end
 end

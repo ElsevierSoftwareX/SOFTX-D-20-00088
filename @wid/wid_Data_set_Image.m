@@ -12,10 +12,10 @@ function wid_Data_set_Image(obj, in),
         % Reshape to writing format
 %         TDImage.regexp('^ImageDataIsInverted<', true).Data = false;
 %         TDImage.regexp('^Ranges<ImageData<', true).Data = int32([size(in, 1) size(in, 2)]); % Ranges
-%         TDImage.regexp('^Data<ImageData<', true).Data = obj.wid_set_DataType(ipermute(in, [2 1]));
+%         TDImage.regexp('^Data<ImageData<', true).Data = obj.wid_Data_set_DataType(ipermute(in, [2 1]));
         TDImage.regexp('^ImageDataIsInverted<', true).Data = true;
         TDImage.regexp('^Ranges<ImageData<', true).Data = int32([size(in, 2) size(in, 1)]); % Ranges
-        TDImage.regexp('^Data<ImageData<', true).Data = obj.wid_set_DataType(in);
+        TDImage.regexp('^Data<ImageData<', true).Data = obj.wid_Data_set_DataType(in);
         % Recalculate various statistics
         in = double(in); % Convert to double for the statistics
         TDImage.regexp('^Average<', true).Data = mean(in(:));
@@ -35,7 +35,7 @@ function wid_Data_set_Image(obj, in),
         TDImage.regexp('^SizeY<', true).Data = int32(size(in, 2)); % SizeY % int32 required by WITec Project 2.10.3.3
         TDImage.regexp('^Ranges<ImageData<', true).Data = int32([size(in, 1) size(in, 2)]); % Ranges % int32 required by WITec Project 2.10.3.3
         % Reshape to writing format
-        TDImage.regexp('^Data<ImageData<', true).Data = obj.wid_set_DataType(ipermute(in, [2 1]));
+        TDImage.regexp('^Data<ImageData<', true).Data = obj.wid_Data_set_DataType(ipermute(in, [2 1]));
         % Recalculate various statistics
         in = double(in); % Convert to double for the statistics
         TDImage.regexp('^Average<', true).Data = mean(in(:));

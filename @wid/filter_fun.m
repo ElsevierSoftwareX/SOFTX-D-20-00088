@@ -16,7 +16,7 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin),
     % Pop states (even if not used to avoid push-pop bugs)
     AutoCreateObj = Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
     
-    new_obj = wid.Empty;
+    new_obj = wid.empty;
     
     Project.pushAutoCopyObj(false); % Temporarily don't allow copying
     Project.pushAutoModifyObj(false); % Temporarily don't allow modifying

@@ -14,7 +14,7 @@ function out = wid_Data_get_Bitmap(obj),
         SizeX = TDBitmap.regexp('^SizeX<', true).Data;
         SizeY = TDBitmap.regexp('^SizeY<', true).Data;
         % Reshape to user format
-        out = typecast(obj.wid_get_DataType(in), 'uint8'); % From int32 to uint8
+        out = typecast(obj.wid_Data_get_DataType(in), 'uint8'); % From int32 to uint8
         out = reshape(out, 4, SizeX, SizeY); % Reshape back to a matrix
         out = permute(out, [2 3 1]); % Permute the matrix so that the color channels go to the end
         out = out(:,:,1:3); % Ignore the 4th channel (= alpha)

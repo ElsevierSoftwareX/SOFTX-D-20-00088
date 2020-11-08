@@ -8,6 +8,7 @@
 % view at the Video camera per frame. Frame imperfections may be caused,
 % for instance, by vignetting or varying pixel sensitivity.
 
+edit([mfilename('fullpath') '.m']); % Open this code in Editor
 clear all; % Clear workspace
 close all; % Close figures
 

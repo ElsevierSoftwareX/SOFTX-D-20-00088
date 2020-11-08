@@ -126,9 +126,6 @@ classdef wit < handle, % Since R2008a
         OrdinalNumber = 1; % Array index among its Parent's Children
         Id = 0; % Used internally to enable handle-like comparison in Octave
     end
-    properties (SetAccess = private, Hidden) % READ-ONLY
-        IsValid = true; % Used internally to mark object invalid and that it should be deleted
-    end
     
     %% PUBLIC METHODS
     methods
@@ -655,8 +652,8 @@ classdef wit < handle, % Since R2008a
         % Read file to obj
         obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteria_for_obj, varargin);
         
-        % Default Command Window progress bar used in content reading and writing
-        [fun_start, fun_now, fun_end] = progress_bar(N_bytes_max, varargin);
+        % Default Command Window progress bar and text used in content reading and writing
+        [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max, varargin);
         
         % Determine whether or not to swap endianess to achieve little
         % endian ordering
