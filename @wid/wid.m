@@ -29,12 +29,6 @@
 
 % Class for project datas
 classdef wid < handle, % Since R2008a
-    % Hidden constant to reduce calls to moderately used wid.empty
-    properties (Constant, Hidden)
-        % Using wid.Empty is up to 30 times faster than wid.empty
-        Empty = wid.empty; % Call wid.empty only once
-    end
-    
     %% MAIN PROPERTIES
     % Everything rely on the underlying wit-classes
     properties (SetAccess = private, Dependent) % READ-ONLY, DEPENDENT
@@ -97,7 +91,7 @@ classdef wid < handle, % Since R2008a
             N_pairs = size(Pairs, 1);
             if N_pairs == 0,
                 obj.destroy(); % Destroy the created template
-                obj = wid.Empty;
+                obj = wid.empty;
             else,
                 if N_pairs > 1, % Avoid endless loop
                     obj(N_pairs,1) = wid(); % Preallocate the array first
@@ -296,7 +290,7 @@ classdef wid < handle, % Since R2008a
         % AllLinksToThis (READ-ONLY, DEPENDENT)
         function AllLinksToThis = get.AllLinksToThis(obj),
             % Same as LinksToThis but includes also the LinksToThis of LinksToThis and so on.
-            AllLinksToThis = wid.Empty;
+            AllLinksToThis = wid.empty;
             if isfield(obj.Tag, 'Data'),
                 % First get the object's wit-tree parent tag
                 tags = [obj.Tag.Data.Parent wit.empty];
@@ -442,10 +436,10 @@ classdef wid < handle, % Since R2008a
     
     %% PRIVATE METHODS
     methods (Access = private)
-        Data = wid_get_LineValid(obj, Data);
+        Data = wid_Data_get_LineValid(obj, Data);
         
-        Data = wid_get_DataType(obj, Data);
-        Data = wid_set_DataType(obj, Data);
+        Data = wid_Data_get_DataType(obj, Data);
+        Data = wid_Data_set_DataType(obj, Data);
         
         out = wid_DataTree_get(obj, varargin); % For (un)formatted structs
         wid_DataTree_set(obj, in, varargin); % For (un)formatted structs

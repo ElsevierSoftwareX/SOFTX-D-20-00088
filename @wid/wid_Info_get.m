@@ -5,11 +5,11 @@
 function out = wid_Info_get(obj),
     out = struct.empty; % If not TDBitmap, TDGraph or TDImage
     
-    SpaceTransformation = wid.Empty;
-    SecondaryTransformation = wid.Empty; % v7 (only known case: Time<TDGraph, where SpaceTransformation and SecondaryTransformation are related to time (a vector) and space (a single point) in WITec Project FIVE, respectively.)
-    GraphTransformation = wid.Empty;
-    GraphInterpretation = wid.Empty;
-    DataInterpretation = wid.Empty;
+    SpaceTransformation = wid.empty;
+    SecondaryTransformation = wid.empty; % v7 (only known case: Time<TDGraph, where SpaceTransformation and SecondaryTransformation are related to time (a vector) and space (a single point) in WITec Project FIVE, respectively.)
+    GraphTransformation = wid.empty;
+    GraphInterpretation = wid.empty;
+    DataInterpretation = wid.empty;
     
     % Specialize according to the obj Type
     switch(obj.Type),
@@ -95,14 +95,14 @@ function out = wid_Info_get(obj),
     out.XLength = LengthX;
     out.XUnit = LengthUnit;
     out.XTransformation = SpaceTransformation;
-    out.XInterpretation = wid.Empty;
+    out.XInterpretation = wid.empty;
     
     out.Y = Y;
     out.YSize = SizeY;
     out.YLength = LengthY;
     out.YUnit = LengthUnit;
     out.YTransformation = SpaceTransformation;
-    out.YInterpretation = wid.Empty;
+    out.YInterpretation = wid.empty;
     
     out.Graph = Graph;
     out.GraphSize = SizeGraph;
@@ -116,26 +116,26 @@ function out = wid_Info_get(obj),
     out.ZLength = LengthZ;
     out.ZUnit = LengthUnit;
     out.ZTransformation = SpaceTransformation;
-    out.ZInterpretation = wid.Empty;
+    out.ZInterpretation = wid.empty;
     
     out.SecondaryX = SecondaryX;
     out.SecondaryXSize = SecondarySizeX;
     out.SecondaryXLength = SecondaryLengthX;
     out.SecondaryXUnit = SecondaryLengthUnit;
     out.SecondaryXTransformation = SecondaryTransformation;
-    out.SecondaryXInterpretation = wid.Empty;
+    out.SecondaryXInterpretation = wid.empty;
     
     out.SecondaryY = SecondaryY;
     out.SecondaryYSize = SecondarySizeY;
     out.SecondaryYLength = SecondaryLengthY;
     out.SecondaryYUnit = SecondaryLengthUnit;
     out.SecondaryYTransformation = SecondaryTransformation;
-    out.SecondaryYInterpretation = wid.Empty;
+    out.SecondaryYInterpretation = wid.empty;
     
     out.SecondaryZ = SecondaryZ;
     out.SecondaryZSize = SecondarySizeZ;
     out.SecondaryZLength = SecondaryLengthZ;
     out.SecondaryZUnit = SecondaryLengthUnit;
     out.SecondaryZTransformation = SecondaryTransformation;
-    out.SecondaryZInterpretation = wid.Empty;
+    out.SecondaryZInterpretation = wid.empty;
 end

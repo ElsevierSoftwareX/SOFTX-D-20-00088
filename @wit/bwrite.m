@@ -6,15 +6,18 @@
 % writing to file, because we can call EXPENSIVE fwrite only once.
 function buffer = bwrite(obj, swapEndianess, fun_progress_bar),
     if nargin < 2 || isempty(swapEndianess), swapEndianess = wit.swap_endianess(); end % By default: Binary with little endianess
-    if nargin < 3, fun_progress_bar = @wit.progress_bar; end % By default: verbose progress bar in Command Window
+    if nargin < 3, fun_progress_bar = @(x) wit.progress_bar(x, '-OnlyIncreasing'); end % By default: verbose progress bar in Command Window
     
     % Update the wit Tree object
     obj.update();
     
     verbose = isa(fun_progress_bar, 'function_handle');
     if verbose,
+        IntervalBlockSize = 1024.^2; % Limit progress updates to every 1 MB
+        IntervalNextLimit = 0;
+        
         fprintf('Writing wit Tree objects as %d bytes of binary:\n', obj.End);
-        [fun_start, fun_now, fun_end] = fun_progress_bar(obj.End);
+        [fun_start, fun_now, fun_end, fun_now_text] = fun_progress_bar(obj.End);
         fun_start(0);
         ocu = onCleanup(fun_end); % Automatically call fun_end whenever end of function is reached
     end
@@ -72,6 +75,18 @@ function buffer = bwrite(obj, swapEndianess, fun_progress_bar),
         buffer(ind_begin:ind_end) = uint8_array;
         ind_begin = ind_end + 1; % Set next begin index
         
+        doVerbose = false;
+        if verbose,
+            if obj.Start >= IntervalNextLimit,
+                IntervalNextLimit = obj.Start + IntervalBlockSize;
+                doVerbose = true;
+            end
+        end
+        
+        if doVerbose,
+            fun_now_text(obj.FullName);
+        end
+        
         % Write Data
         if obj.Type == 0, % List of Tags
             for ii = 1:numel(obj.Data),
@@ -124,7 +139,7 @@ function buffer = bwrite(obj, swapEndianess, fun_progress_bar),
             ind_begin = ind_end + 1; % Set next begin index
         end
         
-        if verbose,
+        if doVerbose,
             fun_now(obj.End);
         end
     end

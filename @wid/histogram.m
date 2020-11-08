@@ -16,7 +16,7 @@ function [new_obj, Bin_Counts, Bin_Centers] = histogram(obj, N_bins, lower_quant
         error('Invalid Type! Histogram generation is only for TDImage. ABORTING...');
     end
     
-    new_obj = wid.Empty;
+    new_obj = wid.empty;
     
     Data = obj.Data(:);
     Method_bins = '';

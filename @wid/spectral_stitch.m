@@ -15,7 +15,7 @@ function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin),
     % Pop states (even if not used to avoid push-pop bugs)
     AutoCreateObj = obj(1).Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
     
-    new_obj = wid.Empty;
+    new_obj = wid.empty;
     
     % Add obj(s) as varargin
     varargin = [{obj}; varargin(:)];
