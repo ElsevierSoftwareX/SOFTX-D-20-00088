@@ -27,7 +27,20 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
-## [1.3.2] - 2020-11-05
+## [1.3.2.1] - 2020-11-10
+
+### Fixed
+
+- [`README.md`][1.3.2.1,F1]: Hotfix to the Acknowledgments section with a missing link and some newline issues.
+- `CHANGELOG.md`: Corrected the incorrect release date of v1.3.2.
+- [`dev_update_version`][1.3.2.1,F2]: Hotfix an error-causing missing `strcmp` in the first if-clause.
+
+[1.3.2.1,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.2.1/README.md
+[1.3.2.1,F2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.3.2.1/dev/dev_update_version.m
+
+
+
+## [1.3.2] - 2020-11-08
 
 ### Added
 
@@ -521,7 +534,8 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
-[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.2...develop
+[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.2.1...develop
+[1.3.2.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.2...v1.3.2.1
 [1.3.2]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.1...v1.3.2
 [1.3.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.0...v1.3.1
 [1.3.0]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.2.3...v1.3.0
