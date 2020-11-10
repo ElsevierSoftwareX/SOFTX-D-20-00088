@@ -13,8 +13,8 @@ function dev_update_version(old_version, new_version),
         error('Accepting only char array inputs, i.e. ''1.3.0.0''!');
     end
     
-    % Do nothing is same version
-    if old_version == new_version, return; end
+    % Do nothing if same version
+    if strcmp(old_version, new_version), return; end
     
     % Get the toolbox folder
     stored_cd = cd;
