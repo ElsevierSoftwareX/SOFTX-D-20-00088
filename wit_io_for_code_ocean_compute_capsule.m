@@ -44,5 +44,6 @@ function wit_io_for_code_ocean_compute_capsule(AutoCloseInSeconds),
         str_spaces_ii = repmat(' ', [1 numel(str_dashes)-numel(names{ii})-1-6-1-17]);
         fprintf('%s:%s%s!\n', names{ii}, str_spaces_ii, str_msg_ii);
     end
+    fprintf('Total elapsed time is %.4g seconds.\n', sum(elapsedTimeInSeconds));
     fprintf('%s\n\n', str_dashes);
 end
