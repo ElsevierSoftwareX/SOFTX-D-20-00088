@@ -7,7 +7,6 @@
 % (E2B ii.) spatial averaging.
 
 edit([mfilename('fullpath') '.m']); % Open this code in Editor
-clear all; % Clear workspace
 close all; % Close figures
 
 % Example file

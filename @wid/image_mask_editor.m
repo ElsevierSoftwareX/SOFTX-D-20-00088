@@ -42,6 +42,12 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
         str_Popup = {'Freehand', 'Contour', 'Fill'};
         set(Fig, 'WindowButtonDownFcn', @WindowButtonDownFcn, 'WindowButtonUpFcn', @WindowButtonUpFcn); % Enable mouse tracking when pressed down!
         ui_sidebar_for_popup(Fig, 'Masking tool:', str_Popup, @update, 1, false, [1 -1 1 1]);
+        
+        AutoCloseInSeconds = wit_io_pref_get('AutoCloseInSeconds', Inf);
+        if ~isinf(AutoCloseInSeconds) && AutoCloseInSeconds >= 0,
+            start(timer('ExecutionMode', 'singleShot', 'StartDelay', AutoCloseInSeconds, 'TimerFcn', @(~,~) delete(Fig), 'StopFcn', @(s,~) delete(s)));
+        end
+        
         waitfor(Fig);
     end
     

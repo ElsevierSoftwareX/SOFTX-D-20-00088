@@ -8,7 +8,6 @@
 % (E3 iv.) histogram generation.
 
 edit([mfilename('fullpath') '.m']); % Open this code in Editor
-clear all; % Clear workspace
 close all; % Close figures
 
 % Example file

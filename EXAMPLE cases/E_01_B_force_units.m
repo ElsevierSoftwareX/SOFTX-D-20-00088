@@ -6,7 +6,6 @@
 % Simple examples of (E1B i-iv.) forcing of the content units on the fly.
 
 edit([mfilename('fullpath') '.m']); % Open this code in Editor
-clear all; % Clear workspace
 close all; % Close figures
 
 % Example file
