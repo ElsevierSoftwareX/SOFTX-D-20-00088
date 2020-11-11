@@ -50,7 +50,7 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
         MDP = TreeData.ModifiedDescendantProperty;
         MDM = TreeData.ModifiedDescendantMeta; % Use this to determine exactly which objects were added and which removed
         if numel(MDI) == 0, % Continue if Data-tag has been directly modified
-            if strcmp(MDP, 'Parent'),
+            if strcmp(MDP, 'Parent'), % Data-tag becomes invalid
                 TreeData = obj.Tree.regexp('^Data(<WITec (Project|Data))?$', true);
                 if isempty(TreeData),
                     delete(obj.DataObjectBeingDestroyedListener);
@@ -69,9 +69,30 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
                     obj.DataObjectModifiedListener = TreeData.addlistener('ObjectModified', @(s,e) wip_update_Data(obj));
                     obj.Data = reshape(wid(obj), [], 1); % Force column vector
                 end
-            elseif strcmp(MDP, 'Children'), % New child added (and maybe children removed)
-                obj.Data = reshape(wid(obj), [], 1); % Force column vector
-            elseif strcmp(MDP, 'Data'), % Data-tag becomes invalid
+            elseif strcmp(MDP, 'Children'), % Data-tag gains new children: some may be added and some may be removed.
+                TreeData_Children = TreeData.Children;
+                current_Ids = [TreeData_Children.Id];
+                obj_Data = obj.Data;
+                current_Data_Ids = zeros(numel(obj_Data), 2);
+                for ii = 1:numel(obj_Data),
+                    obj_Data_ii_Tag = obj_Data(ii).Tag;
+                    current_Data_Ids(ii,:) = [obj_Data_ii_Tag.Data.Id obj_Data_ii_Tag.DataClassName.Id];
+                end
+                current_Data_Ids = reshape(current_Data_Ids, 1, []);
+                added_Ids = MDM{1,2};
+                removed_Ids = MDM{2,2};
+                bw_added = false(size(current_Ids));
+                bw_removed = false(size(current_Data_Ids));
+                if ~isempty(current_Ids) && ~isempty(added_Ids),
+                    bw_added = any(bsxfun(@eq, current_Ids, added_Ids(:)), 1);
+                end
+                if ~isempty(current_Data_Ids) && ~isempty(removed_Ids),
+                    bw_removed = any(bsxfun(@eq, current_Data_Ids, removed_Ids(:)), 1);
+                end
+                bw_removed = reshape(bw_removed, [], 2);
+                bw_removed = any(bw_removed, 2);
+                obj.Data = [obj_Data(~bw_removed); reshape(wid(TreeData_Children(bw_added)), [], 1)]; % Force column vector
+            elseif strcmp(MDP, 'Data'), % Data-tag becomes empty
                 delete(obj.DataObjectBeingDestroyedListener);
                 delete(obj.DataObjectModifiedListener);
                 obj.TreeData = wit.empty;
@@ -89,18 +110,29 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
                 obj.Data = wid.empty;
             end
         elseif numel(MDI) == 1, % Continue if Data-tag's Children have been directly modified
-            if strcmp(MDP, 'Parent'), % New child added (and maybe children removed)
-                obj.Data = reshape(wid(obj), [], 1); % Force column vector
-                obj.TreeDataModifiedCount = MC;
-            elseif strcmp(MDP, 'Data'), 
+            % From parent's point of view, it never sees strcmp(MDP, 'Parent') == true.
+            if strcmp(MDP, 'Data'), % A child of Data-tag remains valid
                 obj.TreeDataModifiedCount = MC;
                 return; % Do nothing
-            elseif strcmp(MDP, 'Children'),
+            elseif strcmp(MDP, 'Children'), % A child of Data-tag remains valid
                 obj.TreeDataModifiedCount = MC;
                 return; % Do nothing
-            elseif strcmp(MDP, 'Name'), % Child may become invalid
+            elseif strcmp(MDP, 'Name'), % A child of Data-tag may become invalid
                 obj.TreeDataModifiedCount = MC;
-                obj.Data = reshape(wid(obj), [], 1); % Force column vector
+                obj_Data = obj.Data;
+                current_Data_Ids = zeros(numel(obj_Data), 2);
+                for ii = 1:N_Data,
+                    obj_Data_ii_Tag = obj_Data(ii).Tag;
+                    current_Data_Ids(ii,:) = [obj_Data_ii_Tag.Data.Id obj_Data_ii_Tag.DataClassName.Id];
+                end
+                removed_Ids = TreeData.Children(MDI).Id;
+                bw_removed = false(size(current_Data_Ids));
+                if ~isempty(current_Data_Ids) && ~isempty(removed_Ids),
+                    bw_removed = any(bsxfun(@eq, current_Data_Ids, removed_Ids(:)), 1);
+                end
+                bw_removed = reshape(bw_removed, [], 2);
+                bw_removed = any(bw_removed, 2);
+                obj.Data = obj_Data(~bw_removed); % Force column vector
             end
         end
     end
