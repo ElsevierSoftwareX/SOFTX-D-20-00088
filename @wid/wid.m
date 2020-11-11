@@ -78,8 +78,11 @@ classdef wid < handle, % Since R2008a
             % new wid. If no, then it adds all found Data/DataClassName
             % pairs as new wid.
             
+            persistent nestedcall;
+            if isempty(nestedcall), nestedcall = false; end
+            
             if nargin == 0, % Create minimal TDGraph data
-                obj = wid.new_Graph();
+                if ~nestedcall, obj = wid.new_Graph(); end
                 return;
             end
             
@@ -113,18 +116,19 @@ classdef wid < handle, % Since R2008a
             end
             
             % Loop the found pairs to construct wids
-            if N_pairs > 1, % Avoid endless loop
-                obj(N_pairs,1) = wid(); % Preallocate the array first
-            end
+            nestedcall = true;
+            obj(N_pairs,1) = wid(); % Extend the array first
+            nestedcall = false;
             for ii = 1:N_pairs,
                 obj(ii).Project = Project;
-                obj(ii).Tag(1).Root = Pairs(ii,1).Root;
-                obj(ii).Tag(1).RootVersion = Pairs(ii,1).Root.search('Version', {'WITec (Project|Data)'});
-                obj(ii).Tag(1).DataClassName = Pairs(ii,1);
-                obj(ii).Tag(1).Data = Pairs(ii,2);
-                obj(ii).Tag(1).Caption = Pairs(ii,2).search('Caption', 'TData', {'^Data \d+$'});
-                obj(ii).Tag(1).Id = Pairs(ii,2).search('ID', 'TData', {'^Data \d+$'});
-                obj(ii).Tag(1).ImageIndex = Pairs(ii,2).search('ImageIndex', 'TData', {'^Data \d+$'});
+                DataClassName = Pairs(ii,1);
+                Data = Pairs(ii,2);
+                Root = DataClassName.Root;
+                obj(ii).Tag(1).Root = Root;
+                obj(ii).Tag(1).RootVersion = Root.search_children('Version');
+                obj(ii).Tag(1).DataClassName = DataClassName;
+                obj(ii).Tag(1).Data = Data;
+                [obj(ii).Tag(1).Caption, obj(ii).Tag(1).Id, obj(ii).Tag(1).ImageIndex] = Data.search_children('TData').search_children('Caption', 'ID', 'ImageIndex');
             end
         end
         
