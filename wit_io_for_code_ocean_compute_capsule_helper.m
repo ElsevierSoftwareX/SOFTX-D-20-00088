@@ -3,6 +3,12 @@
 % All rights reserved.
 
 % This is helper function to prevent unintentional mixing of variables.
-function wit_io_for_code_ocean_compute_capsule_helper(name),
-    feval(name); % Assuming that the called function does not CLEAR ALL, which would stop NON-INTERACTIVE MODE!
+function tf = wit_io_for_code_ocean_compute_capsule_helper(name),
+    try,
+        feval(name); % Assuming that the called function does not CLEAR ALL, which would stop NON-INTERACTIVE MODE!
+        tf = true;
+    catch me,
+        disp(getReport(me, 'extended', 'hyperlinks', 'on'));
+        tf = false;
+    end
 end
