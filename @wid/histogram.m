@@ -75,9 +75,6 @@ function [new_obj, Bin_Counts, Bin_Centers] = histogram(obj, N_bins, lower_quant
         new_obj.Tag.Data.regexp('^XTransformationID<TDGraph<', true).Data = new_TLUT.Id; % Must be int32!
         new_obj.Tag.Data.regexp('^XInterpretationID<TDGraph<', true).Data = new_ILUT.Id; % Must be int32!
 
-        % Add new object to current Project, modifying its Project-property.
-        if ~isempty(obj.Project),
-            obj.Project.Data = [obj.Project.Data; new_obj; new_TLUT; new_ILUT];
-        end
+        % These were AUTOMATICALLY added to the wip Project object!
     end
 end

@@ -64,10 +64,7 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
         end
     end
     
-    % Add new object to current Project, modifying its Project-property.
-    if ~isempty(Project) && ~isempty(new_obj),
-        Project.Data = [Project.Data; new_obj];
-    end
+    % These were AUTOMATICALLY added to the wip Project object!
     
     function isShown = show_mask(),
         isShown = false;

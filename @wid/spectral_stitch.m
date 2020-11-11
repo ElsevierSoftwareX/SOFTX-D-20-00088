@@ -64,9 +64,6 @@ function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin),
 
         new_obj.Tag.Data.regexp('^XTransformationID<TDGraph<', true).Data = new_SpectralT.Id; % Must be int32!
         
-        % Add new object to current Project, modifying its Project-property.
-        if ~isempty(obj.Project),
-            obj.Project.Data = [obj.Project.Data; new_SpectralT];
-        end
+        % These were AUTOMATICALLY added to the wip Project object!
     end
 end

@@ -74,10 +74,7 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin),
         end
     end
     
-    % Add new objects to current Project, modifying their Project-property.
-    if ~isempty(Project) && ~isempty(new_obj),
-        Project.Data = [Project.Data; new_obj(:)];
-    end
+    % These were AUTOMATICALLY added to the wip Project object!
     
     % OPTIONAL: Create a new TDGraph object for I_new, which is returned by
     % fitting algorithms, in order to visually test the fitting result.
