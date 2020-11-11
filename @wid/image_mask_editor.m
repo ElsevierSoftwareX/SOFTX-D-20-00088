@@ -48,7 +48,7 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
             start(timer('ExecutionMode', 'singleShot', 'StartDelay', AutoCloseInSeconds, 'TimerFcn', @(~,~) delete(Fig), 'StopFcn', @(s,~) delete(s)));
         end
         
-        waitfor(Fig);
+        wit_io_uiwait(Fig);
     end
     
     % Create new object if permitted

@@ -215,7 +215,7 @@ function O_wid = manager(obj, varargin),
     
     indices = []; % Store old indices (to be updated by MouseReleasedCallback)
     if nargout > 0,
-        waitfor(fig); % If output is expected, then wait until the manager is closed!
+        wit_io_uiwait(fig); % If output is expected, then wait until the manager is closed!
         O_wid = O_wid(indices(~isnan(indices))); % ~isnan removes NaN's due to deselecting indices
     end
     
