@@ -51,6 +51,8 @@ classdef wip < handle, % Since R2008a
     
     properties (SetAccess = private, Hidden) % READ-ONLY, HIDDEN
         OnDeleteUnwrap = false;
+        TreeData = wit.empty;
+        TreeDataModifiedCount = [];
         wip_listener;
         TreeObjectBeingDestroyedListener;
         TreeObjectModifiedListener;
@@ -390,7 +392,7 @@ classdef wip < handle, % Since R2008a
     methods (Access = private)
         % Update Tree- and Data-properties according to wit Tree object changes
         wip_update_Tree(obj);
-        wip_update_Data(obj, TreeData, isObjectBeingDestroyed);
+        wip_update_Data(obj, isObjectBeingDestroyed);
         
         % GENERIC BOOLEAN LIFO (last in, first out) concept
         function latest = popBoolean(obj, field, default),
