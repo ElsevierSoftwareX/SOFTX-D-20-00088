@@ -392,8 +392,7 @@ classdef wit < handle, % Since R2008a
         function Root = get.Root(obj),
             Root = obj.RootNow;
             % Update returned and stored Root if any change is detected
-            if isempty(Root) || ...
-                    obj.RootModifiedCount ~= Root.ModifiedCount && ~strcmp(Root.ModifiedDescendantProperty, 'Name'),
+            if isempty(Root) || obj.RootModifiedCount ~= Root.ModifiedCount,
                 % Find new Root
                 Root = obj;
                 while ~isempty(Root.ParentNow), Root = Root.ParentNow; end
