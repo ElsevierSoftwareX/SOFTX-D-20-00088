@@ -408,12 +408,7 @@ classdef wit < handle, % Since R2008a
             if ~isa(Root, 'wit') && numel(Root) ~= 1,
                 error('Root can be set by a single wit tree object!');
             end
-            OldRoot = obj.Root; % Call get.Root only once
-            if OldRoot == obj, % SPECIAL CASE: This object is its own root
-                Root.Data = obj; % Make the old root (or this object) the only child of the new root
-            else, % Otherwise, disconnect the old root by transfering its contents to the new root
-                Root.Data = OldRoot.DataNow; % Transfer children from the old root to the new root
-            end
+            obj.Root.Parent = Root; % Set new Root
         end
         
         % Siblings (READ-WRITE, DEPENDENT)
