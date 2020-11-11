@@ -68,7 +68,7 @@ O_Point.Name = sprintf('Zeroed<%s', O_Point.Name);
 figure; O_Point_old.plot('-compare', O_Point); % Show fitting results % Image<TDGraph with sidebar
 xlim(Range_0); ylim('auto'); % Show only the region near the 0-peak
 
-if ishandle(h), figure(h); uiwait(h); end % Wait for wit_io_msgbox to be closed before continuing.
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
 
@@ -97,7 +97,7 @@ O_2D = O_ImageScan.filter_lorentzian(Range_2D); % Lorentz filtering with removal
 % SHOWING FITTING RESULTS OF THE RAYLEIGH-, D-, G- AND 2D-PEAKS
 figure; O_ImageScan.plot('-compare', O_0(end), O_D(end), O_G(end), O_2D(end)); % Show fitting results % Image<TDGraph with sidebar
 
-if ishandle(h), figure(h); uiwait(h); end % Wait for wit_io_msgbox to be closed before continuing.
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
 
@@ -152,7 +152,7 @@ figure;
 subplot(1, 2, 1); nanimagesc(O_I_DperG.Data.'); daspect([1 1 1]); title(O_I_DperG.Name);
 subplot(1, 2, 2); nanimagesc(O_I_2DperG.Data.'); daspect([1 1 1]); title(O_I_2DperG.Name);
 
-if ishandle(h), figure(h); uiwait(h); end % Wait for wit_io_msgbox to be closed before continuing.
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
 
@@ -175,7 +175,7 @@ O_hist_I_2DperG = O_I_2DperG.histogram();
 figure; O_hist_I_DperG.plot();
 figure; O_hist_I_2DperG.plot();
 
-if ishandle(h), figure(h); uiwait(h); end % Wait for wit_io_msgbox to be closed before continuing.
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
 

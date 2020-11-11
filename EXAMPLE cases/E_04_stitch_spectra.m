@@ -21,7 +21,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 4:}' ...
     '{\bf\fontsize{12}SPECTRAL STITCHING}' ...
     '' ...
     '\bullet If unfamiliar with ''wit\_io'', then go through the previous examples first.'});
-uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -37,7 +37,7 @@ uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E4)} Spectral stitching the measured LED lamp spectra into one spectrum:}' ...
     '' ...
     '\bullet Illustrative stitching procedure begins by closing this help dialog.'});
-if ishandle(h), figure(h); uiwait(h); end
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -63,7 +63,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}Spectral stitching has completed:}' ...
     '\bullet Here the 1st figure illustrates how each neighbouring datas were weighted. See the opened figures for the total-weighted datas, the original datas and the total-weights.' ...
     '' ...
     '\ldots Close this dialog to END and see the final result.'});
-if ishandle(h), figure(h); uiwait(h); end
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 

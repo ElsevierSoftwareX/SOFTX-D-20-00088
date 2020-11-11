@@ -23,7 +23,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 2 A:}' ...
     '{\bf\fontsize{12}DATA FILTERING FOR LINESHAPE PARAMETERS}' ...
     '' ...
     '\bullet Using ''E\_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'});
-if ishandle(h), figure(h); uiwait(h); end % Wait for wit_io_msgbox to be closed before continuing.
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -91,7 +91,7 @@ Sum_D = sum(Data_D, 3);
 % utilizing a generic filter_fun (under @wid) like filter_sum and others.
 
 O_wip.manager;
-if ishandle(h), figure(h); uiwait(h); end
+wit_io_uiwait(h);
 close all; % Close Project Manager
 %-------------------------------------------------------------------------%
 
@@ -121,7 +121,7 @@ O_Point_2D = O_Point.filter_voigtian({'-Fwhm_G', Point_Fwhm_G}, Range_2D); % Voi
 % Compare the experimental data with the fitting result using '-compare'-feature of obj.plot
 figure; O_Point.plot('-compare', O_Point_0(end), O_Point_D(end), O_Point_G(end), O_Point_2D(end)); % Show fitting results % Image<TDGraph with sidebar
 
-if ishandle(h), figure(h); uiwait(h); end
+wit_io_uiwait(h);
 close all; % Close the plot
 %-------------------------------------------------------------------------%
 

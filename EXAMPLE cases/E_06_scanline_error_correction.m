@@ -23,7 +23,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 6:}' ...
     '{\bf\fontsize{12}SCANLINE ERROR CORRECTION}' ...
     '' ...
     '\bullet If unfamiliar with ''wit\_io'', then go through the previous examples first.'});
-uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -59,7 +59,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E6)} Scanline error correc
     '\bullet For more details, continue by reading the example case comments and the code documentation.' ...
     '' ...
     '\ldots Close this dialog to display the corrected image and END.'});
-if ishandle(h), figure(h); uiwait(h); end % Wait for wit_io_msgbox to be closed before continuing.
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 

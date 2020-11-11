@@ -22,7 +22,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 1 B:}' ...
     '{\bf\fontsize{12}FORCING UNITS}' ...
     '' ...
     '\bullet Using ''E\_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'});
-if ishandle(h), figure(h); uiwait(h); end % Wait for wit_io_msgbox to be closed before continuing.
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -52,7 +52,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E1B)} The imported content
     '\bullet Read the code for more details.' ...
     '' ...
     '\ldots Close this to END.'});
-if ishandle(h), figure(h); uiwait(h); end % Wait for wit_io_msgbox to be closed before continuing.
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
