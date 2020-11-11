@@ -6,7 +6,6 @@
 % Simple examples of (E1D) storing permanent user preferences.
 
 edit([mfilename('fullpath') '.m']); % Open this code in Editor
-clear all; % Clear workspace
 close all; % Close figures
 %-------------------------------------------------------------------------%
 
@@ -17,7 +16,7 @@ wit_io_license;
 
 h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 1 D:}' ...
     '{\bf\fontsize{12}PERMANENT USER PREFERENCES}'});
-if ishandle(h), figure(h); uiwait(h); end % Wait for helpdlg to be closed before continuing.
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -40,7 +39,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E1D)} Configure wit\_io wi
     '\bullet Read the code for more details.' ...
     '' ...
     '\ldots Close this dialog to END.'});
-if ishandle(h), figure(h); uiwait(h); end
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 

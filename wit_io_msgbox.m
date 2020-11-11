@@ -147,6 +147,11 @@ function h = wit_io_msgbox(message, varargin),
     set(h, 'Visible', 'on');
     drawnow;
     
+    AutoCloseInSeconds = wit_io_pref_get('AutoCloseInSeconds', Inf);
+    if ~isinf(AutoCloseInSeconds) && AutoCloseInSeconds >= 0,
+        start(timer('ExecutionMode', 'singleShot', 'StartDelay', AutoCloseInSeconds, 'TimerFcn', @(~,~) delete(h), 'StopFcn', @(s,~) delete(s)));
+    end
+    
     function KeyPressFcn(src, event), % Same buttons as in msgbox
         if any(strcmp({'return', 'space', 'escape'}, event.Key)), delete(h); end
     end

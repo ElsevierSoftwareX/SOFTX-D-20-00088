@@ -28,7 +28,7 @@ function destroy_duplicate_Transformations(obj),
                 for nn = 1:numel(linked_tags),
                     linked_tags(nn).Data(linked_tags(nn).Data == O_wid(ind_jj).Id) = O_wid(ii).Id;
                 end
-                destroy(O_wid(ind_jj));
+                delete(O_wid(ind_jj));
                 B_destroyed(ind_jj) = true;
             end
         end

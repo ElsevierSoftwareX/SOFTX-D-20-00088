@@ -79,7 +79,7 @@ classdef wid < handle, % Since R2008a
             % pairs as new wid.
             
             if nargin == 0, % Create minimal TDGraph data
-                obj.destroy(); % Destroy the created template
+                delete(obj); % Destroy the created template
                 obj = wid.new_Graph();
                 return;
             end
@@ -90,7 +90,7 @@ classdef wid < handle, % Since R2008a
             % Loop the found pairs to construct wids
             N_pairs = size(Pairs, 1);
             if N_pairs == 0,
-                obj.destroy(); % Destroy the created template
+                delete(obj); % Destroy the created template
                 obj = wid.empty;
             else,
                 if N_pairs > 1, % Avoid endless loop
@@ -106,6 +106,39 @@ classdef wid < handle, % Since R2008a
                     obj(ii).Tag(1).ImageIndex = Pairs(ii,2).search('ImageIndex', 'TData', {'^Data \d+$'});
                 end
             end
+        end
+        
+        function delete(obj),
+            ON = obj.OrdinalNumber;
+            % Update its project
+            Project = obj.Project;
+            if ~isempty(Project),
+                % Remove this from the project
+                Data = Project.Data;
+                Data = Data(Data ~= obj);
+                Project.Data = Data;
+                % Update the ordinal numberings
+                for ii = 1:numel(Data),
+                    ON_ii = Data(ii).OrdinalNumber;
+                    if ON_ii > ON, Data(ii).OrdinalNumber = ON_ii - 1; end
+                end
+            end
+            % Update its tree
+            Tag = obj.Tag;
+            if ~isempty(Tag),
+                % Update its tree root counters
+                Tag_NV = Tag.Data.Parent.search('NumberOfData', 'Data');
+                if ~isempty(Tag_NV),
+                    Tag_NV.Data = Tag_NV.Data - 1; % Reduce the number by one
+                end
+                % Delete its tree tags
+                delete(Tag.DataClassName);
+                delete(Tag.Data);
+            end
+            % Useful resources:
+            % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
+            % https://se.mathworks.com/help/matlab/matlab_oop/example-implementing-linked-lists.html
+            % https://blogs.mathworks.com/loren/2013/07/23/deconstructing-destructors/
         end
         
         
@@ -332,7 +365,7 @@ classdef wid < handle, % Since R2008a
         varargout = copy_Others_if_shared_and_unshare(obj, varargin); % Copy given shared linked objects and relink
         copy_LinksToOthers(obj); % Copy linked objects (i.e. transformations and interpretations) and relink
         copy_Links(obj); % Deprecated version! Use copy_LinksToOthers
-        destroy(obj); % Destructor-method
+        destroy(obj); % Deprecated! Use delete instead!
         destroy_LinksToOthers(obj); % Destroy links to objects (i.e. transformations and interpretations)
         destroy_Links(obj); % Deprecated version! Use destroy_LinksToOthers
         write(obj, File); % Ability to write selected objects to *.WID-format

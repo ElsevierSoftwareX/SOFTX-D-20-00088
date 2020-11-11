@@ -27,6 +27,50 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
+## [1.4.0] - 2020-11-11
+
+### Added
+
+- [`wit_io_for_code_ocean_compute_capsule`][1.4.0,A1]: New function to **non-interactively** run all the example cases by auto-closing with the specified delay any opened msgboxes, managers and plots requiring user interaction. It also summarizes timings and whether or not errors were captured. This can and will be used for the toolbox codebase testing in order to make the community contributions less difficult. This is also a step towards [Code Ocean compute capsule][1.4.0,A2] for publication purposes.
+- [`wit_io_uiwait`][1.4.0,A3]: New function to replace all occurrences of built-in `uiwait` and enable the non-interactive mode mentioned above.
+
+[1.4.0,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.4.0/wit_io_for_code_ocean_compute_capsule.m
+[1.4.0,A2]: https://codeocean.com/
+[1.4.0,A3]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.4.0/wit_io_uiwait.m
+
+### Changed
+
+- `wit`-class: Simplify setting of `Root`-property by making it to set new Root as parent of old Root.
+- `wit`-class: Make its `ObjectBeingDestroyed` and `ObjectModified` events listenable by external code: a step towards event-oriented programming.
+
+### Deprecated
+
+- [`@wid/destroy`][1.4.0,D1]: Supercede by `delete` of [`wid`][1.4.0,D2]-class.
+
+[1.4.0,D1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.4.0/@wid/destroy.m
+[1.4.0,D2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.4.0/@wid/wid.m
+
+### Removed
+
+- Special folder `DEVELOP` in `develop`-branch is removed to better support *GitFlow* workflow in the future and avoid merging issues.
+
+### Fixed
+
+- [`@wit`][1.4.0,F1]-class: Getting of `Root`-property no longer errors due to certain multiple changes to the tree structure prior to the call.
+- [`@wip`][1.4.0,F2]-class: Implement the missing destructor of `wip`-class to fix `wid`-class delete errors.
+
+[1.4.0,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.4.0/@wit/wit.m
+[1.4.0,F2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.4.0/@wip/wip.m
+
+### Performance
+
+- [`@wit/regexp_children`][1.4.0,P1] and [`@wit/search_children`][1.4.0,P2]: Slight speed-up of performance critical parts of wit-class.
+
+[1.4.0,P1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.4.0/@wit/regexp_children.m
+[1.4.0,P2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.4.0/@wit/search_children.m
+
+
+
 ## [1.3.2.1] - 2020-11-10
 
 ### Fixed
@@ -534,7 +578,8 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
-[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.2.1...develop
+[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.4.0...develop
+[1.4.0]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.2.1...v1.4.0
 [1.3.2.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.2...v1.3.2.1
 [1.3.2]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.1...v1.3.2
 [1.3.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.0...v1.3.1

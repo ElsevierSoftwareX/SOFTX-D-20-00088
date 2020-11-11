@@ -23,5 +23,5 @@ function destroy_Data(obj, varargin),
         end
     end
     % Destroy MATCHING wid-input
-    Datas(bw_destroy).destroy();
+    delete(Datas(bw_destroy));
 end

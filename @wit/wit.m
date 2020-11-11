@@ -33,7 +33,7 @@ classdef wit < handle, % Since R2008a
     % uncommenting the related code segments. This compatibility has been
     % disabled for best performance with big datas.
     %% MAIN EVENTS (not used internally to preserve Octave-compatibility)
-    events (ListenAccess = private, NotifyAccess = private) % May be subject to change in some future release if full Octave-compatibility is pursued!
+    events (NotifyAccess = private) % May be subject to change in some future release if full Octave-compatibility is pursued!
         % ObjectBeingDestroyed; % Automatically defined by the handle class
         ObjectModified;
     end
@@ -392,8 +392,7 @@ classdef wit < handle, % Since R2008a
         function Root = get.Root(obj),
             Root = obj.RootNow;
             % Update returned and stored Root if any change is detected
-            if isempty(Root) || ...
-                    obj.RootModifiedCount ~= Root.ModifiedCount && ~strcmp(Root.ModifiedDescendantProperty, 'Name'),
+            if isempty(Root) || obj.RootModifiedCount ~= Root.ModifiedCount,
                 % Find new Root
                 Root = obj;
                 while ~isempty(Root.ParentNow), Root = Root.ParentNow; end
@@ -408,12 +407,7 @@ classdef wit < handle, % Since R2008a
             if ~isa(Root, 'wit') && numel(Root) ~= 1,
                 error('Root can be set by a single wit tree object!');
             end
-            OldRoot = obj.Root; % Call get.Root only once
-            if OldRoot == obj, % SPECIAL CASE: This object is its own root
-                Root.Data = obj; % Make the old root (or this object) the only child of the new root
-            else, % Otherwise, disconnect the old root by transfering its contents to the new root
-                Root.Data = OldRoot.DataNow; % Transfer children from the old root to the new root
-            end
+            obj.Root.Parent = Root; % Set new Root
         end
         
         % Siblings (READ-WRITE, DEPENDENT)

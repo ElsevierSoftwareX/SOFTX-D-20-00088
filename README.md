@@ -1,8 +1,8 @@
 # [wit_io: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wid) files][file-exchange]
 
-[![wit_io v1.3.2.1 Changelog Badge][changelog-badge]][changelog] [![BSD License Badge][license-badge]][license]
+[![wit_io v1.4.0 Changelog Badge][changelog-badge]][changelog] [![BSD License Badge][license-badge]][license]
 
-[changelog-badge]: https://img.shields.io/badge/changelog-wit__io_v1.3.2.1-0000ff.svg
+[changelog-badge]: https://img.shields.io/badge/changelog-wit__io_v1.4.0-0000ff.svg
 
 Toolbox can directly **read**/**write** [WITec] Project/Data (\*.wip/\*.wid)
 files in [MATLAB] with or without GUI. It also provides data analysis tools.

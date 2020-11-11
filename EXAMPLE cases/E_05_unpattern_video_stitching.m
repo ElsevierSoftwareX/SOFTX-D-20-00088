@@ -9,7 +9,6 @@
 % for instance, by vignetting or varying pixel sensitivity.
 
 edit([mfilename('fullpath') '.m']); % Open this code in Editor
-clear all; % Clear workspace
 close all; % Close figures
 
 % Example file
@@ -23,7 +22,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 5:}' ...
     '{\bf\fontsize{12}UNPATTERN VIDEO STITCHING IMAGES}' ...
     '' ...
     '\bullet If unfamiliar with ''wit\_io'', then go through the previous examples first.'});
-uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -46,7 +45,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E5)} Unpatterning the Vide
     '\bullet Aim is to remove the grid pattern arising during stitching procedure due to the imperfect view at the Video camera per frame. Frame imperfections may be caused, for instance, by vignetting or varying pixel sensitivity.' ...
     '' ...
     '\ldots Illustrative unpatterning procedure begins by closing this help dialog.'});
-if ishandle(h), figure(h); uiwait(h); end
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -96,7 +95,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}Unpatterning has completed:}' ...
     '\bullet Read the code for more details.' ...
     '' ...
     '\ldots Close this dialog to END and see the final result.'});
-if ishandle(h), figure(h); uiwait(h); end
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 

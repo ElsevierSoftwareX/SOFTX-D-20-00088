@@ -7,7 +7,6 @@
 % (E2B ii.) spatial averaging.
 
 edit([mfilename('fullpath') '.m']); % Open this code in Editor
-clear all; % Clear workspace
 close all; % Close figures
 
 % Example file
@@ -24,7 +23,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 2 B:}' ...
     '{\bf\fontsize{12}DATA MASKING AND SPATIAL AVERAGING}' ...
     '' ...
     '\bullet Using ''E\_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'});
-if ishandle(h), figure(h); uiwait(h); end % Wait for wit_io_msgbox to be closed before continuing.
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -83,7 +82,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E2B ii.)} Getting spatial 
 %-------------------------------------------------------------------------%
 O_avg = O_masked.spatial_average();
 figure; O_avg.plot; % Point<TDGraph with sidebar
-if ishandle(h), figure(h); uiwait(h); end
+wit_io_uiwait(h);
 close all; % Close the plot
 %-------------------------------------------------------------------------%
 

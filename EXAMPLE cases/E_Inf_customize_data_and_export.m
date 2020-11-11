@@ -26,7 +26,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE INF:}' ...
     '{\bf\fontsize{12}CUSTOMIZE DATA AND EXPORT}' ...
     '' ...
     '\bullet If unfamiliar with ''wit\_io'', then go through the previous examples first.'});
-uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -228,7 +228,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E\infty)} Customizing data
     '\bullet In this advanced example, customized TDBitmap, TDGraph, TDImage and TDText were created and exported to a file. See the generated data in the opened Project Manager.' ...
     '' ...
     '\ldots Close this dialog to END and close all the opened figures.'});
-if ishandle(h), figure(h); uiwait(h); end
+wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
 

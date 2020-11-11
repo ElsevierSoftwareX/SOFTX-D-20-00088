@@ -105,6 +105,21 @@ classdef wip < handle, % Since R2008a
             obj.AutoModifyObj = wit_io_pref_get('wip_AutoModifyObj', obj.AutoModifyObj);
         end
         
+        function delete(obj),
+            % Disconnect link with wid objects
+            for ii = 1:numel(obj.Data),
+                obj.Data(ii).Project = wip.empty;
+            end
+            % Delete wid objects
+            delete(obj.Data);
+            % Delete wit objects
+            delete(obj.Tree);
+            % Useful resources:
+            % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
+            % https://se.mathworks.com/help/matlab/matlab_oop/example-implementing-linked-lists.html
+            % https://blogs.mathworks.com/loren/2013/07/23/deconstructing-destructors/
+        end
+        
         
         
         %% MAIN PROPERTIES
