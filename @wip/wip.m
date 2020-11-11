@@ -142,7 +142,6 @@ classdef wip < handle, % Since R2008a
                     
                     % Enable tracking of this wip Project object
                     obj.wip_listener = wip.Projects.add(obj);
-
                     % Get user preferences (or default values if not found)
                     obj.ForceDataUnit = wit_io_pref_get('wip_ForceDataUnit', obj.ForceDataUnit);
                     obj.ForceSpaceUnit = wit_io_pref_get('wip_ForceSpaceUnit', obj.ForceSpaceUnit);
@@ -156,8 +155,8 @@ classdef wip < handle, % Since R2008a
                     obj.AutoModifyObj = wit_io_pref_get('wip_AutoModifyObj', obj.AutoModifyObj);
                     % Enable link between Tree and Project
                     wip_update_Data(obj);
-                    obj.TreeObjectBeingDestroyedListener = Tree.addlistener('ObjectBeingDestroyed', @() delete(obj));
-                    obj.TreeObjectModifiedListener = Tree.addlistener('ObjectModified', @() wip_update_Tree(obj));
+                    obj.TreeObjectBeingDestroyedListener = Tree.addlistener('ObjectBeingDestroyed', @(s,e) delete(obj));
+                    obj.TreeObjectModifiedListener = Tree.addlistener('ObjectModified', @(s,e) wip_update_Tree(obj));
                 end
             catch me, % Handle invalid or deleted object -case
                 switch me.identifier,
@@ -391,7 +390,7 @@ classdef wip < handle, % Since R2008a
     methods (Access = private)
         % Update Tree- and Data-properties according to wit Tree object changes
         wip_update_Tree(obj);
-        wip_update_Data(obj, isObjectBeingDestroyed);
+        wip_update_Data(obj, TreeData, isObjectBeingDestroyed);
         
         % GENERIC BOOLEAN LIFO (last in, first out) concept
         function latest = popBoolean(obj, field, default),

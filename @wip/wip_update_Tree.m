@@ -9,8 +9,10 @@ function wip_update_Tree(obj),
     NewTree = OldTree.Root;
     if OldTree ~= NewTree,
         obj.Tree = NewTree;
+        delete(obj.TreeObjectBeingDestroyedListener);
         delete(obj.TreeObjectModifiedListener);
-        obj.TreeObjectModifiedListener = NewTree.addlistener('ObjectModified', @() wip_update_Tree(obj));
-        obj.wip_update_Data();
+        obj.TreeObjectBeingDestroyedListener = NewTree.addlistener('ObjectBeingDestroyed', @(s,e) delete(obj));
+        obj.TreeObjectModifiedListener = NewTree.addlistener('ObjectModified', @(s,e) wip_update_Tree(obj));
     end
+    obj.wip_update_Data();
 end
