@@ -123,12 +123,22 @@ function [O_wit, varargout] = append(varargin),
         end
     end
     
-    % Set new Children only once
-    if ~isempty(Tag_Data), Tag_Data.Data = [Tag_ND.Siblings DataOrDataClassNames Tag_ND]; end % MAJOR bottleneck
-    if ~isempty(Tag_Viewer), Tag_Viewer.Data = [Tag_NV.Siblings ViewerOrViewerClassNames Tag_NV]; end % Does not exist for WITec Data
+    % Temporarily disable the Project related wit-class ObjectModified events until the end of the function
+    O_wit.disableObjectModified;
+    ocu = onCleanup(@O_wit.enableObjectModified);
+    Tag_Data.disableObjectModified;
+    ocu2 = onCleanup(@Tag_Data.enableObjectModified);
     
     % Update the counters
     if ~isempty(Tag_ID), Tag_ID.Data = int32(offset); end % Must be int32! % Does not exist for WITec Data
     if ~isempty(Tag_Data), Tag_ND.Data = ND; end
     if ~isempty(Tag_Viewer), Tag_NV.Data = NV; end % Does not exist for WITec Data
+    
+    % Set new Children only once
+    if ~isempty(Tag_Viewer) && ~isempty(ViewerOrViewerClassNames), Tag_Viewer.Data = [Tag_NV.Siblings ViewerOrViewerClassNames Tag_NV]; end % Does not exist for WITec Data
+    if ~isempty(Tag_Data) && ~isempty(DataOrDataClassNames),
+        Tag_Data.Data = [Tag_ND.Siblings DataOrDataClassNames Tag_ND]; % MAJOR bottleneck
+        Tag_Data.notifyObjectModified;
+        O_wit.notifyObjectModified;
+    end
 end

@@ -105,8 +105,6 @@ classdef wit < handle, % Since R2008a
         ModifiedDescendantMeta; % Empty unless obj.ModifiedDescendantProperty is 'Children'
         ModifiedDescendantIndices = []; % Related to OrdinalNumber-property
         ModifiedDescendantIds = []; % Related to Id-property
-    end
-    properties % READ-WRITE
         ModifiedEvents = false; % Used for optimizations and is automatically set true when addlistener is called with 'ObjectModified'
     end
     properties (SetAccess = private, Hidden) % READ-ONLY
@@ -636,6 +634,15 @@ classdef wit < handle, % Since R2008a
                 obj(ii).Listeners{end+1,1} = event_listener; % By default, bound to this object's lifetime
                 if isObjectModified, obj(ii).ModifiedEvents = true; end % Required for optimizations
             end
+        end
+        function disableObjectModified(obj),
+            obj.ModifiedEvents = false;
+        end
+        function enableObjectModified(obj),
+            obj.ModifiedEvents = true;
+        end
+        function notifyObjectModified(obj),
+            notify(obj, 'ObjectModified');
         end
     end
     

@@ -3,6 +3,14 @@
 % All rights reserved.
 
 function copy_LinksToOthers(obj),
+    % Temporarily disable the Project related wit-class ObjectModified events until the end of the function
+    Root = obj.Tag.Root;
+    Data = obj.Tag.Data;
+    Root.disableObjectModified;
+    ocu = onCleanup(@Root.enableObjectModified);
+    Data.disableObjectModified;
+    ocu2 = onCleanup(@Data.enableObjectModified);
+    
     % DANGER! Call this function only if obj and its obj.Tag are COPIES!
     % Handle transformations and interpretations
     Tag_Id = obj.Tag.Data.regexp('^[^<]+ID(List)?(<[^<]*)*$'); % Should not match with ID<TData!
