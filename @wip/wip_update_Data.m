@@ -43,9 +43,8 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
         return;
     else,
         MC = TreeData.ModifiedCount;
-        if MC == obj.TreeDataModifiedCount,
-            return; % Do nothing
-        end
+        if MC == obj.TreeDataModifiedCount, return; % Do nothing
+        else, obj.TreeDataModifiedCount = MC; end
         MDI = TreeData.ModifiedDescendantIndices;
         MDP = TreeData.ModifiedDescendantProperty;
         MDM = TreeData.ModifiedDescendantMeta; % Use this to determine exactly which objects were added and which removed
@@ -64,7 +63,6 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
                     delete(obj.DataObjectBeingDestroyedListener);
                     delete(obj.DataObjectModifiedListener);
                     obj.TreeData = TreeData;
-                    obj.TreeDataModifiedCount = MC;
                     obj.DataObjectBeingDestroyedListener = TreeData.addlistener('ObjectBeingDestroyed', @(s,e) wip_update_Data(obj, true));
                     obj.DataObjectModifiedListener = TreeData.addlistener('ObjectModified', @(s,e) wip_update_Data(obj));
                     obj.Data = reshape(wid(obj), [], 1); % Force column vector
@@ -112,16 +110,13 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
         elseif numel(MDI) == 1, % Continue if Data-tag's Children have been directly modified
             % From parent's point of view, it never sees strcmp(MDP, 'Parent') == true.
             if strcmp(MDP, 'Data'), % A child of Data-tag remains valid
-                obj.TreeDataModifiedCount = MC;
                 return; % Do nothing
             elseif strcmp(MDP, 'Children'), % A child of Data-tag remains valid
-                obj.TreeDataModifiedCount = MC;
                 return; % Do nothing
             elseif strcmp(MDP, 'Name'), % A child of Data-tag may become invalid
-                obj.TreeDataModifiedCount = MC;
                 obj_Data = obj.Data;
                 current_Data_Ids = zeros(numel(obj_Data), 2);
-                for ii = 1:N_Data,
+                for ii = 1:numel(obj_Data),
                     obj_Data_ii_Tag = obj_Data(ii).Tag;
                     current_Data_Ids(ii,:) = [obj_Data_ii_Tag.Data.Id obj_Data_ii_Tag.DataClassName.Id];
                 end
