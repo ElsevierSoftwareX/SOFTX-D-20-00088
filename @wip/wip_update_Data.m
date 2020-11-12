@@ -4,37 +4,29 @@
 
 % Update is always called when wip Project object may need to be updated
 % with respect to its underlying wit Tree object.
-function tf = wip_update_Data(obj),
-    tf = false;
-    if ~obj.wip_update_Tree, return; end
+function wip_update_Data(obj, isObjectBeingDestroyed),
+    % Delete old listeners
+    delete(obj.DataObjectBeingDestroyedListener);
+    delete(obj.DataObjectModifiedListener);
     
-    % Stop if no Data-tag modifications are detected
-    DataTag = obj.DataTag;
-    if ~isempty(obj.DataModifications) && ~isempty(DataTag) && ...
-            DataTag.ModificationsLatestAt == obj.DataModificationsLatestAt && ...
-            DataTag.ModificationsLatestAt.Modifications == obj.DataModifications,
+    % Discard old wid Data objects
+    obj.Data = wid.empty;
+    
+    % CASE: Data-tag is being destroyed
+    if nargin > 1 && isObjectBeingDestroyed,
+        obj.DataObjectBeingDestroyedListener = [];
+        obj.DataObjectModifiedListener = [];
         return;
     end
     
-    obj.noupdate = true; % Avoid infinite recursion via get.Tree
-    RootTag = obj.Tree;
-    obj.noupdate = false;
-    
-    % Update Data-tag
-    DataTag = RootTag.regexp('^Data(<WITec (Project|Data))?$', true);
-    obj.DataTag = DataTag;
-    
-    % Update the related modification tracking variables
-    if ~isempty(DataTag),
-        obj.DataModificationsLatestAt = DataTag.ModificationsLatestAt;
-        obj.DataModifications = DataTag.ModificationsLatestAt.Modifications;
+    % OTHERWISE: Update Data-tag
+    Data = obj.Tree.regexp('^Data(<WITec (Project|Data))?$', true);
+    if ~isempty(Data),
+        obj.DataObjectBeingDestroyedListener = Data.addlistener('ObjectBeingDestroyed', @() wip_update_Data(obj, true));
+        obj.DataObjectModifiedListener = Data.addlistener('ObjectModified', @() wip_update_Data(obj));
+        
+        % It is computationally cheaper to recreate all objects than
+        % selectively recreate some of them
+        obj.Data = reshape(wid(obj), [], 1); % Force column vector
     end
-    
-    % It is computationally cheaper to recreate all objects than
-    % selectively recreate some of them
-    Data = wid(obj);
-    obj.Data = Data(:); % Force column vector
-    
-    % Update return flag
-    tf = true;
 end

@@ -69,8 +69,7 @@ new_TDBitmap_Tag_Data = new_TDBitmap.Tag.Data; % Required by R2011a
 new_TDBitmap_Tag_Data.regexp('^SpaceTransformationID<TDBitmap<', true).Data = new_TDBitmap_TSpace.Id; % Must be int32! (Required by WITec software)
 % new_TDBitmap_Tag_Data.regexp('^SecondaryTransformationID<TDBitmap<', true).Data = int32(0); % (v7) % Must be int32!
 
-% Append all new objects to Project
-O_wip.add_Data(new_TDBitmap, new_TDBitmap_TSpace); % Make new objects visible in Project-object
+% These were AUTOMATICALLY added to the wip Project object!
 %-------------------------------------------------------------------------%
 
 
@@ -155,8 +154,7 @@ new_TDGraph_Tag_Data.regexp('^XTransformationID<TDGraph<', true).Data = new_TDGr
 new_TDGraph_Tag_Data.regexp('^XInterpretationID<TDGraph<', true).Data = new_TDGraph_ISpectral.Id; % Must be int32!
 new_TDGraph_Tag_Data.regexp('^ZInterpretationID<TDGraph<', true).Data = new_TDGraph_IData.Id; % Must be int32!
 
-% Append all new objects to Project
-O_wip.add_Data(new_TDGraph, new_TDGraph_TSpace, new_TDGraph_TSpectral, new_TDGraph_ISpectral, new_TDGraph_IData); % Make new objects visible in Project-object
+% These were AUTOMATICALLY added to the wip Project object!
 %-------------------------------------------------------------------------%
 
 
@@ -189,8 +187,7 @@ new_TDImage_Tag_Data.regexp('^PositionTransformationID<TDImage<', true).Data = n
 % new_TDImage_Tag_Data.regexp('^SecondaryTransformationID<TDImage<', true).Data = int32(0); % (v7) % Must be int32!
 new_TDImage_Tag_Data.regexp('^ZInterpretationID<TDImage<', true).Data = new_TDImage_IData.Id; % Must be int32!
 
-% Append all new objects to Project
-O_wip.add_Data(new_TDImage, new_TDImage_TSpace, new_TDImage_IData); % Make new objects visible in Project-object
+% These were AUTOMATICALLY added to the wip Project object!
 %-------------------------------------------------------------------------%
 
 
@@ -205,8 +202,7 @@ new_TDText.Data = {'Customized TDText example:', ''; ...
     'This is not a seen as a title.', ''; ...
     'Property 1:', 'Value 2.'; ...
     'Property 2:', 'Value 4.'};
-% Append all new objects to Project
-O_wip.add_Data(new_TDText); % Make new object visible in Project-object
+% These were AUTOMATICALLY added to the wip Project object!
 %-------------------------------------------------------------------------%
 
 

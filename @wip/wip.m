@@ -52,12 +52,10 @@ classdef wip < handle, % Since R2008a
     properties (SetAccess = private, Hidden) % READ-ONLY, HIDDEN
         OnDeleteUnwrap = false;
         wip_listener;
-        DataTag;
-        noupdate = false;
-        RootModificationsLatestAt;
-        RootModifications;
-        DataModificationsLatestAt;
-        DataModifications;
+        TreeObjectBeingDestroyedListener;
+        TreeObjectModifiedListener;
+        DataObjectBeingDestroyedListener;
+        DataObjectModifiedListener;
     end
     
     properties % READ-WRITE
@@ -156,6 +154,10 @@ classdef wip < handle, % Since R2008a
                     obj.AutoCreateObj = wit_io_pref_get('wip_AutoCreateObj', obj.AutoCreateObj);
                     obj.AutoCopyObj = wit_io_pref_get('wip_AutoCopyObj', obj.AutoCopyObj);
                     obj.AutoModifyObj = wit_io_pref_get('wip_AutoModifyObj', obj.AutoModifyObj);
+                    % Enable link between Tree and Project
+                    wip_update_Data(obj);
+                    obj.TreeObjectBeingDestroyedListener = Tree.addlistener('ObjectBeingDestroyed', @() delete(obj));
+                    obj.TreeObjectModifiedListener = Tree.addlistener('ObjectModified', @() wip_update_Tree(obj));
                 end
             catch me, % Handle invalid or deleted object -case
                 switch me.identifier,
@@ -173,12 +175,15 @@ classdef wip < handle, % Since R2008a
                 try, obj_Data(ii).Project = wip.empty;
                 catch, end % Otherwise: Invalid or deleted object.
             end
-            % Do not update obj.Tree and obj.Data below
-            obj.noupdate = true;
-            % Delete the underlying wit Tree object
-            delete(obj.Tree);
+            % Delete event listeners
+            delete(obj.TreeObjectBeingDestroyedListener);
+            delete(obj.TreeObjectModifiedListener);
+            delete(obj.DataObjectBeingDestroyedListener);
+            delete(obj.DataObjectModifiedListener);
             % Delete the underlying wid Data objects
             delete(obj.Data);
+            % Delete the underlying wit Tree objects
+            delete(obj.Tree);
             % Useful resources:
             % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
             % https://se.mathworks.com/help/matlab/matlab_oop/example-implementing-linked-lists.html
@@ -207,8 +212,7 @@ classdef wip < handle, % Since R2008a
         
         % Data (READ-ONLY)
         function Data = get.Data(obj),
-            obj.wip_update_Data; % Update wip Project object (only if modifications are detected)
-            Data = obj.Data;
+            Data = obj.Data; % Auto-updated by an event listener
         end
         
         % Type (READ-WRITE, DEPENDENT)
@@ -283,8 +287,7 @@ classdef wip < handle, % Since R2008a
         
         % Tree (READ-ONLY)
         function Tree = get.Tree(obj),
-            obj.wip_update_Tree; % Update wip Project object (only if modifications are detected)
-            Tree = obj.Tree;
+            Tree = obj.Tree; % Auto-updated by an event listener
         end
         
         % ForceDataUnit (READ-WRITE)
@@ -377,8 +380,6 @@ classdef wip < handle, % Since R2008a
         reset_Viewers(obj); % Deprecated version! Use destroy_all_Viewers.m instead.
         
         % Helper functions for adding, removing and finding wid-objects
-        add_Data(obj, varargin);
-        destroy_Data(obj, varargin);
         O_wid = find_Data(obj, ID);
         
         % Transformations and interpretations (project version)
@@ -389,8 +390,8 @@ classdef wip < handle, % Since R2008a
     %% PRIVATE METHODS
     methods (Access = private)
         % Update Tree- and Data-properties according to wit Tree object changes
-        tf = wip_update_Tree(obj);
-        tf = wip_update_Data(obj);
+        wip_update_Tree(obj);
+        wip_update_Data(obj, isObjectBeingDestroyed);
         
         % GENERIC BOOLEAN LIFO (last in, first out) concept
         function latest = popBoolean(obj, field, default),
