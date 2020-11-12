@@ -51,6 +51,13 @@ classdef wip < handle, % Since R2008a
     
     properties (SetAccess = private, Hidden) % READ-ONLY, HIDDEN
         OnDeleteUnwrap = false;
+        wip_listener;
+        DataTag;
+        noupdate = false;
+        RootModificationsLatestAt;
+        RootModifications;
+        DataModificationsLatestAt;
+        DataModifications;
     end
     
     properties % READ-WRITE
@@ -86,6 +93,10 @@ classdef wip < handle, % Since R2008a
         DefaultTimeUnit = wip.interpret_StandardUnit('s');
     end
     
+    properties (Constant) % READ-ONLY, CONSTANT
+        Projects = handle_listener(); % Generates a shared Project listener
+    end
+    
     %% PUBLIC METHODS
     methods
         % CONSTRUCTOR
@@ -116,26 +127,36 @@ classdef wip < handle, % Since R2008a
                     error('Provide either a wit Tree object or a wid Data object array!');
                 end
                 
-                obj.Tree = Tree;
+                % Check whether or not similar project already exists!
+                O_wip = wip.Projects.match_any(@(O_wip) O_wip.Tree == Tree); % Due to syncronous link between Project and its Tree, Project's Tree is always Root AND never invalid/deleted!
                 
-                % If true, set Project in wip-class constructor
-                if setProjectHere,
-                    obj.Data = Data;
+                % Use already existing wip Project object or this
+                if ~isempty(O_wip),
+                    obj = O_wip;
                 else,
-                    obj.Data = wid(obj);
+                    obj.Tree = Tree;
+                    % If true, set Project in wip-class constructor
+                    if setProjectHere,
+                        obj.Data = Data;
+                    else,
+                        obj.Data = wid(obj);
+                    end
+                    
+                    % Enable tracking of this wip Project object
+                    obj.wip_listener = wip.Projects.add(obj);
+
+                    % Get user preferences (or default values if not found)
+                    obj.ForceDataUnit = wit_io_pref_get('wip_ForceDataUnit', obj.ForceDataUnit);
+                    obj.ForceSpaceUnit = wit_io_pref_get('wip_ForceSpaceUnit', obj.ForceSpaceUnit);
+                    obj.ForceSpectralUnit = wit_io_pref_get('wip_ForceSpectralUnit', obj.ForceSpectralUnit);
+                    obj.ForceTimeUnit = wit_io_pref_get('wip_ForceTimeUnit', obj.ForceTimeUnit);
+                    obj.OnWriteDestroyAllViewers = wit_io_pref_get('wip_OnWriteDestroyAllViewers', obj.OnWriteDestroyAllViewers);
+                    obj.OnWriteDestroyDuplicateTransformations = wit_io_pref_get('wip_OnWriteDestroyDuplicateTransformations', obj.OnWriteDestroyDuplicateTransformations);
+                    obj.UseLineValid = wit_io_pref_get('wip_UseLineValid', obj.UseLineValid);
+                    obj.AutoCreateObj = wit_io_pref_get('wip_AutoCreateObj', obj.AutoCreateObj);
+                    obj.AutoCopyObj = wit_io_pref_get('wip_AutoCopyObj', obj.AutoCopyObj);
+                    obj.AutoModifyObj = wit_io_pref_get('wip_AutoModifyObj', obj.AutoModifyObj);
                 end
-                
-                % Get user preferences (or default values if not found)
-                obj.ForceDataUnit = wit_io_pref_get('wip_ForceDataUnit', obj.ForceDataUnit);
-                obj.ForceSpaceUnit = wit_io_pref_get('wip_ForceSpaceUnit', obj.ForceSpaceUnit);
-                obj.ForceSpectralUnit = wit_io_pref_get('wip_ForceSpectralUnit', obj.ForceSpectralUnit);
-                obj.ForceTimeUnit = wit_io_pref_get('wip_ForceTimeUnit', obj.ForceTimeUnit);
-                obj.OnWriteDestroyAllViewers = wit_io_pref_get('wip_OnWriteDestroyAllViewers', obj.OnWriteDestroyAllViewers);
-                obj.OnWriteDestroyDuplicateTransformations = wit_io_pref_get('wip_OnWriteDestroyDuplicateTransformations', obj.OnWriteDestroyDuplicateTransformations);
-                obj.UseLineValid = wit_io_pref_get('wip_UseLineValid', obj.UseLineValid);
-                obj.AutoCreateObj = wit_io_pref_get('wip_AutoCreateObj', obj.AutoCreateObj);
-                obj.AutoCopyObj = wit_io_pref_get('wip_AutoCopyObj', obj.AutoCopyObj);
-                obj.AutoModifyObj = wit_io_pref_get('wip_AutoModifyObj', obj.AutoModifyObj);
             catch me, % Handle invalid or deleted object -case
                 switch me.identifier,
                     case 'MATLAB:class:InvalidHandle', obj = obj([]); % wid.empty
@@ -152,10 +173,12 @@ classdef wip < handle, % Since R2008a
                 try, obj_Data(ii).Project = wip.empty;
                 catch, end % Otherwise: Invalid or deleted object.
             end
-            % Delete wid Data objects
-            delete(obj_Data);
-            % Delete wit Tree objects
+            % Do not update obj.Tree and obj.Data below
+            obj.noupdate = true;
+            % Delete the underlying wit Tree object
             delete(obj.Tree);
+            % Delete the underlying wid Data objects
+            delete(obj.Data);
             % Useful resources:
             % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
             % https://se.mathworks.com/help/matlab/matlab_oop/example-implementing-linked-lists.html
@@ -182,22 +205,10 @@ classdef wip < handle, % Since R2008a
             Name = [name ext];
         end
         
-        % Data (READ-WRITE)
-        function set.Data(obj, Data),
-            obj_Tree_Id = max([obj.Tree.Id 0]);
-            for ii = 1:numel(Data),
-                Data_ii_Project = Data(ii).Project;
-                if ~isempty(Data_ii_Project),
-                    if Data_ii_Project == obj,
-                        continue;
-                    end
-                    if max([Data_ii_Project.Tree.Id 0]) == obj_Tree_Id,
-                        delete_wrapper(Data_ii_Project);
-                    end
-                end
-                Data(ii).Project = obj;
-            end
-            obj.Data = Data(:); % Force column vector
+        % Data (READ-ONLY)
+        function Data = get.Data(obj),
+            obj.wip_update_Data; % Update wip Project object (only if modifications are detected)
+            Data = obj.Data;
         end
         
         % Type (READ-WRITE, DEPENDENT)
@@ -270,7 +281,11 @@ classdef wip < handle, % Since R2008a
             wip.set_Root_Version(obj.Tree, Version);
         end
         
-        % Tree (READ-WRITE)
+        % Tree (READ-ONLY)
+        function Tree = get.Tree(obj),
+            obj.wip_update_Tree; % Update wip Project object (only if modifications are detected)
+            Tree = obj.Tree;
+        end
         
         % ForceDataUnit (READ-WRITE)
         function set.ForceDataUnit(obj, Value),
@@ -373,6 +388,10 @@ classdef wip < handle, % Since R2008a
     
     %% PRIVATE METHODS
     methods (Access = private)
+        % Update Tree- and Data-properties according to wit Tree object changes
+        tf = wip_update_Tree(obj);
+        tf = wip_update_Data(obj);
+        
         % GENERIC BOOLEAN LIFO (last in, first out) concept
         function latest = popBoolean(obj, field, default),
             if isempty(obj),
