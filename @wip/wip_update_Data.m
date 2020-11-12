@@ -114,20 +114,24 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
             elseif strcmp(MDP, 'Children'), % A child of Data-tag remains valid
                 return; % Do nothing
             elseif strcmp(MDP, 'Name'), % A child of Data-tag may become invalid
+                TreeData_Children = TreeData.Children;
                 obj_Data = obj.Data;
                 current_Data_Ids = zeros(numel(obj_Data), 2);
                 for ii = 1:numel(obj_Data),
                     obj_Data_ii_Tag = obj_Data(ii).Tag;
                     current_Data_Ids(ii,:) = [obj_Data_ii_Tag.Data.Id obj_Data_ii_Tag.DataClassName.Id];
                 end
-                removed_Ids = TreeData.Children(MDI).Id;
-                bw_removed = false(size(current_Data_Ids));
-                if ~isempty(current_Data_Ids) && ~isempty(removed_Ids),
-                    bw_removed = any(bsxfun(@eq, current_Data_Ids, removed_Ids(:)), 1);
+                TreeData_Child = TreeData_Children(MDI);
+                if ~strncmp(TreeData_Child.Name, 'DataClassName ', 14) && ~strncmp(TreeData_Child.Name, 'Data ', 5),
+                    removed_Ids = TreeData_Child.Id;
+                    bw_removed = false(size(current_Data_Ids));
+                    if ~isempty(current_Data_Ids) && ~isempty(removed_Ids),
+                        bw_removed = any(bsxfun(@eq, current_Data_Ids, removed_Ids(:)), 1);
+                    end
+                    bw_removed = reshape(bw_removed, [], 2);
+                    bw_removed = any(bw_removed, 2);
+                    obj.Data = obj_Data(~bw_removed); % Force column vector
                 end
-                bw_removed = reshape(bw_removed, [], 2);
-                bw_removed = any(bw_removed, 2);
-                obj.Data = obj_Data(~bw_removed); % Force column vector
             end
         end
     end
