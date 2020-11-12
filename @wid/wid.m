@@ -97,10 +97,8 @@ classdef wid < handle, % Since R2008a
                 if ~isempty(Tree) && numel(Roots) ~= 1,
                     error('Provide a wit Tree object array with only one common Root!');
                 end
-                Project = wip(Roots);
             elseif isa(TreeOrProject, 'wip') && numel(TreeOrProject) == 1,
                 Tree = TreeOrProject.Tree;
-                Project = TreeOrProject;
             else,
                 error('Provide either a wit Tree object array or a wip Project object!');
             end
@@ -120,7 +118,6 @@ classdef wid < handle, % Since R2008a
             obj(N_pairs,1) = wid(); % Extend the array first
             nestedcall = false;
             for ii = 1:N_pairs,
-                obj(ii).Project = Project;
                 DataClassName = Pairs(ii,1);
                 Data = Pairs(ii,2);
                 Root = DataClassName.Root;
@@ -138,6 +135,7 @@ classdef wid < handle, % Since R2008a
                 % Remove this from the project
                 O_wid = obj.Project.Data;
                 O_wid = O_wid(O_wid ~= obj);
+                obj.Project.Data = O_wid;
                 % Try update the ordinal numberings
                 try,
                     ON = obj.OrdinalNumber;
