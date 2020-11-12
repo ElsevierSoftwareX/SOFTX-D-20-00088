@@ -85,34 +85,71 @@ classdef wip < handle, % Since R2008a
     %% PUBLIC METHODS
     methods
         % CONSTRUCTOR
-        function obj = wip(O_wit),
-            if nargin == 0, O_wit = wip.new(); end % Create minimal project
-            if ~isempty(O_wit),
-                obj.Tree = O_wit;
-                obj.Data = wid(O_wit);
+        function obj = wip(TreeOrData),
+            if nargin == 0, TreeOrData = wip.new(); end % Create minimal project
+            
+            % SPECIAL CASE: Empty wip object
+            if isempty(TreeOrData),
+                obj = obj([]);
+                return;
             end
             
-            % Get user preferences (or default values if not found)
-            obj.ForceDataUnit = wit_io_pref_get('wip_ForceDataUnit', obj.ForceDataUnit);
-            obj.ForceSpaceUnit = wit_io_pref_get('wip_ForceSpaceUnit', obj.ForceSpaceUnit);
-            obj.ForceSpectralUnit = wit_io_pref_get('wip_ForceSpectralUnit', obj.ForceSpectralUnit);
-            obj.ForceTimeUnit = wit_io_pref_get('wip_ForceTimeUnit', obj.ForceTimeUnit);
-            obj.OnWriteDestroyAllViewers = wit_io_pref_get('wip_OnWriteDestroyAllViewers', obj.OnWriteDestroyAllViewers);
-            obj.OnWriteDestroyDuplicateTransformations = wit_io_pref_get('wip_OnWriteDestroyDuplicateTransformations', obj.OnWriteDestroyDuplicateTransformations);
-            obj.UseLineValid = wit_io_pref_get('wip_UseLineValid', obj.UseLineValid);
-            obj.AutoCreateObj = wit_io_pref_get('wip_AutoCreateObj', obj.AutoCreateObj);
-            obj.AutoCopyObj = wit_io_pref_get('wip_AutoCopyObj', obj.AutoCopyObj);
-            obj.AutoModifyObj = wit_io_pref_get('wip_AutoModifyObj', obj.AutoModifyObj);
+            try,
+                % Validate the given input
+                if isa(TreeOrData, 'wit') && numel(TreeOrData) == 1,
+                    Tree = TreeOrData.Root;
+                    setProjectHere = false;
+                elseif isa(TreeOrData, 'wid'),
+                    Data = TreeOrData;
+                    Tags = [Data.Tag];
+                    Roots = unique([Tags.Root]);
+                    if numel(Roots) ~= 1,
+                        error('Provide a wit Tree object array with only one common Root!');
+                    end
+                    Tree = Roots;
+                    setProjectHere = true;
+                else,
+                    error('Provide either a wit Tree object or a wid Data object array!');
+                end
+                
+                obj.Tree = Tree;
+                
+                % If true, set Project in wip-class constructor
+                if setProjectHere,
+                    obj.Data = Data;
+                else,
+                    obj.Data = wid(Tree);
+                end
+                
+                % Get user preferences (or default values if not found)
+                obj.ForceDataUnit = wit_io_pref_get('wip_ForceDataUnit', obj.ForceDataUnit);
+                obj.ForceSpaceUnit = wit_io_pref_get('wip_ForceSpaceUnit', obj.ForceSpaceUnit);
+                obj.ForceSpectralUnit = wit_io_pref_get('wip_ForceSpectralUnit', obj.ForceSpectralUnit);
+                obj.ForceTimeUnit = wit_io_pref_get('wip_ForceTimeUnit', obj.ForceTimeUnit);
+                obj.OnWriteDestroyAllViewers = wit_io_pref_get('wip_OnWriteDestroyAllViewers', obj.OnWriteDestroyAllViewers);
+                obj.OnWriteDestroyDuplicateTransformations = wit_io_pref_get('wip_OnWriteDestroyDuplicateTransformations', obj.OnWriteDestroyDuplicateTransformations);
+                obj.UseLineValid = wit_io_pref_get('wip_UseLineValid', obj.UseLineValid);
+                obj.AutoCreateObj = wit_io_pref_get('wip_AutoCreateObj', obj.AutoCreateObj);
+                obj.AutoCopyObj = wit_io_pref_get('wip_AutoCopyObj', obj.AutoCopyObj);
+                obj.AutoModifyObj = wit_io_pref_get('wip_AutoModifyObj', obj.AutoModifyObj);
+            catch me, % Handle invalid or deleted object -case
+                switch me.identifier,
+                    case 'MATLAB:class:InvalidHandle', obj = obj([]); % wid.empty
+                    otherwise, rethrow(me);
+                end
+            end
         end
         
         function delete(obj),
-            % Disconnect link with wid objects
-            for ii = 1:numel(obj.Data),
-                obj.Data(ii).Project = wip.empty;
+            % Disconnect link with wid Data objects
+            obj_Data = obj.Data;
+            for ii = 1:numel(obj_Data),
+                try, obj_Data(ii).Project = wip.empty;
+                catch, end % Otherwise: Invalid or deleted object.
             end
-            % Delete wid objects
-            delete(obj.Data);
-            % Delete wit objects
+            % Delete wid Data objects
+            delete(obj_Data);
+            % Delete wit Tree objects
             delete(obj.Tree);
             % Useful resources:
             % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
