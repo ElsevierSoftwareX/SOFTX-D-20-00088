@@ -163,17 +163,13 @@ classdef wit < handle, % Since R2008a
             % uses recursion, it is unlikely to become a problem within the
             % WIT-tag formatted files.
             persistent subdelete;
-            if isempty(subdelete), subdelete = false; end
-            % If called from within delete, then skip all redundant code
-            if subdelete,
-                delete(obj.Children);
-            else,
-                obj.Parent = wit.empty; % Disconnect parent (only for the first)
-                % Delete descendants
-                subdelete = true; % Speed-up next delete-calls
-                delete(obj.Children);
-                subdelete = false;
-            end
+            if isempty(subdelete), % If called from within delete, then skip all redundant code
+                obj.Parent = wit.empty; % Disconnect parent (only for the first delete-call)
+                subdelete = true; % Speed-up subsequent delete-calls
+                delete(obj.Children); % Delete descendants
+                subdelete = []; % Reset the persistent variable
+            else, delete(obj.Children); end % Delete descendants ONLY
+            
             % Useful resources:
             % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
             % https://se.mathworks.com/help/matlab/matlab_oop/example-implementing-linked-lists.html
