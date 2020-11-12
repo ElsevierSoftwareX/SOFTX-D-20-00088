@@ -9,23 +9,15 @@ function new = copy(obj),
         if ~obj(ii).isvalid, continue; end % Skip deleted
         new(ii).Project = obj(ii).Project; % Calls wid()-constructor!
         % Copy the tags
-        Tag_ii = obj(ii).Tag;
-        if ~isempty(Tag_ii),
-%             old_datas = Tag_ii.Data.Parent.Children;
-            [new(ii).Tag(1).Root, Tags] = wip.append(Tag_ii.Root, {[Tag_ii.DataClassName Tag_ii.Data]}); % Append the root (ENCLOSED BY {} TO AVOID TOUCHING THE LINKED IDS)
-            new(ii).Tag(1).RootVersion = new(ii).Tag(1).Root.search('Version', {'WITec (Project|Data)'}); % Update RootVersion-tag
-            Tag_1 = Tags(1);
-            Tag_2 = Tags(2);
-%             new_datas = Tag_ii.Data.Parent.Children;
-%             Tags = new_datas(~any(repmat(new_datas(:), [1 numel(old_datas)]) == repmat(old_datas(:)', [numel(new_datas) 1]), 2)); % Find the appended copies % MAJOR BOTTLENECK!
-%             bw = strncmp({Tags.Name}, 'DataClassName', 13); % Find DataClassName-tag
-%             Tag_1 = Tags(bw);
-%             Tag_2 = Tags(~bw); % Other tag is assumed to be Data-tag
-            new(ii).Tag(1).DataClassName = Tag_1;
-            new(ii).Tag(1).Data = Tag_2;
-            new(ii).Tag(1).Caption = Tag_2.search('Caption', 'TData', {'^Data \d+$'});
-            new(ii).Tag(1).Id = Tag_2.search('ID', 'TData', {'^Data \d+$'});
-            new(ii).Tag(1).ImageIndex = Tag_2.search('ImageIndex', 'TData', {'^Data \d+$'});
+        obj_ii_Tag = obj(ii).Tag;
+        if ~isempty(obj_ii_Tag),
+            new_ii_Tag = struct;
+            [new_ii_Tag.Root, Tags] = wip.append(obj_ii_Tag.Root, {[obj_ii_Tag.DataClassName obj_ii_Tag.Data]}); % Append the root (ENCLOSED BY {} TO AVOID TOUCHING THE LINKED IDS)
+            new_ii_Tag.RootVersion = new_ii_Tag.Root.search_children('Version'); % Update RootVersion-tag
+            new_ii_Tag.DataClassName = Tags(1);
+            new_ii_Tag.Data = Tags(2);
+            [new_ii_Tag.Caption, new_ii_Tag.Id, new_ii_Tag.ImageIndex] = Tags(2).search_children('TData').search_children('Caption', 'ID', 'ImageIndex');
+            new(ii).Tag = new_ii_Tag;
         end
         % Copy the linked objects AFTER the tags have been copied!
         new(ii).copy_LinksToOthers();
