@@ -33,7 +33,7 @@ classdef wit < handle, % Since R2008a
     % uncommenting the related code segments. This compatibility has been
     % disabled for best performance with big datas.
     %% MAIN EVENTS (not used internally to preserve Octave-compatibility)
-    events (NotifyAccess = private) % May be subject to change in some future release if full Octave-compatibility is pursued!
+    events % May be subject to change in some future release if full Octave-compatibility is pursued!
         % ObjectBeingDestroyed; % Automatically defined by the handle class
         ObjectModified;
     end
@@ -106,10 +106,12 @@ classdef wit < handle, % Since R2008a
         ModifiedDescendantIndices = []; % Related to OrdinalNumber-property
         ModifiedDescendantIds = []; % Related to Id-property
     end
+    properties % READ-WRITE
+        ModifiedEvents = false; % Used for optimizations and is automatically set true when addlistener is called with 'ObjectModified'
+    end
     properties (SetAccess = private, Hidden) % READ-ONLY
         % modification optimizations
         ModifiedAncestors = true;
-        ModifiedEvents = false; % Used for optimizations and is automatically set true when addlistener is called with 'ObjectModified'
         % get.Root optimizations
         RootNow;
         RootModifiedCount = 0;
