@@ -68,6 +68,10 @@ classdef wid < handle, % Since R2008a
         Project = wip.empty;
     end
     
+    properties (SetAccess = private, Hidden) % READ-ONLY, HIDDEN
+        OnDeleteUnwrap = false;
+    end
+    
     %% PUBLIC METHODS
     methods
         % CONSTRUCTOR
@@ -92,6 +96,7 @@ classdef wid < handle, % Since R2008a
                 return;
             elseif isnumeric(SizeOrTreeOrProject),
                 isSize = true;
+                if numel(SizeOrTreeOrProject) == 1, SizeOrTreeOrProject(2) = SizeOrTreeOrProject; end
                 obj(prod(SizeOrTreeOrProject),1) = wid();
                 obj = reshape(obj, SizeOrTreeOrProject);
                 isSize = false;
@@ -138,9 +143,11 @@ classdef wid < handle, % Since R2008a
                     [obj(ii).Tag(1).Caption, obj(ii).Tag(1).Id, obj(ii).Tag(1).ImageIndex] = Data.search_children('TData').search_children('Caption', 'ID', 'ImageIndex');
                 end
 
-                % If true, set Project in wip-class constructor
-                if ~setProjectHere,
-                    wip(obj);
+                % Find Project
+                if ~setProjectHere, Project = wip(obj); end
+                
+                for ii = 1:N_pairs,
+                    obj(ii).Project = Project;
                 end
             catch me, % Handle invalid or deleted object -case
                 switch me.identifier,
@@ -151,42 +158,54 @@ classdef wid < handle, % Since R2008a
         end
         
         function delete(obj),
-            % Update its project
-            obj_Project = obj.Project;
-            if ~isempty(obj_Project),
-                % Remove this from the project
-                O_wid = obj_Project.Data;
-                O_wid = O_wid(O_wid ~= obj);
-                obj.Project.Data = O_wid;
-                % Try update the ordinal numberings
-                ON = obj.OrdinalNumber;
-                try,
-                    for ii = 1:numel(O_wid),
-                        ON_ii = O_wid(ii).OrdinalNumber;
-                        if ON_ii > ON, O_wid(ii).OrdinalNumber = ON_ii - 1; end
-                    end
-                catch, end % Otherwise: Invalid or deleted object.
-            end
+            if obj.OnDeleteUnwrap, return; end % Do nothing if to unwrap
             % Update its tree
             Tag = obj.Tag;
             if ~isempty(Tag),
+                Tag_Root = Tag.Root;
+                Tag_Data = Tag.Data;
+                Tag_DataClassName = Tag.DataClassName;
+                % Disable the Project related wit-class ObjectModified events
+                Tag_Root.disableObjectModified;
+                Tag_Data.disableObjectModified;
                 % Try update its tree root counters
-                try,
-                    Tag_NV = Tag.Data.Parent.search_children('NumberOfData');
-                    if ~isempty(Tag_NV),
-                        Tag_NV.Data = Tag_NV.Data - 1; % Reduce the number by one
-                    end
-                catch,
-                    % OTHERWISE DO NOTHING
+                Tag_NV = Tag_Data.Parent.search_children('NumberOfData');
+                if ~isempty(Tag_NV),
+                    Tag_NV.Data = Tag_NV.Data - 1; % Reduce the number by one
                 end
-                % Delete its tree tags
-                delete(Tag.DataClassName);
-                delete(Tag.Data);
+            end
+            % Update its project
+            Project = obj.Project;
+            if ~isempty(Project),
+                % Remove this from the project
+                O_wid = Project.Data;
+                O_wid = O_wid(O_wid ~= obj);
+                % Try update the ordinal numberings
+                ON = obj.OrdinalNumber;
+                for ii = 1:numel(O_wid),
+                    ON_ii = O_wid(ii).OrdinalNumber;
+                    if ON_ii > ON, O_wid(ii).OrdinalNumber = ON_ii - 1; end
+                end
+            end
+            % Update its tree
+            if ~isempty(Tag),
+                % Delete its tree tags on exit after obj has been deleted!
+                % (Required to avoid hard-to-decode event-based bugs!)
+                ocu = onCleanup(@() delete([Tag_DataClassName Tag_Data]));
             end
             % Useful resources:
             % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
             % https://se.mathworks.com/help/matlab/matlab_oop/example-implementing-linked-lists.html
             % https://blogs.mathworks.com/loren/2013/07/23/deconstructing-destructors/
+        end
+        
+        % Delete wid Data objects without deleting underlying wit Tree objects
+        function delete_wrapper(obj),
+            for ii = 1:numel(obj),
+                try, obj(ii).OnDeleteUnwrap = true;
+                catch, end % Handle invalid or deleted object -case
+            end
+            delete(obj);
         end
         
         
