@@ -71,7 +71,7 @@ classdef wid < handle, % Since R2008a
     %% PUBLIC METHODS
     methods
         % CONSTRUCTOR
-        function obj = wid(O_wit),
+        function obj = wid(TreeOrProject),
             % Loops through each element in O_wit array. It checks whether
             % the element points directly to a specific Data/DataClassName
             % (or its children) or not. If yes, then it only adds that as
@@ -79,57 +79,83 @@ classdef wid < handle, % Since R2008a
             % pairs as new wid.
             
             if nargin == 0, % Create minimal TDGraph data
-                delete(obj); % Destroy the created template
                 obj = wid.new_Graph();
                 return;
             end
             
-            % Get valid tag pairs
-            Pairs = wip.get_Data_DataClassName_pairs(O_wit);
+            % Validate the given input
+            if isa(TreeOrProject, 'wit'),
+                Tree = TreeOrProject;
+                Roots = wit.empty;
+                for ii = 1:numel(Tree), % Append its Root to Roots if not present
+                    Root_ii = Tree(ii).Root;
+                    if all(Roots ~= Root_ii), Roots(end+1) = Root_ii; end
+                end
+                if ~isempty(Tree) && numel(Roots) ~= 1,
+                    error('Provide a wit Tree object array with only one common Root!');
+                end
+                Project = wip(Roots);
+            elseif isa(TreeOrProject, 'wip') && numel(TreeOrProject) == 1,
+                Tree = TreeOrProject.Tree;
+                Project = TreeOrProject;
+            else,
+                error('Provide either a wit Tree object array or a wip Project object!');
+            end
             
-            % Loop the found pairs to construct wids
+            % Get valid tag pairs
+            Pairs = wip.get_Data_DataClassName_pairs(Tree);
+            
+            % Stop if no valid pairs found
             N_pairs = size(Pairs, 1);
             if N_pairs == 0,
-                delete(obj); % Destroy the created template
-                obj = wid.empty;
-            else,
-                if N_pairs > 1, % Avoid endless loop
-                    obj(N_pairs,1) = wid(); % Preallocate the array first
-                end
-                for ii = 1:N_pairs,
-                    obj(ii).Tag(1).Root = Pairs(ii,1).Root;
-                    obj(ii).Tag(1).RootVersion = Pairs(ii,1).Root.search('Version', {'WITec (Project|Data)'});
-                    obj(ii).Tag(1).DataClassName = Pairs(ii,1);
-                    obj(ii).Tag(1).Data = Pairs(ii,2);
-                    obj(ii).Tag(1).Caption = Pairs(ii,2).search('Caption', 'TData', {'^Data \d+$'});
-                    obj(ii).Tag(1).Id = Pairs(ii,2).search('ID', 'TData', {'^Data \d+$'});
-                    obj(ii).Tag(1).ImageIndex = Pairs(ii,2).search('ImageIndex', 'TData', {'^Data \d+$'});
-                end
+                obj = obj([]); % wid.empty
+                return;
+            end
+            
+            % Loop the found pairs to construct wids
+            if N_pairs > 1, % Avoid endless loop
+                obj(N_pairs,1) = wid(); % Preallocate the array first
+            end
+            for ii = 1:N_pairs,
+                obj(ii).Project = Project;
+                obj(ii).Tag(1).Root = Pairs(ii,1).Root;
+                obj(ii).Tag(1).RootVersion = Pairs(ii,1).Root.search('Version', {'WITec (Project|Data)'});
+                obj(ii).Tag(1).DataClassName = Pairs(ii,1);
+                obj(ii).Tag(1).Data = Pairs(ii,2);
+                obj(ii).Tag(1).Caption = Pairs(ii,2).search('Caption', 'TData', {'^Data \d+$'});
+                obj(ii).Tag(1).Id = Pairs(ii,2).search('ID', 'TData', {'^Data \d+$'});
+                obj(ii).Tag(1).ImageIndex = Pairs(ii,2).search('ImageIndex', 'TData', {'^Data \d+$'});
             end
         end
         
         function delete(obj),
-            ON = obj.OrdinalNumber;
             % Update its project
-            Project = obj.Project;
-            if ~isempty(Project),
+            if ~isempty(obj.Project),
                 % Remove this from the project
-                Data = Project.Data;
-                Data = Data(Data ~= obj);
-                Project.Data = Data;
-                % Update the ordinal numberings
-                for ii = 1:numel(Data),
-                    ON_ii = Data(ii).OrdinalNumber;
-                    if ON_ii > ON, Data(ii).OrdinalNumber = ON_ii - 1; end
+                O_wid = obj.Project.Data;
+                O_wid = O_wid(O_wid ~= obj);
+                % Try update the ordinal numberings
+                try,
+                    ON = obj.OrdinalNumber;
+                    for ii = 1:numel(O_wid),
+                        ON_ii = O_wid(ii).OrdinalNumber;
+                        if ON_ii > ON, O_wid(ii).OrdinalNumber = ON_ii - 1; end
+                    end
+                catch,
+                    % OTHERWISE DO NOTHING
                 end
             end
             % Update its tree
             Tag = obj.Tag;
             if ~isempty(Tag),
-                % Update its tree root counters
-                Tag_NV = Tag.Data.Parent.search('NumberOfData', 'Data');
-                if ~isempty(Tag_NV),
-                    Tag_NV.Data = Tag_NV.Data - 1; % Reduce the number by one
+                % Try update its tree root counters
+                try,
+                    Tag_NV = Tag.Data.Parent.search_children('NumberOfData');
+                    if ~isempty(Tag_NV),
+                        Tag_NV.Data = Tag_NV.Data - 1; % Reduce the number by one
+                    end
+                catch,
+                    % OTHERWISE DO NOTHING
                 end
                 % Delete its tree tags
                 delete(Tag.DataClassName);
