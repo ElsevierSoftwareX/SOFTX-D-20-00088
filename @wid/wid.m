@@ -71,81 +71,101 @@ classdef wid < handle, % Since R2008a
     %% PUBLIC METHODS
     methods
         % CONSTRUCTOR
-        function obj = wid(TreeOrProject),
+        function obj = wid(SizeOrTreeOrProject),
             % Loops through each element in O_wit array. It checks whether
             % the element points directly to a specific Data/DataClassName
             % (or its children) or not. If yes, then it only adds that as
             % new wid. If no, then it adds all found Data/DataClassName
             % pairs as new wid.
             
-            persistent nestedcall;
-            if isempty(nestedcall), nestedcall = false; end
+            persistent isSize;
+            if isempty(isSize), isSize = false; end
             
             if nargin == 0, % Create minimal TDGraph data
-                if ~nestedcall, obj = wid.new_Graph(); end
+                if ~isSize, obj = wid.new_Graph(); end
                 return;
             end
             
-            % Validate the given input
-            if isa(TreeOrProject, 'wit'),
-                Tree = TreeOrProject;
-                Roots = wit.empty;
-                for ii = 1:numel(Tree), % Append its Root to Roots if not present
-                    Root_ii = Tree(ii).Root;
-                    if all(Roots ~= Root_ii), Roots(end+1) = Root_ii; end
-                end
-                if ~isempty(Tree) && numel(Roots) ~= 1,
-                    error('Provide a wit Tree object array with only one common Root!');
-                end
-            elseif isa(TreeOrProject, 'wip') && numel(TreeOrProject) == 1,
-                Tree = TreeOrProject.Tree;
-            else,
-                error('Provide either a wit Tree object array or a wip Project object!');
-            end
-            
-            % Get valid tag pairs
-            Pairs = wip.get_Data_DataClassName_pairs(Tree);
-            
-            % Stop if no valid pairs found
-            N_pairs = size(Pairs, 1);
-            if N_pairs == 0,
+            % SPECIAL CASE: Empty wid object
+            if isempty(SizeOrTreeOrProject),
                 obj = obj([]); % wid.empty
                 return;
+            elseif isnumeric(SizeOrTreeOrProject),
+                isSize = true;
+                obj(prod(SizeOrTreeOrProject),1) = wid();
+                obj = reshape(obj, SizeOrTreeOrProject);
+                isSize = false;
+                return;
             end
             
-            % Loop the found pairs to construct wids
-            nestedcall = true;
-            obj(N_pairs,1) = wid(); % Extend the array first
-            nestedcall = false;
-            for ii = 1:N_pairs,
-                DataClassName = Pairs(ii,1);
-                Data = Pairs(ii,2);
-                Root = DataClassName.Root;
-                obj(ii).Tag(1).Root = Root;
-                obj(ii).Tag(1).RootVersion = Root.search_children('Version');
-                obj(ii).Tag(1).DataClassName = DataClassName;
-                obj(ii).Tag(1).Data = Data;
-                [obj(ii).Tag(1).Caption, obj(ii).Tag(1).Id, obj(ii).Tag(1).ImageIndex] = Data.search_children('TData').search_children('Caption', 'ID', 'ImageIndex');
+            try,
+                % Validate the given input
+                if isa(SizeOrTreeOrProject, 'wit'),
+                    Tree = SizeOrTreeOrProject;
+                    Roots = unique([Tree.Root]);
+                    if numel(Roots) ~= 1,
+                        error('Provide a wit Tree object array with only one common Root!');
+                    end
+                    setProjectHere = false;
+                elseif isa(SizeOrTreeOrProject, 'wip') && numel(SizeOrTreeOrProject) == 1,
+                    Project = SizeOrTreeOrProject;
+                    Tree = Project.Tree;
+                    setProjectHere = true;
+                else,
+                    error('Provide either a wit Tree object array or a wip Project object!');
+                end
+                
+                % Get valid tag pairs
+                Pairs = wip.get_Data_DataClassName_pairs(Tree);
+                
+                % Stop if no valid pairs found
+                N_pairs = size(Pairs, 1);
+                if N_pairs == 0,
+                    obj = obj([]); % wid.empty
+                    return;
+                end
+                
+                % Loop the found pairs to construct wids
+                obj = wid([N_pairs 1]); % Preallocate the array first
+                for ii = 1:N_pairs,
+                    DataClassName = Pairs(ii,1);
+                    Data = Pairs(ii,2);
+                    Root = DataClassName.Root;
+                    obj(ii).Tag(1).Root = Root;
+                    obj(ii).Tag(1).RootVersion = Root.search_children('Version');
+                    obj(ii).Tag(1).DataClassName = DataClassName;
+                    obj(ii).Tag(1).Data = Data;
+                    [obj(ii).Tag(1).Caption, obj(ii).Tag(1).Id, obj(ii).Tag(1).ImageIndex] = Data.search_children('TData').search_children('Caption', 'ID', 'ImageIndex');
+                end
+
+                % If true, set Project in wip-class constructor
+                if ~setProjectHere,
+                    wip(obj);
+                end
+            catch me, % Handle invalid or deleted object -case
+                switch me.identifier,
+                    case 'MATLAB:class:InvalidHandle', obj = obj([]); % wid.empty
+                    otherwise, rethrow(me);
+                end
             end
         end
         
         function delete(obj),
             % Update its project
-            if ~isempty(obj.Project),
+            obj_Project = obj.Project;
+            if ~isempty(obj_Project),
                 % Remove this from the project
-                O_wid = obj.Project.Data;
+                O_wid = obj_Project.Data;
                 O_wid = O_wid(O_wid ~= obj);
                 obj.Project.Data = O_wid;
                 % Try update the ordinal numberings
+                ON = obj.OrdinalNumber;
                 try,
-                    ON = obj.OrdinalNumber;
                     for ii = 1:numel(O_wid),
                         ON_ii = O_wid(ii).OrdinalNumber;
                         if ON_ii > ON, O_wid(ii).OrdinalNumber = ON_ii - 1; end
                     end
-                catch,
-                    % OTHERWISE DO NOTHING
-                end
+                catch, end % Otherwise: Invalid or deleted object.
             end
             % Update its tree
             Tag = obj.Tag;

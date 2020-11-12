@@ -4,8 +4,8 @@
 
 % Make hard copy of the wid and all its linked objects and append to wip.
 function new = copy(obj),
-    new = wid.empty; % Return empty if no obj given
-    for ii = numel(obj):-1:1,
+    new = wid(size(obj)); % Return empty if no obj given
+    for ii = 1:numel(obj),
         if ~obj(ii).isvalid, continue; end % Skip deleted
         new(ii).Project = obj(ii).Project; % Calls wid()-constructor!
         % Copy the tags

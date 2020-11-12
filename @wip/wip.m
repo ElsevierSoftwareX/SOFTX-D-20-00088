@@ -49,6 +49,10 @@ classdef wip < handle, % Since R2008a
         Tree = wit.empty;
     end
     
+    properties (SetAccess = private, Hidden) % READ-ONLY, HIDDEN
+        OnDeleteUnwrap = false;
+    end
+    
     properties % READ-WRITE
         % DataUnit, SpaceUnit, SpectralUnit or TimeUnit
         ForceDataUnit = '';
@@ -90,7 +94,7 @@ classdef wip < handle, % Since R2008a
             
             % SPECIAL CASE: Empty wip object
             if isempty(TreeOrData),
-                obj = obj([]);
+                obj = obj([]); % wip.empty
                 return;
             end
             
@@ -118,7 +122,7 @@ classdef wip < handle, % Since R2008a
                 if setProjectHere,
                     obj.Data = Data;
                 else,
-                    obj.Data = wid(Tree);
+                    obj.Data = wid(obj);
                 end
                 
                 % Get user preferences (or default values if not found)
@@ -141,6 +145,7 @@ classdef wip < handle, % Since R2008a
         end
         
         function delete(obj),
+            if obj.OnDeleteUnwrap, return; end % Do nothing if to unwrap
             % Disconnect link with wid Data objects
             obj_Data = obj.Data;
             for ii = 1:numel(obj_Data),
@@ -155,6 +160,12 @@ classdef wip < handle, % Since R2008a
             % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
             % https://se.mathworks.com/help/matlab/matlab_oop/example-implementing-linked-lists.html
             % https://blogs.mathworks.com/loren/2013/07/23/deconstructing-destructors/
+        end
+        
+        % Delete wip Project objects without deleting underlying wit Tree objects
+        function delete_wrapper(obj),
+            for ii = 1:numel(obj), obj(ii).OnDeleteUnwrap = true; end
+            delete(obj);
         end
         
         
@@ -173,7 +184,17 @@ classdef wip < handle, % Since R2008a
         
         % Data (READ-WRITE)
         function set.Data(obj, Data),
+            obj_Tree_Id = max([obj.Tree.Id 0]);
             for ii = 1:numel(Data),
+                Data_ii_Project = Data(ii).Project;
+                if ~isempty(Data_ii_Project),
+                    if Data_ii_Project == obj,
+                        continue;
+                    end
+                    if max([Data_ii_Project.Tree.Id 0]) == obj_Tree_Id,
+                        delete_wrapper(Data_ii_Project);
+                    end
+                end
                 Data(ii).Project = obj;
             end
             obj.Data = Data(:); % Force column vector
