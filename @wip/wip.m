@@ -50,7 +50,6 @@ classdef wip < handle, % Since R2008a
     end
     
     properties (SetAccess = private, Hidden) % READ-ONLY, HIDDEN
-        OnDeleteUnwrap = false;
         TreeData = wit.empty;
         TreeDataModifiedCount = [];
         wip_listener;
@@ -113,7 +112,6 @@ classdef wip < handle, % Since R2008a
                 % Validate the given input
                 if isa(TreeOrData, 'wit') && numel(TreeOrData) == 1,
                     Tree = TreeOrData.Root;
-                    setProjectHere = false;
                 elseif isa(TreeOrData, 'wid'),
                     Data = TreeOrData;
                     Tags = [Data.Tag];
@@ -122,7 +120,6 @@ classdef wip < handle, % Since R2008a
                         error('Provide a wit Tree object array with only one common Root!');
                     end
                     Tree = Roots;
-                    setProjectHere = true;
                 else,
                     error('Provide either a wit Tree object or a wid Data object array!');
                 end
@@ -135,13 +132,6 @@ classdef wip < handle, % Since R2008a
                     obj = O_wip;
                 else,
                     obj.Tree = Tree;
-                    % If true, set Project in wip-class constructor
-                    if setProjectHere,
-                        obj.Data = Data;
-                    else,
-                        obj.Data = wid(obj);
-                    end
-                    
                     % Enable tracking of this wip Project object
                     obj.wip_listener = wip.Projects.add(obj);
                     % Get user preferences (or default values if not found)
@@ -156,9 +146,9 @@ classdef wip < handle, % Since R2008a
                     obj.AutoCopyObj = wit_io_pref_get('wip_AutoCopyObj', obj.AutoCopyObj);
                     obj.AutoModifyObj = wit_io_pref_get('wip_AutoModifyObj', obj.AutoModifyObj);
                     % Enable link between Tree and Project
-                    wip_update_Data(obj);
                     obj.TreeObjectBeingDestroyedListener = Tree.addlistener('ObjectBeingDestroyed', @(s,e) delete(obj));
                     obj.TreeObjectModifiedListener = Tree.addlistener('ObjectModified', @(s,e) wip_update_Tree(obj));
+                    wip_update_Data(obj);
                 end
             catch me, % Handle invalid or deleted object -case
                 switch me.identifier,
@@ -169,32 +159,19 @@ classdef wip < handle, % Since R2008a
         end
         
         function delete(obj),
-            if obj.OnDeleteUnwrap, return; end % Do nothing if to unwrap
-            % Disconnect link with wid Data objects
-            obj_Data = obj.Data;
-            for ii = 1:numel(obj_Data),
-                try, obj_Data(ii).Project = wip.empty;
-                catch, end % Otherwise: Invalid or deleted object.
-            end
-            % Delete event listeners
+            % Delete event listeners before toughing the wit Tree
             delete(obj.TreeObjectBeingDestroyedListener);
             delete(obj.TreeObjectModifiedListener);
             delete(obj.DataObjectBeingDestroyedListener);
             delete(obj.DataObjectModifiedListener);
-            % Delete the underlying wid Data objects
-            delete(obj.Data);
+            % Delete the underlying wid Data objects (only the wrappers)
+            delete_wrapper(obj.Data);
             % Delete the underlying wit Tree objects
             delete(obj.Tree);
             % Useful resources:
             % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
             % https://se.mathworks.com/help/matlab/matlab_oop/example-implementing-linked-lists.html
             % https://blogs.mathworks.com/loren/2013/07/23/deconstructing-destructors/
-        end
-        
-        % Delete wip Project objects without deleting underlying wit Tree objects
-        function delete_wrapper(obj),
-            for ii = 1:numel(obj), obj(ii).OnDeleteUnwrap = true; end
-            delete(obj);
         end
         
         
