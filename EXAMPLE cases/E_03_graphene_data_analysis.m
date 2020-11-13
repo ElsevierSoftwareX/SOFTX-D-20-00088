@@ -58,8 +58,10 @@ O_Point_old = O_Point.copy(); % Store the old data for comparison purposes
 O_0 = O_Point.filter_gaussian({'-silent'}, Range_0); % Gauss filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
 [~, Rayleigh_rel_invcm] = clever_statistics_and_outliers(O_0(2).Data, [], 4); % Calculate mean using clever 4-sigmas statistics (Robust against outliers)
 Rayleigh_nm = O_Point.interpret_Graph('(nm)', Rayleigh_rel_invcm); % Calculate mean excitation wavelength
-O_Point.Info.GraphInterpretation.Data.TDSpectralInterpretation.ExcitationWaveLength = Rayleigh_nm; % Permanently recalibrate the Rayleigh peak to zero!
-O_ImageScan.Info.GraphInterpretation.Data.TDSpectralInterpretation.ExcitationWaveLength = Rayleigh_nm; % Permanently recalibrate the Rayleigh peak to zero!
+O_Point_Info_GraphInterpretation = O_Point.Info.GraphInterpretation; % Make line below backward compatible with R2011a
+O_Point_Info_GraphInterpretation.Data.TDSpectralInterpretation.ExcitationWaveLength = Rayleigh_nm; % Permanently recalibrate the Rayleigh peak to zero!
+O_ImageScan_Info_GraphInterpretation = O_ImageScan.Info.GraphInterpretation; % Make line below backward compatible with R2011a
+O_ImageScan_Info_GraphInterpretation.Data.TDSpectralInterpretation.ExcitationWaveLength = Rayleigh_nm; % Permanently recalibrate the Rayleigh peak to zero!
 
 % Alternatively, try and run an semi-automated script under scripts-folder
 % on your file contents of interest: recalibrate_rayleigh_peak_to_zero.m
