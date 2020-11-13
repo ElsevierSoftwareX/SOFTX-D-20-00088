@@ -37,6 +37,7 @@ classdef wit < handle, % Since R2008a
     % methods declared near the end of this file.
     events (NotifyAccess = private, ListenAccess = private) % May be subject to change in some future release if full Octave-compatibility is pursued!
         % ObjectBeingDestroyed; % Automatically defined by the handle class
+        % PreSet, PostSet, PreGet, PostGet; % For each class property
         ObjectModified;
     end
     
@@ -632,8 +633,15 @@ classdef wit < handle, % Since R2008a
         
         % Override built-in addlistener to include some optimizations
         function event_listener = addlistener(obj, varargin),
-            event_listener = event.listener(obj, varargin{:}); % This line is incompatible with Octave
-            isObjectModified = strcmp(varargin{1}, 'ObjectModified');
+            if numel(varargin) == 2,
+                event_listener = event.listener(obj, varargin{:}); % This line is incompatible with Octave
+                isObjectModified = strcmp(varargin{1}, 'ObjectModified');
+            elseif numel(varargin) == 3,
+                event_listener = event.proplistener(obj, varargin{:}); % This line is incompatible with Octave
+                isObjectModified = false;
+            else,
+                error('Number of inputs must either be 3 (for event.listener) or 4 (for event.proplistener)!');
+            end
             for ii = 1:numel(obj),
                 obj(ii).Listeners{end+1,1} = event_listener; % By default, bound to this object's lifetime
                 if isObjectModified, obj(ii).ModifiedEvents = true; end % Required for optimizations
