@@ -132,12 +132,12 @@ classdef wid < handle, % Since R2008a
                 
                 % Loop the found pairs to construct wids
                 obj = wid([N_pairs 1]); % Preallocate the array first
+                Root_Version = Roots.search_children('Version'); % Find Version-tag only once
                 for ii = 1:N_pairs,
                     DataClassName = Pairs(ii,1);
                     Data = Pairs(ii,2);
-                    Root = DataClassName.Root;
-                    obj(ii).Tag(1).Root = Root;
-                    obj(ii).Tag(1).RootVersion = Root.search_children('Version');
+                    obj(ii).Tag(1).Root = Roots;
+                    obj(ii).Tag(1).RootVersion = Root_Version;
                     obj(ii).Tag(1).DataClassName = DataClassName;
                     obj(ii).Tag(1).Data = Data;
                     [obj(ii).Tag(1).Caption, obj(ii).Tag(1).Id, obj(ii).Tag(1).ImageIndex] = Data.search_children('TData').search_children('Caption', 'ID', 'ImageIndex');
