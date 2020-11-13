@@ -138,6 +138,7 @@ classdef wid < handle, % Since R2008a
                     Data = Pairs(ii,2);
                     obj(ii).Tag(1).Root = Roots;
                     obj(ii).Tag(1).RootVersion = Root_Version;
+                    obj(ii).Tag(1).Parent = Data.Parent;
                     obj(ii).Tag(1).DataClassName = DataClassName;
                     obj(ii).Tag(1).Data = Data;
                     [obj(ii).Tag(1).Caption, obj(ii).Tag(1).Id, obj(ii).Tag(1).ImageIndex] = Data.search_children('TData').search_children('Caption', 'ID', 'ImageIndex');
@@ -165,15 +166,15 @@ classdef wid < handle, % Since R2008a
                 Tag_Root = Tag.Root;
                 Tag_Data = Tag.Data;
                 Tag_DataClassName = Tag.DataClassName;
+                Tag_Parent = Tag.Parent;
                 % Delete its tree tags on exit after obj has been deleted!
                 % (Required to avoid hard-to-decode event-based bugs!)
-                ocu = onCleanup(@() delete([Tag_DataClassName Tag_Data]));
+                deleteOnCleanup = onCleanup(@() delete([Tag_DataClassName Tag_Data]));
                 % Disable the Project related wit-class ObjectModified events
-                if isvalid(Tag_Root), Tag_Root.disableObjectModified; end
-                if isvalid(Tag_Data), Tag_Data.disableObjectModified; end
+                enableOnCleanup = disableObjectModified([Tag_Root Tag_Parent]);
                 % Try update its tree root counters
-                if isvalid(Tag_Data)
-                    Tag_NV = Tag_Data.Parent.search_children('NumberOfData');
+                if isvalid(Tag_Parent)
+                    Tag_NV = Tag_Parent.search_children('NumberOfData');
                     if ~isempty(Tag_NV),
                         Tag_NV.Data = Tag_NV.Data - 1; % Reduce the number by one
                     end
