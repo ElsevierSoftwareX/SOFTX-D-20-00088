@@ -160,9 +160,13 @@ classdef wid < handle, % Since R2008a
         end
         
         function delete(obj),
-            if obj.OnDeleteUnwrap, return; end % Do nothing if to unwrap
+            try, if obj.OnDeleteUnwrap, return; end % Do nothing if to unwrap
+            catch, return; end % Do nothing if already deleted
             % Delete its tree branches
-            if ~isempty(obj.Tag), delete([obj.Tag.DataClassName obj.Tag.Data]); end
+            if ~isempty(obj.Tag),
+                try, delete(obj.Tag.DataClassName); catch, end % Backward compatibility with R2011a to avoid 'Invalid or deleted object.'
+                try, delete(obj.Tag.Data); catch, end % Backward compatibility with R2011a to avoid 'Invalid or deleted object.'
+            end
             % Useful resources:
             % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
             % https://se.mathworks.com/help/matlab/matlab_oop/example-implementing-linked-lists.html
