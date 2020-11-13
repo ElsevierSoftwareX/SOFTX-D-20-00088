@@ -89,6 +89,8 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
                 end
                 bw_removed = reshape(bw_removed, [], 2);
                 bw_removed = any(bw_removed, 2);
+                % Temporarily disable the Project related wit-class ObjectModified events
+                enableOnCleanup = disableObjectModified([TreeData.Root TreeData]);
                 obj.Data = [obj_Data(~bw_removed); reshape(wid(TreeData_Children(bw_added)), [], 1)]; % Force column vector
             elseif strcmp(MDP, 'Data'), % Data-tag becomes empty
                 delete(obj.DataObjectBeingDestroyedListener);
