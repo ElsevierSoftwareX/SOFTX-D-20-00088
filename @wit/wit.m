@@ -33,7 +33,9 @@ classdef wit < handle, % Since R2008a
     % uncommenting the related code segments. This compatibility has been
     % disabled for best performance with big datas.
     %% MAIN EVENTS (not used internally to preserve Octave-compatibility)
-    events % May be subject to change in some future release if full Octave-compatibility is pursued!
+    % These are only notificable or listenable by the provided public
+    % methods declared near the end of this file.
+    events (NotifyAccess = private, ListenAccess = private) % May be subject to change in some future release if full Octave-compatibility is pursued!
         % ObjectBeingDestroyed; % Automatically defined by the handle class
         ObjectModified;
     end
