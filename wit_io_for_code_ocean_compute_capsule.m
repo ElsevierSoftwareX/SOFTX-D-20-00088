@@ -25,11 +25,17 @@ function wit_io_for_code_ocean_compute_capsule(AutoCloseInSeconds, ExampleCases,
     
     % Find all example cases
     pathstr = fileparts([mfilename('fullpath') '.m']);
-    S = dir(fullfile(pathstr, 'EXAMPLE cases'));
+    pathstr = fullfile(pathstr, 'EXAMPLE cases');
+    S = dir(pathstr);
     S = S(~[S.isdir]); % Exclude directories
-    names = {S.name};
-    [~, names, ext] = cellfun(@fileparts, names, 'UniformOutput', false);
-    names = names(strcmp(ext, '.m')); % Keep *.m files
+    
+    files = fullfile(pathstr, {S.name});
+    [~, names, ext] = cellfun(@fileparts, files, 'UniformOutput', false);
+    
+    % Keep *.m files
+    bw_m_files = strcmp(ext, '.m');
+    names = names(bw_m_files);
+    files = files(bw_m_files);
     
     % Select example cases if user has provided such input
     if ischar(ExampleCases), ExampleCases = {ExampleCases}; end % Enclose to a cell
@@ -39,6 +45,7 @@ function wit_io_for_code_ocean_compute_capsule(AutoCloseInSeconds, ExampleCases,
             bw_select = bw_select | strncmp(names, ExampleCases{ii}, numel(ExampleCases{ii}));
         end
         names = names(bw_select);
+        files = files(bw_select);
     end
     
     % Clear Command Window
@@ -52,7 +59,7 @@ function wit_io_for_code_ocean_compute_capsule(AutoCloseInSeconds, ExampleCases,
         str_dashes = repmat('-', [1 max(numel(str_msg), numel(names{ii}))]);
         fprintf('%s\n%s\n%s\n%s\n\n', str_dashes, str_msg, names{ii}, str_dashes);
         tictoc = tic;
-        isPassed(ii) = wit_io_for_code_ocean_compute_capsule_helper(names{ii});
+        isPassed(ii) = wit_io_for_code_ocean_compute_capsule_helper(files{ii});
         elapsedTimeInSeconds(ii) = toc(tictoc);
         fprintf('\n\n');
     end
