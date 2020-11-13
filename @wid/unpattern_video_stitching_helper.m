@@ -373,7 +373,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
 
     % Remove the middle pattern from the original image
     I_best = remove_pattern(I, P_best, B_5, inds_begin(ii_best,:)); % Restore too bright regions if requested
-    I_pattern = remove_pattern(ones(size(I), 'like', I).*128, P_best, B_5, inds_begin(ii_best,:));
+    I_pattern = remove_pattern(ones(size(I), class(I)).*128, P_best, B_5, inds_begin(ii_best,:));
     
     % Continue by calculating the edge patterns (if not to be cropped)
     if ~CropEdgePatterns,
@@ -581,7 +581,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         
         % Loop through images
         for jj = nargin-1:-1:1,
-            varargout{jj} = zeros(S_expanded, 'like', varargin{jj});
+            varargout{jj} = zeros(S_expanded, class(varargin{jj}));
             varargout{jj}(ind_expanded) = varargin{jj}; % Linear indexing
 %             varargout{jj}(B_expanded) = varargin{jj}; % Logical indexing (but apparently slower)
         end
@@ -944,7 +944,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         S_pad = ceil(S_I(1:2)./S_P(1:2)).*S_P(1:2);
         
         % Preallocate and avoid padarray
-        I_cc_pad = zeros(S_pad, 'like', I);
+        I_cc_pad = zeros(S_pad, class(I));
         B_valid_pad = false(S_pad);
         
         % Do linear indexing only once

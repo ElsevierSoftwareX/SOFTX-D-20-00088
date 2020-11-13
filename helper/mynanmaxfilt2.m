@@ -18,13 +18,13 @@ function B = mynanmaxfilt2(A, W),
     if any(mod(W, 2) ~= 1), error('FAIL: Only odd-valued window sizes are accepted!'); end 
     W = (W-1)./2;
     S = size(A);
-    B_cols = zeros(size(A), 'like', A);
+    B_cols = zeros(size(A), class(A));
     % Loop matrix columns
     for ii = 1:S(1),
         inds = max(ii-W(1), 1):1:min(ii+W(1), S(1));
         B_cols(ii,:) = max(A(inds,:), [], 1);
     end
-    B = zeros(size(A), 'like', A);
+    B = zeros(size(A), class(A));
     % Loop matrix rows
     for ii = 1:S(2),
         inds = max(ii-W(2), 1):1:min(ii+W(2), S(2));
