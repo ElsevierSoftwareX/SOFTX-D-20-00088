@@ -124,10 +124,7 @@ function [O_wit, varargout] = append(varargin),
     end
     
     % Temporarily disable the Project related wit-class ObjectModified events until the end of the function
-    O_wit.disableObjectModified;
-    ocu = onCleanup(@O_wit.enableObjectModified);
-    Tag_Data.disableObjectModified;
-    ocu2 = onCleanup(@Tag_Data.enableObjectModified);
+    enableOnCleanup = disableObjectModified([Tag_Data O_wit]);
     
     % Update the counters
     if ~isempty(Tag_ID), Tag_ID.Data = int32(offset); end % Must be int32! % Does not exist for WITec Data
@@ -138,7 +135,6 @@ function [O_wit, varargout] = append(varargin),
     if ~isempty(Tag_Viewer) && ~isempty(ViewerOrViewerClassNames), Tag_Viewer.Data = [Tag_NV.Siblings ViewerOrViewerClassNames Tag_NV]; end % Does not exist for WITec Data
     if ~isempty(Tag_Data) && ~isempty(DataOrDataClassNames),
         Tag_Data.Data = [Tag_ND.Siblings DataOrDataClassNames Tag_ND]; % MAJOR bottleneck
-        Tag_Data.notifyObjectModified;
-        O_wit.notifyObjectModified;
+        notifyObjectModified([Tag_Data O_wit]);
     end
 end

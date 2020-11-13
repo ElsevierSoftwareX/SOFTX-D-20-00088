@@ -635,14 +635,25 @@ classdef wit < handle, % Since R2008a
                 if isObjectModified, obj(ii).ModifiedEvents = true; end % Required for optimizations
             end
         end
-        function disableObjectModified(obj),
-            obj.ModifiedEvents = false;
+        function enableOnCleanup = disableObjectModified(obj), % If first output is not omitted, then the effect is temporary
+            for ii = 1:numel(obj),
+                try, obj(ii).ModifiedEvents = false;
+                catch, end; % Handle invalid/deleted objects
+            end
+            if nargout == 1, enableOnCleanup = onCleanup(@obj.enableObjectModified); end
         end
-        function enableObjectModified(obj),
-            obj.ModifiedEvents = true;
+        function disableOnCleanup = enableObjectModified(obj), % If first output is not omitted, then the effect is temporary
+            for ii = 1:numel(obj),
+                try, obj(ii).ModifiedEvents = true;
+                catch, end; % Handle invalid/deleted objects
+            end
+            if nargout == 1, disableOnCleanup = onCleanup(@obj.disableObjectModified); end
         end
         function notifyObjectModified(obj),
-            notify(obj, 'ObjectModified');
+            for ii = 1:numel(obj),
+                try, notify(obj, 'ObjectModified');
+                catch, end; % Handle invalid/deleted objects
+            end
         end
     end
     
