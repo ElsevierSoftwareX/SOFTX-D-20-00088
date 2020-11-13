@@ -5,8 +5,9 @@
 % This function is intended to be ran only inside the Code Ocean compute
 % capsule, intended to non-interactively demonstrate all the example cases
 % in the toolbox.
-function wit_io_for_code_ocean_compute_capsule(AutoCloseInSeconds),
-    if nargin == 0, AutoCloseInSeconds = 0; end % By default, auto close without any delay
+function wit_io_for_code_ocean_compute_capsule(AutoCloseInSeconds, ExampleCases),
+    if nargin < 1 || isempty(AutoCloseInSeconds), AutoCloseInSeconds = 0; end % By default, auto close without any delay
+    if nargin < 2, ExampleCases = {}; end % By default, go through all example cases
     wit_io_pref_set('AutoCloseInSeconds', AutoCloseInSeconds);
     ocu = onCleanup(@() wit_io_pref_set('AutoCloseInSeconds', Inf)); % Restore original value on close
     
@@ -17,6 +18,16 @@ function wit_io_for_code_ocean_compute_capsule(AutoCloseInSeconds),
     names = {S.name};
     [~, names, ext] = cellfun(@fileparts, names, 'UniformOutput', false);
     names = names(strcmp(ext, '.m')); % Keep *.m files
+    
+    % Select example cases if user has provided such input
+    if ischar(ExampleCases), ExampleCases = {ExampleCases}; end % Enclose to a cell
+    if ~isempty(ExampleCases),
+        bw_select = false(size(names));
+        for ii = 1:numel(ExampleCases),
+            bw_select = bw_select | strncmp(names, ExampleCases{ii}, numel(ExampleCases{ii}));
+        end
+        names = names(bw_select);
+    end
     
     % Clear Command Window
     clc;
