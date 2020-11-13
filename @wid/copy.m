@@ -14,6 +14,7 @@ function new = copy(obj),
             new_ii_Tag = struct;
             [new_ii_Tag.Root, Tags] = wip.append(obj_ii_Tag.Root, {[obj_ii_Tag.DataClassName obj_ii_Tag.Data]}); % Append the root (ENCLOSED BY {} TO AVOID TOUCHING THE LINKED IDS)
             new_ii_Tag.RootVersion = new_ii_Tag.Root.search_children('Version'); % Update RootVersion-tag
+            new_ii_Tag.Parent = Tags(2).Parent;
             new_ii_Tag.DataClassName = Tags(1);
             new_ii_Tag.Data = Tags(2);
             [new_ii_Tag.Caption, new_ii_Tag.Id, new_ii_Tag.ImageIndex] = Tags(2).search_children('TData').search_children('Caption', 'ID', 'ImageIndex');
