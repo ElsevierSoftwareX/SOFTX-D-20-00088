@@ -177,7 +177,7 @@ function h = plot(obj, varargin),
     
     % Get handles of Axes children
     Ax = get(Fig, 'CurrentAxes');
-    h = Ax.Children;
+    h = get(Ax, 'Children');
     
     % Show positions of the given objects
     if ~isempty(showPosition),
