@@ -52,7 +52,11 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 % WARNING! The related instrumental errors, if NOT corrected for, can lead
 % to UNPHYSICAL stitching result in the overlapping regions, even if their
 % apparent stitching result looks smooth!
-[O_result, X, Y] = O_wid.spectral_stitch('-debug'); % Here debug-mode is used to visualize the progress to the user. It can be used for double-checking. Remove '-debug' to disable such demonstration.
+if wit_io_verbose, % This is true by default (and can be set by wit_io_pref_set('Verbose', tf);)
+    [O_result, X, Y] = O_wid.spectral_stitch('-debug'); % Here debug-mode is used to visualize the progress to the user. It can be used for double-checking. Remove '-debug' to disable such demonstration.
+else,
+    [O_result, X, Y] = O_wid.spectral_stitch();
+end
 %-------------------------------------------------------------------------%
 
 

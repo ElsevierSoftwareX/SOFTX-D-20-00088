@@ -60,7 +60,9 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 % Stitching image has been down-scaled in any way, because then it cannot
 % quarantee finding perfect solution. Here '-debug' is added for more
 % verbose process feedback.
-[O_new_Bitmap, N_best, new_Data] = O_Bitmap.unpattern_video_stitching('-debug'); % Here debug-mode is used to visualize the progress to the user. It can be used for double-checking. Remove '-debug' to disable such demonstration.
+if wit_io_verbose, % This is true by default (and can be set by wit_io_pref_set('Verbose', tf);)
+    [O_new_Bitmap, N_best, new_Data] = O_Bitmap.unpattern_video_stitching('-debug'); % Here debug-mode is used to visualize the progress to the user. It can be used for double-checking. Remove '-debug' to disable such demonstration.
+end
 
 
 
@@ -68,8 +70,10 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 % it. This is useful when working with multiple Video Stitching images,
 % because they have the same optimal solution (if NOT down-scaled).
 
-% N_best = 181; % Known best solution
-% [O_new_Bitmap, N_best] = O_Bitmap.unpattern_video_stitching(N_best); % Use known optimal solution instead of asking for the code to scan through the options
+if ~wit_io_verbose, % This is false by default
+    N_best = 181; % Known best solution
+    [O_new_Bitmap, N_best] = O_Bitmap.unpattern_video_stitching(N_best); % Use known optimal solution instead of asking for the code to scan through the options
+end
 
 
 

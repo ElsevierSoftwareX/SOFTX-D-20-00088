@@ -90,9 +90,15 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E3 ii.)} Lorentzians are f
 Range_D = [1250 1450]; % D-peak
 Range_G = [1500 1650]; % G-peak
 Range_2D = [2550 2800]; % 2D-peak
-O_D = O_ImageScan.filter_lorentzian(Range_D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
-O_G = O_ImageScan.filter_lorentzian(Range_G); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
-O_2D = O_ImageScan.filter_lorentzian(Range_2D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
+if wit_io_verbose, % This is true by default (and can be set by wit_io_pref_set('Verbose', tf);)
+    O_D = O_ImageScan.filter_lorentzian(Range_D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
+    O_G = O_ImageScan.filter_lorentzian(Range_G); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
+    O_2D = O_ImageScan.filter_lorentzian(Range_2D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
+else,
+    O_D = O_ImageScan.filter_lorentzian({'-silent'}, Range_D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
+    O_G = O_ImageScan.filter_lorentzian({'-silent'}, Range_G); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
+    O_2D = O_ImageScan.filter_lorentzian({'-silent'}, Range_2D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
+end
 
 % SHOWING FITTING RESULTS OF THE RAYLEIGH-, D-, G- AND 2D-PEAKS
 figure; O_ImageScan.plot('-compare', O_0(end), O_D(end), O_G(end), O_2D(end)); % Show fitting results % Image<TDGraph with sidebar

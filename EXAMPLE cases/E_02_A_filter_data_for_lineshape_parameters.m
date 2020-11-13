@@ -110,13 +110,23 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E2A ii.)} Apply lineshape-
 %-------------------------------------------------------------------------%
 Range_0 = [-25 25]; % The spectral range of Rayleigh-peak (laser line) at (supposedly) zero
 
-% First fit Gaussian to Rayleigh-peak in order to find instrument-induced Fwhm_G (needed for Voigtian-fitting)
-[O_Point_0, ~, ~, Point_Fwhm_G] = O_Point.filter_gaussian(Range_0); % Gauss filtering after removal of linear background (using filter_bg)
+if wit_io_verbose, % This is true by default (and can be set by wit_io_pref_set('Verbose', tf);)
+    % First fit Gaussian to Rayleigh-peak in order to find instrument-induced Fwhm_G (needed for Voigtian-fitting)
+    [O_Point_0, ~, ~, Point_Fwhm_G] = O_Point.filter_gaussian(Range_0); % Gauss filtering after removal of linear background (using filter_bg)
 
-% Then fit Voigtian to D-, G- and 2D-peaks, but Lock 'Fwhm_G' parameter to previously experimental value in order to retain physical meaning!
-O_Point_D = O_Point.filter_voigtian({'-Fwhm_G', Point_Fwhm_G}, Range_D); % Voigt filtering after removal of linear background (using filter_bg)
-O_Point_G = O_Point.filter_voigtian({'-Fwhm_G', Point_Fwhm_G}, Range_G); % Voigt filtering after removal of linear background (using filter_bg)
-O_Point_2D = O_Point.filter_voigtian({'-Fwhm_G', Point_Fwhm_G}, Range_2D); % Voigt filtering after removal of linear background (using filter_bg)
+    % Then fit Voigtian to D-, G- and 2D-peaks, but Lock 'Fwhm_G' parameter to previously experimental value in order to retain physical meaning!
+    O_Point_D = O_Point.filter_voigtian({'-Fwhm_G', Point_Fwhm_G}, Range_D); % Voigt filtering after removal of linear background (using filter_bg)
+    O_Point_G = O_Point.filter_voigtian({'-Fwhm_G', Point_Fwhm_G}, Range_G); % Voigt filtering after removal of linear background (using filter_bg)
+    O_Point_2D = O_Point.filter_voigtian({'-Fwhm_G', Point_Fwhm_G}, Range_2D); % Voigt filtering after removal of linear background (using filter_bg)
+else,
+    % First fit Gaussian to Rayleigh-peak in order to find instrument-induced Fwhm_G (needed for Voigtian-fitting)
+    [O_Point_0, ~, ~, Point_Fwhm_G] = O_Point.filter_gaussian({'-silent'}, Range_0); % Gauss filtering after removal of linear background (using filter_bg)
+
+    % Then fit Voigtian to D-, G- and 2D-peaks, but Lock 'Fwhm_G' parameter to previously experimental value in order to retain physical meaning!
+    O_Point_D = O_Point.filter_voigtian({'-Fwhm_G', Point_Fwhm_G, '-silent'}, Range_D); % Voigt filtering after removal of linear background (using filter_bg)
+    O_Point_G = O_Point.filter_voigtian({'-Fwhm_G', Point_Fwhm_G, '-silent'}, Range_G); % Voigt filtering after removal of linear background (using filter_bg)
+    O_Point_2D = O_Point.filter_voigtian({'-Fwhm_G', Point_Fwhm_G, '-silent'}, Range_2D); % Voigt filtering after removal of linear background (using filter_bg)
+end
 
 % Compare the experimental data with the fitting result using '-compare'-feature of obj.plot
 figure; O_Point.plot('-compare', O_Point_0(end), O_Point_D(end), O_Point_G(end), O_Point_2D(end)); % Show fitting results % Image<TDGraph with sidebar
