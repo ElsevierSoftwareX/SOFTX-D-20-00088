@@ -89,9 +89,18 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
                 end
                 bw_removed = reshape(bw_removed, [], 2);
                 bw_removed = any(bw_removed, 2);
-                % Temporarily disable the Project related wit-class ObjectModified events
-                enableOnCleanup = disableObjectModified([TreeData.Root TreeData]);
-                obj.Data = [obj_Data(~bw_removed); reshape(wid(TreeData_Children(bw_added)), [], 1)]; % Force column vector
+                enableOnCleanup = disableObjectModified([TreeData.Root TreeData]); % Temporarily disable the Project related wit-class ObjectModified events
+                obj_Data = [obj_Data(~bw_removed); reshape(wid(TreeData_Children(bw_added)), [], 1)];
+                obj.Data = obj_Data; % Force column vector
+                % Update TreeData counter
+                Tag_NV = TreeData.search_children('NumberOfData');
+                if ~isempty(Tag_NV),
+                    Tag_NV.Data = Tag_NV.Data - sum(bw_removed) + sum(bw_added); % Reduce the number by one
+                end
+                % Update the ordinal numberings
+                for ii = 1:numel(obj_Data),
+                    obj_Data(ii).OrdinalNumber = ii;
+                end
             elseif strcmp(MDP, 'Data'), % Data-tag becomes empty
                 delete(obj.DataObjectBeingDestroyedListener);
                 delete(obj.DataObjectModifiedListener);
@@ -132,7 +141,18 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
                     end
                     bw_removed = reshape(bw_removed, [], 2);
                     bw_removed = any(bw_removed, 2);
-                    obj.Data = obj_Data(~bw_removed); % Force column vector
+                    obj_Data = obj_Data(~bw_removed);
+                    obj.Data = obj_Data; % Force column vector
+                    enableOnCleanup = disableObjectModified([TreeData.Root TreeData]); % Temporarily disable the Project related wit-class ObjectModified events
+                    % Update TreeData counter
+                    Tag_NV = TreeData.search_children('NumberOfData');
+                    if ~isempty(Tag_NV),
+                        Tag_NV.Data = Tag_NV.Data - 1; % Reduce the number by one
+                    end
+                    % Update the ordinal numberings
+                    for ii = 1:numel(obj_Data),
+                        obj_Data(ii).OrdinalNumber = ii;
+                    end
                 end
             end
         end

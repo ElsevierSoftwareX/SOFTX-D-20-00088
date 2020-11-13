@@ -161,41 +161,8 @@ classdef wid < handle, % Since R2008a
         
         function delete(obj),
             if obj.OnDeleteUnwrap, return; end % Do nothing if to unwrap
-            % Update its tree
-            Tag = obj.Tag;
-            if ~isempty(Tag),
-                Tag_Root = Tag.Root;
-                Tag_Data = Tag.Data;
-                Tag_DataClassName = Tag.DataClassName;
-                Tag_Parent = Tag.Parent;
-                % Delete its tree tags on exit after obj has been deleted!
-                % (Required to avoid hard-to-decode event-based bugs!)
-                deleteOnCleanup = onCleanup(@() delete([Tag_DataClassName Tag_Data]));
-                % Temporarily disable the Project related wit-class ObjectModified events
-                enableOnCleanup = disableObjectModified([Tag_Root Tag_Parent]);
-                % Clean these up in a specific order
-                ocu = onCleanup(@() cellfun(@(x) delete(x), {enableOnCleanup, deleteOnCleanup}));
-                % Try update its tree root counters
-                if isvalid(Tag_Parent)
-                    Tag_NV = Tag_Parent.search_children('NumberOfData');
-                    if ~isempty(Tag_NV),
-                        Tag_NV.Data = Tag_NV.Data - 1; % Reduce the number by one
-                    end
-                end
-            end
-            % Update its project
-            Project = obj.Project;
-            if ~isempty(Project) && isvalid(Project) && isvalid(Tag_Data) && isvalid(Tag_DataClassName),
-                % Remove this from the project
-                O_wid = Project.Data;
-                O_wid = O_wid(O_wid ~= obj);
-                % Try update the ordinal numberings
-                ON = obj.OrdinalNumber;
-                for ii = 1:numel(O_wid),
-                    ON_ii = O_wid(ii).OrdinalNumber;
-                    if ON_ii > ON, O_wid(ii).OrdinalNumber = ON_ii - 1; end
-                end
-            end
+            % Delete its tree branches
+            if ~isempty(obj.Tag), delete([obj.Tag.DataClassName obj.Tag.Data]); end
             % Useful resources:
             % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
             % https://se.mathworks.com/help/matlab/matlab_oop/example-implementing-linked-lists.html
