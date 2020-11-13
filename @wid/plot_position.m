@@ -62,6 +62,8 @@ function h_position = plot_position(obj, FigAxNeither, varargin),
         set(0, 'CurrentFigure', Fig);
         obj.plot;
     end
+    % Update only the first axes
+    if ~isempty(Ax), Ax = Ax(1); end
     
     % Parse the varargin and keep only TDBitmap, TDGraph and TDImage wid objects
     B_valid = cellfun(@(x) isa(x, 'wid'), varargin); % Test if wid

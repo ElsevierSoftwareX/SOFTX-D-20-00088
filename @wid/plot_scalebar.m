@@ -79,6 +79,8 @@ function h_scalebar = plot_scalebar(obj, FigAxNeither, varargin),
         set(0, 'CurrentFigure', Fig);
         obj.plot;
     end
+    % Update only the first axes
+    if ~isempty(Ax), Ax = Ax(1); end
     
     % Ensure that the subsequent plots are included into same axes
     hold on;
