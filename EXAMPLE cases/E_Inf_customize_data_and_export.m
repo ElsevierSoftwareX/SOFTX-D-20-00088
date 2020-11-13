@@ -9,8 +9,7 @@
 % interpretations). The created WIP-file can then be opened in WITec's
 % external softwares.
 
-edit([mfilename('fullpath') '.m']); % Open this code in Editor
-clear all; % Clear workspace
+wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file

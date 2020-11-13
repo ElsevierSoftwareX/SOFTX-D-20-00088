@@ -5,7 +5,7 @@
 %% WIT_IO EXAMPLE CASE 1 D: PERMANENT USER PREFERENCES
 % Simple examples of (E1D) storing permanent user preferences.
 
-edit([mfilename('fullpath') '.m']); % Open this code in Editor
+wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 %-------------------------------------------------------------------------%
 

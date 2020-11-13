@@ -5,7 +5,7 @@
 %% WIT_IO EXAMPLE CASE 1 C: DATA PLOTTING
 % Simple demonstration of (E1C) data plotting.
 
-edit([mfilename('fullpath') '.m']); % Open this code in Editor
+wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file

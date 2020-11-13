@@ -5,7 +5,7 @@
 %% WIT_IO EXAMPLE CASE 4: SPECTRAL STITCHING
 % Simple example of (E4) spectral stitching.
 
-edit([mfilename('fullpath') '.m']); % Open this code in Editor
+wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file

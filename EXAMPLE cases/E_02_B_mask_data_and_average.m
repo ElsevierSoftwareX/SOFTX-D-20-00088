@@ -6,7 +6,7 @@
 % Simple examples of data post processing like (E2B i.) masking and
 % (E2B ii.) spatial averaging.
 
-edit([mfilename('fullpath') '.m']); % Open this code in Editor
+wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file

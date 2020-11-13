@@ -5,11 +5,16 @@
 % This function is intended to be ran only inside the Code Ocean compute
 % capsule, intended to non-interactively demonstrate all the example cases
 % in the toolbox.
-function wit_io_for_code_ocean_compute_capsule(AutoCloseInSeconds, ExampleCases),
+function wit_io_for_code_ocean_compute_capsule(AutoCloseInSeconds, ExampleCases, AutoStopEdit),
     if nargin < 1 || isempty(AutoCloseInSeconds), AutoCloseInSeconds = 0; end % By default, auto close without any delay
-    if nargin < 2, ExampleCases = {}; end % By default, go through all example cases
+    if nargin < 2 || isempty(ExampleCases), ExampleCases = {}; end % By default, go through all example cases
+    if nargin < 3 || isempty(AutoStopEdit), AutoStopEdit = true; end % By default, auto stop editor opening
+    
     wit_io_pref_set('AutoCloseInSeconds', AutoCloseInSeconds);
     ocu = onCleanup(@() wit_io_pref_set('AutoCloseInSeconds', Inf)); % Restore original value on close
+    
+    wit_io_pref_set('AutoStopEdit', AutoStopEdit);
+    ocu2 = onCleanup(@() wit_io_pref_set('AutoStopEdit', false)); % Restore original value on close
     
     % Find all example cases
     pathstr = fileparts([mfilename('fullpath') '.m']);

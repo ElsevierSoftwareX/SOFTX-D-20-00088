@@ -9,7 +9,7 @@
 % AFM, CRM and SNOM stand for Atomic Force Microscopy, Confocal Raman
 % Microscopy and Scanning Near-Field Optical Microscopy, respectively.
 
-edit([mfilename('fullpath') '.m']); % Open this code in Editor
+wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file

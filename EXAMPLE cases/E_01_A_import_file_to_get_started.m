@@ -7,7 +7,7 @@
 % under '@wip'-folder to load WITec Project/Data (*.wip/*.wid) -files
 % directly to the MATLAB environment without manual exporting/importing.
 
-edit([mfilename('fullpath') '.m']); % Open this code in Editor
+wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file

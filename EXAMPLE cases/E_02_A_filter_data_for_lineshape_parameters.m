@@ -6,7 +6,7 @@
 % Simple examples of data post processing like (E2A i.) filtering and
 % (E2A ii.) fitting.
 
-edit([mfilename('fullpath') '.m']); % Open this code in Editor
+wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file

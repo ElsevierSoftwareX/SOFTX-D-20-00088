@@ -5,7 +5,7 @@
 %% WIT_IO EXAMPLE CASE 2 C: DATA CROPPING
 % Simple examples of (E2C) data cropping.
 
-edit([mfilename('fullpath') '.m']); % Open this code in Editor
+wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
