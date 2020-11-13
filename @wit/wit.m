@@ -296,7 +296,8 @@ classdef wit < handle, % Since R2008a
                     Parent_old.modification('Children', meta);
                 end
                 % Parent the new children
-                Children(1:N_Data) = Data; % Octave-compatible way to generate a row vector of wit objects
+                if N_Data == 0, Children = Data; % Make next line backward compatible with R2011a
+                else, Children(1:N_Data) = Data; end % Octave-compatible way to generate a row vector of wit objects
                 obj.DataNow = Children;
                 obj.ChildrenNow = Children;
                 % Update HasData-flag
