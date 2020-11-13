@@ -17,7 +17,8 @@ function F = fun_lineshape_voigtian(P, X),
     B_V = ~B_L & ~B_G; % Not pure Lorentzian nor pure Gaussian
     
     % Center the position data
-    X0 = X(:,B_V)-P(2,B_V);
+    if any(B_V), X0 = X(:,B_V)-P(2,B_V);
+    else, X0 = []; end % Makes above backward compatible with R2011a
     
     % Convert negative FWHM values to positive to avoid non-Voigt results
     Fwhm_L = abs(P(3,B_V)); % FWHM of Lorentzian = 2.*omega_L
@@ -78,7 +79,7 @@ function F = fun_lineshape_voigtian(P, X),
     
     % Calculate Voigtian, Lorentzian and Gaussian lineshape profiles
     F = zeros(size(X));
-    F(:,B_V) = bsxfun(@plus, bsxfun(@times, P(1,B_V), ratio), P(4,B_V));
-    F(:,B_L) = fun_lineshape_lorentzian(P(1:4,B_L), X(:,B_L));
-    F(:,B_G) = fun_lineshape_gaussian(P([1:2 5 4],B_G), X(:,B_G));
+    if any(B_V), F(:,B_V) = bsxfun(@plus, bsxfun(@times, P(1,B_V), ratio), P(4,B_V)); end % Backward compatible with R2011a
+    if any(B_L), F(:,B_L) = fun_lineshape_lorentzian(P(1:4,B_L), X(:,B_L)); end % Backward compatible with R2011a
+    if any(B_G), F(:,B_G) = fun_lineshape_gaussian(P([1:2 5 4],B_G), X(:,B_G)); end % Backward compatible with R2011a
 end

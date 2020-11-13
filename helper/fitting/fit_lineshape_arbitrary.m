@@ -258,7 +258,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
                 bw = bw_retract; % Update bw temporarily!
                 
                 P(~locks,bw) = P0(~locks,bw); % Restore original
-                Hr2(1,bw(bw_original),bw_diag) = bsxfun(@times, 1+lambdas(bw).*(10-1), Hr2(1,bw(bw_original),bw_diag)); % Adjust diagonal values
+                Hr2(1,bw(bw_original),bw_diag) = bsxfun(@times, 1+lambdas(1,bw).*(10-1), Hr2(1,bw(bw_original),bw_diag)); % Adjust diagonal values % Backward compatible with R2011a
                 lambdas(bw) = lambdas(bw).*10; % Tend towards gradient descent
                 
                 dPsub = solve_step(Jr2(1,bw(bw_original),:), Hr2(1,bw(bw_original),:));
