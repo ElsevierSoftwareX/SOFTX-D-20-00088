@@ -115,6 +115,7 @@ classdef wid < handle, % Since R2008a
                 elseif isa(SizeOrTreeOrProject, 'wip') && numel(SizeOrTreeOrProject) == 1,
                     Project = SizeOrTreeOrProject;
                     Tree = Project.Tree;
+                    Roots = Tree;
                     setProjectHere = true;
                 else,
                     error('Provide either a wit Tree object array or a wip Project object!');
@@ -143,7 +144,7 @@ classdef wid < handle, % Since R2008a
                     obj(ii).Tag(1).Data = Data;
                     [obj(ii).Tag(1).Caption, obj(ii).Tag(1).Id, obj(ii).Tag(1).ImageIndex] = Data.search_children('TData').search_children('Caption', 'ID', 'ImageIndex');
                 end
-
+                
                 % Find Project
                 if ~setProjectHere, Project = wip(obj); end
                 
@@ -171,7 +172,7 @@ classdef wid < handle, % Since R2008a
                 % (Required to avoid hard-to-decode event-based bugs!)
                 deleteOnCleanup = onCleanup(@() delete([Tag_DataClassName Tag_Data]));
                 % Disable the Project related wit-class ObjectModified events
-                enableOnCleanup = disableObjectModified([Tag_Root Tag_Parent]);
+                [enableOnCleanup, notifyOnCleanup] = disableObjectModified([Tag_Root Tag_Parent]);
                 % Try update its tree root counters
                 if isvalid(Tag_Parent)
                     Tag_NV = Tag_Parent.search_children('NumberOfData');
