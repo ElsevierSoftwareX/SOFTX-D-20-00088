@@ -166,7 +166,8 @@ classdef wit < handle, % Since R2008a
             % WIT-tag formatted files.
             persistent subdelete;
             if isempty(subdelete), % If called from within delete, then skip all redundant code
-                obj.Parent = wit.empty; % Disconnect parent (only for the first delete-call)
+                try, obj.Parent = wit.empty; % Disconnect parent (only for the first delete-call)
+                catch, return; end % Do nothing if already deleted (backward compatible with R2011a)
                 subdelete = true; % Speed-up subsequent delete-calls
                 delete(obj.Children); % Delete descendants
                 subdelete = []; % Reset the persistent variable
