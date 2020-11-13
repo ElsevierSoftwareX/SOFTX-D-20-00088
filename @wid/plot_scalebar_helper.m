@@ -179,7 +179,7 @@ function h = plot_scalebar_helper(Ax, image_size, image_size_in_SU, image_SU, va
     positions(3,:) = positions(3,:) + [length thickness]; % Set bottom right
     positions(4,:) = positions(4,:) + [0 thickness]; % Set bottom left
     f = [1 2 3 4]; % How vertices are connected to each other
-    h(1) = patch(Ax, 'Faces', f, 'Vertices', positions, 'EdgeColor', 'none', 'FaceColor', color);
+    h(1) = patch('Parent', Ax, 'Faces', f, 'Vertices', positions, 'EdgeColor', 'none', 'FaceColor', color); % Backward compatible with R2011a!
     if ~isempty(patch_varargin),
         set(h(1), patch_varargin{:});
     end

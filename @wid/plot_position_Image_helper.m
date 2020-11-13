@@ -20,7 +20,7 @@ function h_image = plot_position_Image_helper(Ax, positions, color),
     if size(positions, 1) == 4,
         f = [1 2 3 4]; % How vertices are connected to each other
         v_ii = positions(:,1:2); % Discard the Z-axis indices and reshape for patch
-        h_image = patch(Ax, 'Faces', f, 'Vertices', v_ii, 'EdgeColor', color, 'FaceColor', 'none', 'LineWidth', 1);
+        h_image = patch('Parent', Ax, 'Faces', f, 'Vertices', v_ii, 'EdgeColor', color, 'FaceColor', 'none', 'LineWidth', 1); % Backward compatible with R2011a!
     elseif size(positions, 1) == 2,
         h_image = markLine_default(Ax, positions, Color_ii);
     end

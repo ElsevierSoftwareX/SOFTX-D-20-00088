@@ -16,7 +16,7 @@ function h_line = plot_position_Line_helper(Ax, positions, color),
     end
 
     if size(positions, 1) == 2,
-        h_line = line(Ax, positions(:,1), positions(:,2), 'Color', color, 'LineWidth', 1);
+        h_line = line(positions(:,1), positions(:,2), 'Parent', Ax, 'Color', color, 'LineWidth', 1); % Backward compatible with R2011a!
     elseif size(positions, 1) == 1,
         h_line = markPoint_default(Ax, positions, Color_ii);
     end

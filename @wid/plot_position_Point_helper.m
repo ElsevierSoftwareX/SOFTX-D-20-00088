@@ -11,6 +11,6 @@
 % third expected input 'color' is a 1-by-3 RGB-channel array.
 function h_point = plot_position_Point_helper(Ax, positions, color),
     if size(positions, 1) == 1,
-        h_point = line(Ax, positions(1), positions(2), 'Color', color, 'LineWidth', 1, 'Marker', 'o'); % Add marker which is same size regardless of the zoom level
+        h_point = line(positions(1), positions(2), 'Parent', Ax, 'Color', color, 'LineWidth', 1, 'Marker', 'o'); % Add marker which is same size regardless of the zoom level % Backward compatible with R2011a!
     end
 end
