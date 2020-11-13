@@ -297,8 +297,10 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     expansion_offsets = bsxfun(@minus, inds_end_overfull-expansion_thresholds, N_overlap);
     B_neg = expansion_offsets < 0; % Don't allow negative expansions by shifting them back to positive
     dim = repmat([1 2], [size(expansion_offsets, 1) 1]);
-    expansion_offsets(B_neg & dim == 1) = expansion_offsets(B_neg & dim == 1) + N_test(B_neg(:,1));
-    expansion_offsets(B_neg & dim == 2) = expansion_offsets(B_neg & dim == 2) + N_test(B_neg(:,2));
+    N_test_B_neg_1 = N_test(B_neg(:,1));
+    N_test_B_neg_2 = N_test(B_neg(:,2));
+    if any(N_test_B_neg_1), expansion_offsets(B_neg & dim == 1) = expansion_offsets(B_neg & dim == 1) + N_test_B_neg_1; end % Backward compatible with R2011a
+    if any(N_test_B_neg_2), expansion_offsets(B_neg & dim == 2) = expansion_offsets(B_neg & dim == 2) + N_test_B_neg_2; end % Backward compatible with R2011a
     
     % Calculate 2nd region indices (near the bottom and the right edges).
     inds_2nd_begin = inds_end_overfull;
@@ -347,9 +349,10 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     
     fprintf('Testing all side lengths between %d and %d.\n', N_lower, N_upper);
     
-    B_invalid = test_pattern(1, I, B_Outliers | B_too_bright); % Store invalid to reduce cpu demand of clever_outliers_and_statistics-calls
+    B_Outliers_OR_too_bright = bsxfun(@or, B_Outliers, B_too_bright); % Backward compatible with R2011a
+    B_invalid = test_pattern(1, I, B_Outliers_OR_too_bright); % Store invalid to reduce cpu demand of clever_outliers_and_statistics-calls
     if numel(N_test) > 1,
-        B_invalid_last = test_pattern(numel(N_test), I, B_Outliers | B_too_bright); % Store invalid to reduce cpu demand of clever_outliers_and_statistics-calls
+        B_invalid_last = test_pattern(numel(N_test), I, B_Outliers_OR_too_bright); % Store invalid to reduce cpu demand of clever_outliers_and_statistics-calls
         B_invalid = B_invalid & B_invalid_last; % AND-operation to reduce cpu demand of clever_outliers_and_statistics-calls
         for ii = 2:numel(N_test)-1,
             test_pattern(ii, I, B_invalid);
@@ -581,7 +584,8 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         
         % Loop through images
         for jj = nargin-1:-1:1,
-            varargout{jj} = zeros(S_expanded, class(varargin{jj}));
+            if islogical(varargin{jj}), varargout{jj} = false(S_expanded); % Makes next line backward compatible with R2011a
+            else, varargout{jj} = zeros(S_expanded, class(varargin{jj})); end
             varargout{jj}(ind_expanded) = varargin{jj}; % Linear indexing
 %             varargout{jj}(B_expanded) = varargin{jj}; % Logical indexing (but apparently slower)
         end
@@ -821,7 +825,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
             [P_ss, ~, P_ss_offset] = find_pattern(I_best, S_P, Start, End, B_invalid);
             
             % Remove best mean value to minimize changes to the original image
-            P_ss = P_ss + (P_ss_offset - P_offset_best);
+            P_ss = bsxfun(@plus, P_ss, P_ss_offset - P_offset_best); % Backward compatible with R2011a
             
             % Preserve pattern-to-pattern continuity using the reference
             if ~NoReferences,
