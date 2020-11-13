@@ -31,7 +31,8 @@ function HtmlName = get_HtmlName(obj, isWorkspaceOptimized),
         else, ImageFile = sprintf('%s.png', Type); end
         if isWorkspaceOptimized, % isProjectManagerOptimized == false
             ImageFile = strrep(fullfile(folder_reader, 'icons', 'icons (16x16)', ImageFile), '\', '/'); % Construct its full path
-            if exist(ImageFile, 'file') ~= 2, % Revert to Default.png if attempted ImageFile does NOT exist
+            ImageFile_compatible = strrep(ImageFile, 'file:/', ''); % Make this backward compatible with R2011a!
+            if exist(ImageFile_compatible, 'file') ~= 2, % Revert to Default.png if attempted ImageFile does NOT exist
                 ImageFile = strrep(fullfile(folder_reader, 'icons', 'icons (16x16)', 'Default.png'), '\', '/'); % Construct its full path
             end
             % Wrap icon and name in html-table and set their vertical alignment
@@ -39,10 +40,12 @@ function HtmlName = get_HtmlName(obj, isWorkspaceOptimized),
             HtmlName{ii} = sprintf('<html><img height="16" width="16" src="%s"/>&nbsp;%s</html>', ImageFile, HtmlName{ii}); % height and width are required by R2019b and onwards
         else, % isProjectManagerOptimized == true
             ImageFile = strrep(fullfile(folder_reader, 'icons', ImageFile), '\', '/'); % Construct its full path
-            if exist(ImageFile, 'file') ~= 2, % Revert to Default.png if attempted ImageFile does NOT exist
+            ImageFile_compatible = strrep(ImageFile, 'file:/', ''); % Make this backward compatible with R2011a!
+            if exist(ImageFile_compatible, 'file') ~= 2, % Revert to Default.png if attempted ImageFile does NOT exist
                 ImageFile = strrep(fullfile(folder_reader, 'icons', 'Default.png'), '\', '/'); % Construct its full path
+                ImageFile_compatible = strrep(ImageFile, 'file:/', ''); % Make this backward compatible with R2011a!
             end
-            info = imfinfo(ImageFile); % Get height and width, required by R2019b and onwards
+            info = imfinfo(ImageFile_compatible); % Get height and width, required by R2019b and onwards
             if verLessThan('matlab', '9.7'), % If older than R2019b
                 % Wrap icon and name in html-table and set their vertical alignment
                 % to middle and add 1px cell spacing around the table.
