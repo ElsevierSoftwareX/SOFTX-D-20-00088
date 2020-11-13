@@ -171,8 +171,10 @@ classdef wid < handle, % Since R2008a
                 % Delete its tree tags on exit after obj has been deleted!
                 % (Required to avoid hard-to-decode event-based bugs!)
                 deleteOnCleanup = onCleanup(@() delete([Tag_DataClassName Tag_Data]));
-                % Disable the Project related wit-class ObjectModified events
-                [enableOnCleanup, notifyOnCleanup] = disableObjectModified([Tag_Root Tag_Parent]);
+                % Temporarily disable the Project related wit-class ObjectModified events
+                enableOnCleanup = disableObjectModified([Tag_Root Tag_Parent]);
+                % Clean these up in a specific order
+                ocu = onCleanup(@() cellfun(@(x) delete(x), {enableOnCleanup, deleteOnCleanup}));
                 % Try update its tree root counters
                 if isvalid(Tag_Parent)
                     Tag_NV = Tag_Parent.search_children('NumberOfData');
