@@ -165,18 +165,23 @@ classdef wid < handle, % Since R2008a
                 Tag_Root = Tag.Root;
                 Tag_Data = Tag.Data;
                 Tag_DataClassName = Tag.DataClassName;
+                % Delete its tree tags on exit after obj has been deleted!
+                % (Required to avoid hard-to-decode event-based bugs!)
+                ocu = onCleanup(@() delete([Tag_DataClassName Tag_Data]));
                 % Disable the Project related wit-class ObjectModified events
-                Tag_Root.disableObjectModified;
-                Tag_Data.disableObjectModified;
+                if isvalid(Tag_Root), Tag_Root.disableObjectModified; end
+                if isvalid(Tag_Data), Tag_Data.disableObjectModified; end
                 % Try update its tree root counters
-                Tag_NV = Tag_Data.Parent.search_children('NumberOfData');
-                if ~isempty(Tag_NV),
-                    Tag_NV.Data = Tag_NV.Data - 1; % Reduce the number by one
+                if isvalid(Tag_Data)
+                    Tag_NV = Tag_Data.Parent.search_children('NumberOfData');
+                    if ~isempty(Tag_NV),
+                        Tag_NV.Data = Tag_NV.Data - 1; % Reduce the number by one
+                    end
                 end
             end
             % Update its project
             Project = obj.Project;
-            if ~isempty(Project),
+            if ~isempty(Project) && isvalid(Project) && isvalid(Tag_Data) && isvalid(Tag_DataClassName),
                 % Remove this from the project
                 O_wid = Project.Data;
                 O_wid = O_wid(O_wid ~= obj);
@@ -186,12 +191,6 @@ classdef wid < handle, % Since R2008a
                     ON_ii = O_wid(ii).OrdinalNumber;
                     if ON_ii > ON, O_wid(ii).OrdinalNumber = ON_ii - 1; end
                 end
-            end
-            % Update its tree
-            if ~isempty(Tag),
-                % Delete its tree tags on exit after obj has been deleted!
-                % (Required to avoid hard-to-decode event-based bugs!)
-                ocu = onCleanup(@() delete([Tag_DataClassName Tag_Data]));
             end
             % Useful resources:
             % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
