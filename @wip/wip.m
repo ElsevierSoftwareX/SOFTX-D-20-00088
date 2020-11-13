@@ -159,11 +159,12 @@ classdef wip < handle, % Since R2008a
         end
         
         function delete(obj),
-            % Delete event listeners before toughing the wit Tree
-            delete(obj.TreeObjectBeingDestroyedListener);
-            delete(obj.TreeObjectModifiedListener);
-            delete(obj.DataObjectBeingDestroyedListener);
-            delete(obj.DataObjectModifiedListener);
+            try, % Delete event listeners before toughing the wit Tree
+                delete(obj.TreeObjectBeingDestroyedListener);
+                delete(obj.TreeObjectModifiedListener);
+                delete(obj.DataObjectBeingDestroyedListener);
+                delete(obj.DataObjectModifiedListener);
+            catch, return; end % Do nothing if already deleted (backward compatible with R2011a)
             % Delete the underlying wid Data objects (only the wrappers)
             delete_wrapper(obj.Data);
             % Delete the underlying wit Tree objects
