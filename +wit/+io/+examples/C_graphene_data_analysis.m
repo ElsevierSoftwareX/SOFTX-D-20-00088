@@ -2,17 +2,17 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE 3: GRAPHENE DATA ANALYSIS
-% Graphene data analysis case with examples of (E3 i.) laser line
-% recalibration, (E3 ii.) lineshape fitting, (E3 iii.) result cleaning and
-% (E3 iv.) histogram generation.
+%% WIT_IO EXAMPLE CASE C: GRAPHENE DATA ANALYSIS
+% Graphene data analysis case with examples of (C i.) laser line
+% recalibration, (C ii.) lineshape fitting, (C iii.) result cleaning and
+% (C iv.) histogram generation.
 
 wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
-pathstr = fileparts([mfilename('fullpath') '.m']); % Get folder of this script
-file = fullfile(pathstr, 'E_v5.wip'); % Construct full path of the example file
+pathstr = fullfile(wit.io.path, '+examples'); % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 
 
@@ -40,7 +40,7 @@ O_Point = O_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 1
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E3 i.)} Recalibrating the Rayleigh-peak to zero position:}' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(C i.)} Recalibrating the Rayleigh-peak to zero position:}' ...
     '' ...
     '\bullet The Rayleigh-peak (or the laser line or the 0-peak) has Gaussian intensity distribution and may be shifted from zero due to instrumental reasons. Misaligned 0-peak offsets all other Raman peak position information, for which reason it should be recalibrated.' ...
     '' ...
@@ -52,7 +52,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E3 i.)} Recalibrating the 
 
 
 %-------------------------------------------------------------------------%
-% !!! (E3 i.) SINGLE GAUSS FITTING OF THE RAYLEIGH-PEAK and RECALIBRATION OF THE RAYLEIGH-PEAK
+% !!! (C i.) SINGLE GAUSS FITTING OF THE RAYLEIGH-PEAK and RECALIBRATION OF THE RAYLEIGH-PEAK
 Range_0 = [-25 25]; % Rayleigh-peak or 0-peak
 O_Point_old = O_Point.copy(); % Store the old data for comparison purposes
 O_0 = O_Point.filter_gaussian({'-silent'}, Range_0); % Gauss filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
@@ -77,7 +77,7 @@ close all;
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E3 ii.)} Lorentzians are fitted to the D-, G- and 2D-peaks.}' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(C ii.)} Lorentzians are fitted to the D-, G- and 2D-peaks.}' ...
     '' ...
     '\bullet Ideal Raman peaks have Lorentzian function form, but may sometimes consist of multiple peaks like graphene 2D-peak.' ...
     '' ...
@@ -87,7 +87,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E3 ii.)} Lorentzians are f
 
 
 %-------------------------------------------------------------------------%
-% !!! (E3 ii.) SINGLE LORENTZ FITTING OF THE D-, G- AND 2D-PEAKS
+% !!! (C ii.) SINGLE LORENTZ FITTING OF THE D-, G- AND 2D-PEAKS
 % Filter ranges
 Range_D = [1250 1450]; % D-peak
 Range_G = [1500 1650]; % G-peak
@@ -112,7 +112,7 @@ close all;
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E3 iii.)} Clean-up of the fitted data:}' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(C iii.)} Clean-up of the fitted data:}' ...
     '' ...
     '\bullet Sometimes the fitting fails or contains invalid regions. For example, here the D-peak exists only in some graphene edges and elsewhere the results are invalid. It can be useful to discard such outlier regions from the dataset as {\bf\fontname{Courier}NaN} values.' ...
     '' ...
@@ -126,7 +126,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E3 iii.)} Clean-up of the 
 
 
 %-------------------------------------------------------------------------%
-% !!! (E3 iii.) CLEAN-UP OF THE LORENTZ FITTED DATA
+% !!! (C iii.) CLEAN-UP OF THE LORENTZ FITTED DATA
 % Get invalid areas and modify I, Pos, Fwhm and I0
 R_2_threshold = 0.2; % A rough threshold for very poorly fitted data
 [bw_D_invalid, O_D(1).Data, O_D(2).Data, O_D(3).Data, O_D(4).Data] = ...
@@ -167,7 +167,7 @@ close all;
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E3 iv.)} Histograms of the previously cleaned intensity ratios, I(D)/I(G) and I(2D)/I(G) are evaluated and shown:}' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(C iv.)} Histograms of the previously cleaned intensity ratios, I(D)/I(G) and I(2D)/I(G) are evaluated and shown:}' ...
     '' ...
     '\bullet Please note that the previously done cleaning procedure removed most invalid fitting values, what would have otherwise hidden these distributions.' ...
     '' ...
@@ -177,7 +177,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E3 iv.)} Histograms of the
 
 
 %-------------------------------------------------------------------------%
-% !!! (E3 iv.) CALCULATE AND SHOW HISTOGRAMS
+% !!! (C iv.) CALCULATE AND SHOW HISTOGRAMS
 O_hist_I_DperG = O_I_DperG.histogram();
 O_hist_I_2DperG = O_I_2DperG.histogram();
 figure; O_hist_I_DperG.plot();

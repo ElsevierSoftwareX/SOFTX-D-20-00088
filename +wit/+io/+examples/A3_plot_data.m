@@ -2,15 +2,15 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE 1 C: DATA PLOTTING
-% Simple demonstration of (E1C) data plotting.
+%% WIT_IO EXAMPLE CASE A 3: DATA PLOTTING
+% Simple demonstration of (A3) data plotting.
 
 wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
-pathstr = fileparts([mfilename('fullpath') '.m']); % Get folder of this script
-file = fullfile(pathstr, 'E_v5.wip'); % Construct full path of the example file
+pathstr = fullfile(wit.io.path, '+examples'); % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 
 
@@ -40,7 +40,7 @@ O_Mask = O_wid(7); % Get object of "1-layer Gr<Mask 2" at index 7
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E1C)} Plot data}' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(A3)} Plot data}' ...
     '' ...
     '\bullet Although the plottable wid objects are of Types: TDBitmap, TDGraph, TDImage and TDText, the non-plottable objects are plotted like TDText but via DataTree-format:' ...
     '' ...

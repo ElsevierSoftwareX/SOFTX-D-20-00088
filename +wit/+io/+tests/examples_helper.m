@@ -3,10 +3,10 @@
 % All rights reserved.
 
 % This is helper function to prevent unintentional mixing of variables.
-function tf = wit_io_for_code_ocean_compute_capsule_helper(file),
+function tf = examples_helper(example_case),
     try,
         % Use run rather than eval for better safety
-        run(file); % Assuming that the called function does not CLEAR ALL, which would stop NON-INTERACTIVE MODE!
+        wit.io.examples.(example_case); % Assuming that the called function does not CLEAR ALL, which would stop NON-INTERACTIVE MODE!
         tf = true;
     catch me,
         disp(getReport(me, 'extended', 'hyperlinks', 'on'));

@@ -2,16 +2,16 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE 2 A: DATA FILTERING FOR LINESHAPE PARAMETERS
-% Simple examples of data post processing like (E2A i.) filtering and
-% (E2A ii.) fitting.
+%% WIT_IO EXAMPLE CASE B 1: DATA FILTERING FOR LINESHAPE PARAMETERS
+% Simple examples of data post processing like (B1 i.) filtering and
+% (B1 ii.) fitting.
 
 wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
-pathstr = fileparts([mfilename('fullpath') '.m']); % Get folder of this script
-file = fullfile(pathstr, 'E_v5.wip'); % Construct full path of the example file
+pathstr = fullfile(wit.io.path, '+examples'); % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 
 
@@ -52,7 +52,7 @@ O_Point = O_Points(end); % Get the last TDGraph Point in the file
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E2A i.)} Apply filters on the Raman D-, G- and 2D-peaks:}' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(B1 i.)} Apply filters on the Raman D-, G- and 2D-peaks:}' ...
     '' ...
     '\bullet Please read the code that applies Sum and Center of Mass -filters over the specified ranges.' ...
     '' ...
@@ -98,7 +98,7 @@ close all; % Close Project Manager
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E2A ii.)} Apply lineshape-fitting filters on the Raman 0-, D-, G- and 2D-peaks:}' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(B1 ii.)} Apply lineshape-fitting filters on the Raman 0-, D-, G- and 2D-peaks:}' ...
     '' ...
     '\bullet Please read the code that applies Gaussian and Voigtian -filters over the specified ranges.' ...
     '' ...

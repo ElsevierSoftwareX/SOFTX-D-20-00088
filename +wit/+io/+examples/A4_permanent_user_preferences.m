@@ -2,8 +2,8 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE 1 D: PERMANENT USER PREFERENCES
-% Simple examples of (E1D) storing permanent user preferences.
+%% WIT_IO EXAMPLE CASE A 4: PERMANENT USER PREFERENCES
+% Simple examples of (A4) storing permanent user preferences.
 
 wit_io_edit(); % Open this code in Editor
 close all; % Close figures
@@ -22,7 +22,7 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E1D)} Configure wit\_io with permanent user preferences:}' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(A4)} Configure wit\_io with permanent user preferences:}' ...
     '' ...
     '\bullet Getting the specified user preference values (or default values):' ...
     '{\bf\fontname{Courier}value = wit\_io\_pref\_get(pref, value);}' ...

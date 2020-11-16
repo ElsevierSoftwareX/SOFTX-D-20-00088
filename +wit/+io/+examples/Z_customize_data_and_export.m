@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE INF: CUSTOMIZE DATA AND EXPORT
+%% WIT_IO EXAMPLE CASE Z: CUSTOMIZE DATA AND EXPORT
 % Illustrating the creation of Project, its customized objects and writing
 % to a new file. Customized object examples for TDBitmap, Image<TDGraph,
 % TDImage and TDText datatypes (and some related transformations and
@@ -13,15 +13,15 @@ wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
-pathstr = fileparts([mfilename('fullpath') '.m']); % Get folder of this script
-file = fullfile(pathstr, 'E_v5.wip'); % Construct full path of the example file
+pathstr = fullfile(wit.io.path, '+examples'); % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 
 
 %-------------------------------------------------------------------------%
 wit_io_license;
 
-h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE INF:}' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE Z:}' ...
     '{\bf\fontsize{12}CUSTOMIZE DATA AND EXPORT}' ...
     '' ...
     '\bullet If unfamiliar with ''wit\_io'', then go through the previous examples first.'});

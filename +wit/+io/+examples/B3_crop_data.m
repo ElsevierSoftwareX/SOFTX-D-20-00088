@@ -2,15 +2,15 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE 2 C: DATA CROPPING
-% Simple examples of (E2C) data cropping.
+%% WIT_IO EXAMPLE CASE B 3: DATA CROPPING
+% Simple examples of (B3) data cropping.
 
 wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
-pathstr = fileparts([mfilename('fullpath') '.m']); % Get folder of this script
-file = fullfile(pathstr, 'E_v5.wip'); % Construct full path of the example file
+pathstr = fullfile(wit.io.path, '+examples'); % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 
 
@@ -45,7 +45,7 @@ figure; O_PointScan.plot();
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E2C)} Cropping objects:}' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(B3)} Cropping objects:}' ...
     '' ...
     '\bullet Any TDBitmap, TDGraph or TDImage can be cropped using {\bf\fontname{Courier}crop}-function, which takes pixel indices as input.' ...
     '' ...

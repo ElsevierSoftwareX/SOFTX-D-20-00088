@@ -2,15 +2,15 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE 4: SPECTRAL STITCHING
-% Simple example of (E4) spectral stitching.
+%% WIT_IO EXAMPLE CASE D: SPECTRAL STITCHING
+% Simple example of (D) spectral stitching.
 
 wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
-pathstr = fileparts([mfilename('fullpath') '.m']); % Get folder of this script
-file = fullfile(pathstr, 'E_04_stitch_spectra_v7.wip'); % Construct full path of the example file
+pathstr = fullfile(wit.io.path, '+examples'); % Get folder of this script
+file = fullfile(pathstr, 'D_stitch_spectra_v7.wip'); % Construct full path of the example file
 
 
 
@@ -34,7 +34,7 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E4)} Spectral stitching the measured LED lamp spectra into one spectrum:}' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(D)} Spectral stitching the measured LED lamp spectra into one spectrum:}' ...
     '' ...
     '\bullet Illustrative stitching procedure begins by closing this help dialog.'});
 wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.

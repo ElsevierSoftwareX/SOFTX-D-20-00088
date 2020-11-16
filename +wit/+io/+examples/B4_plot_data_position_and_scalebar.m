@@ -2,16 +2,16 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE 2 D: DATA POSITION AND SCALEBAR PLOTTING
-% Simple examples of (E2D) data position and scalebar plotting in order to
+%% WIT_IO EXAMPLE CASE B 4: DATA POSITION AND SCALEBAR PLOTTING
+% Simple examples of (B4) data position and scalebar plotting in order to
 % see their positions with respect to each other.
 
 wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
-pathstr = fileparts([mfilename('fullpath') '.m']); % Get folder of this script
-file = fullfile(pathstr, 'E_v5.wip'); % Construct full path of the example file
+pathstr = fullfile(wit.io.path, '+examples'); % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 
 
@@ -39,7 +39,7 @@ O_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E2D)} Show position of objects on each other and display scalebar:}' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(B4)} Show position of objects on each other and display scalebar:}' ...
     '' ...
     '{\bf\fontname{Courier}obj.plot(''-position'', obj2, ..., objN, ''-scalebar'');}' ...
     '' ...

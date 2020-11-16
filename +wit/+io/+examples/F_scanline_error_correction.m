@@ -2,8 +2,8 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE 6: SCANLINE ERROR CORRECTION
-% Simple example of (E6) correcting images with scanline errors, which can
+%% WIT_IO EXAMPLE CASE F: SCANLINE ERROR CORRECTION
+% Simple example of (F) correcting images with scanline errors, which can
 % be additive (for height images from AFM or peak position images from CRM)
 % or multiplicative (for intensity images from CRM or SNOM) in nature. Here
 % AFM, CRM and SNOM stand for Atomic Force Microscopy, Confocal Raman
@@ -13,13 +13,13 @@ wit_io_edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
-pathstr = fileparts([mfilename('fullpath') '.m']); % Get folder of this script
-file = fullfile(pathstr, 'E_v5.wip'); % Construct full path of the example file
+pathstr = fullfile(wit.io.path, '+examples'); % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 %-------------------------------------------------------------------------%
 wit_io_license;
 
-h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 6:}' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE F:}' ...
     '{\bf\fontsize{12}SCANLINE ERROR CORRECTION}' ...
     '' ...
     '\bullet If unfamiliar with ''wit\_io'', then go through the previous examples first.'});
@@ -44,7 +44,7 @@ figure; O_Image.plot;
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E6)} Scanline error correction of images:}' ...
+h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(F)} Scanline error correction of images:}' ...
     '' ...
     '\bullet This plotted image shows clear horizontal scanline errors. The image represents the integrated intensity of Raman Si-peak, for which reason the underlying error is expected to be multiplicative in nature.' ...
     '' ...

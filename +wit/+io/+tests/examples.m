@@ -2,10 +2,10 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% This function is intended to be ran only inside the Code Ocean compute
+% This function is intended to be ran inside the Code Ocean compute
 % capsule, intended to non-interactively demonstrate all the example cases
-% in the toolbox.
-function wit_io_for_code_ocean_compute_capsule(AutoCloseInSeconds, ExampleCases, AutoStopEdit, Verbose),
+% in the toolbox. This can be used to test the toolbox stability as well.
+function examples(AutoCloseInSeconds, ExampleCases, AutoStopEdit, Verbose),
     if nargin < 1 || isempty(AutoCloseInSeconds), AutoCloseInSeconds = 0; end % By default, auto close without any delay
     if nargin < 2 || isempty(ExampleCases), ExampleCases = {}; end % By default, go through all example cases
     if nargin < 3 || isempty(AutoStopEdit), AutoStopEdit = true; end % By default, auto stop editor opening
@@ -24,8 +24,7 @@ function wit_io_for_code_ocean_compute_capsule(AutoCloseInSeconds, ExampleCases,
     ocu3 = onCleanup(@() wit_io_pref_set('Verbose', old_Verbose)); % Restore original value on close
     
     % Find all example cases
-    pathstr = fileparts([mfilename('fullpath') '.m']);
-    pathstr = fullfile(pathstr, 'EXAMPLE cases');
+    pathstr = fullfile(wit.io.path, '+examples');
     S = dir(pathstr);
     S = S(~[S.isdir]); % Exclude directories
     
@@ -59,7 +58,7 @@ function wit_io_for_code_ocean_compute_capsule(AutoCloseInSeconds, ExampleCases,
         str_dashes = repmat('-', [1 max(numel(str_msg), numel(names{ii}))]);
         fprintf('%s\n%s\n%s\n%s\n\n', str_dashes, str_msg, names{ii}, str_dashes);
         tictoc = tic;
-        isPassed(ii) = wit_io_for_code_ocean_compute_capsule_helper(files{ii});
+        isPassed(ii) = wit.io.tests.examples_helper(names{ii});
         elapsedTimeInSeconds(ii) = toc(tictoc);
         fprintf('\n\n');
     end
