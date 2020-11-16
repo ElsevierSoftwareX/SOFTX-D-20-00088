@@ -86,7 +86,7 @@ classdef handle_listener < handle, % Since R2008a
     methods (Access = private)
         function objects = listen_handle(obj, fun, varargin),
             ocu = onCleanup(@() obj.clear()); % Ensure safe clearing of temporary values on exit
-            notify(obj, 'listen_handle_event', handle_listener_event_data(fun, varargin{:}));
+            notify(obj, 'listen_handle_event', wit.io.handle_listener_event_data(fun, varargin{:}));
             % According to MATLAB's documentation, all listener callbacks
             % must be synchronously fired with notify-call [1].
             % [1] https://www.mathworks.com/help/matlab/matlab_oop/callback-execution.html

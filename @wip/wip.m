@@ -93,7 +93,7 @@ classdef wip < handle, % Since R2008a
     end
     
     properties (Constant) % READ-ONLY, CONSTANT
-        Projects = handle_listener(); % Generates a shared Project listener
+        Projects = wit.io.handle_listener(); % Generates a shared Project listener
     end
     
     %% PUBLIC METHODS
