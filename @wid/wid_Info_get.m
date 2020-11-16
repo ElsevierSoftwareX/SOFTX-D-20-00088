@@ -31,7 +31,7 @@ function out = wid_Info_get(obj),
     end
     
     SizeGraph = size(obj.Data, 3);
-    [GraphUnit, Graph] = wip.transform(GraphTransformation, (1:SizeGraph+1)'); % 25.2.2019 transform_forced would cause NaN if ForceSpectralUnit == '(rel. 1/cm)' due to missing ExcitationWavelength!
+    [GraphUnit, Graph] = wit.io.wip.transform(GraphTransformation, (1:SizeGraph+1)'); % 25.2.2019 transform_forced would cause NaN if ForceSpectralUnit == '(rel. 1/cm)' due to missing ExcitationWavelength!
     if isempty(GraphInterpretation) && ~isempty(GraphTransformation), % 25.2.2019 to allow handling of forced units
         GraphInterpretation = strrep(GraphTransformation.Type, 'Transformation', 'Interpretation');
     end
@@ -50,7 +50,7 @@ function out = wid_Info_get(obj),
     LengthX = SizeX;
     LengthY = SizeY;
     LengthZ = SizeZ;
-    LengthUnit = wip.ArbitraryUnit;
+    LengthUnit = wit.io.wip.ArbitraryUnit;
     if ~isempty(SpaceTransformation),
         [LengthUnit, Corners] = obj.Project.transform_forced(SpaceTransformation, permute([1 SizeX+1 1 1;1 1 SizeY+1 1;1 1 1 SizeZ+1], [2 3 1]));
         LengthX = sqrt(sum((Corners(1,:,:)-Corners(2,:,:)).^2, 3));
@@ -71,7 +71,7 @@ function out = wid_Info_get(obj),
     SecondaryLengthX = SecondarySizeX;
     SecondaryLengthY = SecondarySizeY;
     SecondaryLengthZ = SecondarySizeZ;
-    SecondaryLengthUnit = wip.ArbitraryUnit;
+    SecondaryLengthUnit = wit.io.wip.ArbitraryUnit;
     if ~isempty(SecondaryTransformation),
         [SecondaryLengthUnit, SecondaryCorners] = obj.Project.transform_forced(SecondaryTransformation, permute([1 SecondarySizeX+1 1 1;1 1 SecondarySizeY+1 1;1 1 1 SecondarySizeZ+1], [2 3 1]));
         SecondaryLengthX = sqrt(sum((SecondaryCorners(1,:,:)-SecondaryCorners(2,:,:)).^2, 3));

@@ -65,7 +65,7 @@ classdef wid < handle, % Since R2008a
         Tag = struct.empty; % Either empty OR contains all the fields defined in wid-constructor
     end
     properties % READ-WRITE
-        Project = wip.empty;
+        Project = wit.io.wip.empty;
     end
     
     properties (SetAccess = private, Hidden) % READ-ONLY, HIDDEN
@@ -112,7 +112,7 @@ classdef wid < handle, % Since R2008a
                         error('Provide a wit Tree object array with only one common Root!');
                     end
                     setProjectHere = false;
-                elseif isa(SizeOrTreeOrProject, 'wip') && numel(SizeOrTreeOrProject) == 1,
+                elseif isa(SizeOrTreeOrProject, 'wit.io.wip') && numel(SizeOrTreeOrProject) == 1,
                     Project = SizeOrTreeOrProject;
                     Tree = Project.Tree;
                     Roots = Tree;
@@ -122,7 +122,7 @@ classdef wid < handle, % Since R2008a
                 end
                 
                 % Get valid tag pairs
-                Pairs = wip.get_Data_DataClassName_pairs(Tree);
+                Pairs = wit.io.wip.get_Data_DataClassName_pairs(Tree);
                 
                 % Stop if no valid pairs found
                 N_pairs = size(Pairs, 1);
@@ -146,7 +146,7 @@ classdef wid < handle, % Since R2008a
                 end
                 
                 % Find Project
-                if ~setProjectHere, Project = wip(obj); end
+                if ~setProjectHere, Project = wit.io.wip(obj); end
                 
                 for ii = 1:N_pairs,
                     obj(ii).Project = Project;
@@ -191,7 +191,7 @@ classdef wid < handle, % Since R2008a
             if ~isempty(obj.Tag) && ~isempty(obj.Tag.Data),
                 % This can differ from obj.Tag.Root.File, when wid-object
                 % content has been merged from another project file to this
-                % project file using wip.append-function, which uses copy-
+                % project file using wit.io.wip.append-function, which uses copy-
                 % function of wit-class.
                 File = obj.Tag.Data.File;
             end
@@ -460,7 +460,7 @@ classdef wid < handle, % Since R2008a
     %% STATIC PUBLIC METHODS
     methods (Static)
         % File reader
-        varargout = read(varargin); % Simple wrapper for wip.read
+        varargout = read(varargin); % Simple wrapper for wit.io.wip.read
         
         % Constructor WID-formatted WIT-tree
         O_wit = new(Version); % WITec Data WIT-tree

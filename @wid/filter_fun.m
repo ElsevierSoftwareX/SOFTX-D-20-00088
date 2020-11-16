@@ -43,7 +43,7 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin),
     
     % Get obj Name, Version and Root
     Name = obj.Name;
-    Version = wip.get_Root_Version(obj);
+    Version = wit.io.wip.get_Root_Version(obj);
     Root = obj.Tag.Root;
     
     % Get transformations and interpretations (but do not copy them even if popAutoCopyObj == true)

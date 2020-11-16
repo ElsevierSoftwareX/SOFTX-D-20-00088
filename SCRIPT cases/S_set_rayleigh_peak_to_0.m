@@ -10,7 +10,7 @@
 % This interactive script was implemented 6.5.2019 by Joonas Holmi
 
 % Load and select the data with Rayleigh-peak
-[O_wid_w_Rayleigh, O_wip, ~] = wip.read('-SpectralUnit', 'rel. 1/cm', '-Manager', ...
+[O_wid_w_Rayleigh, O_wip, ~] = wit.io.wip.read('-SpectralUnit', 'rel. 1/cm', '-Manager', ...
     '--closepreview', '--singlesection', '--Title', 'SELECT ONE DATA WITH RAYLEIGH-PEAK', '--Type', 'TDGraph');
 if isempty(O_wid_w_Rayleigh), return; end
 
@@ -21,7 +21,7 @@ C_0 = O_wid_w_Rayleigh.filter_gaussian(Range_0); % Gauss filtering with removal 
 Rayleigh_nm = O_wid_w_Rayleigh.interpret_Graph('(nm)', Rayleigh_rel_invcm); % Calculate mean excitation wavelength
 
 % Load and select the datas of interest
-[O_wid, O_wip, O_wid_HtmlNames] = wip.read(O_wip.File, '-ifall', '-Manager', ...
+[O_wid, O_wip, O_wid_HtmlNames] = wit.io.wip.read(O_wip.File, '-ifall', '-Manager', ...
     '--nopreview', '--Title', 'SELECT DATA THAT CAN BE CORRECTED', '--Type', 'TDGraph');
 if isempty(O_wid), return; end
 

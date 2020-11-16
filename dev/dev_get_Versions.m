@@ -17,7 +17,7 @@ function [versions, files] = dev_get_Versions(files),
     versions = nan(size(files));
     for ii = 1:numel(files),
         fprintf('File %d/%d OR %s:\n', ii, numel(files), files{ii});
-        Version = wip.read_Version(files{ii});
+        Version = wit.io.wip.read_Version(files{ii});
         if ~isempty(Version), versions(ii) = Version; end
         fprintf('Version = %d\n', versions(ii));
     end

@@ -29,7 +29,7 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 
 
 %-------------------------------------------------------------------------%
-[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', 'rel. 1/cm'); % Load all the file plottable content
+[O_wid, O_wip, O_wid_HtmlNames] = wit.io.wip.read(file, '-all', '-SpectralUnit', 'rel. 1/cm'); % Load all the file plottable content
 
 % Get handles to some specific data
 O_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3

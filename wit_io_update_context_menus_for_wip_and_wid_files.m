@@ -5,7 +5,7 @@
 % Implemented by Joonas T. Holmi (18.7.2018) based on the idea worked out
 % by Petri Mustonen. Supports only Microsoft Windows operating systems.
 
-disp('*Generating a reg-file in order to add ''MATLAB''-option to the *.WIP and *.WID context menus to enable a quick wip.read call.');
+disp('*Generating a reg-file in order to add ''MATLAB''-option to the *.WIP and *.WID context menus to enable a quick wit.io.wip.read call.');
 if ~ispc, error('*Only Microsoft Windows operating systems are currently supported!'); end
 
 [filepath, name, ext] = fileparts(mfilename('fullpath'));
@@ -43,7 +43,7 @@ fprintf(fid, '@="MATLAB %s"\n', v); % The text shown under the context menu
 fprintf(fid, '[%s\\command]\n', subroot1);
 fprintf(fid, '@="\\"%s\\""\n', MatlabExe);
 fprintf(fid, '[%s\\ddeexec]\n', subroot1);
-fprintf(fid, '@="[filepath, name, ext] = fileparts(''%%1''); cd(filepath); [O_wid, O_wip, O_wid_HtmlNames] = wip.read(fullfile(filepath, [name ext]));"\n');
+fprintf(fid, '@="[filepath, name, ext] = fileparts(''%%1''); cd(filepath); [O_wid, O_wip, O_wid_HtmlNames] = wit.io.wip.read(fullfile(filepath, [name ext]));"\n');
 fprintf(fid, '[%s\\ddeexec\\application]\n', subroot1);
 fprintf(fid, '@="%s"\n', ShellVerbs);
 fprintf(fid, '[%s\\ddeexec\\topic]\n', subroot1);
@@ -56,7 +56,7 @@ fprintf(fid, '@="MATLAB %s"\n', v); % The text shown under the context menu
 fprintf(fid, '[%s\\command]\n', subroot2);
 fprintf(fid, '@="\\"%s\\""\n', MatlabExe);
 fprintf(fid, '[%s\\ddeexec]\n', subroot2);
-fprintf(fid, '@="[filepath, name, ext] = fileparts(''%%1''); cd(filepath); [O_wid, O_wip, O_wid_HtmlNames] = wip.read(fullfile(filepath, [name ext]));"\n');
+fprintf(fid, '@="[filepath, name, ext] = fileparts(''%%1''); cd(filepath); [O_wid, O_wip, O_wid_HtmlNames] = wit.io.wip.read(fullfile(filepath, [name ext]));"\n');
 fprintf(fid, '[%s\\ddeexec\\application]\n', subroot2);
 fprintf(fid, '@="%s"\n', ShellVerbs);
 fprintf(fid, '[%s\\ddeexec\\topic]\n', subroot2);

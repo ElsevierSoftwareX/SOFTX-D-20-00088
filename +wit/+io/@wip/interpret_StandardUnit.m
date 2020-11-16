@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% StandardUnit is a search string for wip.FullStandardUnits, where it is
+% StandardUnit is a search string for wit.io.wip.FullStandardUnits, where it is
 % seen in the ()-brackets. Please note that this will automatically add
 % ()-brackets for the searching purposes! If StandardUnit is NOT found,
 % then this will return it without modifications.
@@ -15,9 +15,9 @@
 function ValueUnit = interpret_StandardUnit(StandardUnit),
     ValueUnit = StandardUnit; % Unmodified output for no match
     StandardUnit_known_specials = regexprep(regexprep(StandardUnit, 'A', '\xC5'), 'u', '\xB5'); % Replace A's with Å's and u's with µ's ...
-    bw_match = ~cellfun(@isempty, strfind(wip.FullStandardUnits, ['(' StandardUnit ')'])) | ...
-        ~cellfun(@isempty, strfind(wip.FullStandardUnits, ['(' StandardUnit_known_specials ')']));
+    bw_match = ~cellfun(@isempty, strfind(wit.io.wip.FullStandardUnits, ['(' StandardUnit ')'])) | ...
+        ~cellfun(@isempty, strfind(wit.io.wip.FullStandardUnits, ['(' StandardUnit_known_specials ')']));
     if sum(bw_match) == 1, % Continue only if one match was found
-        ValueUnit = wip.FullStandardUnits{bw_match}; % Modified output
+        ValueUnit = wit.io.wip.FullStandardUnits{bw_match}; % Modified output
     end
 end

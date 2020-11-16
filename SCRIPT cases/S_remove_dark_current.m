@@ -15,7 +15,7 @@
 % This interactive script was implemented 24.7.2018 by Joonas Holmi
 
 % Load and select the dark current
-[O_wid_dark, O_wip, ~] = wip.read('-Manager', ...
+[O_wid_dark, O_wip, ~] = wit.io.wip.read('-Manager', ...
     '--closepreview', '--singlesection', '--Title', 'SELECT ONE DARK', '--Type', 'TDGraph');
 if isempty(O_wid_dark), return; end
 
@@ -24,7 +24,7 @@ if isempty(O_wid_dark), return; end
 [~, dark] = clever_statistics_and_outliers(O_wid_dark.Data, -3, 4); % Here -3 reads as NOT 3rd dimension
 
 % Load and select the datas of interest
-[O_wid, O_wip, O_wid_HtmlNames] = wip.read(O_wip.File, '-ifall', '-Manager', ...
+[O_wid, O_wip, O_wid_HtmlNames] = wit.io.wip.read(O_wip.File, '-ifall', '-Manager', ...
     '--nopreview', '--Title', 'SELECT NON-DARK', '--Type', 'TDGraph');
 if isempty(O_wid), return; end
 

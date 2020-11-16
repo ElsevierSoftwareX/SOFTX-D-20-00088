@@ -11,5 +11,5 @@ function Graph = interpret_Graph(obj, Unit_new, Graph),
     if isempty(I) && ~isempty(T), % In case Interpretation does not exist
         I = strrep(T.Type, 'Transformation', 'Interpretation');
     end
-    [~, Graph] = wip.interpret(I, Unit_new, Info.GraphUnit, Graph);
+    [~, Graph] = wit.io.wip.interpret(I, Unit_new, Info.GraphUnit, Graph);
 end

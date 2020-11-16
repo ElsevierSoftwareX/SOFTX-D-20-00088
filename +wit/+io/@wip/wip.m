@@ -86,10 +86,10 @@ classdef wip < handle, % Since R2008a
             'Raman Shift (rel. 1/cm)', 'Relative Energy (rel. eV)', ...
             'Relative Energy (rel. meV)', 'Seconds (s)', ...
             'Spectroscopic Wavenumber (1/cm)', 'Ångströms (Å)'};
-        ArbitraryUnit = wip.interpret_StandardUnit('a.u.');
-        DefaultSpaceUnit = wip.interpret_StandardUnit('µm');
-        DefaultSpectralUnit = wip.interpret_StandardUnit('nm');
-        DefaultTimeUnit = wip.interpret_StandardUnit('s');
+        ArbitraryUnit = wit.io.wip.interpret_StandardUnit('a.u.');
+        DefaultSpaceUnit = wit.io.wip.interpret_StandardUnit('µm');
+        DefaultSpectralUnit = wit.io.wip.interpret_StandardUnit('nm');
+        DefaultTimeUnit = wit.io.wip.interpret_StandardUnit('s');
     end
     
     properties (Constant) % READ-ONLY, CONSTANT
@@ -100,11 +100,11 @@ classdef wip < handle, % Since R2008a
     methods
         % CONSTRUCTOR
         function obj = wip(TreeOrData),
-            if nargin == 0, TreeOrData = wip.new(); end % Create minimal project
+            if nargin == 0, TreeOrData = wit.io.wip.new(); end % Create minimal project
             
             % SPECIAL CASE: Empty wip object
             if isempty(TreeOrData),
-                obj = obj([]); % wip.empty
+                obj = obj([]); % wit.io.wip.empty
                 return;
             end
             
@@ -125,7 +125,7 @@ classdef wip < handle, % Since R2008a
                 end
                 
                 % Check whether or not similar project already exists!
-                O_wip = wip.Projects.match_any(@(O_wip) O_wip.Tree == Tree); % Due to syncronous link between Project and its Tree, Project's Tree is always Root AND never invalid/deleted!
+                O_wip = wit.io.wip.Projects.match_any(@(O_wip) O_wip.Tree == Tree); % Due to syncronous link between Project and its Tree, Project's Tree is always Root AND never invalid/deleted!
                 
                 % Use already existing wip Project object or this
                 if ~isempty(O_wip),
@@ -133,7 +133,7 @@ classdef wip < handle, % Since R2008a
                 else,
                     obj.Tree = Tree;
                     % Enable tracking of this wip Project object
-                    obj.wip_listener = wip.Projects.add(obj);
+                    obj.wip_listener = wit.io.wip.Projects.add(obj);
                     % Get user preferences (or default values if not found)
                     obj.ForceDataUnit = wit_io_pref_get('wip_ForceDataUnit', obj.ForceDataUnit);
                     obj.ForceSpaceUnit = wit_io_pref_get('wip_ForceSpaceUnit', obj.ForceSpaceUnit);
@@ -216,7 +216,7 @@ classdef wip < handle, % Since R2008a
             Tree = wit.io.wit.empty;
             switch(Type),
                 case 'WITec Project',
-                    Tree = wip.new(obj.Version);
+                    Tree = wit.io.wip.new(obj.Version);
                 case 'WITec Data',
                     Tree = wid.new(obj.Version);
                 otherwise,
@@ -258,10 +258,10 @@ classdef wip < handle, % Since R2008a
         %% OTHER PROPERTIES
         % Version (READ-WRITE, DEPENDENT)
         function Version = get.Version(obj),
-            Version = wip.get_Root_Version(obj.Tree);
+            Version = wit.io.wip.get_Root_Version(obj.Tree);
         end
         function set.Version(obj, Version),
-            wip.set_Root_Version(obj.Tree, Version);
+            wit.io.wip.set_Root_Version(obj.Tree, Version);
         end
         
         % Tree (READ-ONLY)
@@ -272,7 +272,7 @@ classdef wip < handle, % Since R2008a
         % ForceDataUnit (READ-WRITE)
         function set.ForceDataUnit(obj, Value),
             if ~isempty(Value),
-                try, Value = wip.interpret('TDZInterpretation', Value); % Try interpret
+                try, Value = wit.io.wip.interpret('TDZInterpretation', Value); % Try interpret
                 catch, Value = ''; end % Reset to empty on failure
             end
             obj.ForceDataUnit = Value;
@@ -281,7 +281,7 @@ classdef wip < handle, % Since R2008a
         % ForceSpaceUnit (READ-WRITE)
         function set.ForceSpaceUnit(obj, Value),
             if ~isempty(Value),
-                try, Value = wip.interpret('TDSpaceInterpretation', Value); % Try interpret
+                try, Value = wit.io.wip.interpret('TDSpaceInterpretation', Value); % Try interpret
                 catch, Value = ''; end % Reset to empty on failure
             end
             obj.ForceSpaceUnit = Value;
@@ -290,7 +290,7 @@ classdef wip < handle, % Since R2008a
         % ForceSpectralUnit (READ-WRITE)
         function set.ForceSpectralUnit(obj, Value),
             if ~isempty(Value),
-                try, Value = wip.interpret('TDSpectralInterpretation', Value); % Try interpret
+                try, Value = wit.io.wip.interpret('TDSpectralInterpretation', Value); % Try interpret
                 catch, Value = ''; end % Reset to empty on failure
             end
             obj.ForceSpectralUnit = Value;
@@ -299,7 +299,7 @@ classdef wip < handle, % Since R2008a
         % ForceTimeUnit (READ-WRITE)
         function set.ForceTimeUnit(obj, Value),
             if ~isempty(Value),
-                try, Value = wip.interpret('TDTimeInterpretation', Value); % Try interpret
+                try, Value = wit.io.wip.interpret('TDTimeInterpretation', Value); % Try interpret
                 catch, Value = ''; end % Reset to empty on failure
             end
             obj.ForceTimeUnit = Value;

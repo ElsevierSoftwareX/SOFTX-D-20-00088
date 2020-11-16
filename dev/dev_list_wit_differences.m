@@ -19,7 +19,7 @@ else, return; end % Abort as no file was selected!
 % Read file wit-tags
 O_wit_left = wit.io.wit.read(file_left{1});
 if isempty(O_wit_left), return; end
-fprintf('LEFT: File = %s\nVersion = %d\n', file_left{1}, wip.get_Root_Version(O_wit_left));
+fprintf('LEFT: File = %s\nVersion = %d\n', file_left{1}, wit.io.wip.get_Root_Version(O_wit_left));
 
 [filename, folder] = uigetfile({'*.wip', 'WITec Project (*.WIP)'; '*.wid', 'WITec Data (*.WID)'; '*.*', 'WIT-formatted files (*.*)'}, 'Open Project', 'MultiSelect', 'off');
 if ~iscell(filename), filename = {filename}; end
@@ -29,7 +29,7 @@ else, return; end % Abort as no file was selected!
 % Read file wit-tags
 O_wit_right = wit.io.wit.read(file_right{1});
 if isempty(O_wit_right), return; end
-fprintf('RIGHT: File = %s\nVersion = %d\n', file_right{1}, wip.get_Root_Version(O_wit_right));
+fprintf('RIGHT: File = %s\nVersion = %d\n', file_right{1}, wit.io.wip.get_Root_Version(O_wit_right));
 
 [C_only_left, C_only_right, C_differ] = helper(O_wit_left, O_wit_right);
 

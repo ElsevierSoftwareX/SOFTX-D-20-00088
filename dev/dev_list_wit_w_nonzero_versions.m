@@ -19,7 +19,7 @@ else, return; end % Abort as no file was selected!
 % Read file wit-tags
 O_wit = wit.io.wit.read(file{1});
 if isempty(O_wit), return; end
-fprintf('File = %s\nVersion = %d\n', file{1}, wip.get_Root_Version(O_wit));
+fprintf('File = %s\nVersion = %d\n', file{1}, wit.io.wip.get_Root_Version(O_wit));
 
 % Find tags with nonzero Versions
 O_wit_w_version = O_wit.regexp('^Version<');

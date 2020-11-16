@@ -26,7 +26,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     
     % By default, empty output
     O_wid = wid.empty;
-    O_wip = wip.empty;
+    O_wip = wit.io.wip.empty;
     O_wid_HtmlNames = cell.empty;
     
     % START OF VARARGIN PARSING
@@ -81,14 +81,14 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
             O_wit = OnReadDecompress_loop(O_wit, files{ii});
         else, % Read uncompressed
             O_wit_new = wit.io.wit.read(files{ii}, LimitedRead);
-            O_wit = wip.append(O_wit, O_wit_new);
+            O_wit = wit.io.wip.append(O_wit, O_wit_new);
         end
     end
     if ~ishandle(h), return; end % Abort if cancelled!
     waitbar(1, h, 'Completed!');
     delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Avoids the closing issues with close-function!
     if isempty(O_wit), return; end % Abort if no file to read!
-    O_wip = wip(O_wit);
+    O_wip = wit.io.wip(O_wit);
     
     % Force DataUnit, SpaceUnit, SpectralUnit, TimeUnit:
     % Parse input arguments
@@ -131,7 +131,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
         % Loop through data entries
         for jj = 1:numel(zip_datas),
             obj_new = wit.io.wit.read(File, LimitedRead, [], [], '-CustomFun', @OnReadDecompress_helper, '-Silent');
-            obj = wip.append(obj, obj_new);
+            obj = wit.io.wip.append(obj, obj_new);
         end
         function OnReadDecompress_helper(obj, File),
             obj.bread(zip_datas{jj});

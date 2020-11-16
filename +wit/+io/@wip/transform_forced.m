@@ -3,13 +3,13 @@
 % All rights reserved.
 
 function [ValueUnit, varargout] = transform_forced(obj, T, varargin),
-    ValueUnit = wip.ArbitraryUnit; % Default ValueUnit
+    ValueUnit = wit.io.wip.ArbitraryUnit; % Default ValueUnit
     varargout = cellfun(@double, varargin, 'UniformOutput', false); % Default Value
     
     if isempty(T), return; end % Do nothing if empty Transformation
 
     % Interpret input
-    [ValueUnit, varargout{1:nargout-1}] = wip.transform(T, varargout{:});
+    [ValueUnit, varargout{1:nargout-1}] = wit.io.wip.transform(T, varargout{:});
     % Override units
     if ~isempty(obj),
         Interpretation = T.Data.TDTransformation.InterpretationID; % Prefer the found interpretation

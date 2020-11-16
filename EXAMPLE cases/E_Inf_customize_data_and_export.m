@@ -33,12 +33,12 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 % Create new Project objects
 Version = 5; % Use version 5 here for forward-compability. For instance, WITec Project 2.1.
-O_wit = wip.new(Version); % Create new Project (*.WIP-format) WIT-tree root
+O_wit = wit.io.wip.new(Version); % Create new Project (*.WIP-format) WIT-tree root
 % O_wit = wid.new(Version); % Create new Project (*.WID-format) WIT-tree root
-O_wip = wip(O_wit); % Create its Project object
+O_wip = wit.io.wip(O_wit); % Create its Project object
 
 % Or uncomment below to alternatively append to old Project objects
-% [~, O_wip, ~] = wip.read(file, '-all'); % Load all
+% [~, O_wip, ~] = wit.io.wip.read(file, '-all'); % Load all
 % O_wit = O_wip.Tree; % Get its underlying WIT-tree
 % Version = O_wip.Version; % Get file WIT-tree version
 %-------------------------------------------------------------------------%
@@ -83,7 +83,7 @@ new_TDGraph = wid.new_Graph(O_wit); % Create empty Image<TDGraph
 new_TDGraph.Name = 'Customized Image<TDGraph';
 
 % Create customized Data
-DataUnit = wip.ArbitraryUnit;
+DataUnit = wit.io.wip.ArbitraryUnit;
 SizeX = 10; % X-axis is always the 1st dimension of the wid object Data property!
 SizeY = 20; % Y-axis is always the 2nd dimension of the wid object Data property!
 SizeGraph = 30; % Graph-axis is always the 3rd dimension of the wid object Data property!
@@ -109,11 +109,11 @@ new_TDGraph.Data = Data_TDGraph;
 ExcitationWavelength = 532.1; % (nm)
 Graph_nm = 530+(1:SizeGraph); % Custom spectral axis
 Graph_nm = Graph_nm + randn(size(Graph_nm)); % Add gaussian noise to spectral axis
-% IMPORTANT: Its SpectralUnit is ALWAYS wip.interpret_StandardUnit('nm')
+% IMPORTANT: Its SpectralUnit is ALWAYS wit.io.wip.interpret_StandardUnit('nm')
 % due to the way TDSpectralTransformation was implemented by WITec.
 % In other words, Graph with non-'nm' SpectralUnit must first be converted
 % to Graph with 'nm' SpectralUnit! It can be done as follows:
-% [~, Graph_nm] = wip.interpret({'Spectral', ExcitationWavelength}, '(nm)', '(meV)', Graph_meV); % Direct conversion from meV to nm. Here ExcitationWavelength's extra input is only used when converting from relative units.
+% [~, Graph_nm] = wit.io.wip.interpret({'Spectral', ExcitationWavelength}, '(nm)', '(meV)', Graph_meV); % Direct conversion from meV to nm. Here ExcitationWavelength's extra input is only used when converting from relative units.
 
 % Create customized transformations and interpretations
 new_TDGraph_TSpace = wid.new_Transformation_Space(O_wit);

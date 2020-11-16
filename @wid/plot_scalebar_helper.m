@@ -127,7 +127,7 @@ function h = plot_scalebar_helper(Ax, image_size, image_size_in_SU, image_SU, va
     show_text = ~varargin_dashed_str_exists('notext', varargin); % By default, show text
 
     % Interpret Length (if given) in correct units
-    [~, length_in_SU] = wip.interpret('Space', image_SU, length_unit, length);
+    [~, length_in_SU] = wit.io.wip.interpret('Space', image_SU, length_unit, length);
 
     if isempty(length_in_SU),
         % Initialize the vertical scalebar length

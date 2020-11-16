@@ -30,7 +30,7 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 
 %-------------------------------------------------------------------------%
 % Load all TDImages.
-[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-Manager', '--Type', 'TDImage');
+[O_wid, O_wip, O_wid_HtmlNames] = wit.io.wip.read(file, '-all', '-Manager', '--Type', 'TDImage');
 
 O_Image = O_wid(7); % Get object of "Raman Si-peak<Sum[500-550]<Image Scan 2" at index 7
 

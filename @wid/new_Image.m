@@ -4,12 +4,12 @@
 
 function obj = new_Image(O_wit),
     if nargin == 0 || isempty(O_wit), O_wit = wid.new(); end % Create O_wit
-    Version = wip.get_Root_Version(O_wit);
+    Version = wit.io.wip.get_Root_Version(O_wit);
     
     Tag_DataClassName = wit.io.wit('DataClassName 0', 'TDImage');
     Tag_Data = wit.io.wit('Data 0');
     
-    Tag_TData = wip.new_TData(Version, sprintf('New %s', Tag_DataClassName.Data));
+    Tag_TData = wit.io.wip.new_TData(Version, sprintf('New %s', Tag_DataClassName.Data));
     if nargin < 2 || isempty(Version) || Version == 7,
         Tag_TDImage = wit.io.wit('TDImage', [ ...
             wit.io.wit('Version', int32(1)) ...
@@ -46,7 +46,7 @@ function obj = new_Image(O_wit),
     else, error('Unimplemented Version (%d)!', Version); end
     
     % Append these to the given (or created) O_wit
-    [~, Pair] = wip.append(O_wit, [Tag_DataClassName Tag_Data]);
+    [~, Pair] = wit.io.wip.append(O_wit, [Tag_DataClassName Tag_Data]);
     
     % Create new wid
     obj = wid(Pair);

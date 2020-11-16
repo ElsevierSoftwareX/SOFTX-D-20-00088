@@ -28,7 +28,7 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 
 %-------------------------------------------------------------------------%
 % Load all TDGraphs and set their SpectralUnits to '(nm)'.
-[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-Manager', '--Type', 'TDGraph', '-SpectralUnit', 'nm');
+[O_wid, O_wip, O_wid_HtmlNames] = wit.io.wip.read(file, '-all', '-Manager', '--Type', 'TDGraph', '-SpectralUnit', 'nm');
 %-------------------------------------------------------------------------%
 
 

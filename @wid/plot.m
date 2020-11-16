@@ -465,10 +465,10 @@ function h = plot(obj, varargin),
             'YMinorTick', 'on', 'YGrid', 'off', 'XGrid', 'off', ...
             'XColor', [0 0 0], 'YColor', [0 0 0], 'LineWidth', 1);
 
-        if isempty(XUnit), XUnit = wip.ArbitraryUnit; end
+        if isempty(XUnit), XUnit = wit.io.wip.ArbitraryUnit; end
         xlabel(Ax, XUnit);
 
-        if isempty(YUnit), YUnit = wip.ArbitraryUnit; end
+        if isempty(YUnit), YUnit = wit.io.wip.ArbitraryUnit; end
         ylabel(Ax, YUnit);
     end
 end

@@ -3,7 +3,7 @@
 % All rights reserved.
 
 function [ValueUnit, varargout] = transform(T, varargin),
-    ValueUnit = wip.ArbitraryUnit; % Default ValueUnit
+    ValueUnit = wit.io.wip.ArbitraryUnit; % Default ValueUnit
     varargout = cellfun(@double, varargin, 'UniformOutput', false); % Default Value
     
     if isempty(T), return; end % Do nothing if empty Transformation
@@ -11,9 +11,9 @@ function [ValueUnit, varargout] = transform(T, varargin),
     
     % Try to recognize StandardUnit or revert back to ArbitraryUnit
     SU = T_Data.TDTransformation.StandardUnit; % Get transformation StandardUnit
-    ValueUnit = wip.interpret_StandardUnit(SU); % Unit after transformation
+    ValueUnit = wit.io.wip.interpret_StandardUnit(SU); % Unit after transformation
     if strcmp(ValueUnit, SU), % Test whether StardardUnit was recognized or not
-        ValueUnit = wip.ArbitraryUnit; % If not, then revert back to ArbitraryUnit
+        ValueUnit = wit.io.wip.ArbitraryUnit; % If not, then revert back to ArbitraryUnit
     end
     
     % Specified transformations were reverse engineered to achieve interoperability (13.7.2016)
@@ -22,10 +22,10 @@ function [ValueUnit, varargout] = transform(T, varargin),
             fun = @LinearTransformation;
         case 'TDSpaceTransformation',
             fun = @SpaceTransformation;
-            if isempty(ValueUnit), ValueUnit = wip.DefaultSpaceUnit; end
+            if isempty(ValueUnit), ValueUnit = wit.io.wip.DefaultSpaceUnit; end
         case 'TDSpectralTransformation',
             fun = @SpectralTransformation;
-            if isempty(ValueUnit), ValueUnit = wip.DefaultSpectralUnit; end
+            if isempty(ValueUnit), ValueUnit = wit.io.wip.DefaultSpectralUnit; end
         case 'TDLUTTransformation',
             fun = @LUTTransformation;
         otherwise,
@@ -38,7 +38,7 @@ function [ValueUnit, varargout] = transform(T, varargin),
     
     % Interpret input
     varargout = cellfun(fun, varargout, 'UniformOutput', false);
-    [ValueUnit, varargout{1:numel(varargout)}] = wip.interpret(T_Data.TDTransformation.InterpretationID, [], ValueUnit, varargout{:});
+    [ValueUnit, varargout{1:numel(varargout)}] = wit.io.wip.interpret(T_Data.TDTransformation.InterpretationID, [], ValueUnit, varargout{:});
     
     function Value = LinearTransformation(Value), % Linear-transform pixel values
         TLinear = T_Data.TDLinearTransformation;

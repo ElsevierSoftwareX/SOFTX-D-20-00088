@@ -31,7 +31,7 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for wit_io_msgbox to be closed 
 
 %-------------------------------------------------------------------------%
 % This opens the specified file. Then automatically loads all.
-[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', 'rel. 1/cm');
+[O_wid, O_wip, O_wid_HtmlNames] = wit.io.wip.read(file, '-all', '-SpectralUnit', 'rel. 1/cm');
 
 O_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
 O_Point = O_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 17

@@ -29,7 +29,7 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 
 %-------------------------------------------------------------------------%
 % Load all TDBitmaps and TDTexts.
-[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-Manager', '--Type', 'TDBitmap', 'TDText');
+[O_wid, O_wip, O_wid_HtmlNames] = wit.io.wip.read(file, '-all', '-Manager', '--Type', 'TDBitmap', 'TDText');
 
 O_Bitmap = O_wid(1); % Get object of "7x5 Stitching Image_021 / Exfoliated graphene (Gr) on SiO2/Si-substrate" at index 1
 O_Text = O_wid(2); % Get object of "7x5 Stitching Image_021 Information" at index 2

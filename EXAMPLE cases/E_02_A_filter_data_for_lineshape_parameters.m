@@ -29,7 +29,7 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 
 
 %-------------------------------------------------------------------------%
-[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all', '-SpectralUnit', 'rel. 1/cm'); % Load all the file plottable content and force SpectralUnit to Raman shift
+[O_wid, O_wip, O_wid_HtmlNames] = wit.io.wip.read(file, '-all', '-SpectralUnit', 'rel. 1/cm'); % Load all the file plottable content and force SpectralUnit to Raman shift
 
 % Get handles to some specific data
 O_Text = O_wid(1); % Get object of "Global (Calibration Information)" at index 1

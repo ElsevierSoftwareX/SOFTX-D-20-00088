@@ -31,7 +31,7 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E1E)} Compress and decompress files:}' ...
     '' ...
     '\bullet Decompressing is done automatically if ''.zip'' or ''.zst'' extension is detected:' ...
-    '{\bf\fontname{Courier}[O\_wid, O\_wip, O\_wid\_HtmlNames] = wip.read(''example.wip.zip'', ''-all'');}' ...
+    '{\bf\fontname{Courier}[O\_wid, O\_wip, O\_wid\_HtmlNames] = wit.io.wip.read(''example.wip.zip'', ''-all'');}' ...
     '' ...
     '\bullet Compressing is done automatically if ''.zip'' or ''.zst'' extension is detected:' ...
     '{\bf\fontname{Courier}O\_wip.write(''example.wip.zip'');}' ...
@@ -49,7 +49,7 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 % Load example file as uncompressed
 fprintf('\n----------------------\nINITIAL PREPARATION...\n----------------------\n');
-[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file, '-all');
+[O_wid, O_wip, O_wid_HtmlNames] = wit.io.wip.read(file, '-all');
 %-------------------------------------------------------------------------%
 
 
@@ -96,8 +96,8 @@ O_wip.write('E_v5.wip.zst'); % By default, use minimum compression for *.zst
 %-------------------------------------------------------------------------%
 % Decompress the compressed example file
 fprintf('\n----------------\nDECOMPRESSING...\n----------------\n');
-[O_wid2, O_wip2, O_wid_HtmlNames2] = wip.read('E_v5.wip.zip', '-all');
-[O_wid2, O_wip2, O_wid_HtmlNames2] = wip.read('E_v5.wip.zst', '-all');
+[O_wid2, O_wip2, O_wid_HtmlNames2] = wit.io.wip.read('E_v5.wip.zip', '-all');
+[O_wid2, O_wip2, O_wid_HtmlNames2] = wit.io.wip.read('E_v5.wip.zst', '-all');
 
 % By default, only the *.wid and *.wip are decompressed from *.zip and
 % *.zst files and all the others are ignored. For *.zip, if there are
@@ -107,7 +107,7 @@ fprintf('\n----------------\nDECOMPRESSING...\n----------------\n');
 
 % If it is important to load only certain files from *.zip file, then
 % filter the files extra parameter '--Files' like commented below:
-% [O_wid2, O_wip2, O_wid_HtmlNames2] = wip.read('E_v5.wip.zip', '-all', '-Params', '--Files', 'E_v5.wip'); % Find and load 'E_v5.wip'
+% [O_wid2, O_wip2, O_wid_HtmlNames2] = wit.io.wip.read('E_v5.wip.zip', '-all', '-Params', '--Files', 'E_v5.wip'); % Find and load 'E_v5.wip'
 
 % For more customization details, see to wit_io_file_decompress.m. The
 % second dash '-' in front, like in '--Files', is needed because the

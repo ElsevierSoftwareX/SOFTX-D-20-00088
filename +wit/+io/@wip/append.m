@@ -53,8 +53,8 @@ function [O_wit, varargout] = append(varargin),
         O_wit_ii = varargin{ii}.copy(); % Get copy of the given wit Tree objects
         varargout{ii} = O_wit_ii; % Save copies also as output
         
-        Data_Pairs = wip.get_Data_DataClassName_pairs(O_wit_ii);
-        Viewer_Pairs = wip.get_Viewer_ViewerClassName_pairs(O_wit_ii);
+        Data_Pairs = wit.io.wip.get_Data_DataClassName_pairs(O_wit_ii);
+        Viewer_Pairs = wit.io.wip.get_Viewer_ViewerClassName_pairs(O_wit_ii);
         Both_Pairs = [Data_Pairs; Viewer_Pairs];
         
         if ~isempty(Data_Pairs),

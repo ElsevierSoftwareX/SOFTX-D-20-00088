@@ -6,8 +6,8 @@ function format = DataTree_format_TData(Version_or_obj),
     if nargin == 0, Version_or_obj = []; end
     
     Version = Version_or_obj;
-    if isa(Version_or_obj, 'wid') || isa(Version_or_obj, 'wip') || isa(Version_or_obj, 'wit.io.wit'),
-        Version = wip.get_Root_Version(Version_or_obj);
+    if isa(Version_or_obj, 'wid') || isa(Version_or_obj, 'wit.io.wip') || isa(Version_or_obj, 'wit.io.wit'),
+        Version = wit.io.wip.get_Root_Version(Version_or_obj);
     end
     
     isVisible = false;

@@ -9,7 +9,7 @@ function write(obj, File) % For saving WIT-formatted WID-files!
     if nargin < 2 || iscell(File), % If no or many filenames specified
         for ii = 1:numel(obj),
             if nargin < 2 || isempty(File{ii}), File{ii} = obj(ii).Tag.Data.File; end
-            O_wit = wid.new(wip.get_Root_Version(obj(ii))); % Create minimal data for each object
+            O_wit = wid.new(wit.io.wip.get_Root_Version(obj(ii))); % Create minimal data for each object
             if all(isfield(obj(ii).Tag, {'DataClassName', 'Data'})),
                 O_wits = [obj(ii).Tag.DataClassName obj(ii).Tag.Data];
             end
@@ -19,17 +19,17 @@ function write(obj, File) % For saving WIT-formatted WID-files!
                     O_wits = [O_wits AllLinksToOthers{jj}.Tag.DataClassName AllLinksToOthers{jj}.Tag.Data];
                 end
             end
-            O_wit = wip.append(O_wit, unique(O_wits));
+            O_wit = wit.io.wip.append(O_wit, unique(O_wits));
             O_wit.write(File{ii});
             delete(O_wit);
         end
     elseif ischar(File), % If only one filename specified for all, then save all to the same
-        Version = wip.get_Root_Version(obj(1));
+        Version = wit.io.wip.get_Root_Version(obj(1));
         if numel(obj) > 0, O_wit = wid.new(Version);
         else, O_wit = wid.new(); end % Create minimal data for all objects
         O_wits = wit.io.wit.empty;
         for ii = 1:numel(obj),
-            if wip.get_Root_Version(obj(ii)) ~= Version,
+            if wit.io.wip.get_Root_Version(obj(ii)) ~= Version,
                 warning('Object with index ii has mismatching Version numbering.', ii);
             end
             if all(isfield(obj(ii).Tag, {'DataClassName', 'Data'})),
@@ -42,7 +42,7 @@ function write(obj, File) % For saving WIT-formatted WID-files!
                 end
             end
         end
-        O_wit = wip.append(O_wit, unique(O_wits));
+        O_wit = wit.io.wip.append(O_wit, unique(O_wits));
         O_wit.write(File);
         delete(O_wit);
     end

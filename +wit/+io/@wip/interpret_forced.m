@@ -3,7 +3,7 @@
 % All rights reserved.
 
 function [ValueUnit, varargout] = interpret_forced(obj, I, Unit_new, Unit_old, varargin),
-    ValueUnit = wip.ArbitraryUnit; % Default ValueUnit
+    ValueUnit = wit.io.wip.ArbitraryUnit; % Default ValueUnit
     varargout = cellfun(@double, varargin, 'UniformOutput', false); % Default Value
     
     if nargin < 3, Unit_new = []; end % Default Unit_new
@@ -17,7 +17,7 @@ function [ValueUnit, varargout] = interpret_forced(obj, I, Unit_new, Unit_old, v
     elseif ischar(I), Type = I; end
 
     % Interpret input
-    [ValueUnit, varargout{1:nargout-1}] = wip.interpret(I, Unit_new, Unit_old, varargout{:});
+    [ValueUnit, varargout{1:nargout-1}] = wit.io.wip.interpret(I, Unit_new, Unit_old, varargout{:});
     % Override units
     if ~isempty(obj),
         ForceUnit = [];
@@ -28,7 +28,7 @@ function [ValueUnit, varargout] = interpret_forced(obj, I, Unit_new, Unit_old, v
             case 'TDTimeInterpretation', ForceUnit = obj.ForceTimeUnit; % Using TimeUnit
         end
         if ~isempty(ForceUnit),
-            [ValueUnit, varargout{1:nargout-1}] = wip.interpret(I, ForceUnit, ValueUnit, varargout{:});
+            [ValueUnit, varargout{1:nargout-1}] = wit.io.wip.interpret(I, ForceUnit, ValueUnit, varargout{:});
         end
     end
 end

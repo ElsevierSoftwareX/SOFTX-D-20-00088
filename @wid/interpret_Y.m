@@ -11,5 +11,5 @@ function Y = interpret_Y(obj, Unit_new, Y),
     if isempty(I) && ~isempty(T), % In case Interpretation does not exist
         I = strrep(T.Type, 'Transformation', 'Interpretation');
     end
-    [~, Y] = wip.interpret(I, Unit_new, Info.YUnit, Y);
+    [~, Y] = wit.io.wip.interpret(I, Unit_new, Info.YUnit, Y);
 end
