@@ -40,91 +40,91 @@ function h = plot_scalebar_helper(Ax, image_size, image_size_in_SU, image_SU, va
     image_size_in_SU = reshape(image_size_in_SU, 1, []); % Force row vector
 
     % Check if Color was specified
-    datas = varargin_dashed_str_datas('Color', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('Color', varargin, -1);
     color = [1 1 1]; % White by default
     if numel(datas) > 0, color = datas{1}; end
 
     % Check if Anchor was specified
-    datas = varargin_dashed_str_datas('Anchor', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('Anchor', varargin, -1);
     anchor = [0 1]; % Bottom-left by default
     if numel(datas) > 0, anchor = datas{1}; end
     anchor = reshape(anchor, 1, []); % Force row vector
 
     % Check if PositionRatio was specified
-    datas = varargin_dashed_str_datas('PositionRatio', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('PositionRatio', varargin, -1);
     position_ratio = [0.05 1-0.05]; % 5% margins by default
     if numel(datas) > 0, position_ratio = datas{1}; end
     position_ratio = reshape(position_ratio, 1, []); % Force row vector
 
     % Check if Position (in points) was specified
-    datas = varargin_dashed_str_datas('Position', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('Position', varargin, -1);
     position = position_ratio .* image_size;
     if numel(datas) > 0, position = datas{1}; end
 
     % Check if TextSpacingRatio was specified
-    datas = varargin_dashed_str_datas('TextSpacingRatio', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('TextSpacingRatio', varargin, -1);
     text_spacing_ratio = 0.025;
     if numel(datas) > 0, text_spacing_ratio = datas{1}; end
 
     % Check if TextSpacing (in points) was specified
-    datas = varargin_dashed_str_datas('TextSpacing', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('TextSpacing', varargin, -1);
     text_spacing = text_spacing_ratio .* image_size(2);
     if numel(datas) > 0, text_spacing = datas{1}; end
 
     % Check if TextHeightRatio was specified
-    datas = varargin_dashed_str_datas('TextHeightRatio', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('TextHeightRatio', varargin, -1);
     text_height_ratio = 0.05;
     if numel(datas) > 0, text_height_ratio = datas{1}; end
 
     % Check if TextHeight (in points) was specified
-    datas = varargin_dashed_str_datas('TextHeight', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('TextHeight', varargin, -1);
     text_height = text_height_ratio .* image_size(2);
     if numel(datas) > 0, text_height = datas{1}; end
 
     % Check if ThicknessRatio was specified
-    datas = varargin_dashed_str_datas('ThicknessRatio', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('ThicknessRatio', varargin, -1);
     thickness_ratio = 0.025;
     if numel(datas) > 0, thickness_ratio = datas{1}; end
 
     % Check if Thickness (in points) was specified
-    datas = varargin_dashed_str_datas('Thickness', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('Thickness', varargin, -1);
     thickness = thickness_ratio .* image_size(2);
     if numel(datas) > 0, thickness = datas{1}; end
 
     % Check if AutoLengthRatio was specified
-    datas = varargin_dashed_str_datas('AutoLengthRatio', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('AutoLengthRatio', varargin, -1);
     auto_length_ratio = 0.5;
     if numel(datas) > 0, auto_length_ratio = datas{1}; end
 
     % Check if AutoFloorDigitTo was specified
-    datas = varargin_dashed_str_datas('AutoFloorDigitTo', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('AutoFloorDigitTo', varargin, -1);
     auto_floor_digit_to = [1 2 5]; % Floor to 1, 2 and 5 digits
     if numel(datas) > 0, auto_floor_digit_to = datas{1}; end
     auto_floor_digit_to = sort(auto_floor_digit_to, 'ascend');
 
     % Check if Length was specified
-    datas = varargin_dashed_str_datas('Length', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('Length', varargin, -1);
     length = []; % Auto length by default
     if numel(datas) > 0, length = datas{1}; end
 
     % Check if LengthUnit was specified
-    datas = varargin_dashed_str_datas('LengthUnit', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('LengthUnit', varargin, -1);
     length_unit = [];
     if numel(datas) > 0, length_unit = datas{1}; end
 
     % Check if LengthFormat was specified
-    datas = varargin_dashed_str_datas('LengthFormat', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('LengthFormat', varargin, -1);
     length_format = '%g';
     if numel(datas) > 0, length_format = datas{1}; end
 
     % Check if PatchVarargin was specified
-    patch_varargin = varargin_dashed_str_datas('PatchVarargin', varargin);
+    patch_varargin = wit.io.parse.varargin_dashed_str_datas('PatchVarargin', varargin);
 
     % Check if TextVarargin was specified
-    text_varargin = varargin_dashed_str_datas('TextVarargin', varargin);
+    text_varargin = wit.io.parse.varargin_dashed_str_datas('TextVarargin', varargin);
 
     % Check if notext was specified
-    show_text = ~varargin_dashed_str_exists('notext', varargin); % By default, show text
+    show_text = ~wit.io.parse.varargin_dashed_str_exists('notext', varargin); % By default, show text
 
     % Interpret Length (if given) in correct units
     [~, length_in_SU] = wit.io.wip.interpret('Space', image_SU, length_unit, length);
@@ -134,7 +134,7 @@ function h = plot_scalebar_helper(Ax, image_size, image_size_in_SU, image_SU, va
         length_in_SU = auto_length_ratio.*image_size_in_SU(1);
 
         % Get the most significant digit
-        [digit, power] = get_significant_digits_and_power(length_in_SU, 1);
+        [digit, power] = wit.io.fun.get_significant_digits_and_power(length_in_SU, 1);
 
         % Automatically floor the digit to
         for ii = numel(auto_floor_digit_to):-1:1,

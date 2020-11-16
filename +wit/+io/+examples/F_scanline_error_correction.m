@@ -90,7 +90,7 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 % intensity of Raman Si-peak:
 O_Image_2 = O_Image.copy(); % Create copy
 O_Image_2.Name = sprintf('Scanline Corrected<%s', O_Image_2.Name); % Rename it
-O_Image_2.Data = apply_MRLCM(O_Image_2.Data, 2); % Correct the data scanline errors in the 2nd dimension
+O_Image_2.Data = wit.io.fun.correct.apply_MRLCM(O_Image_2.Data, 2); % Correct the data scanline errors in the 2nd dimension
 
 figure; O_Image_2.plot;
 %-------------------------------------------------------------------------%

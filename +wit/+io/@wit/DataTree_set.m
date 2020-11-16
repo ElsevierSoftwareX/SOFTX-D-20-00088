@@ -19,7 +19,7 @@ function DataTree_set(parent, in, format),
     % Get UNSORTED format names, fields and values AND obey its ordering (PRIMARY)
     predefined_names = format(:,1);
     [predefined_names_sorted, ind_predefined_sorted] = sort(predefined_names);
-    predefined_fields_sorted = get_valid_and_unique_names(predefined_names_sorted);
+    predefined_fields_sorted = wit.io.fun.get_valid_and_unique_names(predefined_names_sorted);
     predefined_fields(ind_predefined_sorted) = predefined_fields_sorted; % Unsort
 %     predefined_isVisible = format(:,2); % IGNORED
     predefined_values = format(:,3);
@@ -101,7 +101,7 @@ function DataTree_set(parent, in, format),
     % ordering, then the non-linked children name ordering. This becomes
     % important when generated field names begin to overlap each other and
     % we need to ensure that results of predefined names remain unchanged.
-    all_fields = get_valid_and_unique_names([predefined_fields_sorted; children_names_no_link_sorted]);
+    all_fields = wit.io.fun.get_valid_and_unique_names([predefined_fields_sorted; children_names_no_link_sorted]);
     children_fields_no_link_sorted = all_fields(numel(predefined_names_sorted)+1:end);
     
     % Loop through non-linked fields

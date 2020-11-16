@@ -14,7 +14,7 @@ function DataTree_set(parent, in, format),
     
     % Sort format fields and values by names
     [predefined_names, ind_predefined_sorted] = sort(format(:,1));
-    predefined_fields = get_valid_and_unique_names(predefined_names);
+    predefined_fields = wit.io.fun.get_valid_and_unique_names(predefined_names);
     predefined_values = format(ind_predefined_sorted,2);
 
     % Sort children by names
@@ -83,7 +83,7 @@ function DataTree_set(parent, in, format),
     % missing children). Predefined names are converted first in order to
     % retain self-consistency of generated fields in case of duplicates.
     bw_children = [ind_child(:)~=0; true(sum(~bw_match_children), 1)];
-    all_existing_fields = get_valid_and_unique_names([predefined_names(:).' children_names(~bw_match_children)]);
+    all_existing_fields = wit.io.fun.get_valid_and_unique_names([predefined_names(:).' children_names(~bw_match_children)]);
     ind = [reshape(ind_child(ind_child~=0), [], 1); find(~bw_match_children(:))];
     children_fields(ind) = all_existing_fields(bw_children);
 

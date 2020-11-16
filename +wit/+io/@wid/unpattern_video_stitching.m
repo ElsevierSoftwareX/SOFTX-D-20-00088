@@ -16,7 +16,7 @@ function [obj, N_bests, Datas] = unpattern_video_stitching(obj, varargin),
     N_bests = nan(size(obj));
     
     % Check if TDText was specified and keep only valid objects
-    TDText = varargin_dashed_str_datas('TDText', varargin);
+    TDText = wit.io.parse.varargin_dashed_str_datas('TDText', varargin);
     TDText = TDText(cellfun(@(x) isa(x, 'wit.io.wid'), TDText)); % Keep only wid
     TDText = cellfun(@(x) x(:), TDText, 'UniformOutput', false); % Force to column vectors
     TDText = cat(1, TDText{:}); % Merge column vectors to a single column vector

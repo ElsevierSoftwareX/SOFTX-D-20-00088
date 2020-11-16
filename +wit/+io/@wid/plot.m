@@ -42,12 +42,12 @@ function h = plot(obj, varargin),
     srcCopyingQueue = [];
     evtCopyingQueue = [];
     
-    showSidebar = ~varargin_dashed_str_exists('nosidebar', varargin); % By default, show sidebar
-    showPreview = ~varargin_dashed_str_exists('nopreview', varargin); % By default, show preview
-    showCursor = ~varargin_dashed_str_exists('nocursor', varargin); % By default, show cursor
-    showPosition = varargin_dashed_str_datas('position', varargin);
-    [showScalebar, vararginScalebar] = varargin_dashed_str_exists_and_datas('scalebar', varargin);
-    obj_compare = varargin_dashed_str_datas('compare', varargin);
+    showSidebar = ~wit.io.parse.varargin_dashed_str_exists('nosidebar', varargin); % By default, show sidebar
+    showPreview = ~wit.io.parse.varargin_dashed_str_exists('nopreview', varargin); % By default, show preview
+    showCursor = ~wit.io.parse.varargin_dashed_str_exists('nocursor', varargin); % By default, show cursor
+    showPosition = wit.io.parse.varargin_dashed_str_datas('position', varargin);
+    [showScalebar, vararginScalebar] = wit.io.parse.varargin_dashed_str_exists_and_datas('scalebar', varargin);
+    obj_compare = wit.io.parse.varargin_dashed_str_datas('compare', varargin);
     fun_auto = @(x) true; % By default, enable autoscaling
     
     Name = obj.Name;
@@ -74,8 +74,8 @@ function h = plot(obj, varargin),
     set(Fig, 'Units', Units); % Restore Units
     
     % Mask Data
-    MaskDatas = varargin_dashed_str_datas('mask', varargin);
-    for ii = 1:numel(MaskDatas), [~, Data] = data_mask(Data, MaskDatas{ii}.Data); end
+    MaskDatas = wit.io.parse.varargin_dashed_str_datas('mask', varargin);
+    for ii = 1:numel(MaskDatas), [~, Data] = wit.io.fun.data_mask(Data, MaskDatas{ii}.Data); end
     
     if ~isempty(Data),
         switch(obj.Type),
@@ -312,14 +312,14 @@ function h = plot(obj, varargin),
     function updateGraphVolume(filter_range),
         set(0, 'CurrentFigure', Fig);
         Data_range = wit.io.wid.crop_Graph_with_bg_helper(Data, Info.Graph, filter_range);
-        data_plot_Volume(mynansum(Data_range, 3));
+        data_plot_Volume(wit.io.fun.mynansum(Data_range, 3));
     end
     % Update Graph Image
     function updateGraphImage(filter_range),
         set(0, 'CurrentFigure', Fig);
         Data_range = wit.io.wid.crop_Graph_with_bg_helper(Data, Info.Graph, filter_range);
         bw_isnan_3rd_dim = all(isnan(Data_range), 3); % Test if all NaN in the same location
-        sum_3rd_dim = mynansum(Data_range, 3);
+        sum_3rd_dim = wit.io.fun.mynansum(Data_range, 3);
         sum_3rd_dim(bw_isnan_3rd_dim) = NaN; % Restore NaN if all NaN in the same location
         plot_Image(sum_3rd_dim, Info.DataUnit, Info.XUnit, Info.XLength, Info.YLength);
     end
@@ -330,7 +330,7 @@ function h = plot(obj, varargin),
             isBusy = true; % Set busy flag true
             % Create figure on demand
             if isempty(Fig_sub) || ~ishandle(Fig_sub), 
-                Fig_sub = invisible_figure(floor(rem(now, 1)*86400000)); % Produce unique (invisible) figure
+                Fig_sub = wit.io.fun.plot.invisible_figure(floor(rem(now, 1)*86400000)); % Produce unique (invisible) figure
                 set(Fig_sub, 'Name', sprintf('PREVIEW of %s', obj.Name), 'NumberTitle', 'off');
                 Units = get(Fig_sub, 'Units'); % Store Units
                 set(Fig_sub, 'Units', 'centimeters'); % Units to centimeters
@@ -394,7 +394,7 @@ function h = plot(obj, varargin),
         % Otherwise update data
         else,
             set(h_sub(1), 'YData', Data(indX,indY,:));
-            if fun_auto(), autoaxis(get(h_sub(1), 'Parent'), Info.Graph, Data(indX,indY,:)); end
+            if fun_auto(), wit.io.fun.plot.autoaxis(get(h_sub(1), 'Parent'), Info.Graph, Data(indX,indY,:)); end
             counter = 0;
             for ii = 1:numel(obj_compare),
                 C_compare = obj_compare{ii};
@@ -420,9 +420,9 @@ function h = plot(obj, varargin),
         if size(Data, 3) == 1, % Plot grayscale data
             if ~islogical(Data),
                 % Get smart 4-sigmas range for best visibility using clever statistics
-                [~, ~, ~, ~, ~, cmin, cmax] = clever_statistics_and_outliers(Data, [], 4);
-                if cmin == cmax || isnan(cmin) || isnan(cmax), h = nanimagesc(Data);
-                else, h = nanimagesc(Data, [cmin cmax]); end
+                [~, ~, ~, ~, ~, cmin, cmax] = wit.io.fun.clever_statistics_and_outliers(Data, [], 4);
+                if cmin == cmax || isnan(cmin) || isnan(cmax), h = wit.io.fun.plot.nanimagesc(Data);
+                else, h = wit.io.fun.plot.nanimagesc(Data, [cmin cmax]); end
             else, h = imagesc(Data); end % Plot logical data
 %             colormap(wit.io.lib.perceptually_uniform_colormap('inferno')); % Use inferno by default
             colorbar('HitTest', 'off'); % HitTest 'off' added for backward compability of wit.io.ui.sidebar_cursor
@@ -436,7 +436,7 @@ function h = plot(obj, varargin),
             'XColor', [0 0 0], 'YColor', [0 0 0], 'LineWidth', 1);
 
         if nargin > 1 && ~isempty(DataUnit), title(DataUnit, 'Interpreter', 'none'); end
-        if nargin > 4, add_ticks_to_image( size(Data, 2), size(Data, 1), SideWidth, SideHeight, SideUnit ); end
+        if nargin > 4, wit.io.fun.plot.add_ticks_to_image( size(Data, 2), size(Data, 1), SideWidth, SideHeight, SideUnit ); end
     end
 
     function h = plot_Spectrum(Fig, X, XUnit, Y, YUnit, fun, isAuto),
@@ -450,7 +450,7 @@ function h = plot(obj, varargin),
 
         if isAuto,
             h = fun(Ax, X(:), Y(:));
-            autoaxis(Ax, X, Y);
+            wit.io.fun.plot.autoaxis(Ax, X, Y);
         else, % Preserve scaling
             XLim = get(Ax, 'XLim');
             YLim = get(Ax, 'YLim');

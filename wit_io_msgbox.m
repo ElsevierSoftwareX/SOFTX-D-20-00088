@@ -35,22 +35,22 @@ function h = wit_io_msgbox(message, varargin),
     end
     
     % Check if Icon was specified
-    datas = varargin_dashed_str_datas('Icon', varargin, -3);
+    datas = wit.io.parse.varargin_dashed_str_datas('Icon', varargin, -3);
     icon = {'custom', default_icondata, default_iconcmap}; % Default
     if numel(datas) > 0, icon(1:numel(datas)) = datas; end
     
     % Check if WindowStyle was specified
-    datas = varargin_dashed_str_datas('WindowStyle', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('WindowStyle', varargin, -1);
     WindowStyle = 'modal'; % Default
     if numel(datas) > 0, WindowStyle = datas{1}; end
     
     % Check if Interpreter was specified
-    datas = varargin_dashed_str_datas('Interpreter', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('Interpreter', varargin, -1);
     Interpreter = 'tex'; % Default
     if numel(datas) > 0, Interpreter = datas{1}; end
     
     % Check if Title was specified
-    datas = varargin_dashed_str_datas('Title', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('Title', varargin, -1);
     title = 'wit_io''s Dialog'; % Default
     if ~strcmp(icon{1}, 'none') && ~strcmp(icon{1}, 'custom'),
         title = sprintf('wit_io''s %s Dialog', [upper(icon{1}(1)) icon{1}(2:end)]);
@@ -58,7 +58,7 @@ function h = wit_io_msgbox(message, varargin),
     if numel(datas) > 0, title = datas{1}; end
     
     % Check if TextWrapping was specified
-    datas = varargin_dashed_str_datas('TextWrapping', varargin, -2);
+    datas = wit.io.parse.varargin_dashed_str_datas('TextWrapping', varargin, -2);
     TextWrapping = {true}; % Default
     if numel(datas) > 0, TextWrapping = datas; end
     
@@ -115,7 +115,7 @@ function h = wit_io_msgbox(message, varargin),
             Units = get(h_MessageBox, 'Units');
             set(h_MessageBox, 'Units', TextWrapping{2});
         end
-        mytextwrap(h_MessageBox, max_width); % Rewrap the text
+        wit.io.fun.plot.mytextwrap(h_MessageBox, max_width); % Rewrap the text
         if numel(TextWrapping) > 1 && ~islogical(TextWrapping{1}),
             set(h_MessageBox, 'Units', Units);
         end

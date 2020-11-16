@@ -56,7 +56,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(C i.)} Recalibrating the R
 Range_0 = [-25 25]; % Rayleigh-peak or 0-peak
 O_Point_old = O_Point.copy(); % Store the old data for comparison purposes
 O_0 = O_Point.filter_gaussian({'-silent'}, Range_0); % Gauss filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
-[~, Rayleigh_rel_invcm] = clever_statistics_and_outliers(O_0(2).Data, [], 4); % Calculate mean using clever 4-sigmas statistics (Robust against outliers)
+[~, Rayleigh_rel_invcm] = wit.io.fun.clever_statistics_and_outliers(O_0(2).Data, [], 4); % Calculate mean using clever 4-sigmas statistics (Robust against outliers)
 Rayleigh_nm = O_Point.interpret_Graph('(nm)', Rayleigh_rel_invcm); % Calculate mean excitation wavelength
 O_Point_Info_GraphInterpretation = O_Point.Info.GraphInterpretation; % Make line below backward compatible with R2011a
 O_Point_Info_GraphInterpretation.Data.TDSpectralInterpretation.ExcitationWaveLength = Rayleigh_nm; % Permanently recalibrate the Rayleigh peak to zero!
@@ -130,15 +130,15 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(C iii.)} Clean-up of the f
 % Get invalid areas and modify I, Pos, Fwhm and I0
 R_2_threshold = 0.2; % A rough threshold for very poorly fitted data
 [bw_D_invalid, O_D(1).Data, O_D(2).Data, O_D(3).Data, O_D(4).Data] = ...
-    data_true_and_nan_collective_hole_reduction(O_D(5).Data<R_2_threshold, ...
+    wit.io.fun.data_true_and_nan_collective_hole_reduction(O_D(5).Data<R_2_threshold, ...
     O_D(1).Data, O_D(2).Data, O_D(3).Data, O_D(4).Data);
 O_D(7).Data(repmat(bw_D_invalid, [1 1 size(O_D(7).Data, 3)])) = NaN; % Set invalid Fit results to NaN
 [bw_G_invalid, O_G(1).Data, O_G(2).Data, O_G(3).Data, O_G(4).Data] = ...
-    data_true_and_nan_collective_hole_reduction(O_G(5).Data<R_2_threshold, ...
+    wit.io.fun.data_true_and_nan_collective_hole_reduction(O_G(5).Data<R_2_threshold, ...
     O_G(1).Data, O_G(2).Data, O_G(3).Data, O_G(4).Data);
 O_G(7).Data(repmat(bw_G_invalid, [1 1 size(O_G(7).Data, 3)])) = NaN; % Set invalid Fit results to NaN
 [bw_2D_invalid, O_2D(1).Data, O_2D(2).Data, O_2D(3).Data, O_2D(4).Data] = ...
-    data_true_and_nan_collective_hole_reduction(O_2D(5).Data<R_2_threshold, ...
+    wit.io.fun.data_true_and_nan_collective_hole_reduction(O_2D(5).Data<R_2_threshold, ...
     O_2D(1).Data, O_2D(2).Data, O_2D(3).Data, O_2D(4).Data);
 O_2D(7).Data(repmat(bw_2D_invalid, [1 1 size(O_2D(7).Data, 3)])) = NaN; % Set invalid Fit results to NaN
 
@@ -157,8 +157,8 @@ O_I_2DperG.Name = 'Cleaned<I(2D)/I(G)';
 % of of filter_sum to estimate areas under the Raman peaks.
 
 figure;
-subplot(1, 2, 1); nanimagesc(O_I_DperG.Data.'); daspect([1 1 1]); title(O_I_DperG.Name);
-subplot(1, 2, 2); nanimagesc(O_I_2DperG.Data.'); daspect([1 1 1]); title(O_I_2DperG.Name);
+subplot(1, 2, 1); wit.io.fun.plot.nanimagesc(O_I_DperG.Data.'); daspect([1 1 1]); title(O_I_DperG.Name);
+subplot(1, 2, 2); wit.io.fun.plot.nanimagesc(O_I_2DperG.Data.'); daspect([1 1 1]); title(O_I_2DperG.Name);
 
 wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 close all;

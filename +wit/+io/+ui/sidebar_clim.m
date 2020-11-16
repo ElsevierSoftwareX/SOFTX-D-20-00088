@@ -56,7 +56,7 @@ function [fun_refresh, h_edit_1, h_edit_2, h_button_1, h_button_2, h_button_3, h
         h_image = findobj(Ax, 'Type', 'image');
         CData = get(h_image, 'CData');
         if ~isempty(CData),
-            set(h_image, 'CData', apply_MRLCM(CData, 1)); % Preserve ratios (i.e. A, I, Sum)
+            set(h_image, 'CData', wit.io.fun.correct.apply_MRLCM(CData, 1)); % Preserve ratios (i.e. A, I, Sum)
         end
     end
     
@@ -64,7 +64,7 @@ function [fun_refresh, h_edit_1, h_edit_2, h_button_1, h_button_2, h_button_3, h
         h_image = findobj(Ax, 'Type', 'image');
         CData = get(h_image, 'CData');
         if ~isempty(CData),
-            set(h_image, 'CData', apply_MDLCA(CData, 1)); % Preserve differences (i.e. Fwhm, Pos)
+            set(h_image, 'CData', wit.io.fun.correct.apply_MDLCA(CData, 1)); % Preserve differences (i.e. Fwhm, Pos)
         end
     end
     
@@ -72,7 +72,7 @@ function [fun_refresh, h_edit_1, h_edit_2, h_button_1, h_button_2, h_button_3, h
         % Get smart 4-sigmas range for best visibility using clever statistics
         CData = get(findobj(Ax, 'Type', 'image'), 'CData');
         if ~isempty(CData),
-            [~, ~, ~, ~, ~, cmin, cmax] = clever_statistics_and_outliers(CData, [], 4);
+            [~, ~, ~, ~, ~, cmin, cmax] = wit.io.fun.clever_statistics_and_outliers(CData, [], 4);
             if cmin == cmax || isnan(cmin) || isnan(cmax), return; end % Must not be equivalent or NaN!
             set(h_edit_1, 'String', sprintf('%g', cmin));
             set(h_edit_2, 'String', sprintf('%g', cmax));

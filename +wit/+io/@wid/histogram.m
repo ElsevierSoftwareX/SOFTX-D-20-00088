@@ -21,18 +21,18 @@ function [new_obj, Bin_Counts, Bin_Centers] = histogram(obj, N_bins, lower_quant
     Data = obj.Data(:);
     Method_bins = '';
     if numel(Data) > 1,
-%         [~, ~, ~, ~, ~, cmin, cmax] = clever_statistics_and_outliers(Data, [], 4);
+%         [~, ~, ~, ~, ~, cmin, cmax] = wit.io.fun.clever_statistics_and_outliers(Data, [], 4);
 %         Data_lower_quantile = interp1([0 1], [cmin cmax], lower_quantile, 'linear'); % Approximate lower quantile
 %         Data_upper_quantile = interp1([0 1], [cmin cmax], upper_quantile, 'linear'); % Approximate upper quantile
-        Data_lower_quantile = vector_quantile(Data, lower_quantile);
-        Data_upper_quantile = vector_quantile(Data, upper_quantile);
+        Data_lower_quantile = wit.io.fun.vector_quantile(Data, lower_quantile);
+        Data_upper_quantile = wit.io.fun.vector_quantile(Data, upper_quantile);
         Data_extra = (Data_upper_quantile-Data_lower_quantile)/2*(range_scaling-1);
         if ischar(N_bins), % If a method is specified
             Method_bins = [N_bins ': '];
             N_samples = sum(~isnan(Data));
             switch(N_bins),
                 case 'Freedman-Diaconis',
-                    IQ = vector_quantile(Data, [0.25 0.75]);
+                    IQ = wit.io.fun.vector_quantile(Data, [0.25 0.75]);
                     IQR = IQ(2) - IQ(1);
                     h = 2 .* IQR .* N_samples.^(-1./3);
                     N_bins = ceil((Data_upper_quantile - Data_lower_quantile + 2.*Data_extra)./h);

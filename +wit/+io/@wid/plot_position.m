@@ -23,17 +23,17 @@ function h_position = plot_position(obj, FigAxNeither, varargin),
     if ~strcmp(obj.SubType, 'Image'), return; end % Exit if not an Image
     
     % Check if markImageFun was specified
-    datas = varargin_dashed_str_datas('markImageFun', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('markImageFun', varargin, -1);
     markImage = @wit.io.wid.plot_position_Image_helper;
     if numel(datas) > 0, markImage = datas{1}; end
     
     % Check if markLineFun was specified
-    datas = varargin_dashed_str_datas('markLineFun', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('markLineFun', varargin, -1);
     markLine = @wit.io.wid.plot_position_Line_helper;
     if numel(datas) > 0, markLine = datas{1}; end
     
     % Check if markPointFun was specified
-    datas = varargin_dashed_str_datas('markPointFun', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('markPointFun', varargin, -1);
     markPoint = @wit.io.wid.plot_position_Point_helper;
     if numel(datas) > 0, markPoint = datas{1}; end
     

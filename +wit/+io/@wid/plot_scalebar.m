@@ -50,7 +50,7 @@ function h_scalebar = plot_scalebar(obj, FigAxNeither, varargin),
     if ~strcmp(obj.SubType, 'Image'), return; end % Exit if not an Image
     
     % Check if markScalebarFun was specified
-    [datas, varargin] = varargin_dashed_str_datas('markScalebarFun', varargin, -1);
+    [datas, varargin] = wit.io.parse.varargin_dashed_str_datas('markScalebarFun', varargin, -1);
     markScalebar = @wit.io.wid.plot_scalebar_helper;
     if numel(datas) > 0, markScalebar = datas{1}; end
     

@@ -51,13 +51,13 @@ function [Data_range, Graph_range, Data_range_bg, range] = crop_Graph_with_bg_he
     
     % Calculate lower background averaging
     [Data_start, Graph_start] = quick_indexing(idx_lower-bg_avg_lower, idx_lower-1);
-    Data_mean_start = mynanmean(Data_start, 3);
-    Graph_mean_start = mynanmean(Graph_start, 3);
+    Data_mean_start = wit.io.fun.mynanmean(Data_start, 3);
+    Graph_mean_start = wit.io.fun.mynanmean(Graph_start, 3);
     
     % Calculate upper background averaging
     [Data_end, Graph_end] = quick_indexing(idx_upper+1, idx_upper+bg_avg_upper);
-    Data_mean_end = mynanmean(Data_end, 3);
-    Graph_mean_end = mynanmean(Graph_end, 3);
+    Data_mean_end = wit.io.fun.mynanmean(Data_end, 3);
+    Graph_mean_end = wit.io.fun.mynanmean(Graph_end, 3);
     
     % If no lower background averaging
     Graph_mean_start(isnan(Graph_mean_start)) = Graph_mean_end(isnan(Graph_mean_start));

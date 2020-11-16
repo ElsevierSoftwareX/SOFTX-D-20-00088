@@ -32,7 +32,7 @@ function sidebar_export(Fig),
     N_formats = size(formats, 1);
     % Add CROPPED versions of the formats
     formats(end+1:end+2,1) = formats(1:2,1);
-    formats(end-1:end,2) = anyfun2cell(@(x) sprintf('CROP >> %s', x{1}), formats(1:2,2));
+    formats(end-1:end,2) = wit.io.fun.anyfun2cell(@(x) sprintf('CROP >> %s', x{1}), formats(1:2,2));
     [filename, pathname, filterindex] = uiputfile(formats, 'Export figure >> 600 DPI >> ...', wit_io_pref_get('latest_folder', cd));
     
     % Export if filename is provided

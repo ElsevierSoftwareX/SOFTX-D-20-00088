@@ -115,64 +115,64 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     %% Parsing the varargin
     
     % Parse varargin before any dashed str
-    out = varargin_dashed_str_removed('', varargin);
+    out = wit.io.parse.varargin_dashed_str_removed('', varargin);
     N_test = [];
     if numel(out) > 0, N_test = out{1}; end
     
     % Parse varargin input
-    RestoreTooBright = varargin_dashed_str_exists('RestoreTooBright', varargin); % By default, do not restore too bright
-    IsFlat = varargin_dashed_str_exists('Flat', varargin); % By default, do not assume flatness
-    AdditiveMode = varargin_dashed_str_exists('AdditiveMode', varargin); % By default, fix in a multiplicative mode
-    UseMedian = varargin_dashed_str_exists('UseMedian', varargin); % By default, use mean values
-    RollingWindowAnalysis = varargin_dashed_str_exists('RollingWindowAnalysis', varargin); % By default, smoothen the image
-    GlobalRollingWindowAnalysis = varargin_dashed_str_exists('GlobalRollingWindowAnalysis', varargin); % By default, smoothen the image
-    CropEdgePatterns = varargin_dashed_str_exists('Crop', varargin); % By default, do not crop the image
-    AutoIgnoreChannels = ~varargin_dashed_str_exists('DisableAutoIgnoreChannels', varargin); % By default, automatically ignore channels that have 50% too dark or too bright in the image
-    NoReferences = ~varargin_dashed_str_exists('BestContinuity', varargin); % By default, do not use references to improve the pattern-to-pattern continuity
-    Debug = varargin_dashed_str_exists('Debug', varargin); % By default, do not show Debug visuals
+    RestoreTooBright = wit.io.parse.varargin_dashed_str_exists('RestoreTooBright', varargin); % By default, do not restore too bright
+    IsFlat = wit.io.parse.varargin_dashed_str_exists('Flat', varargin); % By default, do not assume flatness
+    AdditiveMode = wit.io.parse.varargin_dashed_str_exists('AdditiveMode', varargin); % By default, fix in a multiplicative mode
+    UseMedian = wit.io.parse.varargin_dashed_str_exists('UseMedian', varargin); % By default, use mean values
+    RollingWindowAnalysis = wit.io.parse.varargin_dashed_str_exists('RollingWindowAnalysis', varargin); % By default, smoothen the image
+    GlobalRollingWindowAnalysis = wit.io.parse.varargin_dashed_str_exists('GlobalRollingWindowAnalysis', varargin); % By default, smoothen the image
+    CropEdgePatterns = wit.io.parse.varargin_dashed_str_exists('Crop', varargin); % By default, do not crop the image
+    AutoIgnoreChannels = ~wit.io.parse.varargin_dashed_str_exists('DisableAutoIgnoreChannels', varargin); % By default, automatically ignore channels that have 50% too dark or too bright in the image
+    NoReferences = ~wit.io.parse.varargin_dashed_str_exists('BestContinuity', varargin); % By default, do not use references to improve the pattern-to-pattern continuity
+    Debug = wit.io.parse.varargin_dashed_str_exists('Debug', varargin); % By default, do not show Debug visuals
     
-%     EdgePatterns = ~varargin_dashed_str_exists('DisableEdgePatterns', varargin); % By default, enable edge patterns
+%     EdgePatterns = ~wit.io.parse.varargin_dashed_str_exists('DisableEdgePatterns', varargin); % By default, enable edge patterns
 % '-DisableEdgePatterns': Disables the edge pattern calculations. Can be
 % provided with [left, right, top, bottom] input for customization.
 
     % Check if Outliers was specified
-    datas = varargin_dashed_str_datas('Outliers', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('Outliers', varargin, -1);
     B_Outliers = false(W, H);
     if numel(datas) > 0, B_Outliers = datas{1}; end
 
     % Check if MinSigmasThreshold was specified
-    datas = varargin_dashed_str_datas('MinSigmasThreshold', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('MinSigmasThreshold', varargin, -1);
     MinSigmasThreshold = 2; % 2.25 % Too low (<~2) begins to label true data as outliers but too high (>~4) is contaminated by outliers
     if numel(datas) > 0, MinSigmasThreshold = datas{1}; end
     
     % Check if TrueBlackColor was specified
-    datas = varargin_dashed_str_datas('TrueBlackColor', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('TrueBlackColor', varargin, -1);
     TrueBlackColor = 0;
     if numel(datas) > 0, TrueBlackColor = datas{1}; end
     TrueBlackColor = reshape(TrueBlackColor, 1, 1, []); % Enforce correct shape
     
     % Check if LocalWindowSize was specified
-    datas = varargin_dashed_str_datas('LocalWindowSize', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('LocalWindowSize', varargin, -1);
     LocalWindowSize = 17;
     if numel(datas) > 0, LocalWindowSize = datas{1}; end
     
     % Check if OverlapRatio was specified
-    datas = varargin_dashed_str_datas('OverlapRatio', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('OverlapRatio', varargin, -1);
     OverlapRatio = 0.05; % Interpreted from experimental data
     if numel(datas) > 0, OverlapRatio = datas{1}; end
     
     % Check if LowResMaxPixels was specified
-    datas = varargin_dashed_str_datas('LowResMaxPixels', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('LowResMaxPixels', varargin, -1);
     LowResMaxPixels = 1024.^2; % Interpreted from experimental data
     if numel(datas) > 0, LowResMaxPixels = datas{1}; end
     
     % Check if HighResMaxPixels was specified
-    datas = varargin_dashed_str_datas('HighResMaxPixels', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('HighResMaxPixels', varargin, -1);
     HighResMaxPixels = 64e6; % Interpreted from experimental data
     if numel(datas) > 0, HighResMaxPixels = datas{1}; end
     
     % Check if IgnoreChannels was specified
-    datas = varargin_dashed_str_datas('IgnoreChannels', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('IgnoreChannels', varargin, -1);
     IgnoreChannels = [];
     if numel(datas) > 0, IgnoreChannels = datas{1}; end
     if numel(IgnoreChannels) == 1, IgnoreChannels = repmat(IgnoreChannels, [1 D]); end
@@ -337,8 +337,8 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     % Smoothen the image before analysis if requested
     if GlobalRollingWindowAnalysis,
         oldclass = class(I);
-        if ~UseMedian, [~, I] = rolling_window_analysis(I, [1 1 0]);
-        else, [~, ~, ~, ~, I] = rolling_window_analysis(I, [1 1 0]); end
+        if ~UseMedian, [~, I] = wit.io.fun.rolling_window_analysis(I, [1 1 0]);
+        else, [~, ~, ~, ~, I] = wit.io.fun.rolling_window_analysis(I, [1 1 0]); end
         I = cast(I, oldclass); % Restore the original image type
         if Debug,
             figure; imshow(permute(uint8(I), [2 1 3])); daspect([1 1 1]); title('Smoothened');
@@ -576,7 +576,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         inds3 = 1:D;
         
         % Generate expanded indices in memory conservative way (avoiding ndgrid and sub2ind and cast)
-        ind_expanded = generic_sub2ind(S_expanded, inds1, inds2, inds3, 'uint32');
+        ind_expanded = wit.io.fun.generic_sub2ind(S_expanded, inds1, inds2, inds3, 'uint32');
         
 %         % Perform linear indexing only once (but apparently slower)
 %         B_expanded = false(S_expanded);
@@ -635,8 +635,8 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         I_test = I_test(ind1_test,ind2_test,:); % Keep the test area
         
         % Evaluate local variance in the test area
-        local_var_test(ii) = mynansum(reshape(mynanstdfilt2(I_test, LocalWindowSize).^2, [], 1)); % Minimize this
-%         local_var_test(ii) = mynansum(reshape(stdfilt(I_test, local_var_kernel).^2, [], 1)); % Minimize this
+        local_var_test(ii) = wit.io.fun.mynansum(reshape(wit.io.fun.mynanstdfilt2(I_test, LocalWindowSize).^2, [], 1)); % Minimize this
+%         local_var_test(ii) = wit.io.fun.mynansum(reshape(stdfilt(I_test, local_var_kernel).^2, [], 1)); % Minimize this
         
         fprintf(' -> Local variance of %g', local_var_test(ii));
         
@@ -662,8 +662,8 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         % Create temporarily hidden figures (if not specified or closed)
         persistent h1 h2;
         if isempty(h1) || isempty(h2) || ~ishandle(h1) || ~ishandle(h2),
-            h1 = invisible_figure;
-            h2 = invisible_figure;
+            h1 = wit.io.fun.plot.invisible_figure;
+            h2 = wit.io.fun.plot.invisible_figure;
         end
         
         % Indices to the patterned region
@@ -699,7 +699,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
             % Make rolling window analysis if requested
             if ~RollingWindowAnalysis, extra_dim = [];,
             else,
-                [I_reshaped, ind_RWA] = rolling_window_analysis_transformation(I_reshaped, [1 1 0 0], true);
+                [I_reshaped, ind_RWA] = wit.io.fun.rolling_window_analysis_transformation(I_reshaped, [1 1 0 0], true);
                 extra_dim = ndims(I_reshaped);
             end
             
@@ -707,28 +707,28 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
             if UseMedian,
                 if ~IsFlat,
                     % Extract blockwise average illumination levels
-                    [~, ~, ~, ~, P_cc_offset] = clever_statistics_and_outliers(I_reshaped, [1 2 extra_dim], 1.5.*MinSigmasThreshold);
+                    [~, ~, ~, ~, P_cc_offset] = wit.io.fun.clever_statistics_and_outliers(I_reshaped, [1 2 extra_dim], 1.5.*MinSigmasThreshold);
                     I_reshaped = bsxfun(@minus, I_reshaped, P_cc_offset);
                 end
-                [B_cc, ~, ~, ~, P_cc] = clever_statistics_and_outliers(I_reshaped, [3 4 extra_dim], MinSigmasThreshold);
+                [B_cc, ~, ~, ~, P_cc] = wit.io.fun.clever_statistics_and_outliers(I_reshaped, [3 4 extra_dim], MinSigmasThreshold);
             else,
                 if ~IsFlat,
                     % Extract blockwise average illumination levels
-                    [~, P_cc_offset, ~, ~, ~] = clever_statistics_and_outliers(I_reshaped, [1 2 extra_dim], 1.5.*MinSigmasThreshold);
+                    [~, P_cc_offset, ~, ~, ~] = wit.io.fun.clever_statistics_and_outliers(I_reshaped, [1 2 extra_dim], 1.5.*MinSigmasThreshold);
                     I_reshaped = bsxfun(@minus, I_reshaped, P_cc_offset);
                 end
-                [B_cc, P_cc, ~, ~, ~] = clever_statistics_and_outliers(I_reshaped, [3 4 extra_dim], MinSigmasThreshold);
+                [B_cc, P_cc, ~, ~, ~] = wit.io.fun.clever_statistics_and_outliers(I_reshaped, [3 4 extra_dim], MinSigmasThreshold);
             end
             
             % Remove mean value to minimize changes to the original image
-            P_offset(cc) = mynanmean(P_cc(:));
+            P_offset(cc) = wit.io.fun.mynanmean(P_cc(:));
             P_cc = P_cc - P_offset(cc);
             
             % Take into account the blockwise averaging
             if ~IsFlat,
                 P_cc_offset = repmat(P_cc_offset, [S_P(1) S_P(2)]);
                 P_cc_offset(B_cc) = NaN;
-                P_offset(cc) = mynanmean(P_cc_offset(:)) + P_offset(cc);
+                P_offset(cc) = wit.io.fun.mynanmean(P_cc_offset(:)) + P_offset(cc);
             end
             
             % Replace NaNs with linearly interpolated values
@@ -757,7 +757,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
             
             if Debug,
                 figure(h1);
-                nanimagesc(P_cc.');
+                wit.io.fun.plot.nanimagesc(P_cc.');
                 daspect([1 1 1]);
                 title(sprintf('Found pattern, color channel = %d', cc));
                 set(h1, 'Visible', 'on'); 
@@ -768,7 +768,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
                 I_reshaped(B_cc) = NaN;
                 
                 figure(h2);
-                nanimagesc(I_reshaped.');
+                wit.io.fun.plot.nanimagesc(I_reshaped.');
                 daspect([1 1 1]);
                 title(sprintf('Used image without outliers, color channel = %d', cc));
                 set(h2, 'Visible', 'on'); 
@@ -830,7 +830,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
             % Preserve pattern-to-pattern continuity using the reference
             if ~NoReferences,
                 edge = P_ss(ind1_ref{ss},ind2_ref{ss},:);
-                [~, cshift] = clever_statistics_and_outliers(-edge, -3, 1); % Here -3 reads as NOT 3rd dimension
+                [~, cshift] = wit.io.fun.clever_statistics_and_outliers(-edge, -3, 1); % Here -3 reads as NOT 3rd dimension
                 P_ss = bsxfun(@plus, P_ss, cshift); % Zero the reference region
             end
             
@@ -896,7 +896,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         
         % Calculate once
         [x_P0, y_P0, z] = ndgrid(1:S_P(1), 1:S_P(2), z);
-        ind_P0 = generic_sub2ind(S_P, x_P0, y_P0, z, '-nobsxfun'); % Call once
+        ind_P0 = wit.io.fun.generic_sub2ind(S_P, x_P0, y_P0, z, '-nobsxfun'); % Call once
         
         % Shift P once
         x_P = mod((1:S_P(1))-P_TopLeft(1), S_P(1))+1; % Shift indices
@@ -1017,9 +1017,9 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
 %         wy_P1 = interp1([min(y_overlap)-1 max(y_overlap)+1], [1 0], y_P1, 'linear');
 %         wy_P2 = interp1([min(y_overlap)-1 max(y_overlap)+1], [0 1], y_P2, 'linear');
 %         
-%         ind_P = generic_sub2ind(S_P, x_P, y_P, z_P);
-%         ind_P1 = generic_sub2ind(S_mix, x_P1, y_P1, z_P);
-%         ind_P2 = generic_sub2ind(S_mix, x_P2, y_P2, z_P);
+%         ind_P = wit.io.fun.generic_sub2ind(S_P, x_P, y_P, z_P);
+%         ind_P1 = wit.io.fun.generic_sub2ind(S_mix, x_P1, y_P1, z_P);
+%         ind_P2 = wit.io.fun.generic_sub2ind(S_mix, x_P2, y_P2, z_P);
 %         
 %         P1 = P;
 %         P1(:,y_P(By1),:) = bsxfun(@times, P1(:,y_P(By1),:), wy_P1(By1));

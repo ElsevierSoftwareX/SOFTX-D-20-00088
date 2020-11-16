@@ -16,29 +16,29 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
     persistent tictoc N_dots_lower N_bytes_lower N_dots_upper N_bytes_upper latest_text latest_text_toc;
     
     % Parse extra inputs: Width
-    parsed = varargin_dashed_str_datas('Width', varargin, -1);
+    parsed = wit.io.parse.varargin_dashed_str_datas('Width', varargin, -1);
     width_in_characters = 50; % By default, use 50 characters wide progress bar
     if numel(parsed) > 0, width_in_characters = parsed{1}; end
     
     % Parse extra inputs: Character
-    parsed = varargin_dashed_str_datas('Character', varargin, -1);
+    parsed = wit.io.parse.varargin_dashed_str_datas('Character', varargin, -1);
     Character = '.'; % By default, use dot '.'
     if numel(parsed) > 0, Character = parsed{1}; end
     
     % Parse extra inputs: FlipStartEnd
-    FlipStartEnd = varargin_dashed_str_exists('FlipStartEnd', varargin);
+    FlipStartEnd = wit.io.parse.varargin_dashed_str_exists('FlipStartEnd', varargin);
     
     % Parse extra inputs: Reverse
-    Reverse = varargin_dashed_str_exists('Reverse', varargin);
+    Reverse = wit.io.parse.varargin_dashed_str_exists('Reverse', varargin);
     
     % Parse extra inputs: OnlyIncreasing
-    OnlyIncreasing = varargin_dashed_str_exists('OnlyIncreasing', varargin);
+    OnlyIncreasing = wit.io.parse.varargin_dashed_str_exists('OnlyIncreasing', varargin);
     
     % Parse extra inputs: OnlyDecreasing
-    OnlyDecreasing = varargin_dashed_str_exists('OnlyDecreasing', varargin);
+    OnlyDecreasing = wit.io.parse.varargin_dashed_str_exists('OnlyDecreasing', varargin);
     
     % Parse extra inputs: TextUpdateInterval
-    parsed = varargin_dashed_str_datas('TextUpdateInterval', varargin, -1);
+    parsed = wit.io.parse.varargin_dashed_str_datas('TextUpdateInterval', varargin, -1);
     TextUpdateInterval = 0.1; % By default, use 100 ms
     if numel(parsed) > 0, TextUpdateInterval = parsed{1}; end
     

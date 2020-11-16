@@ -18,7 +18,7 @@ function Data_merged = merge_Data(obj, dim),
     % uint8/int8 can contain EXACTLY itself and logical.
     % logical can contain EXACTLY itself.
     % otherwise require element-by-element testing to quarantee EXACTNESS or ABORT.
-    [Datas{1:numel(obj)}] = dim_size_consistent_repmat(Datas{:}); % Repmat consistently to permit direct cat-merging
+    [Datas{1:numel(obj)}] = wit.io.fun.dim_size_consistent_repmat(Datas{:}); % Repmat consistently to permit direct cat-merging
     SizeConsistent = size(Datas{1});
     if nargin < 2, % If no dim is given, then automatically add a new dimension or use 2nd or 1st dimension if singletons
         if SizeConsistent(end) == 1,

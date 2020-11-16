@@ -24,7 +24,7 @@ function write(obj, varargin),
     end
     
     % Check if Params was specified
-    Params = varargin_dashed_str_datas('Params', varargin);
+    Params = wit.io.parse.varargin_dashed_str_datas('Params', varargin);
     
     % Determine the required file extension
     switch(obj.Type),

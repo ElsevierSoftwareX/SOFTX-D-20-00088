@@ -17,7 +17,7 @@ if isempty(O_wid_w_Rayleigh), return; end
 % Gauss-fit the Rayleigh-peak and find its wavelength
 Range_0 = [-25 25]; % Rayleigh-peak
 C_0 = O_wid_w_Rayleigh.filter_gaussian(Range_0); % Gauss filtering with removal of linear background.
-[~, Rayleigh_rel_invcm] = clever_statistics_and_outliers(C_0(2).Data, [], 4); % Calculate mean using clever 4-sigmas statistics (Robust against outliers)
+[~, Rayleigh_rel_invcm] = wit.io.fun.clever_statistics_and_outliers(C_0(2).Data, [], 4); % Calculate mean using clever 4-sigmas statistics (Robust against outliers)
 Rayleigh_nm = O_wid_w_Rayleigh.interpret_Graph('(nm)', Rayleigh_rel_invcm); % Calculate mean excitation wavelength
 
 % Load and select the datas of interest

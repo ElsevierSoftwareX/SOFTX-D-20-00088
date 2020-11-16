@@ -9,26 +9,26 @@ function O_wid = manager(obj, varargin),
     % START OF VARARGIN PARSING
     
     % Parse extra arguments
-    show_all = varargin_dashed_str_exists('all', varargin); % By default, show only all plottable
-    is_multiple_selection = ~varargin_dashed_str_exists('singlesection', varargin); % By default, multiple selection
-    show_indices = varargin_dashed_str_exists('indices', varargin); % By default, do not show indices
-    show_sorted = ~varargin_dashed_str_exists('nosort', varargin); % By default, show sorted
-    show_manager = ~varargin_dashed_str_exists('nomanager', varargin); % By default, show manager
-    show_preview = ~varargin_dashed_str_exists('nopreview', varargin); % By default, show preview
-    close_preview = varargin_dashed_str_exists('closepreview', varargin); % By default, keep preview figures opened
+    show_all = wit.io.parse.varargin_dashed_str_exists('all', varargin); % By default, show only all plottable
+    is_multiple_selection = ~wit.io.parse.varargin_dashed_str_exists('singlesection', varargin); % By default, multiple selection
+    show_indices = wit.io.parse.varargin_dashed_str_exists('indices', varargin); % By default, do not show indices
+    show_sorted = ~wit.io.parse.varargin_dashed_str_exists('nosort', varargin); % By default, show sorted
+    show_manager = ~wit.io.parse.varargin_dashed_str_exists('nomanager', varargin); % By default, show manager
+    show_preview = ~wit.io.parse.varargin_dashed_str_exists('nopreview', varargin); % By default, show preview
+    close_preview = wit.io.parse.varargin_dashed_str_exists('closepreview', varargin); % By default, keep preview figures opened
     
     % Check if Title was specified
-    datas = varargin_dashed_str_datas('Title', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('Title', varargin, -1);
     Title = '';
     if numel(datas) > 0, Title = datas{1}; end
     
     % Check if Type was specified
-    datas = varargin_dashed_str_datas('Type', varargin);
+    datas = wit.io.parse.varargin_dashed_str_datas('Type', varargin);
     Type = {'TDBitmap', 'TDGraph', 'TDImage', 'TDText'}; % Default
     if numel(datas) > 0, Type = datas; end
     
     % Check if SubType was specified
-    datas = varargin_dashed_str_datas('SubType', varargin);
+    datas = wit.io.parse.varargin_dashed_str_datas('SubType', varargin);
     SubType = {};
     if numel(datas) > 0, SubType = datas; end
     
@@ -38,7 +38,7 @@ function O_wid = manager(obj, varargin),
     SubType(end+1:numel(Type)) = {''}; % Extend
     
     % Check if Data was specified
-    datas = varargin_dashed_str_datas('Data', varargin, -1);
+    datas = wit.io.parse.varargin_dashed_str_datas('Data', varargin, -1);
     O_wid = obj.Data; % Get all the objects in the project % ASSUMING THAT PROJECT HAS SELF-CONSISTENT WID-DATA!
     if numel(datas) > 0, O_wid = datas{1}; end
     if isempty(O_wid), return; end % Exit if no project data
@@ -268,7 +268,7 @@ function O_wid = manager(obj, varargin),
                 idx = find(isnan(indices), 1, 'first'); % Find next NaN index
                 indices(idx) = next_indices(jj); % Store current truly new index
                 if isPreview, 
-                    invisible_figure(idx+fig_offset); % Create new invisible figure
+                    wit.io.fun.plot.invisible_figure(idx+fig_offset); % Create new invisible figure
                     plot(O_wid(next_indices(jj))); % Show data
                     waitbar(jj / N_new);
                 end

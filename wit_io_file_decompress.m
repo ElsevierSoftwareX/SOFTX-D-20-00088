@@ -86,7 +86,7 @@ function [files, datas] = wit_io_file_decompress(file, varargin),
     if ~jf.exists(), return; end % Abort if does not exist
     
     % Parse extra inputs: Decompressor
-    parsed = varargin_dashed_str_datas('Decompressor', varargin, -1);
+    parsed = wit.io.parse.varargin_dashed_str_datas('Decompressor', varargin, -1);
     Decompressor = []; % By default, determine decompressor from the file extension
     if numel(parsed) > 0, Decompressor = parsed{1}; end
     if isempty(Decompressor), [~, ~, Decompressor] = fileparts(file); end
@@ -117,16 +117,16 @@ function [files, datas] = wit_io_file_decompress(file, varargin),
     jrt = java.lang.Runtime.getRuntime();
     
     % Parse extra inputs: MaxBlockSize
-    parsed = varargin_dashed_str_datas('MaxBlockSize', varargin, -1);
+    parsed = wit.io.parse.varargin_dashed_str_datas('MaxBlockSize', varargin, -1);
     MaxBlockSize = 64.*1024.^2; % By default, 64 MB max blocksize per read
     if numel(parsed) > 0, MaxBlockSize = parsed{1}; end
     
     % Parse extra inputs: MaxSubBlockSize
-    parsed = varargin_dashed_str_datas('MaxSubBlockSize', varargin, -1);
+    parsed = wit.io.parse.varargin_dashed_str_datas('MaxSubBlockSize', varargin, -1);
     if numel(parsed) > 0, MaxSubBlockSize = parsed{1}; end
     
     % Parse extra inputs: Files
-    Files = varargin_dashed_str_datas('Files', varargin);
+    Files = wit.io.parse.varargin_dashed_str_datas('Files', varargin);
     for ii = numel(Files):-1:1,
         if iscell(Files{ii}),
             Files = [Files(1:ii-1) Files(ii+1:end) Files{ii}]; % If a cell was provided, then append its contents to the end
@@ -134,16 +134,16 @@ function [files, datas] = wit_io_file_decompress(file, varargin),
     end
     
     % Parse extra inputs: DataSizes
-    DataSizes = varargin_dashed_str_exists('DataSizes', varargin);
+    DataSizes = wit.io.parse.varargin_dashed_str_exists('DataSizes', varargin);
     
     % Parse extra inputs: FilterExtension
-    FilterExtension = varargin_dashed_str_datas('FilterExtension', varargin);
+    FilterExtension = wit.io.parse.varargin_dashed_str_datas('FilterExtension', varargin);
     
     % Parse extra inputs: FilterRegexp
-    FilterRegexp = varargin_dashed_str_datas('FilterRegexp', varargin);
+    FilterRegexp = wit.io.parse.varargin_dashed_str_datas('FilterRegexp', varargin);
     
     % Parse extra inputs: ProgressBar
-    [ProgressBar, parsed] = varargin_dashed_str_exists_and_datas('ProgressBar', varargin, -1);
+    [ProgressBar, parsed] = wit.io.parse.varargin_dashed_str_exists_and_datas('ProgressBar', varargin, -1);
     if ProgressBar, ProgressBar = @wit.io.wit.progress_bar; end
     if numel(parsed) > 0, ProgressBar = parsed{1}; end
     verbose = isa(ProgressBar, 'function_handle');

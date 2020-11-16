@@ -25,7 +25,7 @@ for ii = 1:numel(O_wid),
     waitbar((ii-1)/numel(O_wid), h, sprintf('Processing data %d/%d. Please wait...', ii, numel(O_wid)));
     if makecopies, O_wid_new = O_wid(ii).copy(); % Make a copy
     else, O_wid_new = O_wid(ii); end % Do not make a copy
-    [~, O_wid_new.Data] = clever_statistics_and_outliers(O_wid_new.Data, 1, 4);
+    [~, O_wid_new.Data] = wit.io.fun.clever_statistics_and_outliers(O_wid_new.Data, 1, 4);
     O_wid_new.SubType = 'Point';
     O_wid_new.Name = sprintf('Clever Mean<%s', O_wid_new.Name);
 end

@@ -16,8 +16,8 @@ function [new_obj, I, Pos, Fwhm_L, I0, Fwhm_G, R2, Residuals, Fit] = filter_voig
     [new_obj, I, Pos, Fwhm_L, I0, Fwhm_G, R2, Residuals, Fit] = obj.filter_fun(@fun, str_fun, varargin{:});
     
     function [F, I_new] = fun(I, X, dim),
-        P0 = fit_lineshape_automatic_guess(X, I, dim);
-        [P, R2, SSres, Y_fit] = fit_lineshape_voigtian(X, I, P0, dim, opts{:});
+        P0 = wit.io.fun.fit.fit_lineshape_automatic_guess(X, I, dim);
+        [P, R2, SSres, Y_fit] = wit.io.fun.fit.fit_lineshape_voigtian(X, I, P0, dim, opts{:});
         F = cat(dim, P, R2, SSres);
         I_new = Y_fit; % Tell filter_fun to create a new TDGraph for this
     end
