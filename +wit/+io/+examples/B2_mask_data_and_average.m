@@ -22,14 +22,14 @@ wit.io.misc.license;
 h = wit.io.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 2 B:}' ...
     '{\bf\fontsize{12}DATA MASKING AND SPATIAL AVERAGING}' ...
     '' ...
-    '\bullet Using ''E\_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'});
+    '\bullet Using ''A\_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'});
 wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-[O_wid, O_wip, O_wid_HtmlNames] = wit.io.wip.read(file, '-all', '-SpectralUnit', 'rel. 1/cm'); % Load all the file plottable content
+[O_wid, O_wip, O_wid_HtmlNames] = wit.io.read(file, '-all', '-SpectralUnit', 'rel. 1/cm'); % Load all the file plottable content
 
 % Get handles to some specific data
 O_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3

@@ -38,7 +38,7 @@ O_wit = wit.io.wip.new(Version); % Create new Project (*.WIP-format) WIT-tree ro
 O_wip = wit.io.wip(O_wit); % Create its Project object
 
 % Or uncomment below to alternatively append to old Project objects
-% [~, O_wip, ~] = wit.io.wip.read(file, '-all'); % Load all
+% [~, O_wip, ~] = wit.io.read(file, '-all'); % Load all
 % O_wit = O_wip.Tree; % Get its underlying WIT-tree
 % Version = O_wip.Version; % Get file WIT-tree version
 %-------------------------------------------------------------------------%

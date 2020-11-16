@@ -60,7 +60,7 @@ Subfolders".
 ### Installation to context menus (for MATLAB R2011a or newer)
 **Optionally**, run *(or F5)* also *'[wit.io.update_context_menus_for_wip_and_wid_files.m]'*
 to add *'MATLAB'*-option to the **\*.wip** and **\*.wid** file right-click
-context menus to enable a quick call to `[O_wid, O_wip, O_wid_HtmlNames] = wit.io.wip.read(file);`.
+context menus to enable a quick call to `[O_wid, O_wip, O_wid_HtmlNames] = wit.io.read(file);`.
 **This also requires administration rights.**
 
 ### Example cases

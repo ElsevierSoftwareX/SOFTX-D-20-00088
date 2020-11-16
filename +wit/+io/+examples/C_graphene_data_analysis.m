@@ -23,7 +23,7 @@ wit.io.misc.license;
 h = wit.io.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 3:}' ...
     '{\bf\fontsize{12}GRAPHENE DATA ANALYSIS}' ...
     '' ...
-    '\bullet Using ''E\_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'});
+    '\bullet Using ''A\_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'});
 if ishandle(h), figure(h); uiwait(h); end % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
@@ -31,7 +31,7 @@ if ishandle(h), figure(h); uiwait(h); end % Wait for wit.io.misc.msgbox to be cl
 
 %-------------------------------------------------------------------------%
 % This opens the specified file. Then automatically loads all.
-[O_wid, O_wip, O_wid_HtmlNames] = wit.io.wip.read(file, '-all', '-SpectralUnit', 'rel. 1/cm');
+[O_wid, O_wip, O_wid_HtmlNames] = wit.io.read(file, '-all', '-SpectralUnit', 'rel. 1/cm');
 
 O_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
 O_Point = O_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 17
