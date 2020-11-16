@@ -103,8 +103,8 @@ function [files, datas] = wit_io_file_decompress(file, varargin),
         MaxSubBlockSize = 4.*1024.^2; % By default, 4 MB max subblocksize per read
         % Documentation: https://www.javadoc.io/doc/com.github.luben/zstd-jni/latest/index.html
         if isempty(zst_library), % Load java library only once per session
-            decompressor_library = {'helper', '3rd party', 'zstd-jni', 'zstd-jni-1.4.5-11.jar'};
-            zst_library = fullfile(fileparts(mfilename('fullpath')), decompressor_library{:});
+            decompressor_library = {'+lib', '+zstd-jni', 'zstd-jni-1.4.5-12.jar'};
+            zst_library = fullfile(wit.io.path, decompressor_library{:});
             javaaddpath(zst_library);
         end
         decompressor_constructor = @decompress_zst_construct;

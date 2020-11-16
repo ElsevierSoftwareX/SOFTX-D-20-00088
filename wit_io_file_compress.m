@@ -88,8 +88,8 @@ function wit_io_file_compress(file, files, datas, varargin),
         MaxBlockSize = 4.*1024.^2; % By default, 4 MB max subblocksize per write
         % Documentation: https://www.javadoc.io/doc/com.github.luben/zstd-jni/latest/index.html
         if isempty(zst_library), % Load java library only once per session
-            compressor_library = {'helper', '3rd party', 'zstd-jni', 'zstd-jni-1.4.5-11.jar'};
-            zst_library = fullfile(fileparts(mfilename('fullpath')), compressor_library{:});
+            compressor_library = {'+lib', '+zstd-jni', 'zstd-jni-1.4.5-12.jar'};
+            zst_library = fullfile(wit.io.path, compressor_library{:});
             javaaddpath(zst_library);
         end
         compressor_multiple_files = false;

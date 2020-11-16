@@ -424,7 +424,7 @@ function h = plot(obj, varargin),
                 if cmin == cmax || isnan(cmin) || isnan(cmax), h = nanimagesc(Data);
                 else, h = nanimagesc(Data, [cmin cmax]); end
             else, h = imagesc(Data); end % Plot logical data
-%             colormap(perceptually_uniform_colormap('inferno')); % Use inferno by default
+%             colormap(wit.io.lib.perceptually_uniform_colormap('inferno')); % Use inferno by default
             colorbar('HitTest', 'off'); % HitTest 'off' added for backward compability of wit.io.ui.sidebar_cursor
         elseif size(Data, 3) == 3, h = image(Data); end % Plot colored data
 
