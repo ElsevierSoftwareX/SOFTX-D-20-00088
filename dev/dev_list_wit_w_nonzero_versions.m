@@ -37,4 +37,4 @@ UNIQUE_O_wit_w_nonzero_version = O_wit_w_nonzero_version(ind_unique_nonzero);
 
 % See the tree structure by double-clicking either variable under Workspace
 C_static_tree = O_wit.collapse; % Fast to load because it is ONLY READ!
-% C_dynamic_tree = wit_debug(O_wit); % Slow to load because it is READ+WRITE!
+% C_dynamic_tree = wit.io.wit.debug(O_wit); % Slow to load because it is READ+WRITE!

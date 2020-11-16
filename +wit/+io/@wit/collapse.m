@@ -5,7 +5,7 @@
 % This function collapses the WIT tree structure into an all summarizing
 % READ-only struct. This is an essential tool to reverse engineer new file
 % versions for interoperability and implement them into MATLAB. If you want
-% to have WRITE+READ version of this, then use wit_debug-class instead.
+% to have WRITE+READ version of this, then use debug-class instead.
 
 % This code is deprecated and may be removed in the future revisions due to
 % addition of wit-class 'DataTree_get' and 'DataTree_set' static functions.

@@ -31,10 +31,10 @@
 % READ+WRITE access to Name-Value pairs of each tag. This is particularly
 % useful for quick modifications of small wit-formatted files. For larger
 % files, use struct-based collapse-function under wit-class instead.
-classdef wit_debug < dynamicprops, % Since R2008a
+classdef debug < dynamicprops, % Since R2008a
     methods
         % Use this constructor for reverse engineering to achieve interoperability.
-        function obj = wit_debug(O_wit),
+        function obj = debug(O_wit),
             if nargin > 0,
                 obj.collapse(O_wit);
             end
