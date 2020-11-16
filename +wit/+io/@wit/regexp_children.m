@@ -7,7 +7,7 @@
 function varargout = regexp_children(obj, varargin),
     % Get wit Tree object Children and their Names
     Children = [obj.Children];
-    if isempty(Children), Children = wit.empty; end
+    if isempty(Children), Children = wit.io.wit.empty; end
     Names = {Children.Name};
     % Loop to match them
     varargout = cell(size(varargin));

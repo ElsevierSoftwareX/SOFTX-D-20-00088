@@ -9,7 +9,7 @@ function tags = regexp(obj, pattern, FirstOnly, LayersFurther, PrevFullNames),
     % optional FirstOnly flag to true to stop the search! Another optional
     % PrevFullNames char-array is automatically used for the subsequent
     % calls for more speed-up.
-    if isempty(obj), tags = wit.empty; return; end
+    if isempty(obj), tags = wit.io.wit.empty; return; end
     if nargin < 3, FirstOnly = false; end % By default, return all matches!
     if nargin < 4, LayersFurther = Inf; end % By default, return all matches!
     if nargin < 5, FullNames = {obj.FullName}; % Call FullName only for the first level
@@ -24,6 +24,6 @@ function tags = regexp(obj, pattern, FirstOnly, LayersFurther, PrevFullNames),
         n = cellfun(@numel, subobj); % Collect the number of children
         ind = cumsum(accumarray(cumsum([1; reshape(n, [], 1)]), 1)); % Simulate repelem of indices for backward compability!
         PrevFullNames = FullNames(ind(1:end-1)); % Collect PrevFullNames for the children
-        tags = [reshape(obj(match), 1, []) regexp([subobj{:} wit.empty], pattern, FirstOnly, LayersFurther-1, reshape(PrevFullNames, 1, []))]; % Returns always a row vector
+        tags = [reshape(obj(match), 1, []) regexp([subobj{:} wit.io.wit.empty], pattern, FirstOnly, LayersFurther-1, reshape(PrevFullNames, 1, []))]; % Returns always a row vector
     end
 end

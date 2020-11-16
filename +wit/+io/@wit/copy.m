@@ -5,7 +5,7 @@
 % Make hard copy of the wit-tree and its nodes. Please note that the links
 % to the root and the parents are destroyed to keep the trees consistent!
 function new = copy(obj),
-    new = copy_children(obj, wit.empty); % Define as Root objects
+    new = copy_children(obj, wit.io.wit.empty); % Define as Root objects
     % Set Root properties
     for jj = 1:numel(obj),
         new(jj).OrdinalNumber = 1;
@@ -13,12 +13,12 @@ function new = copy(obj),
         new(jj).File = obj(jj).File; % Sufficient but not an exact copy
     end
     function new_children = copy_children(children, Parent),
-        new_children = wit.empty; % Return empty if no obj given
+        new_children = wit.io.wit.empty; % Return empty if no obj given
         % Using constructor to automatically reset Root and Parent
-%         new_children(numel(children)) = wit(); % Causes same-Id-bug when using Octave-compatible NextId-scheme!
+%         new_children(numel(children)) = wit.io.wit(); % Causes same-Id-bug when using Octave-compatible NextId-scheme!
         for ii = 1:numel(children),
             obj_ii = children(ii);
-            new_ii = wit(); % Avoids same-Id-bug when using Octave-compatible NextId-scheme!
+            new_ii = wit.io.wit(); % Avoids same-Id-bug when using Octave-compatible NextId-scheme!
             
             new_ii.NameNow = obj_ii.NameNow; % Speed-up
             

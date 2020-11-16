@@ -9,7 +9,7 @@ function varargout = search_children(obj, varargin),
     varargout = cell(size(varargin));
     % Get wit Tree object Children
     Children = [obj.Children];
-    if isempty(Children), Children = wit.empty; end
+    if isempty(Children), Children = wit.io.wit.empty; end
     % Sort both children and input Name strings
     [Names_sorted, jj2ind] = sort({Children.Name});
     [varargin, ii2ind] = sort(varargin);

@@ -25,7 +25,7 @@ function DataTree_set(parent, in, format),
     predefined_values = format(:,3);
 
     % Get UNSORTED children names
-    children = reshape([parent.Children wit.empty], [], 1); % Force column
+    children = reshape([parent.Children wit.io.wit.empty], [], 1); % Force column
     children_names = reshape({children.Name}, [], 1); % Force column
 
     % Get UNSORTED in-struct fields and values AND obey its ordering (SECONDARY)
@@ -64,15 +64,15 @@ function DataTree_set(parent, in, format),
         if ind_to_C_from_P(ii),
             child = children(ind_to_C_from_P(ii));
         else, % No child was found,
-            child = wit(parent, name); % Append new child to the WIT-tree
+            child = wit.io.wit(parent, name); % Append new child to the WIT-tree
         end
 
         if isempty(value) || size(value, 2) == 3, % CASE: empty OR YES subformat
             % If formatting is given, then obey it and ignore the underlying wit-tree if needed.
             if ind_to_I_from_P(ii), % CASE: YES found in-struct field
-                wit.DataTree_set(child, in_values{ind_to_I_from_P(ii)}, value);
+                wit.io.wit.DataTree_set(child, in_values{ind_to_I_from_P(ii)}, value);
             else, % CASE: NO found in-struct field
-                wit.DataTree_set(child, struct(), value);
+                wit.io.wit.DataTree_set(child, struct(), value);
             end
         else, % CASE: YES parser
             % If formatting is given, then obey it and ignore the underlying wit-tree if needed.
@@ -126,11 +126,11 @@ function DataTree_set(parent, in, format),
         if ind_to_C_from_I(ii),
             child = children_no_link_sorted(ind_to_C_from_I(ii));
         else, % No child was found,
-            child = wit(parent, field); % Non-linked in-struct field string is name
+            child = wit.io.wit(parent, field); % Non-linked in-struct field string is name
         end
 
         if isstruct(value),
-            wit.DataTree_set(child, value, {});
+            wit.io.wit.DataTree_set(child, value, {});
         else,
             delete(child.Children); % Destroy the underlying wit-tree
             child.Data = value;

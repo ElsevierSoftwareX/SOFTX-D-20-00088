@@ -50,7 +50,7 @@ classdef wit_debug < dynamicprops, % Since R2008a
                 prop_name = addprop(obj, [Pre Id '_Name']);
                 prop_name.GetMethod = @(x) get_Name(x, O_wit(ii));
                 prop_name.SetMethod = @(x, y) set_Name(x, y, O_wit(ii));
-                if isa(O_wit(ii).Data, 'wit'),
+                if isa(O_wit(ii).Data, 'wit.io.wit'),
                     obj.collapse(O_wit(ii).Data, [Pre Id '_Value_']);
                 else,
                     prop_data = addprop(obj, [Pre Id '_Value']);

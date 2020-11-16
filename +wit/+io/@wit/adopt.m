@@ -7,11 +7,11 @@ function adopt(obj, varargin),
     warning('You are using a deprecated version, marked to be deleted in the future!');
     if numel(obj) > 1, error('A tag cannot have more than one parent!'); % Error if more than one parent!
     elseif numel(obj) == 0, return; end % Do nothing if no parents
-    children = [obj.Children wit.empty];
+    children = [obj.Children wit.io.wit.empty];
     N_children = numel(children);
     for ii = 1:numel(varargin),
         children_ii = varargin{ii};
-        if isa(children_ii, 'wit'),
+        if isa(children_ii, 'wit.io.wit'),
             children = [children reshape(children_ii, 1, [])];
         end
     end

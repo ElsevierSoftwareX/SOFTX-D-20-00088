@@ -30,7 +30,7 @@ function obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteri
     FileName = [name ext];
     
     % Construct the wit Tree root object
-    obj = wit();
+    obj = wit.io.wit();
     
     % Then read the file
     if ~Silent,

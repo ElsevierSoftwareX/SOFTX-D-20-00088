@@ -3,7 +3,7 @@
 % All rights reserved.
 
 function update(obj),
-    update_helper(obj, wit.empty); % Hide use of helper variables from user
+    update_helper(obj, wit.io.wit.empty); % Hide use of helper variables from user
     
     function update_helper(obj, Prev),
         % NameLength (4 bytes)
@@ -14,7 +14,7 @@ function update(obj),
 
         % Type (4 bytes)
         switch(class(obj.Data)),
-            case 'wit', % List of Tags
+            case 'wit.io.wit', % List of Tags
                 obj.Type = uint32(0);
             case 'double', % Double (8 bytes)
                 obj.Type = uint32(2);
@@ -55,7 +55,7 @@ function update(obj),
         % End (8 bytes)
         switch(obj.Type),
             case 0, % List of Tags
-                Prev = wit.empty;
+                Prev = wit.io.wit.empty;
                 N_bytes = zeros(numel(obj.Data), 1, 'uint64');
                 for ii = 1:numel(obj.Data), % Loop the children
                     child_ii = obj.Data(ii);

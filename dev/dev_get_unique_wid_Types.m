@@ -20,7 +20,7 @@ function [unique_wid_Types, B_diversity_matrix, versions, files] = dev_get_uniqu
     versions = nan(size(files));
     for ii = 1:numel(files),
         fprintf('File %d/%d OR %s:\n', ii, numel(files), files{ii});
-        O_wit = wit.read(files{ii}, 4096, @skip_Data_criteria_for_obj);
+        O_wit = wit.io.wit.read(files{ii}, 4096, @skip_Data_criteria_for_obj);
         Version = wip.get_Root_Version(O_wit);
         if ~isempty(Version), versions(ii) = Version; end
         Tag_Data = O_wit.regexp('^Data(<WITec (Project|Data))?$', true);

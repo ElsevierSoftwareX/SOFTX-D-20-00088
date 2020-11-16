@@ -67,7 +67,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     compressed_ext = {'.zip', '.zst'};
     
     % Read all files preferring limited read and append them together
-    O_wit = wit.empty;
+    O_wit = wit.io.wit.empty;
     h = waitbar(0, 'Please wait...');
     for ii = 1:numel(files),
         if ~ishandle(h), return; end % Abort if cancelled!
@@ -80,7 +80,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
         if OnReadDecompress, % Read compressed
             O_wit = OnReadDecompress_loop(O_wit, files{ii});
         else, % Read uncompressed
-            O_wit_new = wit.read(files{ii}, LimitedRead);
+            O_wit_new = wit.io.wit.read(files{ii}, LimitedRead);
             O_wit = wip.append(O_wit, O_wit_new);
         end
     end
@@ -130,7 +130,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
         [~, zip_datas] = wit_io_file_decompress(File, '-FilterExtension', '.wip', '.wid', '-ProgressBar', Params{:}); % Decompress binary from zip archive
         % Loop through data entries
         for jj = 1:numel(zip_datas),
-            obj_new = wit.read(File, LimitedRead, [], [], '-CustomFun', @OnReadDecompress_helper, '-Silent');
+            obj_new = wit.io.wit.read(File, LimitedRead, [], [], '-CustomFun', @OnReadDecompress_helper, '-Silent');
             obj = wip.append(obj, obj_new);
         end
         function OnReadDecompress_helper(obj, File),

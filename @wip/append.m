@@ -12,7 +12,7 @@ function [O_wit, varargout] = append(varargin),
     varargin(bw) = cellfun(@(x) x{1}, varargin(bw), 'UniformOutput', false); % Remove cell-containers
     
     % Test input first
-    ind_notwit = find(~cellfun(@(x) isa(x, 'wit'), varargin), 1);
+    ind_notwit = find(~cellfun(@(x) isa(x, 'wit.io.wit'), varargin), 1);
     if ~isempty(ind_notwit), error('Input #%d expected to be a wit-class!', ind_notwit); end
     
     % Exclude all empty
@@ -21,7 +21,7 @@ function [O_wit, varargout] = append(varargin),
     varargin = varargin(bw_notempty);
     
     % Exit if no non-empty input remaining
-    O_wit = wit.empty;
+    O_wit = wit.io.wit.empty;
     if numel(varargin) == 0, return; end % Exit here if no inputs
     
     % Append everything to the first non-empty object
@@ -46,8 +46,8 @@ function [O_wit, varargout] = append(varargin),
     end
     
     % Loop through the other input
-    DataOrDataClassNames = wit.empty;
-    ViewerOrViewerClassNames = wit.empty;
+    DataOrDataClassNames = wit.io.wit.empty;
+    ViewerOrViewerClassNames = wit.io.wit.empty;
     varargout = cell(size(varargin));
     for ii = 1:numel(varargin),
         O_wit_ii = varargin{ii}.copy(); % Get copy of the given wit Tree objects
@@ -71,7 +71,7 @@ function [O_wit, varargout] = append(varargin),
             Tags_with_ID = Both_Pairs.regexp_all_Names('.+ID(List)?'); % List all other the IDs (except NextDataID) under Data and Viewer
             for jj = 1:numel(Tags_with_ID),
                 Data_jj = Tags_with_ID(jj).Data;
-                if isa(Data_jj, 'wit'), % SPECIAL CASE: ID list
+                if isa(Data_jj, 'wit.io.wit'), % SPECIAL CASE: ID list
                     ID_list = Tags_with_ID(jj).search_children('Data');
                     if ~isempty(ID_list) && ~isempty(ID_list.Data),
                         ID_list_Data = ID_list.Data;
@@ -88,7 +88,7 @@ function [O_wit, varargout] = append(varargin),
             else, Tags_with_ID = [Tags_with_TData_ID Tags_with_ID]; end % List all the IDs under Data and Viewer
             ID_max = 0;
             for jj = 1:numel(Tags_with_ID),
-                if isa(Tags_with_ID(jj).Data, 'wit'), % SPECIAL CASE: ID list
+                if isa(Tags_with_ID(jj).Data, 'wit.io.wit'), % SPECIAL CASE: ID list
                     ID_list = Tags_with_ID(jj).search_children('Data');
                     if ~isempty(ID_list) && ~isempty(ID_list.Data), % Skip empty
                         ID_max = max(ID_max, max(ID_list.Data));

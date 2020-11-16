@@ -92,8 +92,8 @@ classdef wit < handle, % Since R2008a
         NameNow = '';
         % Update the following along with OrdinalNumber-property!
         DataNow = [];
-        ParentNow = []; % = wit.empty; % Only [] is Octave-compatible!
-        ChildrenNow = []; % = wit.empty; % Only [] is Octave-compatible!
+        ParentNow = []; % = wit.io.wit.empty; % Only [] is Octave-compatible!
+        ChildrenNow = []; % = wit.io.wit.empty; % Only [] is Octave-compatible!
     end
     
     % Tree-specific internal parameters
@@ -142,7 +142,7 @@ classdef wit < handle, % Since R2008a
             
             % Parse input
             if nargin > 0,
-                if isa(ParentOrName, 'wit'), % Set new Parent
+                if isa(ParentOrName, 'wit.io.wit'), % Set new Parent
                     obj.ModifiedAncestors = ParentOrName.ModifiedAncestors; % Inherit this property from parent
                     obj.Parent = ParentOrName;
                 elseif isa(ParentOrName, 'char'), % Set new Name
@@ -150,7 +150,7 @@ classdef wit < handle, % Since R2008a
                     obj.Name = ParentOrName;
                 else, error('First input must be either wit-class or char!'); end
                 if nargin > 1,
-                    if isa(ParentOrName, 'wit'), % After new Parent
+                    if isa(ParentOrName, 'wit.io.wit'), % After new Parent
                         if isa(NameOrData, 'char'), % Set new Name
                             obj.Name = NameOrData;
                             if nargin > 2, obj.Data = DataOrNone; end % Set new Data
@@ -167,7 +167,7 @@ classdef wit < handle, % Since R2008a
             % WIT-tag formatted files.
             persistent subdelete;
             if isempty(subdelete), % If called from within delete, then skip all redundant code
-                try, obj.Parent = wit.empty; % Disconnect parent (only for the first delete-call)
+                try, obj.Parent = obj([]); % = wit.io.wit.empty; % Disconnect parent (only for the first delete-call)
                 catch, return; end % Do nothing if already deleted (backward compatible with R2011a)
                 subdelete = true; % Speed-up subsequent delete-calls
                 delete(obj.Children); % Delete descendants
@@ -209,9 +209,9 @@ classdef wit < handle, % Since R2008a
             Data = obj.DataNow;
         end
         function set.Data(obj, Data),
-            if ~isa(Data, 'wit'), % GENERAL CASE: Add new data to the obj
+            if ~isa(Data, 'wit.io.wit'), % GENERAL CASE: Add new data to the obj
                 obj.DataNow = Data;
-                obj.ChildrenNow = wit.empty;
+                obj.ChildrenNow = wit.io.wit.empty;
                 % Update HasData-flag
                 obj.HasData = ~isempty(Data);
                 % Update obj's ModifiedCount and notify its ancestors
@@ -248,7 +248,7 @@ classdef wit < handle, % Since R2008a
                 for ii = 1:numel(Data_old),
                     % Remove parent of an old child if it is not found among the new children
                     if B_old_at_new(ii), continue; end % Skip if among new
-                    Data_old(ii).ParentNow = wit.empty;
+                    Data_old(ii).ParentNow = wit.io.wit.empty;
                     Data_old(ii).OrdinalNumber = 1;
                     % Update old child's ModifiedCount but do not notify its ancestors
                     Data_old(ii).ModifiedAncestors = false;
@@ -320,14 +320,14 @@ classdef wit < handle, % Since R2008a
         function set.Parent(obj, Parent),
             % If called from set.Data, then skip all redundant code
             % Validate the given input
-            if ~isa(Parent, 'wit') || numel(Parent) > 1,
+            if ~isa(Parent, 'wit.io.wit') || numel(Parent) > 1,
                 error('Parent can be set by either an empty or a single wit tree object!');
             end
             % Get old parent
             Parent_old = obj.ParentNow;
             % Stop if both old and new parents are empty
             if isempty(Parent) && isempty(Parent_old),
-                if ~isa(Parent_old, 'wit'),
+                if ~isa(Parent_old, 'wit.io.wit'),
                     obj.ParentNow = Parent;
                 end
                 return;
@@ -383,7 +383,7 @@ classdef wit < handle, % Since R2008a
         end
         function set.Children(obj, Children),
             % Validate the given input
-            if ~isa(Children, 'wit'),
+            if ~isa(Children, 'wit.io.wit'),
                 error('Children can be set an array of wit tree objects!');
             end
             obj.Data = Children; % Try to update this object children
@@ -405,7 +405,7 @@ classdef wit < handle, % Since R2008a
         end
         function set.Root(obj, Root),
             % Validate the given input
-            if ~isa(Root, 'wit') && numel(Root) ~= 1,
+            if ~isa(Root, 'wit.io.wit') && numel(Root) ~= 1,
                 error('Root can be set by a single wit tree object!');
             end
             obj.Root.Parent = Root; % Set new Root
@@ -413,7 +413,7 @@ classdef wit < handle, % Since R2008a
         
         % Siblings (READ-WRITE, DEPENDENT)
         function Siblings = get.Siblings(obj),
-            Siblings = wit.empty;
+            Siblings = wit.io.wit.empty;
             if ~isempty(obj.ParentNow),
                 Siblings = obj.ParentNow.DataNow; % Including itself
                 Siblings = Siblings(Siblings ~= obj); % Exclude itself
@@ -424,7 +424,7 @@ classdef wit < handle, % Since R2008a
             if isempty(obj.ParentNow),
                 error('Root cannot have siblings!');
             end
-            if ~isa(Siblings, 'wit'),
+            if ~isa(Siblings, 'wit.io.wit'),
                 error('Siblings can be set by an array of wit tree objects! It can optionally include the main object to choose its position within its new siblings. Otherwise, the main object will be first!');
             end
             ind = find(Siblings == obj, 1); % Get index of this object
@@ -434,7 +434,7 @@ classdef wit < handle, % Since R2008a
         
         % Next (READ-WRITE, DEPENDENT)
         function Next = get.Next(obj),
-            Next = wit.empty;
+            Next = wit.io.wit.empty;
             if ~isempty(obj.ParentNow),
                 Siblings = obj.ParentNow.DataNow; % Including itself
                 ind_Next = find(Siblings == obj, 1) + 1;
@@ -446,7 +446,7 @@ classdef wit < handle, % Since R2008a
             if isempty(obj.ParentNow),
                 error('Root cannot have next sibling!');
             end
-            if ~isa(Next, 'wit'),
+            if ~isa(Next, 'wit.io.wit'),
                 error('Next can be set by an array of wit tree objects!');
             end
             Children = obj.ParentNow.DataNow; % Get parent children
@@ -457,7 +457,7 @@ classdef wit < handle, % Since R2008a
         
         % Prev (READ-WRITE, DEPENDENT)
         function Prev = get.Prev(obj),
-            Prev = wit.empty;
+            Prev = wit.io.wit.empty;
             if ~isempty(obj.ParentNow),
                 Siblings = obj.ParentNow.DataNow; % Including itself
                 ind_Prev = find(Siblings == obj, 1) - 1;
@@ -469,7 +469,7 @@ classdef wit < handle, % Since R2008a
             if isempty(obj.ParentNow),
                 error('Root cannot have previous sibling!');
             end
-            if ~isa(Prev, 'wit'),
+            if ~isa(Prev, 'wit.io.wit'),
                 error('Prev can be set by an array of wit tree objects! Its content will be added in reversed order.');
             end
             Children = obj.ParentNow.DataNow; % Get parent children
@@ -534,7 +534,7 @@ classdef wit < handle, % Since R2008a
 %         function tf = compare(O1, O2, fun, default),
 %             if numel(O1) == 1 || numel(O2) == 1 || ... % Either O1 or O2 is scalar
 %                     ndims(O1) == ndims(O2) && all(size(O1) == size(O2)), % Or size(O1) == size(O2)
-%                 if isa(O2, 'wit'), tf = fun(reshape([O1.Id], size(O1)), reshape([O2.Id], size(O2)));
+%                 if isa(O2, 'wit.io.wit'), tf = fun(reshape([O1.Id], size(O1)), reshape([O2.Id], size(O2)));
 %                 elseif numel(O1) == 1, tf = repmat(default, size(O2));
 %                 else, tf = repmat(default, size(O1)); end
 %             else, error('Matrix dimensions must agree.'); end
@@ -550,7 +550,7 @@ classdef wit < handle, % Since R2008a
 %         function obj = horzcat(varargin), % Enables [O1 O2 ...]
 %             if ~is_octave(), obj = builtin('horzcat', varargin{:}); % MATLAB-way
 %             else, % Octave-way
-%                 obj = wit.empty;
+%                 obj = wit.io.wit.empty;
 %                 varargin = varargin(~cellfun(@isempty, varargin)); % Skip empty
 %                 if ~isempty(varargin),
 %                     D = max(cellfun(@ndims, varargin)); % Number of dimensions
@@ -571,7 +571,7 @@ classdef wit < handle, % Since R2008a
 %         function obj = vertcat(varargin), % Enables [O1; O2; ...]
 %             if ~is_octave(), obj = builtin('vertcat', varargin{:}); % MATLAB-way
 %             else, % Octave-way
-%                 obj = wit.empty;
+%                 obj = wit.io.wit.empty;
 %                 varargin = varargin(~cellfun(@isempty, varargin)); % Skip empty
 %                 if ~isempty(varargin),
 %                     D = max(cellfun(@ndims, varargin)); % Number of dimensions
@@ -690,8 +690,8 @@ classdef wit < handle, % Since R2008a
         % Define Octave-compatible empty-function
         function empty = empty(), % Faster than MATLAB's built-in empty!
             persistent empty_obj;
-            if ~isa(empty_obj, 'wit'), % Do only once to achieve best performance
-                dummy_obj = wit(); % Create a dummy wit-class
+            if ~isa(empty_obj, 'wit.io.wit'), % Do only once to achieve best performance
+                dummy_obj = wit.io.wit(); % Create a dummy wit-class
                 empty_obj = dummy_obj([]); % Octave-compatible way to construct empty array of objects
                 delete(dummy_obj); % Delete the dummy wit-class
             end

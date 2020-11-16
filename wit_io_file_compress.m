@@ -17,7 +17,7 @@
 % allow writing in smaller blocks and to reduce risk of exceeding Java Heap
 % Memory (>= 128 MB for R2011a or newer) limit. For .zip, default value is
 % 1048576 or 1 MB. For .zst, default value is 4194304 or 4 MB.
-% '-ProgressBar' (= none): Use verbose wit.progress_bar in Command
+% '-ProgressBar' (= none): Use verbose wit.io.wit.progress_bar in Command
 % Window. If a function handle (with equivalent output arguments) is
 % provided, then use it instead.
 function wit_io_file_compress(file, files, datas, varargin),
@@ -125,7 +125,7 @@ function wit_io_file_compress(file, files, datas, varargin),
     
     % Parse extra inputs: ProgressBar
     [ProgressBar, parsed] = varargin_dashed_str_exists_and_datas('ProgressBar', varargin, -1);
-    if ProgressBar, ProgressBar = @wit.progress_bar; end
+    if ProgressBar, ProgressBar = @wit.io.wit.progress_bar; end
     if numel(parsed) > 0, ProgressBar = parsed{1}; end
     verbose = isa(ProgressBar, 'function_handle');
     

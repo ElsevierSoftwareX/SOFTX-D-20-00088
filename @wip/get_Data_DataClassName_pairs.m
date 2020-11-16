@@ -5,16 +5,16 @@
 % Returns valid DataClassName/Data-pairs of wit Tree objects. Second output
 % denotes how many Roots were accessed during this scan.
 function [Pairs, Roots] = get_Data_DataClassName_pairs(O_wit),
-    Pairs = wit.empty;
+    Pairs = wit.io.wit.empty;
     if isempty(O_wit),
-        Roots = wit.empty;
+        Roots = wit.io.wit.empty;
         return; % Stop for empty input
     end
     
     % Collect roots and tags for pairs
-    Roots = wit.empty;
-    Tags_1 = wit.empty;
-    Tags_2 = wit.empty;
+    Roots = wit.io.wit.empty;
+    Tags_1 = wit.io.wit.empty;
+    Tags_2 = wit.io.wit.empty;
     for ii = 1:numel(O_wit),
         % Get wit Tree object
         O_wit_ii = O_wit(ii);
@@ -33,7 +33,7 @@ function [Pairs, Roots] = get_Data_DataClassName_pairs(O_wit),
         else,
             % Step up to get one of the pairs
             while isempty(regexp(O_wit_ii.Name, '^Data(ClassName)? \d+$', 'once')),
-                O_wit_ii = [O_wit_ii.Parent wit.empty];
+                O_wit_ii = [O_wit_ii.Parent wit.io.wit.empty];
             end
             if strncmp(O_wit_ii.Name, 'DataClassName', 13), Tags_1(end+1) = O_wit_ii;
             else, Tags_2(end+1) = O_wit_ii; end

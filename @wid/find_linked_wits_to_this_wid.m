@@ -5,11 +5,11 @@
 % This returns the linked wit-objects pointing directly to the provided
 % wid-objects.
 function O_wit = find_linked_wits_to_this_wid(obj),
-    O_wit = wit.empty;
+    O_wit = wit.io.wit.empty;
     for ii = 1:numel(obj),
         if isfield(obj(ii).Tag, 'Data'),
             % Get the parent tag of the wid-object's wit-tree branches
-            tags = [obj(ii).Tag.Data.Parent wit.empty];
+            tags = [obj(ii).Tag.Data.Parent wit.io.wit.empty];
             % List all the project's ID-tags (except NextDataID and
             % ID<TData) under the Data-tag
             tags = tags.regexp('^(?!NextDataID)([^<]+ID(List)?(<[^<]*)*(<Data(<WITec (Project|Data))?)?$)');

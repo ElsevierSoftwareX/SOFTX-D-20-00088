@@ -15,7 +15,7 @@ function out = DataTree_get(parent, format),
 
     % Test if parent has children
     parent_Data = parent.Data;
-    if ~isa(parent_Data, 'wit'), parent_Data = wit.empty; end
+    if ~isa(parent_Data, 'wit.io.wit'), parent_Data = wit.io.wit.empty; end
 
     % Get unsorted format names and values and obey its ordering
     predefined_names = format(:,1);
@@ -63,7 +63,7 @@ function out = DataTree_get(parent, format),
         name = predefined_names{ii};
         value = predefined_values{ii};
         [out_default_names{ii}, out_default_values{ii}] = ...
-            DataTree_get_helper(wit.empty, name, value);
+            DataTree_get_helper(wit.io.wit.empty, name, value);
     end
     
     % Keep nonempty

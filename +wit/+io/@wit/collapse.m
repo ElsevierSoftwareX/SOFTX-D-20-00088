@@ -15,7 +15,7 @@ function S = collapse(obj),
         Id = sprintf(sprintf('%%0%dd', floor(log10(numel(obj))+1)), ii);
         S.(['Tag_' Id]) = obj(ii);
         S.(['Name_' Id]) = obj(ii).Name;
-        if isa(obj(ii).Data, 'wit'),
+        if isa(obj(ii).Data, 'wit.io.wit'),
             S_sub = obj(ii).Data.collapse();
             C_sub = struct2cell(S_sub);
             subfields = cellfun(@(s) sprintf('%s_%s', ['Data_' Id], s), fieldnames(S_sub), 'UniformOutput', false);

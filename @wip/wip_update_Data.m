@@ -11,7 +11,7 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
     if isObjectBeingDestroyed,
         delete(obj.DataObjectBeingDestroyedListener);
         delete(obj.DataObjectModifiedListener);
-        obj.TreeData = wit.empty;
+        obj.TreeData = wit.io.wit.empty;
         obj.TreeDataModifiedCount = [];
         obj.DataObjectBeingDestroyedListener = [];
         obj.DataObjectModifiedListener = [];
@@ -26,7 +26,7 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
         if isempty(TreeData),
             delete(obj.DataObjectBeingDestroyedListener);
             delete(obj.DataObjectModifiedListener);
-            obj.TreeData = wit.empty;
+            obj.TreeData = wit.io.wit.empty;
             obj.TreeDataModifiedCount = [];
             obj.DataObjectBeingDestroyedListener = [];
             obj.DataObjectModifiedListener = [];
@@ -54,7 +54,7 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
                 if isempty(TreeData),
                     delete(obj.DataObjectBeingDestroyedListener);
                     delete(obj.DataObjectModifiedListener);
-                    obj.TreeData = wit.empty;
+                    obj.TreeData = wit.io.wit.empty;
                     obj.TreeDataModifiedCount = [];
                     obj.DataObjectBeingDestroyedListener = [];
                     obj.DataObjectModifiedListener = [];
@@ -104,7 +104,7 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
             elseif strcmp(MDP, 'Data'), % Data-tag becomes empty
                 delete(obj.DataObjectBeingDestroyedListener);
                 delete(obj.DataObjectModifiedListener);
-                obj.TreeData = wit.empty;
+                obj.TreeData = wit.io.wit.empty;
                 obj.TreeDataModifiedCount = [];
                 obj.DataObjectBeingDestroyedListener = [];
                 obj.DataObjectModifiedListener = [];
@@ -112,7 +112,7 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
             elseif strcmp(MDP, 'Name'), % Data-tag becomes invalid
                 delete(obj.DataObjectBeingDestroyedListener);
                 delete(obj.DataObjectModifiedListener);
-                obj.TreeData = wit.empty;
+                obj.TreeData = wit.io.wit.empty;
                 obj.TreeDataModifiedCount = [];
                 obj.DataObjectBeingDestroyedListener = [];
                 obj.DataObjectModifiedListener = [];

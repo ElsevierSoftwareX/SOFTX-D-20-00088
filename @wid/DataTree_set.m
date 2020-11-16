@@ -10,7 +10,7 @@ function DataTree_set(parent, in, format),
     
     % Test if parent has children
     parent_Data = parent.Data;
-    if ~isa(parent_Data, 'wit'), parent_Data = wit.empty; end % No children
+    if ~isa(parent_Data, 'wit.io.wit'), parent_Data = wit.io.wit.empty; end % No children
     
     % Sort format fields and values by names
     [predefined_names, ind_predefined_sorted] = sort(format(:,1));
@@ -58,7 +58,7 @@ function DataTree_set(parent, in, format),
         if ind_child(ii),
             child = children(ind_child(ii));
         else, % No child was found,
-            child = wit(name);
+            child = wit.io.wit(name);
             parent_Data = [parent_Data child];
             parent.Data = parent_Data; % Add it to the WIT-tree
         end
@@ -109,7 +109,7 @@ function DataTree_set(parent, in, format),
         if ind_child,
             child = children(ind_child);
         else, % No child was found,
-            child = wit(name);
+            child = wit.io.wit(name);
             parent_Data = [parent_Data child];
             parent.Data = parent_Data; % Add it to the WIT-tree
         end

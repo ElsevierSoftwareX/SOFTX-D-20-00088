@@ -24,7 +24,7 @@ function out = DataTree_get(parent, format),
     predefined_values = format(:,3);
 
     % Get UNSORTED children names AND obey the wit tree ordering (PRIMARY)
-    children = reshape([parent.Children wit.empty], [], 1); % Force column
+    children = reshape([parent.Children wit.io.wit.empty], [], 1); % Force column
     children_names = reshape({children.Name}, [], 1); % Force column
 
     % Match children names with predefined names
@@ -68,7 +68,7 @@ function out = DataTree_get(parent, format),
         isVisible = predefined_isVisible_no_link{ii};
         value = predefined_values_no_link{ii};
         [out_default_names{ii}, out_default_values{ii}] = ...
-            DataTree_get_helper(wit.empty, name, isVisible, value);
+            DataTree_get_helper(wit.io.wit.empty, name, isVisible, value);
     end
     
     % Keep nonempty
@@ -110,12 +110,12 @@ function out = DataTree_get(parent, format),
         out_name = ''; % Result upon failure
         out_value = []; % Result upon failure
         if isVisible, % CASE: YES visible
-            if (isempty(value) && isa([child.Data], 'wit')) ... % CASE: NO subformat AND child has YES children
+            if (isempty(value) && isa([child.Data], 'wit.io.wit')) ... % CASE: NO subformat AND child has YES children
                     || size(value, 2) == 3, % OR CASE: YES subformat
                 % If formatting is given, then obey it and ignore the underlying wit-tree if needed.
                 out_name = name;
-                out_value = wit.DataTree_get(child, value);
-            elseif (isempty(value) && ~isa([child.Data], 'wit')) ... % CASE: NO parser AND child has NO children
+                out_value = wit.io.wit.DataTree_get(child, value);
+            elseif (isempty(value) && ~isa([child.Data], 'wit.io.wit')) ... % CASE: NO parser AND child has NO children
                     || size(value, 1) == 2, % OR CASE: YES parser
                 % If formatting is given, then obey it and ignore the underlying wit-tree if needed.
                 out_name = name;

@@ -46,11 +46,11 @@ classdef wip < handle, % Since R2008a
         Version; % WIP/WID-file version. See 'README on WIT-tag formatting.txt'.
     end
     properties % READ-WRITE
-        Tree = wit.empty;
+        Tree = wit.io.wit.empty;
     end
     
     properties (SetAccess = private, Hidden) % READ-ONLY, HIDDEN
-        TreeData = wit.empty;
+        TreeData = wit.io.wit.empty;
         TreeDataModifiedCount = [];
         wip_listener;
         TreeObjectBeingDestroyedListener;
@@ -110,7 +110,7 @@ classdef wip < handle, % Since R2008a
             
             try,
                 % Validate the given input
-                if isa(TreeOrData, 'wit') && numel(TreeOrData) == 1,
+                if isa(TreeOrData, 'wit.io.wit') && numel(TreeOrData) == 1,
                     Tree = TreeOrData.Root;
                 elseif isa(TreeOrData, 'wid'),
                     Data = TreeOrData;
@@ -208,12 +208,12 @@ classdef wip < handle, % Since R2008a
             
             % Sort prior children by names
             Tree_prior = obj.Tree;
-            Children_prior = [Tree_prior.Children wit.empty];
+            Children_prior = [Tree_prior.Children wit.io.wit.empty];
             [names_prior, ind_prior] = sort({Children_prior.Name});
             Children_prior = Children_prior(ind_prior);
             
             % Generate new tree structure template
-            Tree = wit.empty;
+            Tree = wit.io.wit.empty;
             switch(Type),
                 case 'WITec Project',
                     Tree = wip.new(obj.Version);
@@ -226,7 +226,7 @@ classdef wip < handle, % Since R2008a
             % Use the new tree structure if generated
             if ~isempty(Tree),
                 % Sort posterior children by names
-                Children = [Tree.Children wit.empty];
+                Children = [Tree.Children wit.io.wit.empty];
                 [names, ind] = sort({Children.Name});
                 Children = Children(ind);
                 % Find prior children by matching child names and adopt them

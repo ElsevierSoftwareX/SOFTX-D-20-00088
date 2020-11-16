@@ -8,7 +8,7 @@ function Version = read_Version(File),
     
     try,
         % Read UNTIL Version-tag is found, skipping everything unessential
-        wit.read(File, 4096, @skip_Data_criteria_for_obj, @error_criteria_for_obj);
+        wit.io.wit.read(File, 4096, @skip_Data_criteria_for_obj, @error_criteria_for_obj);
     catch,
         % DO NOTHING ELSE
     end

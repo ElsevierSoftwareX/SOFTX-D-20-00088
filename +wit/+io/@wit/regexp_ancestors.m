@@ -9,7 +9,7 @@ function tags = regexp_ancestors(obj, pattern, FirstOnly, LayersFurther),
     % performance. Set optional FirstOnly flag to true to stop the search!
     % Another optional PrevFullNames char-array is automatically used for
     % the subsequent calls for more speed-up.
-    if isempty(obj), tags = wit.empty; return; end
+    if isempty(obj), tags = wit.io.wit.empty; return; end
     if nargin < 3, FirstOnly = false; end % By default, return all matches!
     if nargin < 4, LayersFurther = Inf; end % By default, return all matches!
     FullNames = {obj.FullName};
@@ -20,6 +20,6 @@ function tags = regexp_ancestors(obj, pattern, FirstOnly, LayersFurther),
         tags = reshape(obj(match), 1, []); % Return all matches
     else,
         superobj = {obj.Parent}; % Collect the parents
-        tags = [reshape(obj(match), 1, []) regexp_ancestors([superobj{:} wit.empty], pattern, FirstOnly, LayersFurther-1)]; % Returns always a row vector
+        tags = [reshape(obj(match), 1, []) regexp_ancestors([superobj{:} wit.io.wit.empty], pattern, FirstOnly, LayersFurther-1)]; % Returns always a row vector
     end
 end

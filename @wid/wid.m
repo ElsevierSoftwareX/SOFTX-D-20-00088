@@ -105,7 +105,7 @@ classdef wid < handle, % Since R2008a
             
             try,
                 % Validate the given input
-                if isa(SizeOrTreeOrProject, 'wit'),
+                if isa(SizeOrTreeOrProject, 'wit.io.wit'),
                     Tree = SizeOrTreeOrProject;
                     Roots = unique([Tree.Root]);
                     if numel(Roots) ~= 1,
@@ -367,7 +367,7 @@ classdef wid < handle, % Since R2008a
             AllLinksToThis = wid.empty;
             if isfield(obj.Tag, 'Data'),
                 % First get the object's wit-tree parent tag
-                tags = [obj.Tag.Data.Parent wit.empty];
+                tags = [obj.Tag.Data.Parent wit.io.wit.empty];
                 % List all the project's ID-tags (except NextDataID and
                 % ID<TData) under the Data tree tag
                 tags = tags.regexp('^(?!NextDataID)([^<]+ID(List)?(<[^<]*)*(<Data(<WITec (Project|Data))?)?$)');

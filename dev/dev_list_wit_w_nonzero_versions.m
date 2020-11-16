@@ -17,7 +17,7 @@ if folder ~= 0, file = fullfile(folder, filename);
 else, return; end % Abort as no file was selected!
 
 % Read file wit-tags
-O_wit = wit.read(file{1});
+O_wit = wit.io.wit.read(file{1});
 if isempty(O_wit), return; end
 fprintf('File = %s\nVersion = %d\n', file{1}, wip.get_Root_Version(O_wit));
 

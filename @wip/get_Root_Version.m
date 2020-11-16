@@ -6,8 +6,8 @@
 function Version = get_Root_Version(obj) % Can be wid-, wip- or wit-class
     Version = []; % If not found
     if ~isempty(obj),
-        O_wit = wit.empty; 
-        if isa(obj, 'wit'), O_wit = obj;
+        O_wit = wit.io.wit.empty; 
+        if isa(obj, 'wit.io.wit'), O_wit = obj;
         elseif isa(obj, 'wid'), O_wit = obj.Tag.Root;
         elseif isa(obj, 'wip'), O_wit = obj.Tree; end
         if ~isempty(O_wit), % Test if a tree exists
