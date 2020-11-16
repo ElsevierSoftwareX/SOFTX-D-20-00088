@@ -30,5 +30,5 @@ function update(obj),
     bw_Data = any(bw, 1); % True = keep a Data object
 
     % Remove duplicates and add missing Tree objects
-    obj.Data = [obj.Data(bw_Data); wid(Tree_Data_tags(~bw_Tree))];
+    obj.Data = [obj.Data(bw_Data); wit.io.wid(Tree_Data_tags(~bw_Tree))];
 end

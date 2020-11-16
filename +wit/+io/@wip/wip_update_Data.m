@@ -15,7 +15,7 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
         obj.TreeDataModifiedCount = [];
         obj.DataObjectBeingDestroyedListener = [];
         obj.DataObjectModifiedListener = [];
-        obj.Data = wid.empty;
+        obj.Data = wit.io.wid.empty;
         return;
     end
     
@@ -30,7 +30,7 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
             obj.TreeDataModifiedCount = [];
             obj.DataObjectBeingDestroyedListener = [];
             obj.DataObjectModifiedListener = [];
-            obj.Data = wid.empty;
+            obj.Data = wit.io.wid.empty;
         else,
             delete(obj.DataObjectBeingDestroyedListener);
             delete(obj.DataObjectModifiedListener);
@@ -38,7 +38,7 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
             obj.TreeDataModifiedCount = TreeData.ModifiedCount;
             obj.DataObjectBeingDestroyedListener = TreeData.addlistener('ObjectBeingDestroyed', @(s,e) wip_update_Data(obj, true));
             obj.DataObjectModifiedListener = TreeData.addlistener('ObjectModified', @(s,e) wip_update_Data(obj));
-            obj.Data = reshape(wid(obj), [], 1); % Force column vector
+            obj.Data = reshape(wit.io.wid(obj), [], 1); % Force column vector
         end
         return;
     else,
@@ -58,14 +58,14 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
                     obj.TreeDataModifiedCount = [];
                     obj.DataObjectBeingDestroyedListener = [];
                     obj.DataObjectModifiedListener = [];
-                    obj.Data = wid.empty;
+                    obj.Data = wit.io.wid.empty;
                 else,
                     delete(obj.DataObjectBeingDestroyedListener);
                     delete(obj.DataObjectModifiedListener);
                     obj.TreeData = TreeData;
                     obj.DataObjectBeingDestroyedListener = TreeData.addlistener('ObjectBeingDestroyed', @(s,e) wip_update_Data(obj, true));
                     obj.DataObjectModifiedListener = TreeData.addlistener('ObjectModified', @(s,e) wip_update_Data(obj));
-                    obj.Data = reshape(wid(obj), [], 1); % Force column vector
+                    obj.Data = reshape(wit.io.wid(obj), [], 1); % Force column vector
                 end
             elseif strcmp(MDP, 'Children'), % Data-tag gains new children: some may be added and some may be removed.
                 TreeData_Children = TreeData.Children;
@@ -90,7 +90,7 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
                 bw_removed = reshape(bw_removed, [], 2);
                 bw_removed = any(bw_removed, 2);
                 enableOnCleanup = disableObjectModified([TreeData.Root TreeData]); % Temporarily disable the Project related wit-class ObjectModified events
-                obj_Data = [obj_Data(~bw_removed); reshape(wid(TreeData_Children(bw_added)), [], 1)];
+                obj_Data = [obj_Data(~bw_removed); reshape(wit.io.wid(TreeData_Children(bw_added)), [], 1)];
                 obj.Data = obj_Data; % Force column vector
                 % Update TreeData counter
                 Tag_NV = TreeData.search_children('NumberOfData');
@@ -108,7 +108,7 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
                 obj.TreeDataModifiedCount = [];
                 obj.DataObjectBeingDestroyedListener = [];
                 obj.DataObjectModifiedListener = [];
-                obj.Data = wid.empty;
+                obj.Data = wit.io.wid.empty;
             elseif strcmp(MDP, 'Name'), % Data-tag becomes invalid
                 delete(obj.DataObjectBeingDestroyedListener);
                 delete(obj.DataObjectModifiedListener);
@@ -116,7 +116,7 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
                 obj.TreeDataModifiedCount = [];
                 obj.DataObjectBeingDestroyedListener = [];
                 obj.DataObjectModifiedListener = [];
-                obj.Data = wid.empty;
+                obj.Data = wit.io.wid.empty;
             end
         elseif numel(MDI) == 1, % Continue if Data-tag's Children have been directly modified
             % From parent's point of view, it never sees strcmp(MDP, 'Parent') == true.

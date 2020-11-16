@@ -12,7 +12,7 @@ function [ValueUnit, varargout] = interpret_forced(obj, I, Unit_new, Unit_old, v
     if ~isempty(Unit_old) && ischar(Unit_old), ValueUnit = Unit_old; end % If given Unit_old is ValueUnit_old
     
     if isempty(I), return; end % Do nothing if empty Interpretation
-    if isa(I, 'wid'), Type = I.Type; % Get its Type
+    if isa(I, 'wit.io.wid'), Type = I.Type; % Get its Type
     elseif iscell(I) && numel(I) == 2, Type = I{1};
     elseif ischar(I), Type = I; end
 

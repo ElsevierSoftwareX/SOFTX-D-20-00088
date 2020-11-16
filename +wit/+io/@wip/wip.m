@@ -35,7 +35,7 @@ classdef wip < handle, % Since R2008a
         Name;
     end
     properties % READ-WRITE
-        Data = wid.empty;
+        Data = wit.io.wid.empty;
     end
     properties (Dependent) % READ-WRITE, DEPENDENT
         Type;
@@ -112,7 +112,7 @@ classdef wip < handle, % Since R2008a
                 % Validate the given input
                 if isa(TreeOrData, 'wit.io.wit') && numel(TreeOrData) == 1,
                     Tree = TreeOrData.Root;
-                elseif isa(TreeOrData, 'wid'),
+                elseif isa(TreeOrData, 'wit.io.wid'),
                     Data = TreeOrData;
                     Tags = [Data.Tag];
                     Roots = unique([Tags.Root]);
@@ -152,7 +152,7 @@ classdef wip < handle, % Since R2008a
                 end
             catch me, % Handle invalid or deleted object -case
                 switch me.identifier,
-                    case 'MATLAB:class:InvalidHandle', obj = obj([]); % wid.empty
+                    case 'MATLAB:class:InvalidHandle', obj = obj([]); % wit.io.wid.empty
                     otherwise, rethrow(me);
                 end
             end
@@ -218,7 +218,7 @@ classdef wip < handle, % Since R2008a
                 case 'WITec Project',
                     Tree = wit.io.wip.new(obj.Version);
                 case 'WITec Data',
-                    Tree = wid.new(obj.Version);
+                    Tree = wit.io.wid.new(obj.Version);
                 otherwise,
                     obj.Tree.Name = Type;
             end

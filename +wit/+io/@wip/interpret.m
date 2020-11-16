@@ -22,7 +22,7 @@ function [ValueUnit, varargout] = interpret(I, Unit_new, Unit_old, varargin),
     
     if isempty(I), return; end % Do nothing if empty Interpretation
     
-    if isa(I, 'wid'),
+    if isa(I, 'wit.io.wid'),
         Type = I.Type; % Get its Type
         I = I.Data; % Get its Data-struct
     end

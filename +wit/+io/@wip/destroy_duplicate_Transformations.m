@@ -24,7 +24,7 @@ function destroy_duplicate_Transformations(obj),
         for jj = 1:numel(inds_next),
             ind_jj = inds_next(jj);
             if isequal_nested_structs(Datas{ii}, Datas{ind_jj}),
-                linked_tags = wid.find_linked_wits_to_this_wid(O_wid(ind_jj));
+                linked_tags = wit.io.wid.find_linked_wits_to_this_wid(O_wid(ind_jj));
                 for nn = 1:numel(linked_tags),
                     linked_tags(nn).Data(linked_tags(nn).Data == O_wid(ind_jj).Id) = O_wid(ii).Id;
                 end

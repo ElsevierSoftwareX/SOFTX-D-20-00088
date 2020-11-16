@@ -34,7 +34,7 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 % Create new Project objects
 Version = 5; % Use version 5 here for forward-compability. For instance, WITec Project 2.1.
 O_wit = wit.io.wip.new(Version); % Create new Project (*.WIP-format) WIT-tree root
-% O_wit = wid.new(Version); % Create new Project (*.WID-format) WIT-tree root
+% O_wit = wit.io.wid.new(Version); % Create new Project (*.WID-format) WIT-tree root
 O_wip = wit.io.wip(O_wit); % Create its Project object
 
 % Or uncomment below to alternatively append to old Project objects
@@ -47,7 +47,7 @@ O_wip = wit.io.wip(O_wit); % Create its Project object
 
 %-------------------------------------------------------------------------%
 % Create new TDBitmap with random content
-new_TDBitmap = wid.new_Bitmap(O_wit); % Create empty TDBitmap
+new_TDBitmap = wit.io.wid.new_Bitmap(O_wit); % Create empty TDBitmap
 new_TDBitmap.Name = 'Customized TDBitmap';
 
 % Create customized Data
@@ -60,7 +60,7 @@ Data = randi(256, [SizeX_TDBitmap SizeY_TDBitmap SizeGraph_TDBitmap])-1; % Unifo
 new_TDBitmap.Data = Data;
 
 % Create customized transformations and interpretations
-new_TDBitmap_TSpace = wid.new_Transformation_Space(O_wit);
+new_TDBitmap_TSpace = wit.io.wid.new_Transformation_Space(O_wit);
 % Read TDSpaceTransformation details in 'README on WIT-tag formatting.txt'.
 
 % Add links to transformations and interpretations
@@ -75,7 +75,7 @@ new_TDBitmap_Tag_Data.regexp('^SpaceTransformationID<TDBitmap<', true).Data = ne
 
 %-------------------------------------------------------------------------%
 % Create new Image<TDGraph with random content
-new_TDGraph = wid.new_Graph(O_wit); % Create empty Image<TDGraph
+new_TDGraph = wit.io.wid.new_Graph(O_wit); % Create empty Image<TDGraph
 % new_TDGraph.SubType = 'Image'; % Set its ImageIndex
 % SubTypes are listed in @wid\wid_SubType_set.m and are as follows:
 % 'Image', 'Line', 'Point', 'Array', 'Histogram', 'Time' and 'Mask'
@@ -116,10 +116,10 @@ Graph_nm = Graph_nm + randn(size(Graph_nm)); % Add gaussian noise to spectral ax
 % [~, Graph_nm] = wit.io.wip.interpret({'Spectral', ExcitationWavelength}, '(nm)', '(meV)', Graph_meV); % Direct conversion from meV to nm. Here ExcitationWavelength's extra input is only used when converting from relative units.
 
 % Create customized transformations and interpretations
-new_TDGraph_TSpace = wid.new_Transformation_Space(O_wit);
+new_TDGraph_TSpace = wit.io.wid.new_Transformation_Space(O_wit);
 % Read TDSpaceTransformation details in 'README on WIT-tag formatting.txt'.
 
-new_TDGraph_TSpectral = wid.new_Transformation_LUT(O_wit);
+new_TDGraph_TSpectral = wit.io.wid.new_Transformation_LUT(O_wit);
 new_TDGraph_TSpectral_Data = new_TDGraph_TSpectral.Data; % Get formatted struct once to speed-up
 new_TDGraph_TSpectral_Data.TDLUTTransformation.LUT = Graph_nm; % Its SpectralUnit is always (nm) under the hood until interpreted to other kind!
 new_TDGraph_TSpectral_Data.TDLUTTransformation.LUTSize = numel(Graph_nm); % Ignored by wit_io, but used in WITec software
@@ -128,7 +128,7 @@ new_TDGraph_TSpectral.Data = new_TDGraph_TSpectral_Data; % Save all changes once
 % Read TDLUTTransformation details in 'README on WIT-tag formatting.txt'.
 
 % Interpret Graph-variable (nm) as (rel. 1/cm)
-new_TDGraph_ISpectral = wid.new_Interpretation_Spectral(O_wit);
+new_TDGraph_ISpectral = wit.io.wid.new_Interpretation_Spectral(O_wit);
 new_TDGraph_ISpectral.Data.TDSpectralInterpretation.ExcitationWaveLength = ExcitationWavelength; % Green laser
 new_TDGraph_ISpectral.Data.TDInterpretation.UnitIndex = 3; % (rel. 1/cm)
 % UnitIndex (TDInterpretation<TDSpectralInterpretation)
@@ -137,11 +137,11 @@ new_TDGraph_ISpectral.Data.TDInterpretation.UnitIndex = 3; % (rel. 1/cm)
 
 % Or interpret it as customized unit
 % GraphUnit = 'Randomized spectral axis unit'; % Custom spectral axis unit name
-% new_TDGraph_ISpectral = wid.new_Interpretation_Z(O_wit);
+% new_TDGraph_ISpectral = wit.io.wid.new_Interpretation_Z(O_wit);
 % new_TDGraph_ISpectral.Data.TDZInterpretation.UnitName = GraphUnit;
 % Read TDZInterpretation details in 'README on WIT-tag formatting.txt'.
 
-new_TDGraph_IData = wid.new_Interpretation_Z(O_wit);
+new_TDGraph_IData = wit.io.wid.new_Interpretation_Z(O_wit);
 new_TDGraph_IData.Data.TDZInterpretation.UnitName = DataUnit;
 % Read TDZInterpretation details in 'README on WIT-tag formatting.txt'.
 
@@ -160,7 +160,7 @@ new_TDGraph_Tag_Data.regexp('^ZInterpretationID<TDGraph<', true).Data = new_TDGr
 
 %-------------------------------------------------------------------------%
 % Create new TDImage with random content
-new_TDImage = wid.new_Image(O_wit); % Create empty TDImage
+new_TDImage = wit.io.wid.new_Image(O_wit); % Create empty TDImage
 new_TDImage.Name = 'Customized TDImage';
 
 % Create customized Data
@@ -173,10 +173,10 @@ Data_TDImage = randn(SizeX_TDImage, SizeY_TDImage); % Double
 new_TDImage.Data = Data_TDImage;
 
 % Create customized transformations and interpretations
-new_TDImage_TSpace = wid.new_Transformation_Space(O_wit);
+new_TDImage_TSpace = wit.io.wid.new_Transformation_Space(O_wit);
 % Read TDSpaceTransformation details in 'README on WIT-tag formatting.txt'.
 
-new_TDImage_IData = wid.new_Interpretation_Z(O_wit);
+new_TDImage_IData = wit.io.wid.new_Interpretation_Z(O_wit);
 new_TDImage_IData.Data.TDZInterpretation.UnitName = DataUnit_TDImage;
 % Read TDZInterpretation details in 'README on WIT-tag formatting.txt'.
 
@@ -193,7 +193,7 @@ new_TDImage_Tag_Data.regexp('^ZInterpretationID<TDImage<', true).Data = new_TDIm
 
 %-------------------------------------------------------------------------%
 % Create new TDText
-new_TDText = wid.new_Text(O_wit); % Create empty TDText
+new_TDText = wit.io.wid.new_Text(O_wit); % Create empty TDText
 new_TDText.Name = 'Customized TDText';
 new_TDText.Data = {'Customized TDText example:', ''; ...
     '', ''; ...
