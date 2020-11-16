@@ -36,7 +36,7 @@ in Aalto University, Finland.
 
 ### License
 This is published under **free** and **permissive** [BSD 3-Clause License][license].
-Only exceptions to this license can be found in the *'[helper/3rd party]'* folder.
+Only exceptions to this license can be found in the *'[third party]'* folder.
 
 ### Installation to MATLAB (for R2014b or newer)
 Download [the latest toolbox installer] and double-click it to
@@ -46,7 +46,7 @@ install it.
 Download [the latest zip archive] and extract it as a new folder (i.e. *'wit_io'*)
 to your workfolder.
 
-**For the first time**, go to the created folder and run *(or F5)* *'[wit_io_permanent_load_or_addpath.m]'*
+**For the first time**, go to the created folder and run *(or F5)* *'[wit.io.permanent_load_or_addpath.m]'*
 to **permanently** add it and its subfolders to MATLAB path so that the toolbox
 can be called from anywhere. **This requires administration rights.**
 * Without the rights, do one of the following once per MATLAB instance to make
@@ -58,14 +58,14 @@ and from the context menu left-click "Add to Path" and "Selected Folders and
 Subfolders".
 
 ### Installation to context menus (for MATLAB R2011a or newer)
-**Optionally**, run *(or F5)* also *'[wit_io_update_context_menus_for_wip_and_wid_files.m]'*
+**Optionally**, run *(or F5)* also *'[wit.io.update_context_menus_for_wip_and_wid_files.m]'*
 to add *'MATLAB'*-option to the **\*.wip** and **\*.wid** file right-click
-context menus to enable a quick call to `[O_wid, O_wip, O_wid_HtmlNames] = wip.read(file);`.
+context menus to enable a quick call to `[O_wid, O_wip, O_wid_HtmlNames] = wit.io.wip.read(file);`.
 **This also requires administration rights.**
 
 ### Example cases
 Run *(or F5)* interactive code (*\*.m*) under *'[EXAMPLE cases]'* folder to
-learn **wit_io**. Begin by opening and running *'E_01_A_import_file_to_get_started.m'*.
+learn **wit_io**. Begin by opening and running *'wit.io.examples.A1_import_file_to_get_started.m'*.
 
 ### Semi-automated scripts
 Consider using semi-automated scripts under *'[SCRIPT cases]'* folder on your
@@ -82,11 +82,11 @@ systems.
 
 ### Any WIT-tag formatted file
 Toolbox can also **read** from and **write** to **arbitrary** WIT-tag formatted
-files with use of `O_wit = wit.read(file);` and `O_wit.write();`, respectively.
-Any WIT-tag tree content can be modified using `S_DT = wit.DataTree_get(O_wit);`
-and `wit.DataTree_set(O_wit, S_DT);` class functions. Trees can also be viewed
+files with use of `O_wit = wit.io.wit.read(file);` and `O_wit.write();`, respectively.
+Any WIT-tag tree content can be modified using `S_DT = wit.io.wit.DataTree_get(O_wit);`
+and `wit.io.wit.DataTree_set(O_wit, S_DT);` class functions. Trees can also be viewed
 in collapsed form from workspace after call to `S = O_wit.collapse();` (read-only)
-or `O_wit_debug = wit_debug(O_wit);` (read+write).
+or `O_wit_debug = wit.io.wit.debug(O_wit);` (read+write).
 
 ### Format details of \*.wip/\*.wid-files
 For more information, read *'[README on WIT-tag formatting.txt]'*. Please note
@@ -126,12 +126,12 @@ J. T. Holmi (2019). wit_io: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.w
 [MATLAB]: https://www.mathworks.com/products/matlab.html
 [the latest toolbox installer]: ./wit_io.mltbx
 [the latest zip archive]: https://gitlab.com/jtholmi/wit_io/-/archive/master/wit_io-master.zip
-[helper/3rd party]: ./helper/3rd%20party
-[EXAMPLE cases]: ./EXAMPLE%20cases
-[SCRIPT cases]: ./SCRIPT%20cases
-[wit_io_permanent_load_or_addpath.m]: ./wit_io_permanent_load_or_addpath.m
-[wit_io_update_context_menus_for_wip_and_wid_files.m]: ./wit_io_update_context_menus_for_wip_and_wid_files.m
+[third party]: ./+wit/+io/+lib
+[EXAMPLE cases]: ./+wit/+io/+examples
+[SCRIPT cases]: ./+wit/+io/+scripts
+[wit.io.permanent_load_or_addpath.m]: ./+wit/+io/permanent_load_or_addpath.m
+[wit.io.update_context_menus_for_wip_and_wid_files.m]: ./+wit/+io/update_context_menus_for_wip_and_wid_files.m
 [README on WIT-tag formatting.txt]: ./README%20on%20WIT-tag%20formatting.txt
-[clever_statistics_and_outliers.m]: ./helper/clever_statistics_and_outliers.m
-[myinpolygon.m]: ./helper/myinpolygon.m
-[apply_MRLCM.m]: ./helper/corrections/apply_MRLCM.m
+[clever_statistics_and_outliers.m]: ./+wit/+io/+fun/clever_statistics_and_outliers.m
+[myinpolygon.m]: ./+wit/+io/+fun/myinpolygon.m
+[apply_MRLCM.m]: ./+wit/+io/+fun/+correct/apply_MRLCM.m
