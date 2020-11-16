@@ -2,14 +2,14 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [h_label, h_label_1, h_edit_1, h_label_2, h_edit_2, h_label_3, h_edit_3, h_label_4, h_edit_4] = ui_sidebar_for_cursor(Fig, fun_down, fun_up, fun_image_transform),
+function [h_label, h_label_1, h_edit_1, h_label_2, h_edit_2, h_label_3, h_edit_3, h_label_4, h_edit_4] = sidebar_cursor(Fig, fun_down, fun_up, fun_image_transform),
     if nargin < 1 || isempty(Fig), Fig = gcf; end % By default, update gcf
     if nargin < 2, fun_down = []; end % By default, no function to call on down
     if nargin < 3, fun_up = []; end % By default, no function to call on up
     if nargin < 4, fun_image_transform = []; end % By default, no image transformation
     
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
-    if isempty(Parent), [~, Parent] = ui_sidebar(Fig); end % Create one if it does not exist
+    if isempty(Parent), [~, Parent] = wit.io.ui.sidebar(Fig); end % Create one if it does not exist
     Ax = get(Fig, 'CurrentAxes');
     
     % Calculate positions
@@ -60,7 +60,7 @@ function [h_label, h_label_1, h_edit_1, h_label_2, h_edit_2, h_label_3, h_edit_3
                 CP = CP(1,:);
             else, % Get key point from given difference, dCP
                 % Find the circle
-                CircleObject = findobj(Ax, 'Tag', 'circle_by_ui_sidebar_for_cursor');
+                CircleObject = findobj(Ax, 'Tag', 'circle_by_ui_sidebar_cursor');
                 if ~isempty(CircleObject),
                     CP = get(CircleObject, 'Position'); % Get previous position
                     CP = [CP(1)+1 CP(2)+1 1] + dCP(:).'; % Shift from previous circle center
@@ -102,10 +102,10 @@ function [h_label, h_label_1, h_edit_1, h_label_2, h_edit_2, h_label_3, h_edit_3
                 set([h_label_3 h_label_4 h_edit_3 h_edit_4], 'Visible', 'on');
                 
                 % Also, add a circle as position marker on top of the view
-                CircleObject = findobj(Ax, 'Tag', 'circle_by_ui_sidebar_for_cursor');
+                CircleObject = findobj(Ax, 'Tag', 'circle_by_ui_sidebar_cursor');
                 if isempty(CircleObject), % Create new if needed
                     CircleObject = rectangle('Parent', Ax, 'Position', [round_X-1 round_Y-1 2 2], 'Curvature', [1 1], 'EdgeColor', 'white', 'LineWidth', 1);
-                    set(CircleObject, 'Tag', 'circle_by_ui_sidebar_for_cursor');
+                    set(CircleObject, 'Tag', 'circle_by_ui_sidebar_cursor');
                 else, set(CircleObject, 'Position', [round_X-1 round_Y-1 2 2]); end
             else, set([h_label_3 h_label_4 h_edit_3 h_edit_4], 'Visible', 'off'); end
             

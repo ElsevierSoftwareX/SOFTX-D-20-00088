@@ -81,19 +81,19 @@ function h = plot(obj, varargin),
         switch(obj.Type),
             case 'TDBitmap',
                 plot_Image(Data, 'RGB', Info.XUnit, Info.XLength, Info.YLength);
-                if showSidebar && showCursor, ui_sidebar_for_cursor([], [], [], @transform_CP); end
+                if showSidebar && showCursor, wit.io.ui.sidebar_cursor([], [], [], @transform_CP); end
             case 'TDGraph',
                 % VERIFIED 25.7.2016 TO BE COMPLETE LIST!
                 switch(obj.SubType),
                     case 'Image', % Image
                         if showSidebar,
                             updateGraphImage([-inf inf]);
-                            fun_refresh = ui_sidebar_for_clim(Fig);
-                            ui_sidebar_for_perceptually_uniform_colormaps(Fig);
-                            ui_sidebar_for_sum_filter(Fig, @updateGraphImage, fun_refresh);
+                            fun_refresh = wit.io.ui.sidebar_clim(Fig);
+                            wit.io.ui.sidebar_perceptually_uniform_colormaps(Fig);
+                            wit.io.ui.sidebar_sum_filter(Fig, @updateGraphImage, fun_refresh);
                             if showCursor,
-                                if ~showPreview, ui_sidebar_for_cursor(Fig, [], [], @transform_CP);
-                                else, ui_sidebar_for_cursor(Fig, @subPreview, [], @transform_CP); end
+                                if ~showPreview, wit.io.ui.sidebar_cursor(Fig, [], [], @transform_CP);
+                                else, wit.io.ui.sidebar_cursor(Fig, @subPreview, [], @transform_CP); end
                             end
                         else,
                             if numel(varargin) > 0, updateGraphImage(varargin{1});
@@ -102,34 +102,34 @@ function h = plot(obj, varargin),
                     case 'Line', % Line
                         plotSpectrum(1, 1);
                         if showSidebar,
-                            if showCursor, ui_sidebar_for_cursor(Fig); end
-                            ui_sidebar_for_index_slider(Fig, Info.XSize, @(Ind) plotSpectrum(Ind, 1));
-                            fun_auto = ui_sidebar_for_checkbox(Fig, 'Autoscale', 1);
+                            if showCursor, wit.io.ui.sidebar_cursor(Fig); end
+                            wit.io.ui.sidebar_index_slider(Fig, Info.XSize, @(Ind) plotSpectrum(Ind, 1));
+                            fun_auto = wit.io.ui.sidebar_checkbox(Fig, 'Autoscale', 1);
                         end
                     case 'Point', % Point
                         plotSpectrum(1, 1);
-                        if showSidebar && showCursor, ui_sidebar_for_cursor(Fig); end
+                        if showSidebar && showCursor, wit.io.ui.sidebar_cursor(Fig); end
                     case 'Array', % Array
                         plotSpectrum(1, 1);
-                        if showSidebar && showCursor, ui_sidebar_for_cursor(Fig); end
+                        if showSidebar && showCursor, wit.io.ui.sidebar_cursor(Fig); end
                     case 'Histogram', % Histogram
                         plotSpectrum(1, 1, @bar);
-                        if showSidebar && showCursor, ui_sidebar_for_cursor(Fig); end
+                        if showSidebar && showCursor, wit.io.ui.sidebar_cursor(Fig); end
                     case 'Time', % Time
                         plotSpectrum(1, 1);
                         if showSidebar,
-                            if showCursor, ui_sidebar_for_cursor(Fig); end
-                            ui_sidebar_for_index_slider(Fig, Info.XSize, @(Ind) plotSpectrum(Ind, 1));
-                            fun_auto = ui_sidebar_for_checkbox(Fig, 'Autoscale', 1);
+                            if showCursor, wit.io.ui.sidebar_cursor(Fig); end
+                            wit.io.ui.sidebar_index_slider(Fig, Info.XSize, @(Ind) plotSpectrum(Ind, 1));
+                            fun_auto = wit.io.ui.sidebar_checkbox(Fig, 'Autoscale', 1);
                         end
                     case 'Mask', % Mask
                         plotSpectrum(1, 1);
-                        if showSidebar && showCursor, ui_sidebar_for_cursor(Fig); end        % CUSTOM TYPE
+                        if showSidebar && showCursor, wit.io.ui.sidebar_cursor(Fig); end        % CUSTOM TYPE
                     case 'Volume', % Volume (CUSTOM)
                         if showSidebar,
                             updateGraphVolume([-inf inf]);
-                            ui_sidebar_for_perceptually_uniform_colormaps(Fig);
-                            ui_sidebar_for_sum_filter(Fig, @updateGraphVolume);
+                            wit.io.ui.sidebar_perceptually_uniform_colormaps(Fig);
+                            wit.io.ui.sidebar_sum_filter(Fig, @updateGraphVolume);
                         else,
                             if numel(varargin) > 0, updateGraphVolume(varargin{1});
                             else, updateGraphVolume([-inf inf]); end
@@ -138,9 +138,9 @@ function h = plot(obj, varargin),
             case 'TDImage', % Image
                 plot_Image(Data, Info.DataUnit, Info.XUnit, Info.XLength, Info.YLength);
                 if showSidebar,
-                    ui_sidebar_for_clim(Fig);
-                    ui_sidebar_for_perceptually_uniform_colormaps(Fig);
-                    if showCursor, ui_sidebar_for_cursor(Fig, [], [], @transform_CP); end
+                    wit.io.ui.sidebar_clim(Fig);
+                    wit.io.ui.sidebar_perceptually_uniform_colormaps(Fig);
+                    if showCursor, wit.io.ui.sidebar_cursor(Fig, [], [], @transform_CP); end
                 end
             otherwise, % Text OR (un)formatted DataTree
                 if ~strcmp(obj.Type, 'TDText'), % If NOT TDText
@@ -169,7 +169,7 @@ function h = plot(obj, varargin),
                 set(h, 'ColumnWidth', num2cell(max(CW, [], 1)+2)); % Set new column widths
                 
                 if showSidebar, % Show sidebar if requested
-                    h_mainbar = ui_sidebar(Fig);
+                    h_mainbar = wit.io.ui.sidebar(Fig);
                     set(h_mainbar, 'Visible', 'off'); % Hide mainbar or it will hide uitable
                 end
         end
@@ -344,8 +344,8 @@ function h = plot(obj, varargin),
                 OuterPosition(2) = OuterPosition(2) - OuterPosition(4);
                 set(Fig_sub, 'OuterPosition', OuterPosition);
                 if showSidebar,
-                    ui_sidebar_for_cursor(Fig_sub);
-                    fun_auto = ui_sidebar_for_checkbox(Fig_sub, 'Autoscale', 1);
+                    wit.io.ui.sidebar_cursor(Fig_sub);
+                    fun_auto = wit.io.ui.sidebar_checkbox(Fig_sub, 'Autoscale', 1);
                 end
             end
             % Show spectrum data
@@ -425,7 +425,7 @@ function h = plot(obj, varargin),
                 else, h = nanimagesc(Data, [cmin cmax]); end
             else, h = imagesc(Data); end % Plot logical data
 %             colormap(perceptually_uniform_colormap('inferno')); % Use inferno by default
-            colorbar('HitTest', 'off'); % HitTest 'off' added for backward compability of ui_sidebar_for_cursor
+            colorbar('HitTest', 'off'); % HitTest 'off' added for backward compability of wit.io.ui.sidebar_cursor
         elseif size(Data, 3) == 3, h = image(Data); end % Plot colored data
 
         daspect([1 1 1]);

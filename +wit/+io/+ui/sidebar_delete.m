@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function delete_uipanels(Fig),
+function sidebar_delete(Fig),
     if nargin < 1 || isempty(Fig), Fig = gcf; end % By default, update gcf
     h_sidebar = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
     h_mainbar = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'mainbar'); % Find mainbar uipanel

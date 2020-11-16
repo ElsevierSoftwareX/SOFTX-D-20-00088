@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [h_popup, h_label] = ui_sidebar_for_popup(Fig, str_Label, str_Popup, fun, initialValue, isPersistent, isMargins),
+function [h_popup, h_label] = sidebar_popup(Fig, str_Label, str_Popup, fun, initialValue, isPersistent, isMargins),
     if nargin < 6, isPersistent = true; end
     if nargin < 5, initialValue = 1; end
     if isPersistent,
@@ -14,7 +14,7 @@ function [h_popup, h_label] = ui_sidebar_for_popup(Fig, str_Label, str_Popup, fu
     if isempty(Fig), Fig = gcf; end % By default, update gcf
     if nargin < 7, isMargins = [1 1 1 1]; end % By default, add [left bottom right top] margins
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
-    if isempty(Parent), [~, Parent] = ui_sidebar(Fig); end % Create one if it does not exist
+    if isempty(Parent), [~, Parent] = wit.io.ui.sidebar(Fig); end % Create one if it does not exist
     Ax = get(Fig, 'CurrentAxes');
     
     % Calculate positions

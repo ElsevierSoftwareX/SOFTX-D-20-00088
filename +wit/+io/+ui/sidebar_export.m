@@ -3,7 +3,7 @@
 % All rights reserved.
 
 % Requires 3rd party export_fig
-function export_ui_figure(Fig),
+function sidebar_export(Fig),
     if nargin < 1 || isempty(Fig), Fig = gcf; end % By default, update gcf
     h_sidebar = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
     h_mainbar = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'mainbar'); % Find mainbar uipanel

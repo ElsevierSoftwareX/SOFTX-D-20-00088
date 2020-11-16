@@ -2,13 +2,13 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [h_edit_1, h_edit_2, h_label] = ui_sidebar_for_sum_filter(Fig, varargin),
+function [h_edit_1, h_edit_2, h_label] = sidebar_sum_filter(Fig, varargin),
     persistent currentRange; % Remember this always
     if isempty(currentRange), currentRange = [-inf inf]; end % By default, sum over all data
     
     if isempty(Fig), Fig = gcf; end % By default, update gcf
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
-    if isempty(Parent), [~, Parent] = ui_sidebar(Fig); end % Create one if it does not exist
+    if isempty(Parent), [~, Parent] = wit.io.ui.sidebar(Fig); end % Create one if it does not exist
     
     % Calculate Positions
     Units = get(Parent, 'Units'); % Store Units

@@ -2,10 +2,10 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [h_slider, h_edit, h_label] = ui_sidebar_for_index_slider(Fig, Maximum, fun),
+function [h_slider, h_edit, h_label] = sidebar_index_slider(Fig, Maximum, fun),
     if isempty(Fig), Fig = gcf; end % By default, update gcf
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
-    if isempty(Parent), [~, Parent] = ui_sidebar(Fig); end % Create one if it does not exist
+    if isempty(Parent), [~, Parent] = wit.io.ui.sidebar(Fig); end % Create one if it does not exist
     
     % Calculate positions
     Units = get(Parent, 'Units'); % Store Units

@@ -36,12 +36,12 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
         masking_value = false;
         masking_mode = 0;
         show_mask();
-        ui_sidebar_for_popup(Fig, 'Masking value:', {'False', 'True'}, @update_value, 1, false, [1 -1 1 1]);
-        ui_sidebar_for_button(Fig, [], 'Clear mask', @clear, [1 1 1 -1]);
-        ui_sidebar_for_button(Fig, [], 'Invert mask', @invert, [1 1 1 -1]);
+        wit.io.ui.sidebar_popup(Fig, 'Masking value:', {'False', 'True'}, @update_value, 1, false, [1 -1 1 1]);
+        wit.io.ui.sidebar_button(Fig, [], 'Clear mask', @clear, [1 1 1 -1]);
+        wit.io.ui.sidebar_button(Fig, [], 'Invert mask', @invert, [1 1 1 -1]);
         str_Popup = {'Freehand', 'Contour', 'Fill'};
         set(Fig, 'WindowButtonDownFcn', @WindowButtonDownFcn, 'WindowButtonUpFcn', @WindowButtonUpFcn); % Enable mouse tracking when pressed down!
-        ui_sidebar_for_popup(Fig, 'Masking tool:', str_Popup, @update, 1, false, [1 -1 1 1]);
+        wit.io.ui.sidebar_popup(Fig, 'Masking tool:', str_Popup, @update, 1, false, [1 -1 1 1]);
         
         AutoCloseInSeconds = wit_io_pref_get('AutoCloseInSeconds', Inf);
         if ~isinf(AutoCloseInSeconds) && AutoCloseInSeconds >= 0,

@@ -2,13 +2,13 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [h_popup, h_label] = ui_sidebar_for_perceptually_uniform_colormaps(Fig),
+function [h_popup, h_label] = sidebar_colormap_mpl(Fig),
     persistent currentValue; % Remember this always
     if isempty(currentValue), currentValue = 2; end % Default: inferno
     
     if nargin < 1 || isempty(Fig), Fig = gcf; end % By default, update gcf
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
-    if isempty(Parent), [~, Parent] = ui_sidebar(Fig); end % Create one if it does not exist
+    if isempty(Parent), [~, Parent] = wit.io.ui.sidebar(Fig); end % Create one if it does not exist
 %     Ax = get(Fig, 'CurrentAxes');
     
     % Calculate positions
