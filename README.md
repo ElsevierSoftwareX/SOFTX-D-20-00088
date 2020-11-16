@@ -89,7 +89,7 @@ in collapsed form from workspace after call to `S = O_wit.collapse();` (read-onl
 or `O_wit_debug = wit.io.wit.debug(O_wit);` (read+write).
 
 ### Format details of \*.wip/\*.wid-files
-For more information, read *'[README on WIT-tag formatting.txt]'*. Please note
+For more information, read *'[README on WIT-tag format.txt]'*. Please note
 that it is by no means an all exhaustive list, but rather consists of formatting
 for the relevant WIT-tags.
 
@@ -131,7 +131,7 @@ J. T. Holmi (2019). wit_io: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.w
 [SCRIPT cases]: ./+wit/+io/+scripts
 [wit.io.permanent_load_or_addpath.m]: ./+wit/+io/permanent_load_or_addpath.m
 [wit.io.update_context_menus_for_wip_and_wid_files.m]: ./+wit/+io/update_context_menus_for_wip_and_wid_files.m
-[README on WIT-tag formatting.txt]: ./README%20on%20WIT-tag%20formatting.txt
+[README on WIT-tag format.txt]: ./+wit/+io/+doc/README%20on%20WIT-tag%20format.txt
 [clever_statistics_and_outliers.m]: ./+wit/+io/+fun/clever_statistics_and_outliers.m
 [myinpolygon.m]: ./+wit/+io/+fun/myinpolygon.m
 [apply_MRLCM.m]: ./+wit/+io/+fun/+correct/apply_MRLCM.m
