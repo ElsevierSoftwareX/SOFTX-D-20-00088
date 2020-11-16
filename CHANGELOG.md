@@ -27,6 +27,38 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
+## [2.0.0] - 2020-11-16
+
+### Added
+
+- 
+
+### Changed
+
+- 
+
+### Deprecated
+
+- 
+
+### Removed
+
+- 
+
+### Fixed
+
+- 
+
+### Security
+
+- 
+
+### Performance
+
+- 
+
+
+
 ## [1.4.0.1] - 2020-11-26
 
 ### Added
@@ -589,7 +621,8 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
-[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.4.0.1...develop
+[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v2.0.0...develop
+[2.0.0]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.4.0.1...v2.0.0
 [1.4.0.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.4.0...v1.4.0.1
 [1.4.0]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.2.1...v1.4.0
 [1.3.2.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.2...v1.3.2.1
