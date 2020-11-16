@@ -11,7 +11,7 @@
 % current version the splitting spaces are KEPT at the end of the line to
 % keep the algorithm simple.
 
-% Used by wit_io_msgbox.m
+% Used by wit.io.misc.msgbox.m
 function mytextwrap(h_text, max_width),
     % Test if h_text is a single text object or error
     type = get(h_text, 'Type'); % Errors if 'Type' does not exist

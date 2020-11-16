@@ -4,13 +4,13 @@
 
 % This function is intended replace use of edit within wit_io toolbox,
 % because it allows non-interactive mode to kick in on demand.
-function wit_io_edit(file),
+function edit(file),
     if nargin == 0,
         S = dbstack('-completenames'); % Find out what function called this
         if numel(S) < 2, return; end % Stop if nothing to find
         file = S(2).file;
     end
-    if ~wit_io_pref_get('AutoStopEdit', false),
+    if ~wit.io.pref.get('AutoStopEdit', false),
         edit(file);
     end
 end

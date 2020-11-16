@@ -6,7 +6,7 @@
 % Simple examples of data post processing like (B2 i.) masking and
 % (B2 ii.) spatial averaging.
 
-wit_io_edit(); % Open this code in Editor
+wit.io.misc.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -17,13 +17,13 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
-wit_io_license;
+wit.io.misc.license;
 
-h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 2 B:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 2 B:}' ...
     '{\bf\fontsize{12}DATA MASKING AND SPATIAL AVERAGING}' ...
     '' ...
     '\bullet Using ''E\_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -39,7 +39,7 @@ O_Mask = O_wid(7); % Get object of "1-layer Gr<Mask 2" at index 7
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(B2 i.)} Masking of the ImageScan data:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(B2 i.)} Masking of the ImageScan data:}' ...
     '' ...
     '\bullet This example uses "1-layer Gr<Mask 2"-mask on "Reduced<Image Scan 1 (Data)"-data.' ...
     '' ...
@@ -72,7 +72,7 @@ close all; % Close the plot
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(B2 ii.)} Getting spatial average of the previously masked data.}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(B2 ii.)} Getting spatial average of the previously masked data.}' ...
     '' ...
     '\ldots Close this to END.'});
 %-------------------------------------------------------------------------%
@@ -82,7 +82,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(B2 ii.)} Getting spatial a
 %-------------------------------------------------------------------------%
 O_avg = O_masked.spatial_average();
 figure; O_avg.plot; % Point<TDGraph with sidebar
-wit_io_uiwait(h);
+wit.io.misc.uiwait(h);
 close all; % Close the plot
 %-------------------------------------------------------------------------%
 

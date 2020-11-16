@@ -9,7 +9,7 @@
 % AFM, CRM and SNOM stand for Atomic Force Microscopy, Confocal Raman
 % Microscopy and Scanning Near-Field Optical Microscopy, respectively.
 
-wit_io_edit(); % Open this code in Editor
+wit.io.misc.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -17,13 +17,13 @@ pathstr = fullfile(wit.io.path, '+examples'); % Get folder of this script
 file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 %-------------------------------------------------------------------------%
-wit_io_license;
+wit.io.misc.license;
 
-h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE F:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE F:}' ...
     '{\bf\fontsize{12}SCANLINE ERROR CORRECTION}' ...
     '' ...
     '\bullet If unfamiliar with ''wit\_io'', then go through the previous examples first.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -44,7 +44,7 @@ figure; O_Image.plot;
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(F)} Scanline error correction of images:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(F)} Scanline error correction of images:}' ...
     '' ...
     '\bullet This plotted image shows clear horizontal scanline errors. The image represents the integrated intensity of Raman Si-peak, for which reason the underlying error is expected to be multiplicative in nature.' ...
     '' ...
@@ -59,7 +59,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(F)} Scanline error correct
     '\bullet For more details, continue by reading the example case comments and the code documentation.' ...
     '' ...
     '\ldots Close this dialog to display the corrected image and END.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 

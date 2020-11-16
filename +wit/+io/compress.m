@@ -20,7 +20,7 @@
 % '-ProgressBar' (= none): Use verbose wit.io.wit.progress_bar in Command
 % Window. If a function handle (with equivalent output arguments) is
 % provided, then use it instead.
-function wit_io_file_compress(file, files, datas, varargin),
+function compress(file, files, datas, varargin),
     % Notes on zipping using Java:
     %
     % It is noteworthy that the 64-bit ZIP archives (with individual

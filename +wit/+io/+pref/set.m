@@ -5,7 +5,7 @@
 % Sets wit_io toolbox preferences using built-in SETPREF function. This
 % behaves like SETPREF but also (1) converts a struct 'pref' to 'pref'-
 % 'value' pairs, and (2) initializes 'value' with []'s if it was not given.
-function wit_io_pref_set(pref, value),
+function set(pref, value),
     if nargin > 0,
         if isstruct(pref), % SPECIAL CASE: a struct input
             if nargin == 1, value = struct2cell(pref); end

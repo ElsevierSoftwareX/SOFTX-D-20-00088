@@ -9,7 +9,7 @@
 % interpretations). The created WIP-file can then be opened in WITec's
 % external softwares.
 
-wit_io_edit(); % Open this code in Editor
+wit.io.misc.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -19,13 +19,13 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
-wit_io_license;
+wit.io.misc.license;
 
-h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE Z:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE Z:}' ...
     '{\bf\fontsize{12}CUSTOMIZE DATA AND EXPORT}' ...
     '' ...
     '\bullet If unfamiliar with ''wit\_io'', then go through the previous examples first.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -218,12 +218,12 @@ O_wip.manager('-all', '-closepreview'); % Show the newly created Project
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E\infty)} Customizing data and exporting:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(E\infty)} Customizing data and exporting:}' ...
     '' ...
     '\bullet In this advanced example, customized TDBitmap, TDGraph, TDImage and TDText were created and exported to a file. See the generated data in the opened Project Manager.' ...
     '' ...
     '\ldots Close this dialog to END and close all the opened figures.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
 

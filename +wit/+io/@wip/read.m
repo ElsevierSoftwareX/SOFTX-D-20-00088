@@ -55,11 +55,11 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
             '*.wid;*.wiD;*.wId;*.wID;*.Wid;*.WiD;*.WId;*.WID', 'WITec Data Files (*.wid)'; ...
             '*.zip;*.ziP;*.zIp;*.zIP;*.Zip;*.ZiP;*.ZIp;*.ZIP', 'Compressed Files (*.zip)'; ...
             '*.zst;*.zsT;*.zSt;*.zST;*.Zst;*.ZsT;*.ZSt;*.ZST', 'Compressed Files (*.zst)'};
-        [filename, folder] = uigetfile(filter, 'Open Project', wit_io_pref_get('latest_folder', cd), 'MultiSelect', 'on');
+        [filename, folder] = uigetfile(filter, 'Open Project', wit.io.pref.get('latest_folder', cd), 'MultiSelect', 'on');
         if ~iscell(filename), filename = {filename}; end
         if folder ~= 0,
             files = fullfile(folder, filename);
-            wit_io_pref_set('latest_folder', folder); % Remember permanently the latest folder
+            wit.io.pref.set('latest_folder', folder); % Remember permanently the latest folder
         else, return; end % Abort as no file was selected!
     end
     
@@ -127,7 +127,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
         FileName = [name ext];
         fprintf('\nReading from file: %s\n', FileName);
         % Decompress
-        [~, zip_datas] = wit_io_file_decompress(File, '-FilterExtension', '.wip', '.wid', '-ProgressBar', Params{:}); % Decompress binary from zip archive
+        [~, zip_datas] = wit.io.decompress(File, '-FilterExtension', '.wip', '.wid', '-ProgressBar', Params{:}); % Decompress binary from zip archive
         % Loop through data entries
         for jj = 1:numel(zip_datas),
             obj_new = wit.io.wit.read(File, LimitedRead, [], [], '-CustomFun', @OnReadDecompress_helper, '-Silent');

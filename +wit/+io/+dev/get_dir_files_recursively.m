@@ -6,9 +6,9 @@ function files = get_dir_files_recursively(folder),
     files = {};
     if nargin == 0, % If no folder is provided, then ask for it
         % Select folder in which to begin recursive search of files
-        folder = uigetdir(wit_io_pref_get('latest_folder', cd));
+        folder = uigetdir(wit.io.pref.get('latest_folder', cd));
         if folder == 0, return; end % Abort as no folder was selected!
-        wit_io_pref_set('latest_folder', folder);
+        wit.io.pref.set('latest_folder', folder);
     end
     S = dir(folder);
     files = fullfile(folder, {S(~[S.isdir]).name});

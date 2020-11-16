@@ -4,7 +4,7 @@
 
 % Tests if wit_io toolbox preferences exist using built-in ISPREF function.
 % This behaves like ISPREF but also treats the struct fieldnames as 'pref'.
-function tf = wit_io_pref_is(pref),
+function tf = is(pref),
     if nargin == 0, % SPECIAL CASE: no input
         tf = true;
         return;

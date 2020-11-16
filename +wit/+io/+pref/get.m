@@ -5,7 +5,7 @@
 % Gets wit_io toolbox preferences using built-in GETPREF function. This
 % behaves like GETPREF but also uses optional default 'value' input (set to
 % [] if not given) when no 'pref' is found. Any missing 'pref' is added.
-function value = wit_io_pref_get(pref, value),
+function value = get(pref, value),
     if nargin == 0, % If no input, then get all the preferences
         value = getpref('wit_io');
     elseif ischar(pref), % If a char input, then get the specified preference

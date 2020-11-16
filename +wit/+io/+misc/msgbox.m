@@ -26,8 +26,8 @@
 % default, the automatic text wrapping is enabled.
 
 % EXAMPLE:
-% h = wit_io_msgbox('\bullet This is an{\bf example \color{magenta}dialog} box with max. {\fontname{Courier}200 px} wide text wrapping.', '-Icon', 'help', '-TextWrapping', 200, 'pixels');
-function h = wit_io_msgbox(message, varargin),
+% h = wit.io.misc.msgbox('\bullet This is an{\bf example \color{magenta}dialog} box with max. {\fontname{Courier}200 px} wide text wrapping.', '-Icon', 'help', '-TextWrapping', 200, 'pixels');
+function h = msgbox(message, varargin),
     % Load the default wit_io icon only once
     persistent default_icondata default_iconcmap;
     if isempty(default_icondata) || isempty(default_iconcmap),
@@ -147,7 +147,7 @@ function h = wit_io_msgbox(message, varargin),
     set(h, 'Visible', 'on');
     drawnow;
     
-    AutoCloseInSeconds = wit_io_pref_get('AutoCloseInSeconds', Inf);
+    AutoCloseInSeconds = wit.io.pref.get('AutoCloseInSeconds', Inf);
     if ~isinf(AutoCloseInSeconds) && AutoCloseInSeconds >= 0,
         start(timer('ExecutionMode', 'singleShot', 'StartDelay', AutoCloseInSeconds, 'TimerFcn', @(~,~) delete(h), 'StopFcn', @(s,~) delete(s)));
     end

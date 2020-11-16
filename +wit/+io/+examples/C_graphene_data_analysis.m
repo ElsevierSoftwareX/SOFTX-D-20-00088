@@ -7,7 +7,7 @@
 % recalibration, (C ii.) lineshape fitting, (C iii.) result cleaning and
 % (C iv.) histogram generation.
 
-wit_io_edit(); % Open this code in Editor
+wit.io.misc.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -18,13 +18,13 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
-wit_io_license;
+wit.io.misc.license;
 
-h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 3:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 3:}' ...
     '{\bf\fontsize{12}GRAPHENE DATA ANALYSIS}' ...
     '' ...
     '\bullet Using ''E\_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'});
-if ishandle(h), figure(h); uiwait(h); end % Wait for wit_io_msgbox to be closed before continuing.
+if ishandle(h), figure(h); uiwait(h); end % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -40,7 +40,7 @@ O_Point = O_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 1
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(C i.)} Recalibrating the Rayleigh-peak to zero position:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(C i.)} Recalibrating the Rayleigh-peak to zero position:}' ...
     '' ...
     '\bullet The Rayleigh-peak (or the laser line or the 0-peak) has Gaussian intensity distribution and may be shifted from zero due to instrumental reasons. Misaligned 0-peak offsets all other Raman peak position information, for which reason it should be recalibrated.' ...
     '' ...
@@ -70,14 +70,14 @@ O_Point.Name = sprintf('Zeroed<%s', O_Point.Name);
 figure; O_Point_old.plot('-compare', O_Point); % Show fitting results % Image<TDGraph with sidebar
 xlim(Range_0); ylim('auto'); % Show only the region near the 0-peak
 
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(C ii.)} Lorentzians are fitted to the D-, G- and 2D-peaks.}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(C ii.)} Lorentzians are fitted to the D-, G- and 2D-peaks.}' ...
     '' ...
     '\bullet Ideal Raman peaks have Lorentzian function form, but may sometimes consist of multiple peaks like graphene 2D-peak.' ...
     '' ...
@@ -92,7 +92,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(C ii.)} Lorentzians are fi
 Range_D = [1250 1450]; % D-peak
 Range_G = [1500 1650]; % G-peak
 Range_2D = [2550 2800]; % 2D-peak
-if wit_io_verbose, % This is true by default (and can be set by wit_io_pref_set('Verbose', tf);)
+if wit.io.misc.verbose, % This is true by default (and can be set by wit.io.pref.set('Verbose', tf);)
     O_D = O_ImageScan.filter_lorentzian(Range_D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
     O_G = O_ImageScan.filter_lorentzian(Range_G); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
     O_2D = O_ImageScan.filter_lorentzian(Range_2D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
@@ -105,14 +105,14 @@ end
 % SHOWING FITTING RESULTS OF THE RAYLEIGH-, D-, G- AND 2D-PEAKS
 figure; O_ImageScan.plot('-compare', O_0(end), O_D(end), O_G(end), O_2D(end)); % Show fitting results % Image<TDGraph with sidebar
 
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(C iii.)} Clean-up of the fitted data:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(C iii.)} Clean-up of the fitted data:}' ...
     '' ...
     '\bullet Sometimes the fitting fails or contains invalid regions. For example, here the D-peak exists only in some graphene edges and elsewhere the results are invalid. It can be useful to discard such outlier regions from the dataset as {\bf\fontname{Courier}NaN} values.' ...
     '' ...
@@ -160,14 +160,14 @@ figure;
 subplot(1, 2, 1); wit.io.fun.plot.nanimagesc(O_I_DperG.Data.'); daspect([1 1 1]); title(O_I_DperG.Name);
 subplot(1, 2, 2); wit.io.fun.plot.nanimagesc(O_I_2DperG.Data.'); daspect([1 1 1]); title(O_I_2DperG.Name);
 
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(C iv.)} Histograms of the previously cleaned intensity ratios, I(D)/I(G) and I(2D)/I(G) are evaluated and shown:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(C iv.)} Histograms of the previously cleaned intensity ratios, I(D)/I(G) and I(2D)/I(G) are evaluated and shown:}' ...
     '' ...
     '\bullet Please note that the previously done cleaning procedure removed most invalid fitting values, what would have otherwise hidden these distributions.' ...
     '' ...
@@ -183,7 +183,7 @@ O_hist_I_2DperG = O_I_2DperG.histogram();
 figure; O_hist_I_DperG.plot();
 figure; O_hist_I_2DperG.plot();
 
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
 

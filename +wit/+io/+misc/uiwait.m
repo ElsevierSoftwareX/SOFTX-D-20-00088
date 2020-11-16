@@ -4,9 +4,9 @@
 
 % This function is intended replace use of uiwait within wit_io toolbox,
 % because it allows non-interactive mode to kick in on demand.
-function wit_io_uiwait(h),
+function uiwait(h),
     if ishandle(h),
-        AutoCloseInSeconds = wit_io_pref_get('AutoCloseInSeconds', Inf);
+        AutoCloseInSeconds = wit.io.pref.get('AutoCloseInSeconds', Inf);
         figure(h);
         if isinf(AutoCloseInSeconds),
             uiwait(h);

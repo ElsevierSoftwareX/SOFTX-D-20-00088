@@ -5,7 +5,7 @@
 %% WIT_IO EXAMPLE CASE D: SPECTRAL STITCHING
 % Simple example of (D) spectral stitching.
 
-wit_io_edit(); % Open this code in Editor
+wit.io.misc.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -15,13 +15,13 @@ file = fullfile(pathstr, 'D_stitch_spectra_v7.wip'); % Construct full path of th
 
 
 %-------------------------------------------------------------------------%
-wit_io_license;
+wit.io.misc.license;
 
-h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 4:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 4:}' ...
     '{\bf\fontsize{12}SPECTRAL STITCHING}' ...
     '' ...
     '\bullet If unfamiliar with ''wit\_io'', then go through the previous examples first.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -34,10 +34,10 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(D)} Spectral stitching the measured LED lamp spectra into one spectrum:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(D)} Spectral stitching the measured LED lamp spectra into one spectrum:}' ...
     '' ...
     '\bullet Illustrative stitching procedure begins by closing this help dialog.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -52,7 +52,7 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 % WARNING! The related instrumental errors, if NOT corrected for, can lead
 % to UNPHYSICAL stitching result in the overlapping regions, even if their
 % apparent stitching result looks smooth!
-if wit_io_verbose, % This is true by default (and can be set by wit_io_pref_set('Verbose', tf);)
+if wit.io.misc.verbose, % This is true by default (and can be set by wit.io.pref.set('Verbose', tf);)
     [O_result, X, Y] = O_wid.spectral_stitch('-debug'); % Here debug-mode is used to visualize the progress to the user. It can be used for double-checking. Remove '-debug' to disable such demonstration.
 else,
     [O_result, X, Y] = O_wid.spectral_stitch();
@@ -62,12 +62,12 @@ end
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}Spectral stitching has completed:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}Spectral stitching has completed:}' ...
     '' ...
     '\bullet Here the 1st figure illustrates how each neighbouring datas were weighted. See the opened figures for the total-weighted datas, the original datas and the total-weights.' ...
     '' ...
     '\ldots Close this dialog to END and see the final result.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 

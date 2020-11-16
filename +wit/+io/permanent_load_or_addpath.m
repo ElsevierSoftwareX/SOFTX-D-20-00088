@@ -3,7 +3,7 @@
 % All rights reserved.
 
 % Prefer toolbox installer (*.mltbx) instead!
-function wit_io_permanent_load_or_addpath(toolbox_path, ispermanent),
+function permanent_load_or_addpath(toolbox_path, ispermanent),
     if nargin < 1 || isempty(toolbox_path),
         this_script = [mfilename('fullpath') '.m'];
         [root, ~, ~] = fileparts(this_script);

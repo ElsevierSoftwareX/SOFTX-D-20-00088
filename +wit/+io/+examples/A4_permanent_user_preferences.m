@@ -5,24 +5,24 @@
 %% WIT_IO EXAMPLE CASE A 4: PERMANENT USER PREFERENCES
 % Simple examples of (A4) storing permanent user preferences.
 
-wit_io_edit(); % Open this code in Editor
+wit.io.misc.edit(); % Open this code in Editor
 close all; % Close figures
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-wit_io_license;
+wit.io.misc.license;
 
-h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 1 D:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 1 D:}' ...
     '{\bf\fontsize{12}PERMANENT USER PREFERENCES}'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(A4)} Configure wit\_io with permanent user preferences:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(A4)} Configure wit\_io with permanent user preferences:}' ...
     '' ...
     '\bullet Getting the specified user preference values (or default values):' ...
     '{\bf\fontname{Courier}value = wit\_io\_pref\_get(pref, value);}' ...
@@ -39,7 +39,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(A4)} Configure wit\_io wit
     '\bullet Read the code for more details.' ...
     '' ...
     '\ldots Close this dialog to END.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -53,35 +53,35 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 % functions.
 
 % Get user preferences (or default values if not found)
-pref_value_pairs_struct = wit_io_pref_get(); % Get all the user preferences as a struct
-license_dialog = wit_io_pref_get('license_dialog'); % No default value given here
-latest_folder = wit_io_pref_get('latest_folder', cd);
-wip_ForceDataUnit = wit_io_pref_get('wip_ForceDataUnit', '');
-wip_ForceSpaceUnit = wit_io_pref_get('wip_ForceSpaceUnit', '');
-wip_ForceSpectralUnit = wit_io_pref_get('wip_ForceSpectralUnit', '');
-wip_ForceTimeUnit = wit_io_pref_get('wip_ForceTimeUnit', '');
-wip_OnWriteDestroyAllViewers = wit_io_pref_get('wip_OnWriteDestroyAllViewers', true);
-wip_OnWriteDestroyDuplicateTransformations = wit_io_pref_get('wip_OnWriteDestroyDuplicateTransformations', true);
-wip_UseLineValid = wit_io_pref_get('wip_UseLineValid', true);
-wip_AutoCreateObj = wit_io_pref_get('wip_AutoCreateObj', true);
-wip_AutoCopyObj = wit_io_pref_get('wip_AutoCopyObj', true);
-wip_AutoModifyObj = wit_io_pref_get('wip_AutoModifyObj', true);
+pref_value_pairs_struct = wit.io.pref.get(); % Get all the user preferences as a struct
+license_dialog = wit.io.pref.get('license_dialog'); % No default value given here
+latest_folder = wit.io.pref.get('latest_folder', cd);
+wip_ForceDataUnit = wit.io.pref.get('wip_ForceDataUnit', '');
+wip_ForceSpaceUnit = wit.io.pref.get('wip_ForceSpaceUnit', '');
+wip_ForceSpectralUnit = wit.io.pref.get('wip_ForceSpectralUnit', '');
+wip_ForceTimeUnit = wit.io.pref.get('wip_ForceTimeUnit', '');
+wip_OnWriteDestroyAllViewers = wit.io.pref.get('wip_OnWriteDestroyAllViewers', true);
+wip_OnWriteDestroyDuplicateTransformations = wit.io.pref.get('wip_OnWriteDestroyDuplicateTransformations', true);
+wip_UseLineValid = wit.io.pref.get('wip_UseLineValid', true);
+wip_AutoCreateObj = wit.io.pref.get('wip_AutoCreateObj', true);
+wip_AutoCopyObj = wit.io.pref.get('wip_AutoCopyObj', true);
+wip_AutoModifyObj = wit.io.pref.get('wip_AutoModifyObj', true);
 
 
 
 % Set user preferences
-wit_io_pref_set('license_dialog', true);
-wit_io_pref_set('latest_folder', cd);
-wit_io_pref_set('wip_ForceDataUnit', 'a.u.');
-wit_io_pref_set('wip_ForceSpaceUnit', 'um');
-wit_io_pref_set('wip_ForceSpectralUnit', 'nm');
-wit_io_pref_set('wip_ForceTimeUnit', 's');
-wit_io_pref_set('wip_OnWriteDestroyAllViewers', false);
-wit_io_pref_set('wip_OnWriteDestroyDuplicateTransformations', false);
-wit_io_pref_set('wip_UseLineValid', false);
-wit_io_pref_set('wip_AutoCreateObj', false);
-wit_io_pref_set('wip_AutoCopyObj', false);
-wit_io_pref_set('wip_AutoModifyObj', false);
+wit.io.pref.set('license_dialog', true);
+wit.io.pref.set('latest_folder', cd);
+wit.io.pref.set('wip_ForceDataUnit', 'a.u.');
+wit.io.pref.set('wip_ForceSpaceUnit', 'um');
+wit.io.pref.set('wip_ForceSpectralUnit', 'nm');
+wit.io.pref.set('wip_ForceTimeUnit', 's');
+wit.io.pref.set('wip_OnWriteDestroyAllViewers', false);
+wit.io.pref.set('wip_OnWriteDestroyDuplicateTransformations', false);
+wit.io.pref.set('wip_UseLineValid', false);
+wit.io.pref.set('wip_AutoCreateObj', false);
+wit.io.pref.set('wip_AutoCopyObj', false);
+wit.io.pref.set('wip_AutoModifyObj', false);
 % The above settings would be utilized by the next created wip-class
 % objects. Changing these will not affect the already existing objects.
 
@@ -89,10 +89,10 @@ wit_io_pref_set('wip_AutoModifyObj', false);
 
 % Removing user preferences (and returning to the default values for the
 % next created objects).
-wit_io_pref_rm('wip_ForceTimeUnit'); % Removes the specified user preference
-wit_io_pref_rm({'wip_ForceTimeUnit', 'wip_ForceSpectralUnit'}); % Removes the specified user preferences
-wit_io_pref_rm(pref_value_pairs_struct); % Removes the specified user preferences
-wit_io_pref_rm(); % Removes all the user preferences
+wit.io.pref.rm('wip_ForceTimeUnit'); % Removes the specified user preference
+wit.io.pref.rm({'wip_ForceTimeUnit', 'wip_ForceSpectralUnit'}); % Removes the specified user preferences
+wit.io.pref.rm(pref_value_pairs_struct); % Removes the specified user preferences
+wit.io.pref.rm(); % Removes all the user preferences
 %-------------------------------------------------------------------------%
 
 
@@ -100,7 +100,7 @@ wit_io_pref_rm(); % Removes all the user preferences
 %-------------------------------------------------------------------------%
 % Restore the original user preferences to remove any unwanted
 % modifications during this example script.
-wit_io_pref_set(pref_value_pairs_struct);
+wit.io.pref.set(pref_value_pairs_struct);
 %-------------------------------------------------------------------------%
 
 

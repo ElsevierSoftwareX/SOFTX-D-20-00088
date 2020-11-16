@@ -6,7 +6,7 @@
 % Simple examples of (B4) data position and scalebar plotting in order to
 % see their positions with respect to each other.
 
-wit_io_edit(); % Open this code in Editor
+wit.io.misc.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -17,13 +17,13 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
-wit_io_license;
+wit.io.misc.license;
 
-h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 2 D:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 2 D:}' ...
     '{\bf\fontsize{12}DATA POSITION AND SCALEBAR PLOTTING}' ...
     '' ...
     '\bullet Using ''E\_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -39,7 +39,7 @@ O_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(B4)} Show position of objects on each other and display scalebar:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(B4)} Show position of objects on each other and display scalebar:}' ...
     '' ...
     '{\bf\fontname{Courier}obj.plot(''-position'', obj2, ..., objN, ''-scalebar'');}' ...
     '' ...
@@ -48,7 +48,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(B4)} Show position of obje
     '\bullet Read the code for more details.' ...
     '' ...
     '\ldots Close this dialog to plot few examples and END.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 

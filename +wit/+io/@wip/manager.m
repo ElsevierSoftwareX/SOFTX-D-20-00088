@@ -208,14 +208,14 @@ function O_wid = manager(obj, varargin),
         else, set(fig, 'ResizeFcn', @update); end % Added for backward compability
     end
     
-    AutoCloseInSeconds = wit_io_pref_get('AutoCloseInSeconds', Inf);
+    AutoCloseInSeconds = wit.io.pref.get('AutoCloseInSeconds', Inf);
     if ~isinf(AutoCloseInSeconds) && AutoCloseInSeconds >= 0,
         start(timer('ExecutionMode', 'singleShot', 'StartDelay', AutoCloseInSeconds, 'TimerFcn', @(~,~) delete(fig), 'StopFcn', @(s,~) delete(s)));
     end
     
     indices = []; % Store old indices (to be updated by MouseReleasedCallback)
     if nargout > 0,
-        wit_io_uiwait(fig); % If output is expected, then wait until the manager is closed!
+        wit.io.misc.uiwait(fig); % If output is expected, then wait until the manager is closed!
         O_wid = O_wid(indices(~isnan(indices))); % ~isnan removes NaN's due to deselecting indices
     end
     

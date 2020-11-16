@@ -5,7 +5,7 @@
 %% WIT_IO EXAMPLE CASE A 2: FORCING UNITS
 % Simple examples of (A2 i-iv.) forcing of the content units on the fly.
 
-wit_io_edit(); % Open this code in Editor
+wit.io.misc.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -16,19 +16,19 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
-wit_io_license;
+wit.io.misc.license;
 
-h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 1 B:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 1 B:}' ...
     '{\bf\fontsize{12}FORCING UNITS}' ...
     '' ...
     '\bullet Using ''E\_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(A2)} The imported content units (DataUnit, SpaceUnit, SpectralUnit and TimeUnit) may be modified upon loading:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(A2)} The imported content units (DataUnit, SpaceUnit, SpectralUnit and TimeUnit) may be modified upon loading:}' ...
     '' ...
     '{\bf\fontsize{12}{\color{magenta}(A2 i.)} by adding parameter pairs to wit.io.wip.read as below:}' ...
     '' ...
@@ -52,7 +52,7 @@ h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(A2)} The imported content 
     '\bullet Read the code for more details.' ...
     '' ...
     '\ldots Close this to END.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 

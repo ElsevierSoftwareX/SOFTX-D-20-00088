@@ -5,12 +5,12 @@
 % This always returns a 'BSD 3-Clause License' char array. If allowed by
 % the user preference, then open a License Dialog -window, describing the
 % wit_io toolbox license's span and freedom of usage. To reset this user
-% preference, execute wit_io_pref_rm('license_dialog').
-function license = wit_io_license(),
+% preference, execute wit.io.pref.rm('license_dialog').
+function license = license(),
     % Convert non-false-value to 'ask' (required by uigetpref)
-    value = wit_io_pref_get('license_dialog');
+    value = wit.io.pref.get('license_dialog');
     if ~islogical(value) || numel(value) ~= 1 || value ~= false,
-        wit_io_pref_set('license_dialog', 'ask');
+        wit.io.pref.set('license_dialog', 'ask');
     end
     
     % Show dialog (if user preference allows it)
@@ -27,10 +27,10 @@ function license = wit_io_license(),
     'OK');
     
     % Convert uigetpref's 'ask'-value to true and otherwise false.
-    if strcmp(wit_io_pref_get('license_dialog'), 'ask'),
-        wit_io_pref_set('license_dialog', true);
+    if strcmp(wit.io.pref.get('license_dialog'), 'ask'),
+        wit.io.pref.set('license_dialog', true);
     else,
-        wit_io_pref_set('license_dialog', false);
+        wit.io.pref.set('license_dialog', false);
     end
     
     % Return wit_io's license

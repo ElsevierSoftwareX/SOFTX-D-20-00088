@@ -11,17 +11,17 @@ function examples(AutoCloseInSeconds, ExampleCases, AutoStopEdit, Verbose),
     if nargin < 3 || isempty(AutoStopEdit), AutoStopEdit = true; end % By default, auto stop editor opening
     if nargin < 4 || isempty(Verbose), Verbose = false; end % By default, less verbose for faster non-interactive mode
     
-    old_AutoCloseInSeconds = wit_io_pref_get('AutoCloseInSeconds', Inf);
-    wit_io_pref_set('AutoCloseInSeconds', AutoCloseInSeconds);
-    ocu = onCleanup(@() wit_io_pref_set('AutoCloseInSeconds', old_AutoCloseInSeconds)); % Restore original value on close
+    old_AutoCloseInSeconds = wit.io.pref.get('AutoCloseInSeconds', Inf);
+    wit.io.pref.set('AutoCloseInSeconds', AutoCloseInSeconds);
+    ocu = onCleanup(@() wit.io.pref.set('AutoCloseInSeconds', old_AutoCloseInSeconds)); % Restore original value on close
     
-    old_AutoStopEdit = wit_io_pref_get('AutoStopEdit', false);
-    wit_io_pref_set('AutoStopEdit', AutoStopEdit);
-    ocu2 = onCleanup(@() wit_io_pref_set('AutoStopEdit', old_AutoStopEdit)); % Restore original value on close
+    old_AutoStopEdit = wit.io.pref.get('AutoStopEdit', false);
+    wit.io.pref.set('AutoStopEdit', AutoStopEdit);
+    ocu2 = onCleanup(@() wit.io.pref.set('AutoStopEdit', old_AutoStopEdit)); % Restore original value on close
     
-    old_Verbose = wit_io_pref_get('Verbose', true);
-    wit_io_pref_set('Verbose', Verbose);
-    ocu3 = onCleanup(@() wit_io_pref_set('Verbose', old_Verbose)); % Restore original value on close
+    old_Verbose = wit.io.pref.get('Verbose', true);
+    wit.io.pref.set('Verbose', Verbose);
+    ocu3 = onCleanup(@() wit.io.pref.set('Verbose', old_Verbose)); % Restore original value on close
     
     % Find all example cases
     pathstr = fullfile(wit.io.path, '+examples');

@@ -43,12 +43,12 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
         set(Fig, 'WindowButtonDownFcn', @WindowButtonDownFcn, 'WindowButtonUpFcn', @WindowButtonUpFcn); % Enable mouse tracking when pressed down!
         wit.io.ui.sidebar_popup(Fig, 'Masking tool:', str_Popup, @update, 1, false, [1 -1 1 1]);
         
-        AutoCloseInSeconds = wit_io_pref_get('AutoCloseInSeconds', Inf);
+        AutoCloseInSeconds = wit.io.pref.get('AutoCloseInSeconds', Inf);
         if ~isinf(AutoCloseInSeconds) && AutoCloseInSeconds >= 0,
             start(timer('ExecutionMode', 'singleShot', 'StartDelay', AutoCloseInSeconds, 'TimerFcn', @(~,~) delete(Fig), 'StopFcn', @(s,~) delete(s)));
         end
         
-        wit_io_uiwait(Fig);
+        wit.io.misc.uiwait(Fig);
     end
     
     % Create new object if permitted

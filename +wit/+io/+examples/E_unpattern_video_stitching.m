@@ -8,7 +8,7 @@
 % view at the Video camera per frame. Frame imperfections may be caused,
 % for instance, by vignetting or varying pixel sensitivity.
 
-wit_io_edit(); % Open this code in Editor
+wit.io.misc.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -16,13 +16,13 @@ pathstr = fullfile(wit.io.path, '+examples'); % Get folder of this script
 file = fullfile(pathstr, 'E_unpattern_video_stitching_v7.wip'); % Construct full path of the example file
 
 %-------------------------------------------------------------------------%
-wit_io_license;
+wit.io.misc.license;
 
-h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 5:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 5:}' ...
     '{\bf\fontsize{12}UNPATTERN VIDEO STITCHING IMAGES}' ...
     '' ...
     '\bullet If unfamiliar with ''wit\_io'', then go through the previous examples first.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -40,12 +40,12 @@ figure; O_Bitmap.plot;
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(E)} Unpatterning the Video Stitching images:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(E)} Unpatterning the Video Stitching images:}' ...
     '' ...
     '\bullet Aim is to remove the grid pattern arising during stitching procedure due to the imperfect view at the Video camera per frame. Frame imperfections may be caused, for instance, by vignetting or varying pixel sensitivity.' ...
     '' ...
     '\ldots Illustrative unpatterning procedure begins by closing this help dialog.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -60,7 +60,7 @@ wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
 % Stitching image has been down-scaled in any way, because then it cannot
 % quarantee finding perfect solution. Here '-debug' is added for more
 % verbose process feedback.
-if wit_io_verbose, % This is true by default (and can be set by wit_io_pref_set('Verbose', tf);)
+if wit.io.misc.verbose, % This is true by default (and can be set by wit.io.pref.set('Verbose', tf);)
     [O_new_Bitmap, N_best, new_Data] = O_Bitmap.unpattern_video_stitching('-debug'); % Here debug-mode is used to visualize the progress to the user. It can be used for double-checking. Remove '-debug' to disable such demonstration.
 end
 
@@ -70,7 +70,7 @@ end
 % it. This is useful when working with multiple Video Stitching images,
 % because they have the same optimal solution (if NOT down-scaled).
 
-if ~wit_io_verbose, % This is false by default
+if ~wit.io.misc.verbose, % This is false by default
     N_best = 181; % Known best solution
     [O_new_Bitmap, N_best] = O_Bitmap.unpattern_video_stitching(N_best); % Use known optimal solution instead of asking for the code to scan through the options
 end
@@ -94,12 +94,12 @@ O_new_Bitmap_crop = O_Bitmap.unpattern_video_stitching(N_best, '-crop'); % Use k
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}Unpatterning has completed:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}Unpatterning has completed:}' ...
     '' ...
     '\bullet Read the code for more details.' ...
     '' ...
     '\ldots Close this dialog to END and see the final result.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 

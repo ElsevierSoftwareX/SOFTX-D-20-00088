@@ -31,7 +31,7 @@
 % '-ProgressBar' (= none): Use verbose wit.io.wit.progress_bar in Command
 % Window. If a function handle (with equivalent input/output arguments) is
 % provided, then use it instead.
-function [files, datas] = wit_io_file_decompress(file, varargin),
+function [files, datas] = decompress(file, varargin),
     % Notes on unzipping using Java:
     %
     % It is noteworthy that the 64-bit ZIP archives (with individual

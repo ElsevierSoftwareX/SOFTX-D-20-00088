@@ -5,7 +5,7 @@
 %% WIT_IO EXAMPLE CASE B 3: DATA CROPPING
 % Simple examples of (B3) data cropping.
 
-wit_io_edit(); % Open this code in Editor
+wit.io.misc.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -16,13 +16,13 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
-wit_io_license;
+wit.io.misc.license;
 
-h = wit_io_msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 2 C:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE 2 C:}' ...
     '{\bf\fontsize{12}DATA CROPPING}' ...
     '' ...
     '\bullet Using ''E\_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -45,14 +45,14 @@ figure; O_PointScan.plot();
 
 
 %-------------------------------------------------------------------------%
-h = wit_io_msgbox({'{\bf\fontsize{12}{\color{magenta}(B3)} Cropping objects:}' ...
+h = wit.io.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(B3)} Cropping objects:}' ...
     '' ...
     '\bullet Any TDBitmap, TDGraph or TDImage can be cropped using {\bf\fontname{Courier}crop}-function, which takes pixel indices as input.' ...
     '' ...
     '\bullet Also, spectral range of any TDGraph can be cropped using {\bf\fontname{Courier}crop\_Graph}-function. (This feature is automatically used by {\bf\fontname{Courier}filter\_bg}-function.)' ...
     '' ...
     '\ldots Close this dialog to END and show cropped examples of the opened figures.'});
-wit_io_uiwait(h); % Wait for wit_io_msgbox to be closed before continuing.
+wit.io.misc.uiwait(h); % Wait for wit.io.misc.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -102,7 +102,7 @@ figure; O_PointScan_cropped.plot(); % Cropped spectrum
 % preference is changed as is shown in the last commented line).
 O_wip.destroy_duplicate_Transformations; % Do it immediately
 % O_wip.OnWriteDestroyDuplicateTransformations = true; % OR do it later on write
-% wit_io_pref_set('wip_OnWriteDestroyDuplicateTransformations', true); % Permanently change its user preference for the future runs
+% wit.io.pref.set('wip_OnWriteDestroyDuplicateTransformations', true); % Permanently change its user preference for the future runs
 %-------------------------------------------------------------------------%
 
 
