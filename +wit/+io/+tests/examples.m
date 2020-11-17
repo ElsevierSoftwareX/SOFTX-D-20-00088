@@ -28,7 +28,7 @@ function examples(AutoCloseInSeconds, ExampleCases, AutoStopEdit, Verbose),
     S = dir(pathstr);
     S = S(~[S.isdir]); % Exclude directories
     
-    files = fullfile(pathstr, {S.name});
+    files = cellfun(@(n) fullfile(pathstr, n), {S.name}, 'UniformOutput', false); % Backward compatible with R2011a
     [~, names, ext] = cellfun(@fileparts, files, 'UniformOutput', false);
     
     % Keep *.m files

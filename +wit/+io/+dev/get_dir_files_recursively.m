@@ -11,7 +11,7 @@ function files = get_dir_files_recursively(folder),
         wit.io.pref.set('latest_folder', folder);
     end
     S = dir(folder);
-    files = fullfile(folder, {S(~[S.isdir]).name});
+    files = cellfun(@(n) fullfile(folder, n), {S(~[S.isdir]).name}, 'UniformOutput', false); % Backward compatible with R2011a
     subfolders = {S([S.isdir]).name};
     for ii = 1:numel(subfolders),
         if strcmp(subfolders{ii}, '.') || strcmp(subfolders{ii}, '..'),
