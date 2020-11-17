@@ -7,6 +7,13 @@
 % wit_io toolbox license's span and freedom of usage. To reset this user
 % preference, execute wit.io.pref.rm('license_dialog').
 function license = license(),
+    % Return wit_io's license
+    license = 'BSD 3-Clause License';
+    
+    % Test if non-interactive mode
+    AutoCloseInSeconds = wit.io.pref.get('AutoCloseInSeconds', Inf);
+    if ~isinf(AutoCloseInSeconds) && AutoCloseInSeconds >= 0, return; end
+
     % Convert non-false-value to 'ask' (required by uigetpref)
     value = wit.io.pref.get('license_dialog');
     if ~islogical(value) || numel(value) ~= 1 || value ~= false,
@@ -32,7 +39,4 @@ function license = license(),
     else,
         wit.io.pref.set('license_dialog', false);
     end
-    
-    % Return wit_io's license
-    license = 'BSD 3-Clause License';
 end
