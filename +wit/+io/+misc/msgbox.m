@@ -23,11 +23,14 @@
 % either a logical value (to toggle the automatic text wrapping) or a
 % numeric value (to manually set the maximum text width). The optional
 % second input determines the units of the given maximum text width. By
-% default, the automatic text wrapping is enabled.
+% default, the automatic text wrapping is enabled. DUE TO SLOW PERFORMANCE
+% of the automatic text wrapping in the older MATLAB versions like R2011a,
+% a second output 'rewrapped_message' was introduced to enable
+% precalculation the text wrapping only once.
 
 % EXAMPLE:
 % h = wit.io.misc.msgbox('\bullet This is an{\bf example \color{magenta}dialog} box with max. {\fontname{Courier}200 px} wide text wrapping.', '-Icon', 'help', '-TextWrapping', 200, 'pixels');
-function h = msgbox(message, varargin),
+function [h, rewrapped_message] = msgbox(message, varargin),
     % Load the default wit_io icon only once
     persistent default_icondata default_iconcmap;
     if isempty(default_icondata) || isempty(default_iconcmap),
@@ -119,6 +122,8 @@ function h = msgbox(message, varargin),
             set(h_MessageBox, 'Units', Units);
         end
     end
+    rewrapped_message = get(h_MessageBox, 'String'); % Get the text object lines
+    if ~iscell(rewrapped_message), rewrapped_message = {rewrapped_message}; end % Force a cell array
     Extent_text = get(h_MessageBox, 'Extent'); % Calculate the extent
     % Center the icon position OR the text position like in msgbox
     Width_dialog = Position_text(1) + Extent_text(3) + margins(1);
