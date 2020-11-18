@@ -196,7 +196,7 @@ function h = plot_scalebar_helper(Ax, image_size, image_size_in_SU, image_SU, va
         FontSize = 72./get(0, 'ScreenPixelsPerInch').*text_height.*pixels_per_point;
         % Plot text
         bottom_center = position + [0.5.*length text_height];
-        h(2) = text(Ax, bottom_center(1), bottom_center(2), scalebar_text, 'Color', color, 'HorizontalAlignment', 'center', 'VerticalAlignment', 'baseline', 'FontSize', FontSize);
+        h(2) = text(bottom_center(1), bottom_center(2), scalebar_text, 'Parent', Ax, 'Color', color, 'HorizontalAlignment', 'center', 'VerticalAlignment', 'baseline', 'FontSize', FontSize); % Backward compatible with R2011a
         if ~isempty(text_varargin),
             set(h(2), text_varargin{:});
         end;
