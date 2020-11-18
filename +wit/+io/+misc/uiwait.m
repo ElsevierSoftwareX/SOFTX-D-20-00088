@@ -14,5 +14,6 @@ function uiwait(h),
             uiwait(h, AutoCloseInSeconds);
             delete(h); % Ensure deletion!
         end
+        drawnow; pause(0.1); % Reduce hang issues with old MATLAB versions like R2011a (https://undocumentedmatlab.com/articles/solving-a-matlab-hang-problem)
     end
 end
