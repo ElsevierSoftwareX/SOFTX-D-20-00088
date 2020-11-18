@@ -76,9 +76,8 @@ function h = msgbox(message, varargin),
         'Tag', ['Msgbox_' title]);
     
     % Modify dialog using MATLAB's built-in msgbox
-    h_event = addlistener(h, {'Visible', 'WindowStyle'}, 'PostSet', @force_visible_off_and_out_of_screen); % Prepare to interrupt msgbox from setting h's 'Visible' to 'on'!
     msgbox(message, title, icon{:}, struct('WindowStyle', 'replace', 'Interpreter', Interpreter)); % Always sets 'WindowStyle' to 'normal' according to the documentation and the code.
-    delete(h_event); % Delete listener
+    force_visible_off_and_out_of_screen();
     set(h, 'WindowStyle', WindowStyle); % Enforce the user preferred window modality
     
     % Shift figure's Position back to main screen vertically
@@ -159,6 +158,7 @@ function h = msgbox(message, varargin),
     function force_visible_off_and_out_of_screen(varargin),
         set(h, 'Visible', 'on'); % To circumvent the AbortSet property
         set(h, 'Visible', 'off');
+        drawnow;
         % Then shift Position out of screen vertically (if not yet)
         Units = get(h, 'Units');
         set(h, 'Units', 'pixels');
