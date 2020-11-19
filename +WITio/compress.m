@@ -89,7 +89,7 @@ function compress(file, files, datas, varargin),
         % Documentation: https://www.javadoc.io/doc/com.github.luben/zstd-jni/latest/index.html
         if isempty(zst_library), % Load java library only once per session
             compressor_library = {'+lib', '+zstd-jni', 'zstd-jni-1.4.5-12.jar'};
-            zst_library = fullfile(WITio.path, compressor_library{:});
+            zst_library = fullfile(WITio.path.package, compressor_library{:});
             javaaddpath(zst_library);
         end
         compressor_multiple_files = false;

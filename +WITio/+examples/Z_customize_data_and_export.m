@@ -13,7 +13,7 @@ WITio.misc.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
-pathstr = fullfile(WITio.path, '+examples'); % Get folder of this script
+pathstr = fullfile(WITio.path.package, '+examples'); % Get folder of this script
 file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 

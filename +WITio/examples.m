@@ -5,7 +5,7 @@
 % This function changes to the examples folder and lists them
 function examples(),
     % Get the toolbox examples folder
-    path = fullfile(WITio.path, '+examples');
+    path = fullfile(WITio.path.package, '+examples');
     fprintf('Changing current folder to the examples folder of the WITio toolbox:\n%s\n', path);
     
     % Change folder to the toolbox examples folder

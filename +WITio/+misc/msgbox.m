@@ -34,7 +34,7 @@ function [h, rewrapped_message] = msgbox(message, varargin),
     % Load the default WITio icon only once
     persistent default_icondata default_iconcmap;
     if isempty(default_icondata) || isempty(default_iconcmap),
-        [default_icondata, default_iconcmap] = imread(fullfile(WITio.basepath, 'WITio.png'));
+        [default_icondata, default_iconcmap] = imread(fullfile(WITio.path.toolbox, 'WITio.png'));
     end
     
     % Check if Icon was specified

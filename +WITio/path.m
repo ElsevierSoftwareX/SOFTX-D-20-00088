@@ -2,7 +2,11 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% This function return the folder string of this package.
-function path = path(),
-    path = fileparts([mfilename('fullpath') '.m']);
+% Gets to the toolbox main folder
+function path(),
+    WITio_folder = WITio.path.toolbox;
+    fprintf('Changing current folder to the main folder of the WITio toolbox:\n%s\n', WITio_folder);
+    
+    % Change folder to the toolbox main folder
+    cd(WITio_folder);
 end
