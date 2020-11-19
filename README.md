@@ -1,13 +1,13 @@
-# [wit_io: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wid) files][file-exchange]
+# [WITio: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wid) files][file-exchange]
 
-[![wit_io v2.0.0 Changelog Badge][changelog-badge]][changelog] [![BSD License Badge][license-badge]][license]
+[![WITio v2.0.0 Changelog Badge][changelog-badge]][changelog] [![BSD License Badge][license-badge]][license]
 
 [changelog-badge]: https://img.shields.io/badge/changelog-wit__io_v2.0.0-0000ff.svg
 
 Toolbox can directly **read**/**write** [WITec] Project/Data (\*.wip/\*.wid)
 files in [MATLAB] with or without GUI. It also provides data analysis tools.
 
-![Example image](example.png)
+![Example image](README.png)
 
 
 
@@ -22,7 +22,7 @@ and various post-processing steps. Toolbox can also [read/write **any** WIT-tag
 formatted files](#any-wit-tag-formatted-file).
 
 ### Background
-The **wit_io** (or earlier *wip_reader*) project began in 2016 as a side product
+The **WITio** or **wit_io** (or earlier *wip_reader*) project began in 2016 as a side product
 of MATLAB analysis of huge Raman spectroscopic datasets obtained by WITec Raman
 Alpha 300 RA. The hope was to reduce time spent to manual exporting (from WITec
 software) and importing (in MATLAB software) and benefit from MATLAB's many
@@ -65,7 +65,7 @@ context menus to enable a quick call to `[O_wid, O_wip, O_wid_HtmlNames] = wit.i
 
 ### Example cases
 Run *(or F5)* interactive code (*\*.m*) under *'[EXAMPLE cases]'* folder to
-learn **wit_io**. Begin by opening and running *'wit.io.examples.A1_import_file_to_get_started.m'*.
+learn **WITio**. Begin by opening and running *'wit.io.examples.A1_import_file_to_get_started.m'*.
 
 ### Semi-automated scripts
 Consider using semi-automated scripts under *'[SCRIPT cases]'* folder on your
@@ -103,7 +103,7 @@ Please report any bugs in [Issues](https://gitlab.com/jtholmi/wit_io/issues)-pag
 ## Additional information
 
 ### Citation *(optional)*
-J. T. Holmi (2019). wit_io: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wid) files (https://gitlab.com/jtholmi/wit_io), GitLab. Version \<x.y.z\>. Retrieved \<Month\> \<Day\>, \<Year\>.
+J. T. Holmi (2019). WITio: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wid) files (https://gitlab.com/jtholmi/wit_io), GitLab. Version \<x.y.z\>. Retrieved \<Month\> \<Day\>, \<Year\>.
 
 ### 3rd party content
 * [export_fig](https://se.mathworks.com/matlabcentral/fileexchange/23629-export_fig)
@@ -124,7 +124,7 @@ J. T. Holmi (2019). wit_io: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.w
 [license-badge]: https://img.shields.io/badge/license-BSD-ff0000.svg
 [WITec]: https://witec.de/
 [MATLAB]: https://www.mathworks.com/products/matlab.html
-[the latest toolbox installer]: ./wit_io.mltbx
+[the latest toolbox installer]: ./WITio.mltbx
 [the latest zip archive]: https://gitlab.com/jtholmi/wit_io/-/archive/master/wit_io-master.zip
 [third party]: ./+wit/+io/+lib
 [EXAMPLE cases]: ./+wit/+io/+examples
