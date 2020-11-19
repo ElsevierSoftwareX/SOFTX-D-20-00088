@@ -98,7 +98,8 @@ classdef wit < handle, % Since R2008a
     
     % Tree-specific internal parameters
     properties (SetAccess = private) % READ-ONLY
-        Listeners = {}; % Storage of all listeners attached to this object
+        Listeners = event.listener.empty; % Storage of all event.listeners attached to this object
+        PropListeners = event.proplistener.empty; % Storage of all event.proplisteners attached to this object
         % ModifiedCount is incremented once per successful set.Name,
         % set.Data or set.Parent for each affected object. By default, when
         % obj.ModifiedAncestors == true, then also the ancestors are
@@ -166,13 +167,36 @@ classdef wit < handle, % Since R2008a
             % uses recursion, it is unlikely to become a problem within the
             % WIT-tag formatted files.
             persistent subdelete;
+            try,
+                Parent = obj.ParentNow;
+                obj.ParentNow = []; % Disconnect
+                Children = obj.ChildrenNow;
+                obj.ChildrenNow = []; % Disconnect
+                obj.DataNow = []; % Disconnect
+                % Delete the attached event listeners
+                delete(obj.Listeners);
+                obj.Listeners = []; % Disconnect
+                delete(obj.PropListeners);
+                obj.PropListeners = []; % Disconnect
+            catch, return; end % Do nothing if already deleted (backward compatible with R2011a)
             if isempty(subdelete), % If called from within delete, then skip all redundant code
-                try, obj.Parent = obj([]); % = wit.io.wit.empty; % Disconnect parent (only for the first delete-call)
-                catch, return; end % Do nothing if already deleted (backward compatible with R2011a)
+                if ~isempty(Parent), % Disconnect non-empty parent (only for the first delete-call)
+                    % Remove this object from the old non-empty parent
+                    Parent_ChildrenNow = Parent.ChildrenNow;
+                    Parent_ChildrenNow = Parent_ChildrenNow(Parent_ChildrenNow ~= obj);
+                    Parent.ChildrenNow = Parent_ChildrenNow;
+                    Parent.DataNow = Parent_ChildrenNow;
+                    for ii = obj.OrdinalNumber:numel(Parent_ChildrenNow),
+                        Parent_ChildrenNow(ii).OrdinalNumber = ii;
+                    end
+                    % Update old parent's ModifiedCount and notify its ancestors
+                    meta = {'added Ids', []; 'removed Ids', obj.Id}; % Meta of added and removed Ids
+                    Parent.modification('Children', meta);
+                end
                 subdelete = true; % Speed-up subsequent delete-calls
-                delete(obj.Children); % Delete descendants
+                delete(Children); % Delete descendants
                 subdelete = []; % Reset the persistent variable
-            else, delete(obj.Children); end % Delete descendants ONLY
+            else, delete(Children); end % Delete descendants ONLY
             
             % Useful resources:
             % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
@@ -636,15 +660,17 @@ classdef wit < handle, % Since R2008a
             if numel(varargin) == 2,
                 event_listener = event.listener(obj, varargin{:}); % This line is incompatible with Octave
                 isObjectModified = strcmp(varargin{1}, 'ObjectModified');
+                for ii = 1:numel(obj),
+                    obj(ii).Listeners(end+1,1) = event_listener; % By default, bound to this object's lifetime
+                    if isObjectModified, obj(ii).ModifiedEvents = true; end % Required for optimizations
+                end
             elseif numel(varargin) == 3,
                 event_listener = event.proplistener(obj, varargin{:}); % This line is incompatible with Octave
-                isObjectModified = false;
+                for ii = 1:numel(obj),
+                    obj(ii).PropListeners(end+1,1) = event_listener; % By default, bound to this object's lifetime
+                end
             else,
                 error('Number of inputs must either be 3 (for event.listener) or 4 (for event.proplistener)!');
-            end
-            for ii = 1:numel(obj),
-                obj(ii).Listeners{end+1,1} = event_listener; % By default, bound to this object's lifetime
-                if isObjectModified, obj(ii).ModifiedEvents = true; end % Required for optimizations
             end
         end
         function [enableOnCleanup, notifyOnCleanup] = disableObjectModified(obj), % If first output is not omitted, then the effect is temporary
