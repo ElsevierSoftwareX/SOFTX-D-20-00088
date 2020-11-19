@@ -82,7 +82,6 @@ function [h, rewrapped_message] = msgbox(message, varargin),
     msgbox(message, title, icon{:}, struct('WindowStyle', 'replace', 'Interpreter', Interpreter)); % Always sets 'WindowStyle' to 'normal' according to the documentation and the code.
     set(h, 'Visible', 'on'); % To circumvent the AbortSet property
     set(h, 'Visible', 'off');
-    drawnow; pause(0.1);
     set(h, 'WindowStyle', WindowStyle); % Enforce the user preferred window modality
     
     % Remove the forced 75 characer text wrapping (enforced by msgbox). By
