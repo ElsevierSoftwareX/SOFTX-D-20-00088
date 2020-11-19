@@ -165,21 +165,12 @@ classdef wit < handle, % Since R2008a
             % Disconnect parent and all descendants from each other and
             % delete this and its descendants permanently. Although this
             % uses recursion, it is unlikely to become a problem within the
-            % WIT-tag formatted files.
+            % WIT-tag formatted files. The attached listeners are NOT
+            % deleted.
             persistent subdelete;
-            try,
-                Parent = obj.ParentNow;
-                obj.ParentNow = []; % Disconnect
-                Children = obj.ChildrenNow;
-                obj.ChildrenNow = []; % Disconnect
-                obj.DataNow = []; % Disconnect
-                % Delete the attached event listeners
-                delete(obj.Listeners);
-                obj.Listeners = []; % Disconnect
-                delete(obj.PropListeners);
-                obj.PropListeners = []; % Disconnect
-            catch, return; end % Do nothing if already deleted (backward compatible with R2011a)
             if isempty(subdelete), % If called from within delete, then skip all redundant code
+                try, Parent = obj.ParentNow;
+                catch, return; end % Do nothing if already deleted (backward compatible with R2011a)
                 if ~isempty(Parent), % Disconnect non-empty parent (only for the first delete-call)
                     % Remove this object from the old non-empty parent
                     Parent_ChildrenNow = Parent.ChildrenNow;
@@ -194,9 +185,12 @@ classdef wit < handle, % Since R2008a
                     Parent.modification('Children', meta);
                 end
                 subdelete = true; % Speed-up subsequent delete-calls
-                delete(Children); % Delete descendants
+                delete(obj.ChildrenNow); % Delete descendants
                 subdelete = []; % Reset the persistent variable
-            else, delete(Children); end % Delete descendants ONLY
+            else,
+                try, delete(obj.ChildrenNow); % Delete descendants ONLY
+                catch, return; end % Do nothing if already deleted (backward compatible with R2011a)
+            end
             
             % Useful resources:
             % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
