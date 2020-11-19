@@ -211,8 +211,7 @@ new_TDText.Data = {'Customized TDText example:', ''; ...
 %-------------------------------------------------------------------------%
 % O_wip.write(); % Overwrite the original
 
-new_file = [mfilename('fullpath') '.wip']; % Generate a new filename
-O_wip.write(new_file); % Write Project to the specified file
+O_wip.write('Z_customize_data_and_export.wip'); % Write Project to the specified file
 
 O_wip.manager('-all', '-closepreview'); % Show the newly created Project
 %-------------------------------------------------------------------------%
