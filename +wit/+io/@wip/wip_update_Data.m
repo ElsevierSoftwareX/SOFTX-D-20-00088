@@ -16,8 +16,12 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
         obj.DataObjectBeingDestroyedListener = [];
         obj.DataObjectModifiedListener = [];
         obj.Data = wit.io.wid.empty;
+        obj.isUpdatingData = false;
         return;
     end
+    
+    if obj.isUpdatingData, return; end
+    obj.isUpdatingData = true;
     
     % OTHERWISE: Update Data-tag
     TreeData = obj.TreeData;
@@ -43,7 +47,9 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
         return;
     else,
         MC = TreeData.ModifiedCount;
-        if MC == obj.TreeDataModifiedCount, return; % Do nothing
+        if MC == obj.TreeDataModifiedCount,
+            obj.isUpdatingData = false;
+            return; % Do nothing
         else, obj.TreeDataModifiedCount = MC; end
         MDI = TreeData.ModifiedDescendantIndices;
         MDP = TreeData.ModifiedDescendantProperty;
@@ -157,4 +163,5 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
             end
         end
     end
+    obj.isUpdatingData = false;
 end

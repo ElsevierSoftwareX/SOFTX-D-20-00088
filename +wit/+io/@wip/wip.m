@@ -57,6 +57,8 @@ classdef wip < handle, % Since R2008a
         TreeObjectModifiedListener;
         DataObjectBeingDestroyedListener;
         DataObjectModifiedListener;
+        isUpdatingData = false;
+        isUpdatingTree = false;
     end
     
     properties % READ-WRITE

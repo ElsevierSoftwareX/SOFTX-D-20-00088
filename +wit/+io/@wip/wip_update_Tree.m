@@ -5,6 +5,8 @@
 % Update is always called when wip Project object may need to be updated
 % with respect to its underlying wit Tree object.
 function wip_update_Tree(obj),
+    if obj.isUpdatingTree, return; end
+    obj.isUpdatingTree = true;
     OldTree = obj.Tree;
     NewTree = OldTree.Root;
     if OldTree ~= NewTree,
@@ -15,4 +17,5 @@ function wip_update_Tree(obj),
         obj.TreeObjectModifiedListener = NewTree.addlistener('ObjectModified', @(s,e) wip_update_Tree(obj));
     end
     obj.wip_update_Data();
+    obj.isUpdatingTree = false;
 end
