@@ -2,7 +2,7 @@
 
 [![WITio v2.0.0 Changelog Badge][changelog-badge]][changelog] [![BSD License Badge][license-badge]][license]
 
-[changelog-badge]: https://img.shields.io/badge/changelog-wit__io_v2.0.0-0000ff.svg
+[changelog-badge]: https://img.shields.io/badge/changelog-WITio_v2.0.0-0000ff.svg
 
 Toolbox can directly **read**/**write** [WITec] Project/Data (\*.wip/\*.wid)
 files in [MATLAB] with or without GUI. It also provides data analysis tools.
