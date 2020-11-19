@@ -46,7 +46,7 @@ install it.
 Download [the latest zip archive] and extract it as a new folder (i.e. *'wit_io'*)
 to your workfolder.
 
-**For the first time**, go to the created folder and run *(or F5)* *'[wit.io.permanent_load_or_addpath.m]'*
+**For the first time**, go to the created folder and run *(or F5)* *'[WITio.m]'*
 to **permanently** add it and its subfolders to MATLAB path so that the toolbox
 can be called from anywhere. **This requires administration rights.**
 * Without the rights, do one of the following once per MATLAB instance to make
@@ -58,14 +58,14 @@ and from the context menu left-click "Add to Path" and "Selected Folders and
 Subfolders".
 
 ### Installation to context menus (for MATLAB R2011a or newer)
-**Optionally**, run *(or F5)* also *'[wit.io.update_context_menus_for_wip_and_wid_files.m]'*
+**Optionally**, run *(or F5)* also *'[WITio.update_context_menus_for_wip_and_wid_files.m]'*
 to add *'MATLAB'*-option to the **\*.wip** and **\*.wid** file right-click
-context menus to enable a quick call to `[O_wid, O_wip, O_wid_HtmlNames] = wit.io.read(file);`.
+context menus to enable a quick call to `[O_wid, O_wip, O_wid_HtmlNames] = WITio.read(file);`.
 **This also requires administration rights.**
 
 ### Example cases
 Run *(or F5)* interactive code (*\*.m*) under *'[EXAMPLE cases]'* folder to
-learn **WITio**. Begin by opening and running *'wit.io.examples.A1_import_file_to_get_started.m'*.
+learn **WITio**. Begin by opening and running *'WITio.examples.A1_import_file_to_get_started.m'*.
 
 ### Semi-automated scripts
 Consider using semi-automated scripts under *'[SCRIPT cases]'* folder on your
@@ -82,11 +82,11 @@ systems.
 
 ### Any WIT-tag formatted file
 Toolbox can also **read** from and **write** to **arbitrary** WIT-tag formatted
-files with use of `O_wit = wit.io.wit.read(file);` and `O_wit.write();`, respectively.
-Any WIT-tag tree content can be modified using `S_DT = wit.io.wit.DataTree_get(O_wit);`
-and `wit.io.wit.DataTree_set(O_wit, S_DT);` class functions. Trees can also be viewed
+files with use of `O_wit = WITio.wit.read(file);` and `O_wit.write();`, respectively.
+Any WIT-tag tree content can be modified using `S_DT = WITio.wit.DataTree_get(O_wit);`
+and `WITio.wit.DataTree_set(O_wit, S_DT);` class functions. Trees can also be viewed
 in collapsed form from workspace after call to `S = O_wit.collapse();` (read-only)
-or `O_wit_debug = wit.io.wit.debug(O_wit);` (read+write).
+or `O_wit_debug = WITio.wit.debug(O_wit);` (read+write).
 
 ### Format details of \*.wip/\*.wid-files
 For more information, read *'[README on WIT-tag format.txt]'*. Please note
@@ -118,7 +118,7 @@ J. T. Holmi (2019). WITio: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wi
 [2] *'[myinpolygon.m]'*: J. Hao et al. (2018) "Optimal Reliable Point-in-Polygon Test and Differential Coding Boolean Operations on Polygons", https://doi.org/10.3390/sym10100477  
 [3] *'[apply_MRLCM.m]'* (and deprecated *wip_reader*): J. T. Holmi (2016) "Determining the number of graphene layers by Raman-based Si-peak analysis", pp. 27&ndash;28,35, freely available to download at: http://urn.fi/URN:NBN:fi:aalto-201605122027  
 
-[file-exchange]: https://se.mathworks.com/matlabcentral/fileexchange/70983-wit_io-toolbox-for-witec-project-data-wip-wid-files
+[file-exchange]: https://se.mathworks.com/matlabcentral/fileexchange/70983-wit_io
 [changelog]: ./CHANGELOG.md
 [license]: ./LICENSE
 [license-badge]: https://img.shields.io/badge/license-BSD-ff0000.svg
@@ -126,12 +126,12 @@ J. T. Holmi (2019). WITio: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wi
 [MATLAB]: https://www.mathworks.com/products/matlab.html
 [the latest toolbox installer]: ./WITio.mltbx
 [the latest zip archive]: https://gitlab.com/jtholmi/wit_io/-/archive/master/wit_io-master.zip
-[third party]: ./+wit/+io/+lib
-[EXAMPLE cases]: ./+wit/+io/+examples
-[SCRIPT cases]: ./+wit/+io/+scripts
-[wit.io.permanent_load_or_addpath.m]: ./+wit/+io/permanent_load_or_addpath.m
-[wit.io.update_context_menus_for_wip_and_wid_files.m]: ./+wit/+io/update_context_menus_for_wip_and_wid_files.m
-[README on WIT-tag format.txt]: ./+wit/+io/+doc/README%20on%20WIT-tag%20format.txt
-[clever_statistics_and_outliers.m]: ./+wit/+io/+fun/clever_statistics_and_outliers.m
-[myinpolygon.m]: ./+wit/+io/+fun/myinpolygon.m
-[apply_MRLCM.m]: ./+wit/+io/+fun/+correct/apply_MRLCM.m
+[third party]: ./+WITio/+lib
+[EXAMPLE cases]: ./+WITio/+examples
+[SCRIPT cases]: ./+WITio/+scripts
+[WITio.m]: ./WITio.m
+[WITio.update_context_menus_for_wip_and_wid_files.m]: ./+WITio/update_context_menus_for_wip_and_wid_files.m
+[README on WIT-tag format.txt]: ./+WITio/+doc/README%20on%20WIT-tag%20format.txt
+[clever_statistics_and_outliers.m]: ./+WITio/+fun/clever_statistics_and_outliers.m
+[myinpolygon.m]: ./+WITio/+fun/myinpolygon.m
+[apply_MRLCM.m]: ./+WITio/+fun/+correct/apply_MRLCM.m
