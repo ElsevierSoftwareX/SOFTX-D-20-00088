@@ -278,7 +278,7 @@ function O_wid = manager(obj, varargin),
             isBusy = false;
             if isQueue, % Release queue
                 isQueue = false;
-                ReleasedCallback(h, varargin),
+                ReleasedCallback(h, varargin{:}),
             end
             
             % Handle main window closing if requested (if not already closed)
