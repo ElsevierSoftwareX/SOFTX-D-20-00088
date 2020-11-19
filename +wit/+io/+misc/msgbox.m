@@ -80,16 +80,10 @@ function [h, rewrapped_message] = msgbox(message, varargin),
     
     % Modify dialog using MATLAB's built-in msgbox
     msgbox(message, title, icon{:}, struct('WindowStyle', 'replace', 'Interpreter', Interpreter)); % Always sets 'WindowStyle' to 'normal' according to the documentation and the code.
-    force_visible_off_and_out_of_screen();
+    set(h, 'Visible', 'on'); % To circumvent the AbortSet property
+    set(h, 'Visible', 'off');
+    drawnow; pause(0.1);
     set(h, 'WindowStyle', WindowStyle); % Enforce the user preferred window modality
-    
-    % Shift figure's Position back to main screen vertically
-    Units = get(h, 'Units');
-    set(h, 'Units', 'pixels');
-    Position = get(h, 'Position');
-    Position(2) = Position(2)-HeightOffset;
-    set(h, 'Position', Position);
-    set(h, 'Units', Units);
     
     % Remove the forced 75 characer text wrapping (enforced by msgbox). By
     % default, redo it manually. This is necessary to show i.e. Tex-
@@ -158,20 +152,5 @@ function [h, rewrapped_message] = msgbox(message, varargin),
     
     function KeyPressFcn(src, event), % Same buttons as in msgbox
         if any(strcmp({'return', 'space', 'escape'}, event.Key)), delete(h); end
-    end
-    
-    function force_visible_off_and_out_of_screen(varargin),
-        set(h, 'Visible', 'on'); % To circumvent the AbortSet property
-        set(h, 'Visible', 'off');
-        drawnow;
-        % Then shift Position out of screen vertically (if not yet)
-        Units = get(h, 'Units');
-        set(h, 'Units', 'pixels');
-        Position = get(h, 'Position');
-        if Position(2) < HeightOffset,
-            Position(2) = Position(2)+HeightOffset;
-        end
-        set(h, 'Position', Position);
-        set(h, 'Units', Units);
     end
 end
