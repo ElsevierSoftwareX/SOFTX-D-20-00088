@@ -5,9 +5,9 @@
 % This function is intended to be ran inside the Code Ocean compute
 % capsule, intended to non-interactively demonstrate all the example cases
 % in the toolbox. This can be used to test the toolbox stability as well.
-function examples(AutoCloseInSeconds, ExampleCases, AutoStopEdit, Verbose),
-    if nargin < 1 || isempty(AutoCloseInSeconds), AutoCloseInSeconds = 0; end % By default, auto close without any delay
-    if nargin < 2 || isempty(ExampleCases), ExampleCases = {}; end % By default, go through all example cases
+function examples(ExampleCases, AutoCloseInSeconds, AutoStopEdit, Verbose),
+    if nargin < 1 || isempty(ExampleCases), ExampleCases = {}; end % By default, go through all example cases
+    if nargin < 2 || isempty(AutoCloseInSeconds), AutoCloseInSeconds = 0; end % By default, auto close without any delay
     if nargin < 3 || isempty(AutoStopEdit), AutoStopEdit = true; end % By default, auto stop editor opening
     if nargin < 4 || isempty(Verbose), Verbose = false; end % By default, less verbose for faster non-interactive mode
     
