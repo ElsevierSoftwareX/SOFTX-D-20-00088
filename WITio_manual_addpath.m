@@ -5,10 +5,10 @@
 % Prefer toolbox installer (*.mltbx) instead when using R2014b or newer!
 % Nevertheless, this is safe to call and will also remove all the previous
 % versions of this toolbox from the path.
-function WITio_setup_path(),
+function WITio_manual_addpath(),
     % Remove previous versions of this toolbox from path
     p = path; % Get old path
-    p = regexprep(p, ['[^\' pathsep ']*\' filesep 'wit_io' '\' filesep '?[^\' pathsep ']*\' pathsep '?'], ''); % Remove any mention of wit_io
+    p = regexprep(p, ['[^\' pathsep ']*\' filesep '(wit_io|WITio)' '\' filesep '?[^\' pathsep ']*\' pathsep '?'], ''); % Remove any mention of wit_io
     path(p); % Set new path
     
     % Add this toolbox to path
