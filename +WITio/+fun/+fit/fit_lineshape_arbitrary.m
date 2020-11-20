@@ -439,18 +439,18 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     SSres = ipermute(reshape(SSres, [1 S(2:end)]), perm);
     Y_fit = ipermute(reshape(Y_fit, S), perm);
     
-%     figure; WITio.fun.plot.clever_nanimagesc(R2.'); daspect([1 1 1]); title('R2');
-%     figure; WITio.fun.plot.clever_nanimagesc(SSres.'); daspect([1 1 1]); title('SSres');
+%     figure; WITio.fun.visual.clever_nanimagesc(R2.'); daspect([1 1 1]); title('R2');
+%     figure; WITio.fun.visual.clever_nanimagesc(SSres.'); daspect([1 1 1]); title('SSres');
 %     
 %     N_iterations = reshape(N_iterations, S(2:end));
 %     bw_diverged = reshape(bw_diverged, S(2:end));
 %     bw_converged = reshape(bw_converged, S(2:end));
 %     bw = reshape(bw, S(2:end));
 %     
-%     figure; WITio.fun.plot.nanimagesc(bw.'); daspect([1 1 1]); title('If undone');
-%     figure; WITio.fun.plot.nanimagesc(bw_diverged.'); daspect([1 1 1]); title('If diverged');
-%     figure; WITio.fun.plot.nanimagesc(bw_converged.'); daspect([1 1 1]); title('If converged');
-%     figure; WITio.fun.plot.nanimagesc(N_iterations.'); daspect([1 1 1]); title('Iterations');
+%     figure; WITio.fun.visual.nanimagesc(bw.'); daspect([1 1 1]); title('If undone');
+%     figure; WITio.fun.visual.nanimagesc(bw_diverged.'); daspect([1 1 1]); title('If diverged');
+%     figure; WITio.fun.visual.nanimagesc(bw_converged.'); daspect([1 1 1]); title('If converged');
+%     figure; WITio.fun.visual.nanimagesc(N_iterations.'); daspect([1 1 1]); title('Iterations');
     
     P = reshape(P, [SP S(2:end)]);
     P = ipermute(P, perm);

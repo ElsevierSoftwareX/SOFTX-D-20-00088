@@ -3,7 +3,7 @@
 % All rights reserved.
 
 function h = clever_nanimagesc(varargin),
-    h = WITio.fun.plot.nanimagesc(varargin{:});
+    h = WITio.fun.visual.nanimagesc(varargin{:});
     data = get(h, 'CData');
     
     % Clever caxis

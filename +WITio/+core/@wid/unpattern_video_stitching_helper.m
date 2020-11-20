@@ -662,8 +662,8 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         % Create temporarily hidden figures (if not specified or closed)
         persistent h1 h2;
         if isempty(h1) || isempty(h2) || ~ishandle(h1) || ~ishandle(h2),
-            h1 = WITio.fun.plot.invisible_figure;
-            h2 = WITio.fun.plot.invisible_figure;
+            h1 = WITio.fun.visual.invisible_figure;
+            h2 = WITio.fun.visual.invisible_figure;
         end
         
         % Indices to the patterned region
@@ -757,7 +757,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
             
             if Debug,
                 figure(h1);
-                WITio.fun.plot.nanimagesc(P_cc.');
+                WITio.fun.visual.nanimagesc(P_cc.');
                 daspect([1 1 1]);
                 title(sprintf('Found pattern, color channel = %d', cc));
                 set(h1, 'Visible', 'on'); 
@@ -768,7 +768,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
                 I_reshaped(B_cc) = NaN;
                 
                 figure(h2);
-                WITio.fun.plot.nanimagesc(I_reshaped.');
+                WITio.fun.visual.nanimagesc(I_reshaped.');
                 daspect([1 1 1]);
                 title(sprintf('Used image without outliers, color channel = %d', cc));
                 set(h2, 'Visible', 'on'); 

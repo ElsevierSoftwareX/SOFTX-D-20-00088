@@ -268,7 +268,7 @@ function O_wid = manager(obj, varargin),
                 idx = find(isnan(indices), 1, 'first'); % Find next NaN index
                 indices(idx) = next_indices(jj); % Store current truly new index
                 if isPreview, 
-                    WITio.fun.plot.invisible_figure(idx+fig_offset); % Create new invisible figure
+                    WITio.fun.visual.invisible_figure(idx+fig_offset); % Create new invisible figure
                     plot(O_wid(next_indices(jj))); % Show data
                     waitbar(jj / N_new);
                 end

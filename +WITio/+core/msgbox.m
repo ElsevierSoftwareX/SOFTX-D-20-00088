@@ -110,7 +110,7 @@ function [h, rewrapped_message] = msgbox(message, varargin),
             Units = get(h_MessageBox, 'Units');
             set(h_MessageBox, 'Units', TextWrapping{2});
         end
-        WITio.fun.plot.mytextwrap(h_MessageBox, max_width); % Rewrap the text
+        WITio.fun.visual.mytextwrap(h_MessageBox, max_width); % Rewrap the text
         if numel(TextWrapping) > 1 && ~islogical(TextWrapping{1}),
             set(h_MessageBox, 'Units', Units);
         end

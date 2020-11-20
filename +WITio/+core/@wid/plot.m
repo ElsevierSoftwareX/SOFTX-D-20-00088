@@ -330,7 +330,7 @@ function h = plot(obj, varargin),
             isBusy = true; % Set busy flag true
             % Create figure on demand
             if isempty(Fig_sub) || ~ishandle(Fig_sub), 
-                Fig_sub = WITio.fun.plot.invisible_figure(floor(rem(now, 1)*86400000)); % Produce unique (invisible) figure
+                Fig_sub = WITio.fun.visual.invisible_figure(floor(rem(now, 1)*86400000)); % Produce unique (invisible) figure
                 set(Fig_sub, 'Name', sprintf('PREVIEW of %s', obj.Name), 'NumberTitle', 'off');
                 Units = get(Fig_sub, 'Units'); % Store Units
                 set(Fig_sub, 'Units', 'centimeters'); % Units to centimeters
@@ -394,7 +394,7 @@ function h = plot(obj, varargin),
         % Otherwise update data
         else,
             set(h_sub(1), 'YData', Data(indX,indY,:));
-            if fun_auto(), WITio.fun.plot.autoaxis(get(h_sub(1), 'Parent'), Info.Graph, Data(indX,indY,:)); end
+            if fun_auto(), WITio.fun.visual.autoaxis(get(h_sub(1), 'Parent'), Info.Graph, Data(indX,indY,:)); end
             counter = 0;
             for ii = 1:numel(obj_compare),
                 C_compare = obj_compare{ii};
@@ -421,8 +421,8 @@ function h = plot(obj, varargin),
             if ~islogical(Data),
                 % Get smart 4-sigmas range for best visibility using clever statistics
                 [~, ~, ~, ~, ~, cmin, cmax] = WITio.fun.clever_statistics_and_outliers(Data, [], 4);
-                if cmin == cmax || isnan(cmin) || isnan(cmax), h = WITio.fun.plot.nanimagesc(Data);
-                else, h = WITio.fun.plot.nanimagesc(Data, [cmin cmax]); end
+                if cmin == cmax || isnan(cmin) || isnan(cmax), h = WITio.fun.visual.nanimagesc(Data);
+                else, h = WITio.fun.visual.nanimagesc(Data, [cmin cmax]); end
             else, h = imagesc(Data); end % Plot logical data
 %             colormap(WITio.fun.lib.perceptually_uniform_colormap('inferno')); % Use inferno by default
             colorbar('HitTest', 'off'); % HitTest 'off' added for backward compability of WITio.core.ui.sidebar_cursor
@@ -436,7 +436,7 @@ function h = plot(obj, varargin),
             'XColor', [0 0 0], 'YColor', [0 0 0], 'LineWidth', 1);
 
         if nargin > 1 && ~isempty(DataUnit), title(DataUnit, 'Interpreter', 'none'); end
-        if nargin > 4, WITio.fun.plot.add_ticks_to_image( size(Data, 2), size(Data, 1), SideWidth, SideHeight, SideUnit ); end
+        if nargin > 4, WITio.fun.visual.add_ticks_to_image( size(Data, 2), size(Data, 1), SideWidth, SideHeight, SideUnit ); end
     end
 
     function h = plot_Spectrum(Fig, X, XUnit, Y, YUnit, fun, isAuto),
@@ -450,7 +450,7 @@ function h = plot(obj, varargin),
 
         if isAuto,
             h = fun(Ax, X(:), Y(:));
-            WITio.fun.plot.autoaxis(Ax, X, Y);
+            WITio.fun.visual.autoaxis(Ax, X, Y);
         else, % Preserve scaling
             XLim = get(Ax, 'XLim');
             YLim = get(Ax, 'YLim');

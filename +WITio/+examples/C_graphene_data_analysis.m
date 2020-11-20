@@ -177,8 +177,8 @@ O_I_2DperG.Name = 'Cleaned<I(2D)/I(G)';
 % of of filter_sum to estimate areas under the Raman peaks.
 
 figure;
-subplot(1, 2, 1); WITio.fun.plot.nanimagesc(O_I_DperG.Data.'); daspect([1 1 1]); title(O_I_DperG.Name);
-subplot(1, 2, 2); WITio.fun.plot.nanimagesc(O_I_2DperG.Data.'); daspect([1 1 1]); title(O_I_2DperG.Name);
+subplot(1, 2, 1); WITio.fun.visual.nanimagesc(O_I_DperG.Data.'); daspect([1 1 1]); title(O_I_DperG.Name);
+subplot(1, 2, 2); WITio.fun.visual.nanimagesc(O_I_2DperG.Data.'); daspect([1 1 1]); title(O_I_2DperG.Name);
 
 WITio.core.uiwait(h); % Wait for WITio.core.msgbox to be closed before continuing.
 close all;
