@@ -9,7 +9,7 @@ function [h_label, h_label_1, h_edit_1, h_label_2, h_edit_2, h_label_3, h_edit_3
     if nargin < 4, fun_image_transform = []; end % By default, no image transformation
     
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
-    if isempty(Parent), [~, Parent] = WITio.ui.sidebar(Fig); end % Create one if it does not exist
+    if isempty(Parent), [~, Parent] = WITio.misc.ui.sidebar(Fig); end % Create one if it does not exist
     Ax = get(Fig, 'CurrentAxes');
     
     % Calculate positions

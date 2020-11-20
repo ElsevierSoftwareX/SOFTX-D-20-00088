@@ -8,7 +8,7 @@ function [h_popup, h_label] = sidebar_perceptually_uniform_colormaps(Fig),
     
     if nargin < 1 || isempty(Fig), Fig = gcf; end % By default, update gcf
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
-    if isempty(Parent), [~, Parent] = WITio.ui.sidebar(Fig); end % Create one if it does not exist
+    if isempty(Parent), [~, Parent] = WITio.misc.ui.sidebar(Fig); end % Create one if it does not exist
 %     Ax = get(Fig, 'CurrentAxes');
     
     % Calculate positions

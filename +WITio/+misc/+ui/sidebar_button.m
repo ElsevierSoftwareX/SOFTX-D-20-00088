@@ -6,7 +6,7 @@ function [h_button, h_label] = sidebar_button(Fig, str_Label, str_Button, fun, i
     if isempty(Fig), Fig = gcf; end % By default, update gcf
     if nargin < 5, isMargins = [1 1 1 1]; end % By default, add [left bottom right top] margins
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
-    if isempty(Parent), [~, Parent] = WITio.ui.sidebar(Fig); end % Create one if it does not exist
+    if isempty(Parent), [~, Parent] = WITio.misc.ui.sidebar(Fig); end % Create one if it does not exist
     Ax = get(Fig, 'CurrentAxes');
     
     % Calculate positions
