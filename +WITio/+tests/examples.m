@@ -64,7 +64,7 @@ function examples(ExampleCases, AutoCloseInSeconds, AutoStopEdit, Verbose),
     end
     
     % Print passed/failed summary in the end
-    str_msg = 'PASSED/FAILED SUMMARY:';
+    str_msg = sprintf('PASSED/FAILED SUMMARY for MATLAB %s:', builtin('version'));
     str_dashes = repmat('-', [1 max(numel(str_msg), max(cellfun(@numel, names))+9+17)]);
     fprintf('%s\n%s\n', str_dashes, str_msg);
     for ii = 1:numel(names),
