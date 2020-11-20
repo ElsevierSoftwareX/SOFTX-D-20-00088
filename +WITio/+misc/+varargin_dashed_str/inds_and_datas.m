@@ -24,9 +24,9 @@
 % (2) datas: The cell array of the datas of the given single-dashed string.
 % (3) in_wo: Inputs without the given single-dashed string and its datas.
 
-function [inds, datas, in_wo] = varargin_dashed_str_inds_and_datas(str_wo_dash, in, N),
-    if nargin < 3, [~, ind_dashed_begin, ind_dashed_end] = WITio.parse.varargin_dashed_str(str_wo_dash, in);
-    else, [~, ind_dashed_begin, ind_dashed_end] = WITio.parse.varargin_dashed_str(str_wo_dash, in, N); end
+function [inds, datas, in_wo] = inds_and_datas(str_wo_dash, in, N),
+    if nargin < 3, [~, ind_dashed_begin, ind_dashed_end] = WITio.misc.varargin_dashed_str(str_wo_dash, in);
+    else, [~, ind_dashed_begin, ind_dashed_end] = WITio.misc.varargin_dashed_str(str_wo_dash, in, N); end
     
     % Determine if the given single-dashed string exists
     inds = ind_dashed_begin;

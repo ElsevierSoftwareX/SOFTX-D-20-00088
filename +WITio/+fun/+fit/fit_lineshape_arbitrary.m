@@ -112,11 +112,11 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     SP = size(P0, 1); % Determine the number of fitting parameters
     
     % Parse extra arguments
-    silent = WITio.parse.varargin_dashed_str_exists('silent', varargin); % By default, do not utilize the silent option
-    lowOnMemory = WITio.parse.varargin_dashed_str_exists('lowOnMemory', varargin); % By default, do not utilize the low-on-memory option
-    avoidLMA = WITio.parse.varargin_dashed_str_exists('avoidLMA', varargin); % By default, use the Levenberg–Marquardt algorithm or avoidLMA = false
-    evalHessian = WITio.parse.varargin_dashed_str_exists('evalHessian', varargin); % By default, avoid Hessian or evalHessian = false
-    fitMany = ~WITio.parse.varargin_dashed_str_exists('fitOne', varargin); % By default, fit many Lineshape(s) or fitMany = true
+    silent = WITio.misc.varargin_dashed_str.exists('silent', varargin); % By default, do not utilize the silent option
+    lowOnMemory = WITio.misc.varargin_dashed_str.exists('lowOnMemory', varargin); % By default, do not utilize the low-on-memory option
+    avoidLMA = WITio.misc.varargin_dashed_str.exists('avoidLMA', varargin); % By default, use the Levenberg–Marquardt algorithm or avoidLMA = false
+    evalHessian = WITio.misc.varargin_dashed_str.exists('evalHessian', varargin); % By default, avoid Hessian or evalHessian = false
+    fitMany = ~WITio.misc.varargin_dashed_str.exists('fitOne', varargin); % By default, fit many Lineshape(s) or fitMany = true
     % Consider implementing -minimizeChiSquared feature using photon shot noise estimate (21.8.2018)
     % Consider implementing -absTol, -relTol, -maxIterations features (1.3.2019)
     
@@ -147,7 +147,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     P = P0;
     
     % Check if CUSTOM lambdas was specified
-    datas = WITio.parse.varargin_dashed_str_datas('lambdas', varargin, -1);
+    datas = WITio.misc.varargin_dashed_str.datas('lambdas', varargin, -1);
     lambdas = 1e-1.*ones(1, SD);
     if numel(datas) > 0, lambdas = datas{1}; end
     if numel(lambdas) == 1,
@@ -158,19 +158,19 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     end
     
     % Check if CUSTOM weights was specified
-    datas = WITio.parse.varargin_dashed_str_datas('weights', varargin, -1);
+    datas = WITio.misc.varargin_dashed_str.datas('weights', varargin, -1);
     weights = ones(S(1), SD);
     if numel(datas) > 0, weights = reshape(datas{1}, S(1), SD); end
     
     % Check if CUSTOM locks was specified
-    datas = WITio.parse.varargin_dashed_str_datas('locks', varargin, -1);
+    datas = WITio.misc.varargin_dashed_str.datas('locks', varargin, -1);
     locks = false(SP, 1);
     if numel(datas) > 0, locks = logical(reshape(datas{1}, SP, 1)); end
     SP_unlocked = sum(~locks);
     
 %     % Check if CUSTOM groups was specified
 %     % NOT IMPLEMENTED YET!!! (20.9.2018)
-%     datas = WITio.parse.varargin_dashed_str_datas('groups', varargin, -1);
+%     datas = WITio.misc.varargin_dashed_str.datas('groups', varargin, -1);
 %     groups = false(SP, 1);
 %     if numel(datas) > 0, groups = reshape(datas{1}, S(1), SD); end
     

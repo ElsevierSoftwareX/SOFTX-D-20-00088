@@ -9,26 +9,26 @@ function O_wid = manager(obj, varargin),
     % START OF VARARGIN PARSING
     
     % Parse extra arguments
-    show_all = WITio.parse.varargin_dashed_str_exists('all', varargin); % By default, show only all plottable
-    is_multiple_selection = ~WITio.parse.varargin_dashed_str_exists('singlesection', varargin); % By default, multiple selection
-    show_indices = WITio.parse.varargin_dashed_str_exists('indices', varargin); % By default, do not show indices
-    show_sorted = ~WITio.parse.varargin_dashed_str_exists('nosort', varargin); % By default, show sorted
-    show_manager = ~WITio.parse.varargin_dashed_str_exists('nomanager', varargin); % By default, show manager
-    show_preview = ~WITio.parse.varargin_dashed_str_exists('nopreview', varargin); % By default, show preview
-    close_preview = WITio.parse.varargin_dashed_str_exists('closepreview', varargin); % By default, keep preview figures opened
+    show_all = WITio.misc.varargin_dashed_str.exists('all', varargin); % By default, show only all plottable
+    is_multiple_selection = ~WITio.misc.varargin_dashed_str.exists('singlesection', varargin); % By default, multiple selection
+    show_indices = WITio.misc.varargin_dashed_str.exists('indices', varargin); % By default, do not show indices
+    show_sorted = ~WITio.misc.varargin_dashed_str.exists('nosort', varargin); % By default, show sorted
+    show_manager = ~WITio.misc.varargin_dashed_str.exists('nomanager', varargin); % By default, show manager
+    show_preview = ~WITio.misc.varargin_dashed_str.exists('nopreview', varargin); % By default, show preview
+    close_preview = WITio.misc.varargin_dashed_str.exists('closepreview', varargin); % By default, keep preview figures opened
     
     % Check if Title was specified
-    datas = WITio.parse.varargin_dashed_str_datas('Title', varargin, -1);
+    datas = WITio.misc.varargin_dashed_str.datas('Title', varargin, -1);
     Title = '';
     if numel(datas) > 0, Title = datas{1}; end
     
     % Check if Type was specified
-    datas = WITio.parse.varargin_dashed_str_datas('Type', varargin);
+    datas = WITio.misc.varargin_dashed_str.datas('Type', varargin);
     Type = {'TDBitmap', 'TDGraph', 'TDImage', 'TDText'}; % Default
     if numel(datas) > 0, Type = datas; end
     
     % Check if SubType was specified
-    datas = WITio.parse.varargin_dashed_str_datas('SubType', varargin);
+    datas = WITio.misc.varargin_dashed_str.datas('SubType', varargin);
     SubType = {};
     if numel(datas) > 0, SubType = datas; end
     
@@ -38,7 +38,7 @@ function O_wid = manager(obj, varargin),
     SubType(end+1:numel(Type)) = {''}; % Extend
     
     % Check if Data was specified
-    datas = WITio.parse.varargin_dashed_str_datas('Data', varargin, -1);
+    datas = WITio.misc.varargin_dashed_str.datas('Data', varargin, -1);
     O_wid = obj.Data; % Get all the objects in the project % ASSUMING THAT PROJECT HAS SELF-CONSISTENT WID-DATA!
     if numel(datas) > 0, O_wid = datas{1}; end
     if isempty(O_wid), return; end % Exit if no project data

@@ -16,29 +16,29 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
     persistent tictoc N_dots_lower N_bytes_lower N_dots_upper N_bytes_upper latest_text latest_text_toc;
     
     % Parse extra inputs: Width
-    parsed = WITio.parse.varargin_dashed_str_datas('Width', varargin, -1);
+    parsed = WITio.misc.varargin_dashed_str.datas('Width', varargin, -1);
     width_in_characters = 50; % By default, use 50 characters wide progress bar
     if numel(parsed) > 0, width_in_characters = parsed{1}; end
     
     % Parse extra inputs: Character
-    parsed = WITio.parse.varargin_dashed_str_datas('Character', varargin, -1);
+    parsed = WITio.misc.varargin_dashed_str.datas('Character', varargin, -1);
     Character = '.'; % By default, use dot '.'
     if numel(parsed) > 0, Character = parsed{1}; end
     
     % Parse extra inputs: FlipStartEnd
-    FlipStartEnd = WITio.parse.varargin_dashed_str_exists('FlipStartEnd', varargin);
+    FlipStartEnd = WITio.misc.varargin_dashed_str.exists('FlipStartEnd', varargin);
     
     % Parse extra inputs: Reverse
-    Reverse = WITio.parse.varargin_dashed_str_exists('Reverse', varargin);
+    Reverse = WITio.misc.varargin_dashed_str.exists('Reverse', varargin);
     
     % Parse extra inputs: OnlyIncreasing
-    OnlyIncreasing = WITio.parse.varargin_dashed_str_exists('OnlyIncreasing', varargin);
+    OnlyIncreasing = WITio.misc.varargin_dashed_str.exists('OnlyIncreasing', varargin);
     
     % Parse extra inputs: OnlyDecreasing
-    OnlyDecreasing = WITio.parse.varargin_dashed_str_exists('OnlyDecreasing', varargin);
+    OnlyDecreasing = WITio.misc.varargin_dashed_str.exists('OnlyDecreasing', varargin);
     
     % Parse extra inputs: TextUpdateInterval
-    parsed = WITio.parse.varargin_dashed_str_datas('TextUpdateInterval', varargin, -1);
+    parsed = WITio.misc.varargin_dashed_str.datas('TextUpdateInterval', varargin, -1);
     TextUpdateInterval = 0.1; % By default, use 100 ms
     if numel(parsed) > 0, TextUpdateInterval = parsed{1}; end
     

@@ -86,7 +86,7 @@ function [files, datas] = decompress(file, varargin),
     if ~jf.exists(), return; end % Abort if does not exist
     
     % Parse extra inputs: Decompressor
-    parsed = WITio.parse.varargin_dashed_str_datas('Decompressor', varargin, -1);
+    parsed = WITio.misc.varargin_dashed_str.datas('Decompressor', varargin, -1);
     Decompressor = []; % By default, determine decompressor from the file extension
     if numel(parsed) > 0, Decompressor = parsed{1}; end
     if isempty(Decompressor), [~, ~, Decompressor] = fileparts(file); end
@@ -117,16 +117,16 @@ function [files, datas] = decompress(file, varargin),
     jrt = java.lang.Runtime.getRuntime();
     
     % Parse extra inputs: MaxBlockSize
-    parsed = WITio.parse.varargin_dashed_str_datas('MaxBlockSize', varargin, -1);
+    parsed = WITio.misc.varargin_dashed_str.datas('MaxBlockSize', varargin, -1);
     MaxBlockSize = 64.*1024.^2; % By default, 64 MB max blocksize per read
     if numel(parsed) > 0, MaxBlockSize = parsed{1}; end
     
     % Parse extra inputs: MaxSubBlockSize
-    parsed = WITio.parse.varargin_dashed_str_datas('MaxSubBlockSize', varargin, -1);
+    parsed = WITio.misc.varargin_dashed_str.datas('MaxSubBlockSize', varargin, -1);
     if numel(parsed) > 0, MaxSubBlockSize = parsed{1}; end
     
     % Parse extra inputs: Files
-    Files = WITio.parse.varargin_dashed_str_datas('Files', varargin);
+    Files = WITio.misc.varargin_dashed_str.datas('Files', varargin);
     for ii = numel(Files):-1:1,
         if iscell(Files{ii}),
             Files = [Files(1:ii-1) Files(ii+1:end) Files{ii}]; % If a cell was provided, then append its contents to the end
@@ -134,16 +134,16 @@ function [files, datas] = decompress(file, varargin),
     end
     
     % Parse extra inputs: DataSizes
-    DataSizes = WITio.parse.varargin_dashed_str_exists('DataSizes', varargin);
+    DataSizes = WITio.misc.varargin_dashed_str.exists('DataSizes', varargin);
     
     % Parse extra inputs: FilterExtension
-    FilterExtension = WITio.parse.varargin_dashed_str_datas('FilterExtension', varargin);
+    FilterExtension = WITio.misc.varargin_dashed_str.datas('FilterExtension', varargin);
     
     % Parse extra inputs: FilterRegexp
-    FilterRegexp = WITio.parse.varargin_dashed_str_datas('FilterRegexp', varargin);
+    FilterRegexp = WITio.misc.varargin_dashed_str.datas('FilterRegexp', varargin);
     
     % Parse extra inputs: ProgressBar
-    [ProgressBar, parsed] = WITio.parse.varargin_dashed_str_exists_and_datas('ProgressBar', varargin, -1);
+    [ProgressBar, parsed] = WITio.misc.varargin_dashed_str.exists_and_datas('ProgressBar', varargin, -1);
     if ProgressBar, ProgressBar = @WITio.class.wit.progress_bar; end
     if numel(parsed) > 0, ProgressBar = parsed{1}; end
     verbose = isa(ProgressBar, 'function_handle');

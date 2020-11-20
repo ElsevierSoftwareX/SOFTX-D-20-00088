@@ -21,7 +21,7 @@ function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin),
     varargin = [{obj}; varargin(:)];
     
     % Test if '-debug' was given
-    isdebug = WITio.parse.varargin_dashed_str_exists('debug', varargin);
+    isdebug = WITio.misc.varargin_dashed_str.exists('debug', varargin);
     
     % Parse the input and keep only TDGraph wid objects
     bw_valid_wid = cellfun(@(x) isa(x, 'WITio.class.wid'), varargin); % Test if wid

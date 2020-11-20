@@ -15,7 +15,7 @@
 % OUTPUTS:
 % (1) exists: Whether or not any single-dashed string exists.
 
-function exists = varargin_dashed_str_any_exists(in),
+function exists = any_exists(in),
     % Treat those containing two or more subsequent dashes as datas
     exists = any(strncmp(in, '-', 1) & ~strncmp(in, '--', 2));
 end

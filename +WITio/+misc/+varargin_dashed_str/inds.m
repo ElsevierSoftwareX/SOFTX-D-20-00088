@@ -2,11 +2,11 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Helper function to parse and remove the given single-dashed string and
-% its datas from the given cell array input. Any multiple-dashed string is
-% treated as data (for now) and its first dash is removed. This feature can
-% be used to pass such strings to the nested functions, where they may be
-% detected as single-dashed strings.
+% Helper function to parse and return the indices of the given single-
+% dashed string in the given cell array input. Any multiple-dashed string
+% is treated as data (for now) and its first dash is removed. This feature
+% can be used to pass such strings to the nested functions, where they may
+% be detected as single-dashed strings.
 
 % INPUTS:
 % (1) str_wo_dash: A char array for case-insensitive string-to-string
@@ -20,11 +20,13 @@
 %   IF NEGATIVE: It reverses order of the matches and keeps last N!
 
 % OUTPUTS:
-% (1) in_wo: The cell array without the given single-dashed string and its
-% datas.
+% (1) inds: The indices of the given single-dashed string.
+% (2) in_wo: Inputs without the given single-dashed string and its datas.
 
-function varargout = varargin_dashed_str_removed(varargin),
-    if nargout > 0,
-        [~, ~, varargout{1:nargout}] = WITio.parse.varargin_dashed_str_inds_and_datas(varargin{:});
+function varargout = inds(varargin),
+    if nargout == 1,
+        varargout{1} = WITio.misc.varargin_dashed_str.inds_and_datas(varargin{:});
+    elseif nargout > 1,
+        [varargout{1}, ~, varargout{2:nargout}] = WITio.misc.varargin_dashed_str.inds_and_datas(varargin{:});
     end
 end
