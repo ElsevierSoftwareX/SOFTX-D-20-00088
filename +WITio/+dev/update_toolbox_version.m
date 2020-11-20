@@ -7,7 +7,7 @@
 % version is 1.2.3 and new version is 1.3.0, then provide '1.2.3' and
 % '1.3.0'.
 
-function update_version(old_version, new_version),
+function update_toolbox_version(old_version, new_version),
     % Validate input
     if ~ischar(old_version) || ~ischar(new_version),
         error('Accepting only char array inputs, i.e. ''1.3.0.0''!');
