@@ -82,11 +82,11 @@ systems.
 
 ### Any WIT-tag formatted file
 Toolbox can also **read** from and **write** to **arbitrary** WIT-tag formatted
-files with use of `O_wit = WITio.class.wit.read(file);` and `O_wit.write();`, respectively.
-Any WIT-tag tree content can be modified using `S_DT = WITio.class.wit.DataTree_get(O_wit);`
-and `WITio.class.wit.DataTree_set(O_wit, S_DT);` class functions. Trees can also be viewed
+files with use of `O_wit = WITio.core.wit.read(file);` and `O_wit.write();`, respectively.
+Any WIT-tag tree content can be modified using `S_DT = WITio.core.wit.DataTree_get(O_wit);`
+and `WITio.core.wit.DataTree_set(O_wit, S_DT);` class functions. Trees can also be viewed
 in collapsed form from workspace after call to `S = O_wit.collapse();` (read-only)
-or `O_wit_debug = WITio.class.debug(O_wit);` (read+write).
+or `O_wit_debug = WITio.core.debug(O_wit);` (read+write).
 
 ### Format details of \*.wip/\*.wid-files
 For more information, read *'[README on WIT-tag format.txt]'*. Please note

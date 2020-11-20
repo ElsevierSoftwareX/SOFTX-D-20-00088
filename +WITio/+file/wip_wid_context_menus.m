@@ -6,7 +6,7 @@ function wip_wid_context_menus(),
     % Implemented by Joonas T. Holmi (18.7.2018) based on the idea worked out
     % by Petri Mustonen. Supports only Microsoft Windows operating systems.
     
-    disp('*Generating a reg-file in order to add ''MATLAB''-option to the *.WIP and *.WID context menus to enable a quick WITio.class.wip.read call.');
+    disp('*Generating a reg-file in order to add ''MATLAB''-option to the *.WIP and *.WID context menus to enable a quick WITio.core.wip.read call.');
     if ~ispc, error('*Only Microsoft Windows operating systems are currently supported!'); end
     
     [filepath, name, ~] = fileparts(mfilename('fullpath'));

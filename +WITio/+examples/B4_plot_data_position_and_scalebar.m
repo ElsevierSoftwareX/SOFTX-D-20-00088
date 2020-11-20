@@ -6,7 +6,7 @@
 % Simple examples of (B4) data position and scalebar plotting in order to
 % see their positions with respect to each other.
 
-WITio.self.edit(); % Open this code in Editor
+WITio.core.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -17,15 +17,15 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
-WITio.self.license;
+WITio.core.license;
 
-h = WITio.self.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE B4:}' ...
+h = WITio.core.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE B4:}' ...
 '{\bf\fontsize{12}DATA POSITION AND SCALEBAR ' ...
 'PLOTTING}' ...
 '' ...
 '\bullet Using ''A\_v5.wip'' WITec Project -file, which has Raman data from exfoliated ' ...
 'graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'}, '-TextWrapping', false);
-WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
+WITio.core.uiwait(h); % Wait for WITio.core.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -41,7 +41,7 @@ O_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
 
 
 %-------------------------------------------------------------------------%
-[h,b] = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(B4)} Show position of objects on each ' ...
+[h,b] = WITio.core.msgbox({'{\bf\fontsize{12}{\color{magenta}(B4)} Show position of objects on each ' ...
 'other and display scalebar:}' ...
 '' ...
 '{\bf\fontname{Courier}obj.plot(''-position'', obj2, ..., ' ...
@@ -53,7 +53,7 @@ O_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
 '\bullet Read the code for more details.' ...
 '' ...
 '\ldots Close this dialog to plot few examples and END.'}, '-TextWrapping', false);
-WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
+WITio.core.uiwait(h); % Wait for WITio.core.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 

@@ -8,7 +8,7 @@ function B_fit_valid = mask_bad_results_and_noise(Data, Graph, Range_fit, I_fit,
     Data = Data - min(Data(:));
     
     % Crop Data within Range_fit without background removal (to preserve the shot noise)
-    Data_fit = WITio.class.wid.crop_Graph_with_bg_helper(Data, Graph, Range_fit, 0, 0);
+    Data_fit = WITio.core.wid.crop_Graph_with_bg_helper(Data, Graph, Range_fit, 0, 0);
 
     % Find average fluctuations (or shot noise)
     [~, ~, cvar, ~, ~, cmin, cmax] = WITio.fun.clever_statistics_and_outliers(sqrt(double(Data_fit)), -3, 4); % Sqrt in order to estimate shot noise by variances!

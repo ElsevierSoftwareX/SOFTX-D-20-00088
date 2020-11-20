@@ -17,9 +17,9 @@ if folder ~= 0, file = fullfile(folder, filename);
 else, return; end % Abort as no file was selected!
 
 % Read file wit-tags
-O_wit = WITio.class.wit.read(file{1});
+O_wit = WITio.core.wit.read(file{1});
 if isempty(O_wit), return; end
-fprintf('File = %s\nVersion = %d\n', file{1}, WITio.class.wip.get_Root_Version(O_wit));
+fprintf('File = %s\nVersion = %d\n', file{1}, WITio.core.wip.get_Root_Version(O_wit));
 
 % Find tags with nonzero Versions
 O_wit_w_version = O_wit.regexp('^Version<');
@@ -37,4 +37,4 @@ UNIQUE_O_wit_w_nonzero_version = O_wit_w_nonzero_version(ind_unique_nonzero);
 
 % See the tree structure by double-clicking either variable under Workspace
 C_static_tree = O_wit.collapse; % Fast to load because it is ONLY READ!
-% C_dynamic_tree = WITio.class.debug(O_wit); % Slow to load because it is READ+WRITE!
+% C_dynamic_tree = WITio.core.debug(O_wit); % Slow to load because it is READ+WRITE!

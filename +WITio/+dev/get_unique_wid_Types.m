@@ -20,8 +20,8 @@ function [unique_wid_Types, B_diversity_matrix, versions, files] = get_unique_wi
     versions = nan(size(files));
     for ii = 1:numel(files),
         fprintf('File %d/%d OR %s:\n', ii, numel(files), files{ii});
-        O_wit = WITio.class.wit.read(files{ii}, 4096, @skip_Data_criteria_for_obj);
-        Version = WITio.class.wip.get_Root_Version(O_wit);
+        O_wit = WITio.core.wit.read(files{ii}, 4096, @skip_Data_criteria_for_obj);
+        Version = WITio.core.wip.get_Root_Version(O_wit);
         if ~isempty(Version), versions(ii) = Version; end
         Tag_Data = O_wit.regexp('^Data(<WITec (Project|Data))?$', true);
         DataClassNames = Tag_Data.search({'^DataClassName \d+$'}, 'Data');

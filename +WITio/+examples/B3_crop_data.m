@@ -5,7 +5,7 @@
 %% WIT_IO EXAMPLE CASE B 3: DATA CROPPING
 % Simple examples of (B3) data cropping.
 
-WITio.self.edit(); % Open this code in Editor
+WITio.core.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -16,15 +16,15 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
-WITio.self.license;
+WITio.core.license;
 
-h = WITio.self.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE B3:}' ...
+h = WITio.core.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE B3:}' ...
 '{\bf\fontsize{12}DATA CROPPING}' ...
 '' ...
 '\bullet Using ''A\_v5.wip'' WITec Project -file, which has Raman data from ' ...
 'exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm ' ...
 'SiO2/Si-substrate.'}, '-TextWrapping', false);
-WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
+WITio.core.uiwait(h); % Wait for WITio.core.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -47,7 +47,7 @@ figure; O_PointScan.plot();
 
 
 %-------------------------------------------------------------------------%
-h = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(B3)} Cropping objects:}' ...
+h = WITio.core.msgbox({'{\bf\fontsize{12}{\color{magenta}(B3)} Cropping objects:}' ...
 '' ...
 '\bullet Any TDBitmap, TDGraph or TDImage can be cropped using ' ...
 '{\bf\fontname{Courier}crop}-function, which takes pixel indices as input.' ...
@@ -58,7 +58,7 @@ h = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(B3)} Cropping objects:
 '' ...
 '\ldots Close this dialog to END and show cropped examples of the opened ' ...
 'figures.'}, '-TextWrapping', false);
-WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
+WITio.core.uiwait(h); % Wait for WITio.core.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -82,7 +82,7 @@ O_PointScan_cropped = O_PointScan.crop_Graph([332 1130]);  % Start/end indices i
 % update all related wid objects (and all underlying wit objects) to it.
 % Data_cropped = O_PointScan_cropped.Data;
 % Graph_cropped = O_PointScan_cropped.Graph;
-% O_PointScan_cropped = O_PointScan.crop_Graph([], Data_cropped, Graph_cropped); % Special case, used sometimes after WITio.class.wid.crop_Graph_with_bg_helper.
+% O_PointScan_cropped = O_PointScan.crop_Graph([], Data_cropped, Graph_cropped); % Special case, used sometimes after WITio.core.wid.crop_Graph_with_bg_helper.
 %-------------------------------------------------------------------------%
 
 
@@ -108,7 +108,7 @@ figure; O_PointScan_cropped.plot(); % Cropped spectrum
 % preference is changed as is shown in the last commented line).
 O_wip.destroy_duplicate_Transformations; % Do it immediately
 % O_wip.OnWriteDestroyDuplicateTransformations = true; % OR do it later on write
-% WITio.self.pref.set('wip_OnWriteDestroyDuplicateTransformations', true); % Permanently change its user preference for the future runs
+% WITio.core.pref.set('wip_OnWriteDestroyDuplicateTransformations', true); % Permanently change its user preference for the future runs
 %-------------------------------------------------------------------------%
 
 

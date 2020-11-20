@@ -7,7 +7,7 @@
 % hard disk space. This is beneficial because the WIT-formatted files can
 % often be significantly compressed in size.
 
-WITio.self.edit(); % Open this code in Editor
+WITio.core.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -18,18 +18,18 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
-WITio.self.license;
+WITio.core.license;
 
-h = WITio.self.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE A5:}' ...
+h = WITio.core.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE A5:}' ...
 '{\bf\fontsize{12}COMPRESS AND DECOMPRESS ' ...
 'FILES}'}, '-TextWrapping', false);
-WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
+WITio.core.uiwait(h); % Wait for WITio.core.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-h = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(A5)} Compress and decompress files:}' ...
+h = WITio.core.msgbox({'{\bf\fontsize{12}{\color{magenta}(A5)} Compress and decompress files:}' ...
 '' ...
 '\bullet Decompressing is done automatically if ''.zip'' or ''.zst'' extension is detected:' ...
 '{\bf\fontname{Courier}[O\_wid, O\_wip, O\_wid\_HtmlNames] = ' ...
@@ -46,7 +46,7 @@ h = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(A5)} Compress and deco
 '\bullet Read the code for more details.' ...
 '' ...
 '\ldots Close this dialog to END.'}, '-TextWrapping', false);
-WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
+WITio.core.uiwait(h); % Wait for WITio.core.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
