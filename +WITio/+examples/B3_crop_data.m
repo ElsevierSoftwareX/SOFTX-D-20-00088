@@ -82,7 +82,7 @@ O_PointScan_cropped = O_PointScan.crop_Graph([332 1130]);  % Start/end indices i
 % update all related wid objects (and all underlying wit objects) to it.
 % Data_cropped = O_PointScan_cropped.Data;
 % Graph_cropped = O_PointScan_cropped.Graph;
-% O_PointScan_cropped = O_PointScan.crop_Graph([], Data_cropped, Graph_cropped); % Special case, used sometimes after WITio.wid.crop_Graph_with_bg_helper.
+% O_PointScan_cropped = O_PointScan.crop_Graph([], Data_cropped, Graph_cropped); % Special case, used sometimes after WITio.class.wid.crop_Graph_with_bg_helper.
 %-------------------------------------------------------------------------%
 
 

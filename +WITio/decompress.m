@@ -28,7 +28,7 @@
 % blocks in order to allow smoother user interrupts and less communication
 % with MATLAB. MaxBlockSize should be divisible by this. For .zip, default
 % value is 1048576 or 1 MB. For .zst, default value is 4194304 or 4 MB.
-% '-ProgressBar' (= none): Use verbose WITio.wit.progress_bar in Command
+% '-ProgressBar' (= none): Use verbose WITio.class.wit.progress_bar in Command
 % Window. If a function handle (with equivalent input/output arguments) is
 % provided, then use it instead.
 function [files, datas] = decompress(file, varargin),
@@ -144,7 +144,7 @@ function [files, datas] = decompress(file, varargin),
     
     % Parse extra inputs: ProgressBar
     [ProgressBar, parsed] = WITio.parse.varargin_dashed_str_exists_and_datas('ProgressBar', varargin, -1);
-    if ProgressBar, ProgressBar = @WITio.wit.progress_bar; end
+    if ProgressBar, ProgressBar = @WITio.class.wit.progress_bar; end
     if numel(parsed) > 0, ProgressBar = parsed{1}; end
     verbose = isa(ProgressBar, 'function_handle');
     

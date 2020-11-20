@@ -3,7 +3,7 @@
 % All rights reserved.
 
 %% WIT_IO EXAMPLE CASE A 1: FILE IMPORTING TO GET STARTED
-% Simple examples of (A1 i-iv.) file importing to get started. This calls WITio.wip.read
+% Simple examples of (A1 i-iv.) file importing to get started. This calls WITio.class.wip.read
 % under '@wip'-folder to load WITec Project/Data (*.wip/*.wid) -files
 % directly to the MATLAB environment without manual exporting/importing.
 

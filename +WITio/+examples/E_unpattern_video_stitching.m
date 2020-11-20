@@ -91,8 +91,8 @@ O_new_Bitmap_crop = O_Bitmap.unpattern_video_stitching(N_best, '-crop'); % Use k
 % Or make a manual call to the underlying unpatterning algorithm. Here we
 % use the known Number of Stitching Images X and Y (via 'O_Text.plot;').
 
-% [new_Data, N_best] = WITio.wid.unpattern_video_stitching_helper(O_Bitmap.Data, [7 5], '-debug');
-% new_Data = WITio.wid.unpattern_video_stitching_helper(O_Bitmap.Data, [7 5], N_best, '-debug'); % With known best solution
+% [new_Data, N_best] = WITio.class.wid.unpattern_video_stitching_helper(O_Bitmap.Data, [7 5], '-debug');
+% new_Data = WITio.class.wid.unpattern_video_stitching_helper(O_Bitmap.Data, [7 5], N_best, '-debug'); % With known best solution
 %-------------------------------------------------------------------------%
 
 

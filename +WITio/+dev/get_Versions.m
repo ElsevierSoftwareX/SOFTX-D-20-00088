@@ -17,7 +17,7 @@ function [versions, files] = get_Versions(files),
     versions = nan(size(files));
     for ii = 1:numel(files),
         fprintf('File %d/%d OR %s:\n', ii, numel(files), files{ii});
-        Version = WITio.wip.read_Version(files{ii});
+        Version = WITio.class.wip.read_Version(files{ii});
         if ~isempty(Version), versions(ii) = Version; end
         fprintf('Version = %d\n', versions(ii));
     end

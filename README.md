@@ -22,7 +22,7 @@ and various post-processing steps. Toolbox can also [read/write **any** WIT-tag
 formatted files](#any-wit-tag-formatted-file).
 
 ### Background
-The **WITio** or **wit_io** (or earlier *wip_reader*) project began in 2016 as a side product
+The **WITio** (or formerly **wit_io** for v1.x or *wip_reader* for v0.x) project began in 2016 as a side product
 of MATLAB analysis of huge Raman spectroscopic datasets obtained by WITec Raman
 Alpha 300 RA. The hope was to reduce time spent to manual exporting (from WITec
 software) and importing (in MATLAB software) and benefit from MATLAB's many
@@ -64,11 +64,11 @@ context menus to enable a quick call to `[O_wid, O_wip, O_wid_HtmlNames] = WITio
 **This also requires administration rights.**
 
 ### Example cases
-Run *(or F5)* interactive code (*\*.m*) under *'[EXAMPLE cases]'* folder to
-learn **WITio**. Begin by opening and running *'WITio.examples.A1_import_file_to_get_started.m'*.
+Run *(or F5)* interactive code (*\*.m*) under *'[examples]'*-package to
+learn **WITio**. Begin by opening and running *'WITio.examples.A1_import_file_to_get_started'*.
 
 ### Semi-automated scripts
-Consider using semi-automated scripts under *'[SCRIPT cases]'* folder on your
+Consider using semi-automated scripts under *'[scripts]'*-package on your
 WITec Project/Data files. They will read the given file, interact with the
 user, process the relevant file contents and finally write back to the original
 file.
@@ -82,11 +82,11 @@ systems.
 
 ### Any WIT-tag formatted file
 Toolbox can also **read** from and **write** to **arbitrary** WIT-tag formatted
-files with use of `O_wit = WITio.wit.read(file);` and `O_wit.write();`, respectively.
-Any WIT-tag tree content can be modified using `S_DT = WITio.wit.DataTree_get(O_wit);`
-and `WITio.wit.DataTree_set(O_wit, S_DT);` class functions. Trees can also be viewed
+files with use of `O_wit = WITio.class.wit.read(file);` and `O_wit.write();`, respectively.
+Any WIT-tag tree content can be modified using `S_DT = WITio.class.wit.DataTree_get(O_wit);`
+and `WITio.class.wit.DataTree_set(O_wit, S_DT);` class functions. Trees can also be viewed
 in collapsed form from workspace after call to `S = O_wit.collapse();` (read-only)
-or `O_wit_debug = WITio.wit.debug(O_wit);` (read+write).
+or `O_wit_debug = WITio.class.debug(O_wit);` (read+write).
 
 ### Format details of \*.wip/\*.wid-files
 For more information, read *'[README on WIT-tag format.txt]'*. Please note
@@ -127,8 +127,8 @@ J. T. Holmi (2019). WITio: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wi
 [the latest toolbox installer]: ./WITio.mltbx
 [the latest zip archive]: https://gitlab.com/jtholmi/wit_io/-/archive/master/wit_io-master.zip
 [third party]: ./+WITio/+lib
-[EXAMPLE cases]: ./+WITio/+examples
-[SCRIPT cases]: ./+WITio/+scripts
+[examples]: ./+WITio/+examples
+[scripts]: ./+WITio/+scripts
 [WITio.m]: ./WITio.m
 [WITio.update_context_menus_for_wip_and_wid_files.m]: ./+WITio/update_context_menus_for_wip_and_wid_files.m
 [README on WIT-tag format.txt]: ./+WITio/+doc/README%20on%20WIT-tag%20format.txt
