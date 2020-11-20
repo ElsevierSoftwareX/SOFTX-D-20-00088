@@ -208,7 +208,7 @@ function O_wid = manager(obj, varargin),
         else, set(fig, 'ResizeFcn', @update); end % Added for backward compability
     end
     
-    AutoCloseInSeconds = WITio.pref.get('AutoCloseInSeconds', Inf);
+    AutoCloseInSeconds = WITio.misc.pref.get('AutoCloseInSeconds', Inf);
     if ~isinf(AutoCloseInSeconds) && AutoCloseInSeconds >= 0,
         start(timer('ExecutionMode', 'singleShot', 'StartDelay', AutoCloseInSeconds, 'TimerFcn', @(~,~) delete(fig), 'StopFcn', @(s,~) delete(s)));
     end

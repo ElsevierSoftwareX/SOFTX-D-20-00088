@@ -144,7 +144,7 @@ function [h, rewrapped_message] = msgbox(message, varargin),
     set(h, 'Visible', 'on');
     drawnow;
     
-    AutoCloseInSeconds = WITio.pref.get('AutoCloseInSeconds', Inf);
+    AutoCloseInSeconds = WITio.misc.pref.get('AutoCloseInSeconds', Inf);
     if ~isinf(AutoCloseInSeconds) && AutoCloseInSeconds >= 0,
         start(timer('ExecutionMode', 'singleShot', 'StartDelay', AutoCloseInSeconds, 'TimerFcn', @(~,~) delete(h), 'StopFcn', @(s,~) delete(s)));
     end

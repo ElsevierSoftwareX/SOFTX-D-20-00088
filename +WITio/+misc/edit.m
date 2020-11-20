@@ -10,7 +10,7 @@ function edit(file),
         if numel(S) < 2, return; end % Stop if nothing to find
         file = S(2).file;
     end
-    if ~WITio.pref.get('AutoStopEdit', false),
+    if ~WITio.misc.pref.get('AutoStopEdit', false),
         edit(file);
     end
 end

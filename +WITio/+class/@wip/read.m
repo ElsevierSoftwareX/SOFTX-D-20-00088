@@ -55,11 +55,11 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
             '*.wid;*.wiD;*.wId;*.wID;*.Wid;*.WiD;*.WId;*.WID', 'WITec Data Files (*.wid)'; ...
             '*.zip;*.ziP;*.zIp;*.zIP;*.Zip;*.ZiP;*.ZIp;*.ZIP', 'Compressed Files (*.zip)'; ...
             '*.zst;*.zsT;*.zSt;*.zST;*.Zst;*.ZsT;*.ZSt;*.ZST', 'Compressed Files (*.zst)'};
-        [filename, folder] = uigetfile(filter, 'Open Project', WITio.pref.get('latest_folder', cd), 'MultiSelect', 'on');
+        [filename, folder] = uigetfile(filter, 'Open Project', WITio.misc.pref.get('latest_folder', cd), 'MultiSelect', 'on');
         if ~iscell(filename), filename = {filename}; end
         if folder ~= 0,
             files = fullfile(folder, filename);
-            WITio.pref.set('latest_folder', folder); % Remember permanently the latest folder
+            WITio.misc.pref.set('latest_folder', folder); % Remember permanently the latest folder
         else, return; end % Abort as no file was selected!
     end
     

@@ -6,7 +6,7 @@
 % because it allows non-interactive mode to kick in on demand.
 function uiwait(h),
     if ishandle(h),
-        AutoCloseInSeconds = WITio.pref.get('AutoCloseInSeconds', Inf);
+        AutoCloseInSeconds = WITio.misc.pref.get('AutoCloseInSeconds', Inf);
         figure(h);
         if isinf(AutoCloseInSeconds),
             uiwait(h);

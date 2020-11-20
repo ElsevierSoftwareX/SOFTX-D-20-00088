@@ -137,16 +137,16 @@ classdef wip < handle, % Since R2008a
                     % Enable tracking of this wip Project object
                     obj.wip_listener = WITio.class.wip.Projects.add(obj);
                     % Get user preferences (or default values if not found)
-                    obj.ForceDataUnit = WITio.pref.get('wip_ForceDataUnit', obj.ForceDataUnit);
-                    obj.ForceSpaceUnit = WITio.pref.get('wip_ForceSpaceUnit', obj.ForceSpaceUnit);
-                    obj.ForceSpectralUnit = WITio.pref.get('wip_ForceSpectralUnit', obj.ForceSpectralUnit);
-                    obj.ForceTimeUnit = WITio.pref.get('wip_ForceTimeUnit', obj.ForceTimeUnit);
-                    obj.OnWriteDestroyAllViewers = WITio.pref.get('wip_OnWriteDestroyAllViewers', obj.OnWriteDestroyAllViewers);
-                    obj.OnWriteDestroyDuplicateTransformations = WITio.pref.get('wip_OnWriteDestroyDuplicateTransformations', obj.OnWriteDestroyDuplicateTransformations);
-                    obj.UseLineValid = WITio.pref.get('wip_UseLineValid', obj.UseLineValid);
-                    obj.AutoCreateObj = WITio.pref.get('wip_AutoCreateObj', obj.AutoCreateObj);
-                    obj.AutoCopyObj = WITio.pref.get('wip_AutoCopyObj', obj.AutoCopyObj);
-                    obj.AutoModifyObj = WITio.pref.get('wip_AutoModifyObj', obj.AutoModifyObj);
+                    obj.ForceDataUnit = WITio.misc.pref.get('wip_ForceDataUnit', obj.ForceDataUnit);
+                    obj.ForceSpaceUnit = WITio.misc.pref.get('wip_ForceSpaceUnit', obj.ForceSpaceUnit);
+                    obj.ForceSpectralUnit = WITio.misc.pref.get('wip_ForceSpectralUnit', obj.ForceSpectralUnit);
+                    obj.ForceTimeUnit = WITio.misc.pref.get('wip_ForceTimeUnit', obj.ForceTimeUnit);
+                    obj.OnWriteDestroyAllViewers = WITio.misc.pref.get('wip_OnWriteDestroyAllViewers', obj.OnWriteDestroyAllViewers);
+                    obj.OnWriteDestroyDuplicateTransformations = WITio.misc.pref.get('wip_OnWriteDestroyDuplicateTransformations', obj.OnWriteDestroyDuplicateTransformations);
+                    obj.UseLineValid = WITio.misc.pref.get('wip_UseLineValid', obj.UseLineValid);
+                    obj.AutoCreateObj = WITio.misc.pref.get('wip_AutoCreateObj', obj.AutoCreateObj);
+                    obj.AutoCopyObj = WITio.misc.pref.get('wip_AutoCopyObj', obj.AutoCopyObj);
+                    obj.AutoModifyObj = WITio.misc.pref.get('wip_AutoModifyObj', obj.AutoModifyObj);
                     % Enable link between Tree and Project
                     obj.TreeObjectBeingDestroyedListener = Tree.addlistener('ObjectBeingDestroyed', @(s,e) delete(obj));
                     obj.TreeObjectModifiedListener = Tree.addlistener('ObjectModified', @(s,e) wip_update_Tree(obj));
@@ -312,7 +312,7 @@ classdef wip < handle, % Since R2008a
         %% OTHER METHODS
         % LIFO (last in, first out) concept for UseLineValid
         function latest = popUseLineValid(obj),
-            latest = obj.popBoolean('UseLineValid', WITio.pref.get('wip_UseLineValid', true)); % With default
+            latest = obj.popBoolean('UseLineValid', WITio.misc.pref.get('wip_UseLineValid', true)); % With default
         end
         function pushUseLineValid(obj, latest),
             obj.pushBoolean('UseLineValid', latest);
@@ -320,7 +320,7 @@ classdef wip < handle, % Since R2008a
         
         % LIFO (last in, first out) concept for AutoCreateObj
         function latest = popAutoCreateObj(obj),
-            latest = obj.popBoolean('AutoCreateObj', WITio.pref.get('wip_AutoCreateObj', true)); % With default
+            latest = obj.popBoolean('AutoCreateObj', WITio.misc.pref.get('wip_AutoCreateObj', true)); % With default
         end
         function pushAutoCreateObj(obj, latest),
             obj.pushBoolean('AutoCreateObj', latest);
@@ -328,7 +328,7 @@ classdef wip < handle, % Since R2008a
         
         % LIFO (last in, first out) concept for AutoCopyObj
         function latest = popAutoCopyObj(obj),
-            latest = obj.popBoolean('AutoCopyObj', WITio.pref.get('wip_AutoCopyObj', true)); % With default
+            latest = obj.popBoolean('AutoCopyObj', WITio.misc.pref.get('wip_AutoCopyObj', true)); % With default
         end
         function pushAutoCopyObj(obj, latest),
             obj.pushBoolean('AutoCopyObj', latest);
@@ -336,7 +336,7 @@ classdef wip < handle, % Since R2008a
         
         % LIFO (last in, first out) concept for AutoModifyObj
         function latest = popAutoModifyObj(obj),
-            latest = obj.popBoolean('AutoModifyObj', WITio.pref.get('wip_AutoModifyObj', true)); % With default
+            latest = obj.popBoolean('AutoModifyObj', WITio.misc.pref.get('wip_AutoModifyObj', true)); % With default
         end
         function pushAutoModifyObj(obj, latest),
             obj.pushBoolean('AutoModifyObj', latest);

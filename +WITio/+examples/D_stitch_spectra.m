@@ -54,7 +54,7 @@ WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuin
 % WARNING! The related instrumental errors, if NOT corrected for, can lead
 % to UNPHYSICAL stitching result in the overlapping regions, even if their
 % apparent stitching result looks smooth!
-if WITio.misc.verbose, % This is true by default (and can be set by WITio.pref.set('Verbose', tf);)
+if WITio.misc.verbose, % This is true by default (and can be set by WITio.misc.pref.set('Verbose', tf);)
     [O_result, X, Y] = O_wid.spectral_stitch('-debug'); % Here debug-mode is used to visualize the progress to the user. It can be used for double-checking. Remove '-debug' to disable such demonstration.
 else,
     [O_result, X, Y] = O_wid.spectral_stitch();

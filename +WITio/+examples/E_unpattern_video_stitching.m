@@ -64,7 +64,7 @@ WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuin
 % Stitching image has been down-scaled in any way, because then it cannot
 % quarantee finding perfect solution. Here '-debug' is added for more
 % verbose process feedback.
-if WITio.misc.verbose, % This is true by default (and can be set by WITio.pref.set('Verbose', tf);)
+if WITio.misc.verbose, % This is true by default (and can be set by WITio.misc.pref.set('Verbose', tf);)
     [O_new_Bitmap, N_best, new_Data] = O_Bitmap.unpattern_video_stitching('-debug'); % Here debug-mode is used to visualize the progress to the user. It can be used for double-checking. Remove '-debug' to disable such demonstration.
 end
 

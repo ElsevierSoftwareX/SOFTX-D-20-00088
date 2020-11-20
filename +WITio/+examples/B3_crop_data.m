@@ -108,7 +108,7 @@ figure; O_PointScan_cropped.plot(); % Cropped spectrum
 % preference is changed as is shown in the last commented line).
 O_wip.destroy_duplicate_Transformations; % Do it immediately
 % O_wip.OnWriteDestroyDuplicateTransformations = true; % OR do it later on write
-% WITio.pref.set('wip_OnWriteDestroyDuplicateTransformations', true); % Permanently change its user preference for the future runs
+% WITio.misc.pref.set('wip_OnWriteDestroyDuplicateTransformations', true); % Permanently change its user preference for the future runs
 %-------------------------------------------------------------------------%
 
 

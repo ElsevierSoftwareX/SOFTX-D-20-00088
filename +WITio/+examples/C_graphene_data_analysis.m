@@ -104,7 +104,7 @@ h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(C ii.)} Lorentzians ar
 Range_D = [1250 1450]; % D-peak
 Range_G = [1500 1650]; % G-peak
 Range_2D = [2550 2800]; % 2D-peak
-if WITio.misc.verbose, % This is true by default (and can be set by WITio.pref.set('Verbose', tf);)
+if WITio.misc.verbose, % This is true by default (and can be set by WITio.misc.pref.set('Verbose', tf);)
     O_D = O_ImageScan.filter_lorentzian(Range_D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
     O_G = O_ImageScan.filter_lorentzian(Range_G); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
     O_2D = O_ImageScan.filter_lorentzian(Range_2D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.

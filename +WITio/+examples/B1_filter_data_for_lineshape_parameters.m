@@ -120,7 +120,7 @@ h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(B1 ii.)} Apply linesha
 %-------------------------------------------------------------------------%
 Range_0 = [-25 25]; % The spectral range of Rayleigh-peak (laser line) at (supposedly) zero
 
-if WITio.misc.verbose, % This is true by default (and can be set by WITio.pref.set('Verbose', tf);)
+if WITio.misc.verbose, % This is true by default (and can be set by WITio.misc.pref.set('Verbose', tf);)
     % First fit Gaussian to Rayleigh-peak in order to find instrument-induced Fwhm_G (needed for Voigtian-fitting)
     [O_Point_0, ~, ~, Point_Fwhm_G] = O_Point.filter_gaussian(Range_0); % Gauss filtering after removal of linear background (using filter_bg)
 

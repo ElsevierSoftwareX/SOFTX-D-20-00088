@@ -27,18 +27,18 @@ h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(A4)} Configure WITio w
 'user preferences:}' ...
 '' ...
 '\bullet Getting the specified user preference values (or default values):' ...
-'{\bf\fontname{Courier}value = WITio.pref.get(pref, ' ...
+'{\bf\fontname{Courier}value = WITio.misc.pref.get(pref, ' ...
 'value);}' ...
 '' ...
 '\bullet Setting the specified user preference values:' ...
-'{\bf\fontname{Courier}value = WITio.pref.set(pref, ' ...
+'{\bf\fontname{Courier}value = WITio.misc.pref.set(pref, ' ...
 'value);}' ...
 '' ...
 '\bullet Testing if the speficied user preferences exist:' ...
-'{\bf\fontname{Courier}value = WITio.pref.is(pref);}' ...
+'{\bf\fontname{Courier}value = WITio.misc.pref.is(pref);}' ...
 '' ...
 '\bullet Removing the specified user preferences:' ...
-'{\bf\fontname{Courier}value = WITio.pref.rm(pref);}' ...
+'{\bf\fontname{Courier}value = WITio.misc.pref.rm(pref);}' ...
 '' ...
 '\bullet Read the code for more details.' ...
 '' ...
@@ -57,35 +57,35 @@ WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuin
 % functions.
 
 % Get user preferences (or default values if not found)
-pref_value_pairs_struct = WITio.pref.get(); % Get all the user preferences as a struct
-license_dialog = WITio.pref.get('license_dialog'); % No default value given here
-latest_folder = WITio.pref.get('latest_folder', cd);
-wip_ForceDataUnit = WITio.pref.get('wip_ForceDataUnit', '');
-wip_ForceSpaceUnit = WITio.pref.get('wip_ForceSpaceUnit', '');
-wip_ForceSpectralUnit = WITio.pref.get('wip_ForceSpectralUnit', '');
-wip_ForceTimeUnit = WITio.pref.get('wip_ForceTimeUnit', '');
-wip_OnWriteDestroyAllViewers = WITio.pref.get('wip_OnWriteDestroyAllViewers', true);
-wip_OnWriteDestroyDuplicateTransformations = WITio.pref.get('wip_OnWriteDestroyDuplicateTransformations', true);
-wip_UseLineValid = WITio.pref.get('wip_UseLineValid', true);
-wip_AutoCreateObj = WITio.pref.get('wip_AutoCreateObj', true);
-wip_AutoCopyObj = WITio.pref.get('wip_AutoCopyObj', true);
-wip_AutoModifyObj = WITio.pref.get('wip_AutoModifyObj', true);
+pref_value_pairs_struct = WITio.misc.pref.get(); % Get all the user preferences as a struct
+license_dialog = WITio.misc.pref.get('license_dialog'); % No default value given here
+latest_folder = WITio.misc.pref.get('latest_folder', cd);
+wip_ForceDataUnit = WITio.misc.pref.get('wip_ForceDataUnit', '');
+wip_ForceSpaceUnit = WITio.misc.pref.get('wip_ForceSpaceUnit', '');
+wip_ForceSpectralUnit = WITio.misc.pref.get('wip_ForceSpectralUnit', '');
+wip_ForceTimeUnit = WITio.misc.pref.get('wip_ForceTimeUnit', '');
+wip_OnWriteDestroyAllViewers = WITio.misc.pref.get('wip_OnWriteDestroyAllViewers', true);
+wip_OnWriteDestroyDuplicateTransformations = WITio.misc.pref.get('wip_OnWriteDestroyDuplicateTransformations', true);
+wip_UseLineValid = WITio.misc.pref.get('wip_UseLineValid', true);
+wip_AutoCreateObj = WITio.misc.pref.get('wip_AutoCreateObj', true);
+wip_AutoCopyObj = WITio.misc.pref.get('wip_AutoCopyObj', true);
+wip_AutoModifyObj = WITio.misc.pref.get('wip_AutoModifyObj', true);
 
 
 
 % Set user preferences
-WITio.pref.set('license_dialog', true);
-WITio.pref.set('latest_folder', cd);
-WITio.pref.set('wip_ForceDataUnit', 'a.u.');
-WITio.pref.set('wip_ForceSpaceUnit', 'um');
-WITio.pref.set('wip_ForceSpectralUnit', 'nm');
-WITio.pref.set('wip_ForceTimeUnit', 's');
-WITio.pref.set('wip_OnWriteDestroyAllViewers', false);
-WITio.pref.set('wip_OnWriteDestroyDuplicateTransformations', false);
-WITio.pref.set('wip_UseLineValid', false);
-WITio.pref.set('wip_AutoCreateObj', false);
-WITio.pref.set('wip_AutoCopyObj', false);
-WITio.pref.set('wip_AutoModifyObj', false);
+WITio.misc.pref.set('license_dialog', true);
+WITio.misc.pref.set('latest_folder', cd);
+WITio.misc.pref.set('wip_ForceDataUnit', 'a.u.');
+WITio.misc.pref.set('wip_ForceSpaceUnit', 'um');
+WITio.misc.pref.set('wip_ForceSpectralUnit', 'nm');
+WITio.misc.pref.set('wip_ForceTimeUnit', 's');
+WITio.misc.pref.set('wip_OnWriteDestroyAllViewers', false);
+WITio.misc.pref.set('wip_OnWriteDestroyDuplicateTransformations', false);
+WITio.misc.pref.set('wip_UseLineValid', false);
+WITio.misc.pref.set('wip_AutoCreateObj', false);
+WITio.misc.pref.set('wip_AutoCopyObj', false);
+WITio.misc.pref.set('wip_AutoModifyObj', false);
 % The above settings would be utilized by the next created wip-class
 % objects. Changing these will not affect the already existing objects.
 
@@ -93,10 +93,10 @@ WITio.pref.set('wip_AutoModifyObj', false);
 
 % Removing user preferences (and returning to the default values for the
 % next created objects).
-WITio.pref.rm('wip_ForceTimeUnit'); % Removes the specified user preference
-WITio.pref.rm({'wip_ForceTimeUnit', 'wip_ForceSpectralUnit'}); % Removes the specified user preferences
-WITio.pref.rm(pref_value_pairs_struct); % Removes the specified user preferences
-WITio.pref.rm(); % Removes all the user preferences
+WITio.misc.pref.rm('wip_ForceTimeUnit'); % Removes the specified user preference
+WITio.misc.pref.rm({'wip_ForceTimeUnit', 'wip_ForceSpectralUnit'}); % Removes the specified user preferences
+WITio.misc.pref.rm(pref_value_pairs_struct); % Removes the specified user preferences
+WITio.misc.pref.rm(); % Removes all the user preferences
 %-------------------------------------------------------------------------%
 
 
@@ -104,7 +104,7 @@ WITio.pref.rm(); % Removes all the user preferences
 %-------------------------------------------------------------------------%
 % Restore the original user preferences to remove any unwanted
 % modifications during this example script.
-WITio.pref.set(pref_value_pairs_struct);
+WITio.misc.pref.set(pref_value_pairs_struct);
 %-------------------------------------------------------------------------%
 
 
