@@ -337,8 +337,8 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     % Smoothen the image before analysis if requested
     if GlobalRollingWindowAnalysis,
         oldclass = class(I);
-        if ~UseMedian, [~, I] = WITio.fun.rolling_window_analysis(I, [1 1 0]);
-        else, [~, ~, ~, ~, I] = WITio.fun.rolling_window_analysis(I, [1 1 0]); end
+        if ~UseMedian, [~, I] = WITio.fun.image.rolling_window_analysis(I, [1 1 0]);
+        else, [~, ~, ~, ~, I] = WITio.fun.image.rolling_window_analysis(I, [1 1 0]); end
         I = cast(I, oldclass); % Restore the original image type
         if Debug,
             figure; imshow(permute(uint8(I), [2 1 3])); daspect([1 1 1]); title('Smoothened');
@@ -699,7 +699,7 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
             % Make rolling window analysis if requested
             if ~RollingWindowAnalysis, extra_dim = [];,
             else,
-                [I_reshaped, ind_RWA] = WITio.fun.rolling_window_analysis_transformation(I_reshaped, [1 1 0 0], true);
+                [I_reshaped, ind_RWA] = WITio.fun.image.rolling_window_analysis_transformation(I_reshaped, [1 1 0 0], true);
                 extra_dim = ndims(I_reshaped);
             end
             

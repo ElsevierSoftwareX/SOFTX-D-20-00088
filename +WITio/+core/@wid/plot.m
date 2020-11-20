@@ -75,7 +75,7 @@ function h = plot(obj, varargin),
     
     % Mask Data
     MaskDatas = WITio.fun.varargin_dashed_str.datas('mask', varargin);
-    for ii = 1:numel(MaskDatas), [~, Data] = WITio.fun.data_mask(Data, MaskDatas{ii}.Data); end
+    for ii = 1:numel(MaskDatas), [~, Data] = WITio.fun.image.data_mask(Data, MaskDatas{ii}.Data); end
     
     if ~isempty(Data),
         switch(obj.Type),

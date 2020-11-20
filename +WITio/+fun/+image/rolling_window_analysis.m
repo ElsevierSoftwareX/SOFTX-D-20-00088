@@ -38,7 +38,7 @@ function varargout = rolling_window_analysis(X, W, isCircular, fun, varargin),
     if nargin < 2, W = 0; end
     
     % Create a rolling window analysis dataset
-    X_RWA = WITio.fun.rolling_window_analysis_transformation(X, W, isCircular); % Also tests the input W and isCircular
+    X_RWA = WITio.fun.image.rolling_window_analysis_transformation(X, W, isCircular); % Also tests the input W and isCircular
     
     % Call fun for the dataset
     [varargout{1:nargout}] = fun(X_RWA, ndims(X_RWA), varargin{:}); % fun(data, dim, ...)

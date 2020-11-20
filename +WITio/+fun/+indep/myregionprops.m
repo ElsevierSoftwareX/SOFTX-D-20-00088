@@ -7,7 +7,7 @@
 % from this and can be calculated elsewhere. For instance, 'Area' is
 % Area = cellfun(@numel, {stats.PixelIdxList}, 'UniformOutput', false);
 
-% Used by WITio.fun.data_true_and_nan_collective_hole_reduction.m
+% Used by WITio.fun.image.data_true_and_nan_collective_hole_reduction.m
 function stats = myregionprops(L),
     L_unique = unique(L); % Get region labels
     L_unique = L_unique(L_unique ~= 0); % Remove zero label region

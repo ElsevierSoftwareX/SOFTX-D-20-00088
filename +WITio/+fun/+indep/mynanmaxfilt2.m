@@ -12,7 +12,7 @@
 % calculus on the matrix columns and rows.
 
 % Used by WITio.fun.correct.apply_MDLCA, WITio.fun.correct.apply_CMDLCA and
-% WITio.fun.data_true_and_nan_collective_hole_reduction
+% WITio.fun.image.data_true_and_nan_collective_hole_reduction
 function B = mynanmaxfilt2(A, W),
     if numel(W) == 1, W = [W W]; end
     if any(mod(W, 2) ~= 1), error('FAIL: Only odd-valued window sizes are accepted!'); end 

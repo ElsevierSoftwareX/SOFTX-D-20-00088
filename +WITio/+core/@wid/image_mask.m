@@ -19,7 +19,7 @@ function [obj, Data_NaN_masked] = image_mask(obj, varargin),
         varargin = cellfun(@(x) x(:).', varargin, 'UniformOutput', false); % Force varargin content row-vectors
         obj_Masks = [varargin{:}]; % And make a long row-vector from varargin row-vector content
         Data_mask = all(obj_Masks.merge_Data(3), 3);
-        [~, Data_NaN_masked] = WITio.fun.data_mask(obj.Data, Data_mask);
+        [~, Data_NaN_masked] = WITio.fun.image.data_mask(obj.Data, Data_mask);
         
         % Modify the object (or its copy) if permitted
         if AutoModifyObj,
