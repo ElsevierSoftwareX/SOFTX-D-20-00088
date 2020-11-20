@@ -9,7 +9,7 @@
 % interpretations). The created WIP-file can then be opened in WITec's
 % external softwares.
 
-WITio.misc.edit(); % Open this code in Editor
+WITio.self.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -19,15 +19,15 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
-WITio.misc.license;
+WITio.self.license;
 
-h = WITio.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE Z:}' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE Z:}' ...
 '{\bf\fontsize{12}CUSTOMIZE DATA AND ' ...
 'EXPORT}' ...
 '' ...
 '\bullet If unfamiliar with ''WITio'', then go through the previous ' ...
 'examples first.'}, '-TextWrapping', false);
-WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuing.
+WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -219,14 +219,14 @@ O_wip.manager('-all', '-closepreview'); % Show the newly created Project
 
 
 %-------------------------------------------------------------------------%
-h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(Z)} Customizing data and exporting:}' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(Z)} Customizing data and exporting:}' ...
 '' ...
 '\bullet In this advanced example, customized TDBitmap, TDGraph, TDImage and ' ...
 'TDText were created and exported to a file. See the generated data in the ' ...
 'opened Project Manager.' ...
 '' ...
 '\ldots Close this dialog to END and close all the opened figures.'}, '-TextWrapping', false);
-WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuing.
+WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
 

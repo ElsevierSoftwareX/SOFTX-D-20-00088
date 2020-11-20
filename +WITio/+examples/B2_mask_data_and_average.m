@@ -6,7 +6,7 @@
 % Simple examples of data post processing like (B2 i.) masking and
 % (B2 ii.) spatial averaging.
 
-WITio.misc.edit(); % Open this code in Editor
+WITio.self.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -17,15 +17,15 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
-WITio.misc.license;
+WITio.self.license;
 
-h = WITio.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE B2:}' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE B2:}' ...
 '{\bf\fontsize{12}DATA MASKING AND SPATIAL ' ...
 'AVERAGING}' ...
 '' ...
 '\bullet Using ''A\_v5.wip'' WITec Project -file, which has Raman data from exfoliated ' ...
 'graphene with 1-, 2- and 3-layer areas on 285 nm SiO2/Si-substrate.'}, '-TextWrapping', false);
-WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuing.
+WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -41,7 +41,7 @@ O_Mask = O_wid(7); % Get object of "1-layer Gr<Mask 2" at index 7
 
 
 %-------------------------------------------------------------------------%
-h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(B2 i.)} Masking of the ImageScan data:}' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(B2 i.)} Masking of the ImageScan data:}' ...
 '' ...
 '\bullet This example uses "1-layer Gr<Mask 2"-mask on "Reduced<Image Scan 1 ' ...
 '(Data)"-data.' ...
@@ -76,7 +76,7 @@ close all; % Close the plot
 
 
 %-------------------------------------------------------------------------%
-h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(B2 ii.)} Getting spatial average of the ' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(B2 ii.)} Getting spatial average of the ' ...
 'previously masked data.}' ...
 '' ...
 '\ldots Close this to END.'}, '-TextWrapping', false);
@@ -87,7 +87,7 @@ h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(B2 ii.)} Getting spati
 %-------------------------------------------------------------------------%
 O_avg = O_masked.spatial_average();
 figure; O_avg.plot; % Point<TDGraph with sidebar
-WITio.misc.uiwait(h);
+WITio.self.uiwait(h);
 close all; % Close the plot
 %-------------------------------------------------------------------------%
 

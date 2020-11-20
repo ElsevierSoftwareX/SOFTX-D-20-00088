@@ -54,7 +54,7 @@ function [ind, isAnyAtClassMax, isAtClassMax] = generic_sub2ind(arraySize, varar
     doCirculate = false;
     
     % Check if any of the special dashed strings were specified
-    B_dashed = strncmp(varargin, '-', 1); % Call to WITio.misc.varargin_dashed_str.any_exists(varargin) avoided for slight speed-up
+    B_dashed = strncmp(varargin, '-', 1); % Call to WITio.self.varargin_dashed_str.any_exists(varargin) avoided for slight speed-up
     if any(B_dashed), % Parse ONLY IF exists (for speed-up!)
         N_dashed = sum(B_dashed);
         ind_dashed = find(B_dashed);
@@ -81,20 +81,20 @@ function [ind, isAnyAtClassMax, isAtClassMax] = generic_sub2ind(arraySize, varar
         
         % Look for other dashed strings
         if N_dashed > 1 || (N_dashed == 1 && B_continue),
-            [doTruncate, datas] = WITio.misc.varargin_dashed_str.exists_and_datas('truncate', strs_dashed, -1);
+            [doTruncate, datas] = WITio.self.varargin_dashed_str.exists_and_datas('truncate', strs_dashed, -1);
             if doTruncate && numel(datas) > 0, doTruncate = logical(datas{1}); end
 
-            [doReplace, datas] = WITio.misc.varargin_dashed_str.exists_and_datas('replace', strs_dashed, -1);
+            [doReplace, datas] = WITio.self.varargin_dashed_str.exists_and_datas('replace', strs_dashed, -1);
             if doReplace && numel(datas) > 0, doReplace = logical(datas{1}); end
 
-            datas = WITio.misc.varargin_dashed_str.datas('value', strs_dashed, -1);
+            datas = WITio.self.varargin_dashed_str.datas('value', strs_dashed, -1);
             value = NaN; % Default replacement value
             if numel(datas) > 0, value = datas{1}; end
 
-            [doMirror, datas] = WITio.misc.varargin_dashed_str.exists_and_datas('mirror', strs_dashed, -1);
+            [doMirror, datas] = WITio.self.varargin_dashed_str.exists_and_datas('mirror', strs_dashed, -1);
             if doMirror && numel(datas) > 0, doMirror = logical(datas{1}); end
 
-            [doCirculate, datas] = WITio.misc.varargin_dashed_str.exists_and_datas('circulate', strs_dashed, -1);
+            [doCirculate, datas] = WITio.self.varargin_dashed_str.exists_and_datas('circulate', strs_dashed, -1);
             if doCirculate && numel(datas) > 0, doCirculate = logical(datas{1}); end
         end
     end

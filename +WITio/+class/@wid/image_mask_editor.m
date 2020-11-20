@@ -36,19 +36,19 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
         masking_value = false;
         masking_mode = 0;
         show_mask();
-        WITio.misc.ui.sidebar_popup(Fig, 'Masking value:', {'False', 'True'}, @update_value, 1, false, [1 -1 1 1]);
-        WITio.misc.ui.sidebar_button(Fig, [], 'Clear mask', @clear, [1 1 1 -1]);
-        WITio.misc.ui.sidebar_button(Fig, [], 'Invert mask', @invert, [1 1 1 -1]);
+        WITio.self.ui.sidebar_popup(Fig, 'Masking value:', {'False', 'True'}, @update_value, 1, false, [1 -1 1 1]);
+        WITio.self.ui.sidebar_button(Fig, [], 'Clear mask', @clear, [1 1 1 -1]);
+        WITio.self.ui.sidebar_button(Fig, [], 'Invert mask', @invert, [1 1 1 -1]);
         str_Popup = {'Freehand', 'Contour', 'Fill'};
         set(Fig, 'WindowButtonDownFcn', @WindowButtonDownFcn, 'WindowButtonUpFcn', @WindowButtonUpFcn); % Enable mouse tracking when pressed down!
-        WITio.misc.ui.sidebar_popup(Fig, 'Masking tool:', str_Popup, @update, 1, false, [1 -1 1 1]);
+        WITio.self.ui.sidebar_popup(Fig, 'Masking tool:', str_Popup, @update, 1, false, [1 -1 1 1]);
         
-        AutoCloseInSeconds = WITio.misc.pref.get('AutoCloseInSeconds', Inf);
+        AutoCloseInSeconds = WITio.self.pref.get('AutoCloseInSeconds', Inf);
         if ~isinf(AutoCloseInSeconds) && AutoCloseInSeconds >= 0,
             start(timer('ExecutionMode', 'singleShot', 'StartDelay', AutoCloseInSeconds, 'TimerFcn', @(~,~) delete(Fig), 'StopFcn', @(s,~) delete(s)));
         end
         
-        WITio.misc.uiwait(Fig);
+        WITio.self.uiwait(Fig);
     end
     
     % Create new object if permitted

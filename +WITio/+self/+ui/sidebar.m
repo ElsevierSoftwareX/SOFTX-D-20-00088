@@ -56,7 +56,7 @@ function [h_mainbar, h_sidebar, h_button, h_button_2, h_button_3] = sidebar(Fig,
     set(Fig, 'Visible', Visible); % Restore visibility
     
     % Close callback
-    function callback_1(varargin), WITio.misc.ui.sidebar_delete(Fig); end
+    function callback_1(varargin), WITio.self.ui.sidebar_delete(Fig); end
     
     % Close + Export callback
     function callback_2(varargin),
@@ -65,7 +65,7 @@ function [h_mainbar, h_sidebar, h_button, h_button_2, h_button_3] = sidebar(Fig,
     end
     
     % Export callback
-    function callback_3(varargin), WITio.misc.ui.sidebar_export(Fig); end
+    function callback_3(varargin), WITio.self.ui.sidebar_export(Fig); end
     
     % Proper resizing of the uipanels (mainbar, sidebar)
     function update(varargin),

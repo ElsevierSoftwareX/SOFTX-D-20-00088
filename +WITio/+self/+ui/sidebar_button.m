@@ -2,19 +2,11 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [h_popup, h_label] = sidebar_popup(Fig, str_Label, str_Popup, fun, initialValue, isPersistent, isMargins),
-    if nargin < 6, isPersistent = true; end
-    if nargin < 5, initialValue = 1; end
-    if isPersistent,
-        persistent currentValue; % Remember this always
-        if ~isempty(currentValue), initialValue = currentValue; end
-    end
-    currentValue = initialValue;
-    
+function [h_button, h_label] = sidebar_button(Fig, str_Label, str_Button, fun, isMargins),
     if isempty(Fig), Fig = gcf; end % By default, update gcf
-    if nargin < 7, isMargins = [1 1 1 1]; end % By default, add [left bottom right top] margins
+    if nargin < 5, isMargins = [1 1 1 1]; end % By default, add [left bottom right top] margins
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
-    if isempty(Parent), [~, Parent] = WITio.misc.ui.sidebar(Fig); end % Create one if it does not exist
+    if isempty(Parent), [~, Parent] = WITio.self.ui.sidebar(Fig); end % Create one if it does not exist
     Ax = get(Fig, 'CurrentAxes');
     
     % Calculate positions
@@ -30,7 +22,7 @@ function [h_popup, h_label] = sidebar_popup(Fig, str_Label, str_Popup, fun, init
 %     cHeight = [cumsum(Height(2:end), 'reverse') 0];
     cHeight = [fliplr(cumsum(fliplr(Height(2:end)), 2)) 0]; % Added for backward compability
     Position_label = [View(1) View(2)+cHeight(1) View(3) Height(1)];
-    Position_popup = [View(1) View(2)+cHeight(2) View(3) Height(2)];
+    Position_button = [View(1) View(2)+cHeight(2) View(3) Height(2)];
 
     Position = [Position(1) Position(2)-sum(Height)-2.*(BorderWidth-1)-sum(isMargins(2:2:4)).*Margin Position(3) Position(4)+sum(Height)+2.*(BorderWidth-1)+sum(isMargins(2:2:4)).*Margin]; % Margins included [left bottom width height]
     set(Parent, 'Position', Position); % Set Position in pixels
@@ -44,18 +36,10 @@ function [h_popup, h_label] = sidebar_popup(Fig, str_Label, str_Popup, fun, init
             'Position', Position_label);
     end
     
-    h_popup = uicontrol('Parent', Parent, ...
-        'Style', 'popup', ...
-        'String', str_Popup, ...
-        'Value', currentValue, ...
+    h_button = uicontrol('Parent', Parent, ...
+        'Style', 'pushbutton', ...
+        'String', str_Button, ...
         'Units', 'pixels', ...
-        'Position', Position_popup, ...
-        'Callback', @update);
-    
-    fun(currentValue);
-    
-    function update(varargin),
-        currentValue = get(h_popup, 'Value');
-        fun(currentValue);
-    end
+        'Position', Position_button, ...
+        'Callback', fun);
 end

@@ -25,8 +25,8 @@
 
 function varargout = inds(varargin),
     if nargout == 1,
-        varargout{1} = WITio.misc.varargin_dashed_str.inds_and_datas(varargin{:});
+        varargout{1} = WITio.self.varargin_dashed_str.inds_and_datas(varargin{:});
     elseif nargout > 1,
-        [varargout{1}, ~, varargout{2:nargout}] = WITio.misc.varargin_dashed_str.inds_and_datas(varargin{:});
+        [varargout{1}, ~, varargout{2:nargout}] = WITio.self.varargin_dashed_str.inds_and_datas(varargin{:});
     end
 end

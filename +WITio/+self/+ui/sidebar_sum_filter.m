@@ -8,7 +8,7 @@ function [h_edit_1, h_edit_2, h_label] = sidebar_sum_filter(Fig, varargin),
     
     if isempty(Fig), Fig = gcf; end % By default, update gcf
     Parent = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
-    if isempty(Parent), [~, Parent] = WITio.misc.ui.sidebar(Fig); end % Create one if it does not exist
+    if isempty(Parent), [~, Parent] = WITio.self.ui.sidebar(Fig); end % Create one if it does not exist
     
     % Calculate Positions
     Units = get(Parent, 'Units'); % Store Units

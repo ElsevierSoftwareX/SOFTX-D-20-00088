@@ -6,5 +6,5 @@
 % more verbose output. This is used to enable faster non-interactive mode
 % with the example cases.
 function tf = verbose(),
-    tf = WITio.misc.pref.get('Verbose', true);
+    tf = WITio.self.pref.get('Verbose', true);
 end

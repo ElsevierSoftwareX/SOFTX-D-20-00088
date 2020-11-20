@@ -8,7 +8,7 @@
 % view at the Video camera per frame. Frame imperfections may be caused,
 % for instance, by vignetting or varying pixel sensitivity.
 
-WITio.misc.edit(); % Open this code in Editor
+WITio.self.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -16,14 +16,14 @@ pathstr = fullfile(WITio.path.package, '+examples'); % Get folder of this script
 file = fullfile(pathstr, 'E_unpattern_video_stitching_v7.wip'); % Construct full path of the example file
 
 %-------------------------------------------------------------------------%
-WITio.misc.license;
+WITio.self.license;
 
-h = WITio.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE E:}' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE E:}' ...
 '{\bf\fontsize{12}UNPATTERN VIDEO STITCHING ' ...
 'IMAGES}' ...
 '' ...
 '\bullet If unfamiliar with ''WITio'', then go through the previous examples first.'}, '-TextWrapping', false);
-WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuing.
+WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -41,7 +41,7 @@ figure; O_Bitmap.plot;
 
 
 %-------------------------------------------------------------------------%
-h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(E)} Unpatterning the Video Stitching ' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(E)} Unpatterning the Video Stitching ' ...
 'images:}' ...
 '' ...
 '\bullet Aim is to remove the grid pattern arising during stitching procedure due to ' ...
@@ -49,7 +49,7 @@ h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(E)} Unpatterning the V
 'be caused, for instance, by vignetting or varying pixel sensitivity.' ...
 '' ...
 '\ldots Illustrative unpatterning procedure begins by closing this help dialog.'}, '-TextWrapping', false);
-WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuing.
+WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -64,7 +64,7 @@ WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuin
 % Stitching image has been down-scaled in any way, because then it cannot
 % quarantee finding perfect solution. Here '-debug' is added for more
 % verbose process feedback.
-if WITio.misc.verbose, % This is true by default (and can be set by WITio.misc.pref.set('Verbose', tf);)
+if WITio.self.verbose, % This is true by default (and can be set by WITio.self.pref.set('Verbose', tf);)
     [O_new_Bitmap, N_best, new_Data] = O_Bitmap.unpattern_video_stitching('-debug'); % Here debug-mode is used to visualize the progress to the user. It can be used for double-checking. Remove '-debug' to disable such demonstration.
 end
 
@@ -74,7 +74,7 @@ end
 % it. This is useful when working with multiple Video Stitching images,
 % because they have the same optimal solution (if NOT down-scaled).
 
-if ~WITio.misc.verbose, % This is false by default
+if ~WITio.self.verbose, % This is false by default
     N_best = 181; % Known best solution
     [O_new_Bitmap, N_best] = O_Bitmap.unpattern_video_stitching(N_best); % Use known optimal solution instead of asking for the code to scan through the options
 end
@@ -98,12 +98,12 @@ O_new_Bitmap_crop = O_Bitmap.unpattern_video_stitching(N_best, '-crop'); % Use k
 
 
 %-------------------------------------------------------------------------%
-h = WITio.misc.msgbox({'{\bf\fontsize{12}Unpatterning has completed:}' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}Unpatterning has completed:}' ...
 '' ...
 '\bullet Read the code for more details.' ...
 '' ...
 '\ldots Close this dialog to END and see the final result.'}, '-TextWrapping', false);
-WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuing.
+WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 

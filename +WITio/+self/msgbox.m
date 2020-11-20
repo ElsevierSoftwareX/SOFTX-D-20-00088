@@ -29,7 +29,7 @@
 % precalculation the text wrapping only once.
 
 % EXAMPLE:
-% h = WITio.misc.msgbox('\bullet This is an{\bf example \color{magenta}dialog} box with max. {\fontname{Courier}200 px} wide text wrapping.', '-Icon', 'help', '-TextWrapping', 200, 'pixels');
+% h = WITio.self.msgbox('\bullet This is an{\bf example \color{magenta}dialog} box with max. {\fontname{Courier}200 px} wide text wrapping.', '-Icon', 'help', '-TextWrapping', 200, 'pixels');
 function [h, rewrapped_message] = msgbox(message, varargin),
     % Load the default WITio icon only once
     persistent default_icondata default_iconcmap;
@@ -38,22 +38,22 @@ function [h, rewrapped_message] = msgbox(message, varargin),
     end
     
     % Check if Icon was specified
-    datas = WITio.misc.varargin_dashed_str.datas('Icon', varargin, -3);
+    datas = WITio.self.varargin_dashed_str.datas('Icon', varargin, -3);
     icon = {'custom', default_icondata, default_iconcmap}; % Default
     if numel(datas) > 0, icon(1:numel(datas)) = datas; end
     
     % Check if WindowStyle was specified
-    datas = WITio.misc.varargin_dashed_str.datas('WindowStyle', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('WindowStyle', varargin, -1);
     WindowStyle = 'modal'; % Default
     if numel(datas) > 0, WindowStyle = datas{1}; end
     
     % Check if Interpreter was specified
-    datas = WITio.misc.varargin_dashed_str.datas('Interpreter', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('Interpreter', varargin, -1);
     Interpreter = 'tex'; % Default
     if numel(datas) > 0, Interpreter = datas{1}; end
     
     % Check if Title was specified
-    datas = WITio.misc.varargin_dashed_str.datas('Title', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('Title', varargin, -1);
     title = 'WITio''s Dialog'; % Default
     if ~strcmp(icon{1}, 'none') && ~strcmp(icon{1}, 'custom'),
         title = sprintf('WITio''s %s Dialog', [upper(icon{1}(1)) icon{1}(2:end)]);
@@ -61,7 +61,7 @@ function [h, rewrapped_message] = msgbox(message, varargin),
     if numel(datas) > 0, title = datas{1}; end
     
     % Check if TextWrapping was specified
-    datas = WITio.misc.varargin_dashed_str.datas('TextWrapping', varargin, -2);
+    datas = WITio.self.varargin_dashed_str.datas('TextWrapping', varargin, -2);
     TextWrapping = {true}; % Default
     if numel(datas) > 0, TextWrapping = datas; end
     
@@ -144,7 +144,7 @@ function [h, rewrapped_message] = msgbox(message, varargin),
     set(h, 'Visible', 'on');
     drawnow;
     
-    AutoCloseInSeconds = WITio.misc.pref.get('AutoCloseInSeconds', Inf);
+    AutoCloseInSeconds = WITio.self.pref.get('AutoCloseInSeconds', Inf);
     if ~isinf(AutoCloseInSeconds) && AutoCloseInSeconds >= 0,
         start(timer('ExecutionMode', 'singleShot', 'StartDelay', AutoCloseInSeconds, 'TimerFcn', @(~,~) delete(h), 'StopFcn', @(s,~) delete(s)));
     end

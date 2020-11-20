@@ -2,8 +2,8 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Helper function to parse and remove the given single-dashed string and
-% its datas from the given cell array input. Any multiple-dashed string is
+% Helper function to parse and return the datas of the given single-dashed
+% string from the given cell array input. Any multiple-dashed string is
 % treated as data (for now) and its first dash is removed. This feature can
 % be used to pass such strings to the nested functions, where they may be
 % detected as single-dashed strings.
@@ -20,11 +20,11 @@
 %   IF NEGATIVE: It reverses order of the matches and keeps last N!
 
 % OUTPUTS:
-% (1) in_wo: The cell array without the given single-dashed string and its
-% datas.
+% (1) exists: Whether or not the given single-dashed string exists.
+% (2) datas: The cell array of the datas of the given single-dashed string.
+% (3) in_wo: Inputs without the given single-dashed string and its datas.
 
-function varargout = removed(varargin),
-    if nargout > 0,
-        [~, ~, varargout{1:nargout}] = WITio.misc.varargin_dashed_str.inds_and_datas(varargin{:});
-    end
+function varargout = exists_and_datas(varargin),
+    [varargout{1:nargout}] = WITio.self.varargin_dashed_str.inds_and_datas(varargin{:});
+    if nargout > 0, varargout{1} = ~isempty(varargout{1}); end % Test if exists
 end

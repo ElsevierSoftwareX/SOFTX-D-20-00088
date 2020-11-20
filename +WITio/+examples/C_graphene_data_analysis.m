@@ -7,7 +7,7 @@
 % recalibration, (C ii.) lineshape fitting, (C iii.) result cleaning and
 % (C iv.) histogram generation.
 
-WITio.misc.edit(); % Open this code in Editor
+WITio.self.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -18,15 +18,15 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
-WITio.misc.license;
+WITio.self.license;
 
-h = WITio.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE C:}' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE C:}' ...
 '{\bf\fontsize{12}GRAPHENE DATA ANALYSIS}' ...
 '' ...
 '\bullet Using ''A\_v5.wip'' WITec Project -file, which has Raman data from ' ...
 'exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm ' ...
 'SiO2/Si-substrate.'}, '-TextWrapping', false);
-if ishandle(h), figure(h); uiwait(h); end % Wait for WITio.misc.msgbox to be closed before continuing.
+if ishandle(h), figure(h); uiwait(h); end % Wait for WITio.self.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -42,7 +42,7 @@ O_Point = O_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at index 1
 
 
 %-------------------------------------------------------------------------%
-h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(C i.)} Recalibrating the Rayleigh-peak ' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(C i.)} Recalibrating the Rayleigh-peak ' ...
 'to zero position:}' ...
 '' ...
 '\bullet The Rayleigh-peak (or the laser line or the 0-peak) has Gaussian intensity ' ...
@@ -79,14 +79,14 @@ O_Point.Name = sprintf('Zeroed<%s', O_Point.Name);
 figure; O_Point_old.plot('-compare', O_Point); % Show fitting results % Image<TDGraph with sidebar
 xlim(Range_0); ylim('auto'); % Show only the region near the 0-peak
 
-WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuing.
+WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(C ii.)} Lorentzians are fitted to the D-, ' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(C ii.)} Lorentzians are fitted to the D-, ' ...
 'G- and 2D-peaks.}' ...
 '' ...
 '\bullet Ideal Raman peaks have Lorentzian function form, but may sometimes ' ...
@@ -104,7 +104,7 @@ h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(C ii.)} Lorentzians ar
 Range_D = [1250 1450]; % D-peak
 Range_G = [1500 1650]; % G-peak
 Range_2D = [2550 2800]; % 2D-peak
-if WITio.misc.verbose, % This is true by default (and can be set by WITio.misc.pref.set('Verbose', tf);)
+if WITio.self.verbose, % This is true by default (and can be set by WITio.self.pref.set('Verbose', tf);)
     O_D = O_ImageScan.filter_lorentzian(Range_D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
     O_G = O_ImageScan.filter_lorentzian(Range_G); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
     O_2D = O_ImageScan.filter_lorentzian(Range_2D); % Lorentz filtering with removal of linear background. Returns also Intensity, Center, FWHM and Offset.
@@ -117,14 +117,14 @@ end
 % SHOWING FITTING RESULTS OF THE RAYLEIGH-, D-, G- AND 2D-PEAKS
 figure; O_ImageScan.plot('-compare', O_0(end), O_D(end), O_G(end), O_2D(end)); % Show fitting results % Image<TDGraph with sidebar
 
-WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuing.
+WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(C iii.)} Clean-up of the fitted data:}' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(C iii.)} Clean-up of the fitted data:}' ...
 '' ...
 '\bullet Sometimes the fitting fails or contains invalid regions. For example, here the ' ...
 'D-peak exists only in some graphene edges and elsewhere the results are ' ...
@@ -180,14 +180,14 @@ figure;
 subplot(1, 2, 1); WITio.fun.plot.nanimagesc(O_I_DperG.Data.'); daspect([1 1 1]); title(O_I_DperG.Name);
 subplot(1, 2, 2); WITio.fun.plot.nanimagesc(O_I_2DperG.Data.'); daspect([1 1 1]); title(O_I_2DperG.Name);
 
-WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuing.
+WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(C iv.)} Histograms of the previously cleaned intensity ratios, ' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(C iv.)} Histograms of the previously cleaned intensity ratios, ' ...
 'I(D)/I(G) and I(2D)/I(G) are evaluated and shown:}' ...
 '' ...
 '\bullet Please note that the previously done cleaning procedure removed most invalid fitting values, what would have otherwise ' ...
@@ -205,7 +205,7 @@ O_hist_I_2DperG = O_I_2DperG.histogram();
 figure; O_hist_I_DperG.plot();
 figure; O_hist_I_2DperG.plot();
 
-WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuing.
+WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
 

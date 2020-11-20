@@ -5,19 +5,19 @@
 % This always returns a 'BSD 3-Clause License' char array. If allowed by
 % the user preference, then open a License Dialog -window, describing the
 % WITio toolbox license's span and freedom of usage. To reset this user
-% preference, execute WITio.misc.pref.rm('license_dialog').
+% preference, execute WITio.self.pref.rm('license_dialog').
 function license = license(),
     % Return WITio's license
     license = 'BSD 3-Clause License';
     
     % Test if non-interactive mode
-    AutoCloseInSeconds = WITio.misc.pref.get('AutoCloseInSeconds', Inf);
+    AutoCloseInSeconds = WITio.self.pref.get('AutoCloseInSeconds', Inf);
     if ~isinf(AutoCloseInSeconds) && AutoCloseInSeconds >= 0, return; end
 
     % Convert non-false-value to 'ask' (required by uigetpref)
-    value = WITio.misc.pref.get('license_dialog');
+    value = WITio.self.pref.get('license_dialog');
     if ~islogical(value) || numel(value) ~= 1 || value ~= false,
-        WITio.misc.pref.set('license_dialog', 'ask');
+        WITio.self.pref.set('license_dialog', 'ask');
     end
     
     % Show dialog (if user preference allows it)
@@ -34,9 +34,9 @@ function license = license(),
     'OK');
     
     % Convert uigetpref's 'ask'-value to true and otherwise false.
-    if strcmp(WITio.misc.pref.get('license_dialog'), 'ask'),
-        WITio.misc.pref.set('license_dialog', true);
+    if strcmp(WITio.self.pref.get('license_dialog'), 'ask'),
+        WITio.self.pref.set('license_dialog', true);
     else,
-        WITio.misc.pref.set('license_dialog', false);
+        WITio.self.pref.set('license_dialog', false);
     end
 end

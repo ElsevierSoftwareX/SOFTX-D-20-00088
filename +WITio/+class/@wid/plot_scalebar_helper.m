@@ -40,91 +40,91 @@ function h = plot_scalebar_helper(Ax, image_size, image_size_in_SU, image_SU, va
     image_size_in_SU = reshape(image_size_in_SU, 1, []); % Force row vector
 
     % Check if Color was specified
-    datas = WITio.misc.varargin_dashed_str.datas('Color', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('Color', varargin, -1);
     color = [1 1 1]; % White by default
     if numel(datas) > 0, color = datas{1}; end
 
     % Check if Anchor was specified
-    datas = WITio.misc.varargin_dashed_str.datas('Anchor', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('Anchor', varargin, -1);
     anchor = [0 1]; % Bottom-left by default
     if numel(datas) > 0, anchor = datas{1}; end
     anchor = reshape(anchor, 1, []); % Force row vector
 
     % Check if PositionRatio was specified
-    datas = WITio.misc.varargin_dashed_str.datas('PositionRatio', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('PositionRatio', varargin, -1);
     position_ratio = [0.05 1-0.05]; % 5% margins by default
     if numel(datas) > 0, position_ratio = datas{1}; end
     position_ratio = reshape(position_ratio, 1, []); % Force row vector
 
     % Check if Position (in points) was specified
-    datas = WITio.misc.varargin_dashed_str.datas('Position', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('Position', varargin, -1);
     position = position_ratio .* image_size;
     if numel(datas) > 0, position = datas{1}; end
 
     % Check if TextSpacingRatio was specified
-    datas = WITio.misc.varargin_dashed_str.datas('TextSpacingRatio', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('TextSpacingRatio', varargin, -1);
     text_spacing_ratio = 0.025;
     if numel(datas) > 0, text_spacing_ratio = datas{1}; end
 
     % Check if TextSpacing (in points) was specified
-    datas = WITio.misc.varargin_dashed_str.datas('TextSpacing', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('TextSpacing', varargin, -1);
     text_spacing = text_spacing_ratio .* image_size(2);
     if numel(datas) > 0, text_spacing = datas{1}; end
 
     % Check if TextHeightRatio was specified
-    datas = WITio.misc.varargin_dashed_str.datas('TextHeightRatio', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('TextHeightRatio', varargin, -1);
     text_height_ratio = 0.05;
     if numel(datas) > 0, text_height_ratio = datas{1}; end
 
     % Check if TextHeight (in points) was specified
-    datas = WITio.misc.varargin_dashed_str.datas('TextHeight', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('TextHeight', varargin, -1);
     text_height = text_height_ratio .* image_size(2);
     if numel(datas) > 0, text_height = datas{1}; end
 
     % Check if ThicknessRatio was specified
-    datas = WITio.misc.varargin_dashed_str.datas('ThicknessRatio', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('ThicknessRatio', varargin, -1);
     thickness_ratio = 0.025;
     if numel(datas) > 0, thickness_ratio = datas{1}; end
 
     % Check if Thickness (in points) was specified
-    datas = WITio.misc.varargin_dashed_str.datas('Thickness', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('Thickness', varargin, -1);
     thickness = thickness_ratio .* image_size(2);
     if numel(datas) > 0, thickness = datas{1}; end
 
     % Check if AutoLengthRatio was specified
-    datas = WITio.misc.varargin_dashed_str.datas('AutoLengthRatio', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('AutoLengthRatio', varargin, -1);
     auto_length_ratio = 0.5;
     if numel(datas) > 0, auto_length_ratio = datas{1}; end
 
     % Check if AutoFloorDigitTo was specified
-    datas = WITio.misc.varargin_dashed_str.datas('AutoFloorDigitTo', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('AutoFloorDigitTo', varargin, -1);
     auto_floor_digit_to = [1 2 5]; % Floor to 1, 2 and 5 digits
     if numel(datas) > 0, auto_floor_digit_to = datas{1}; end
     auto_floor_digit_to = sort(auto_floor_digit_to, 'ascend');
 
     % Check if Length was specified
-    datas = WITio.misc.varargin_dashed_str.datas('Length', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('Length', varargin, -1);
     length = []; % Auto length by default
     if numel(datas) > 0, length = datas{1}; end
 
     % Check if LengthUnit was specified
-    datas = WITio.misc.varargin_dashed_str.datas('LengthUnit', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('LengthUnit', varargin, -1);
     length_unit = [];
     if numel(datas) > 0, length_unit = datas{1}; end
 
     % Check if LengthFormat was specified
-    datas = WITio.misc.varargin_dashed_str.datas('LengthFormat', varargin, -1);
+    datas = WITio.self.varargin_dashed_str.datas('LengthFormat', varargin, -1);
     length_format = '%g';
     if numel(datas) > 0, length_format = datas{1}; end
 
     % Check if PatchVarargin was specified
-    patch_varargin = WITio.misc.varargin_dashed_str.datas('PatchVarargin', varargin);
+    patch_varargin = WITio.self.varargin_dashed_str.datas('PatchVarargin', varargin);
 
     % Check if TextVarargin was specified
-    text_varargin = WITio.misc.varargin_dashed_str.datas('TextVarargin', varargin);
+    text_varargin = WITio.self.varargin_dashed_str.datas('TextVarargin', varargin);
 
     % Check if notext was specified
-    show_text = ~WITio.misc.varargin_dashed_str.exists('notext', varargin); % By default, show text
+    show_text = ~WITio.self.varargin_dashed_str.exists('notext', varargin); % By default, show text
 
     % Interpret Length (if given) in correct units
     [~, length_in_SU] = WITio.class.wip.interpret('Space', image_SU, length_unit, length);

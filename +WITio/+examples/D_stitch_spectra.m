@@ -5,7 +5,7 @@
 %% WIT_IO EXAMPLE CASE D: SPECTRAL STITCHING
 % Simple example of (D) spectral stitching.
 
-WITio.misc.edit(); % Open this code in Editor
+WITio.self.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -15,14 +15,14 @@ file = fullfile(pathstr, 'D_stitch_spectra_v7.wip'); % Construct full path of th
 
 
 %-------------------------------------------------------------------------%
-WITio.misc.license;
+WITio.self.license;
 
-h = WITio.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE D:}' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE D:}' ...
 '{\bf\fontsize{12}SPECTRAL STITCHING}' ...
 '' ...
 '\bullet If unfamiliar with ''WITio'', then go through the previous ' ...
 'examples first.'}, '-TextWrapping', false);
-WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuing.
+WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -35,11 +35,11 @@ WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuin
 
 
 %-------------------------------------------------------------------------%
-h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(D)} Spectral stitching the measured ' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(D)} Spectral stitching the measured ' ...
 'LED lamp spectra into one spectrum:}' ...
 '' ...
 '\bullet Illustrative stitching procedure begins by closing this help dialog.'}, '-TextWrapping', false);
-WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuing.
+WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -54,7 +54,7 @@ WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuin
 % WARNING! The related instrumental errors, if NOT corrected for, can lead
 % to UNPHYSICAL stitching result in the overlapping regions, even if their
 % apparent stitching result looks smooth!
-if WITio.misc.verbose, % This is true by default (and can be set by WITio.misc.pref.set('Verbose', tf);)
+if WITio.self.verbose, % This is true by default (and can be set by WITio.self.pref.set('Verbose', tf);)
     [O_result, X, Y] = O_wid.spectral_stitch('-debug'); % Here debug-mode is used to visualize the progress to the user. It can be used for double-checking. Remove '-debug' to disable such demonstration.
 else,
     [O_result, X, Y] = O_wid.spectral_stitch();
@@ -64,14 +64,14 @@ end
 
 
 %-------------------------------------------------------------------------%
-[h,b] = WITio.misc.msgbox({'{\bf\fontsize{12}Spectral stitching has completed:}' ...
+[h,b] = WITio.self.msgbox({'{\bf\fontsize{12}Spectral stitching has completed:}' ...
 '' ...
 '\bullet Here the 1st figure illustrates how each neighbouring datas were ' ...
 'weighted. See the opened figures for the total-weighted datas, the ' ...
 'original datas and the total-weights.' ...
 '' ...
 '\ldots Close this dialog to END and see the final result.'}, '-TextWrapping', false);
-WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuing.
+WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 

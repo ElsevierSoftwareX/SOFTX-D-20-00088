@@ -6,7 +6,7 @@
 % Simple examples of data post processing like (B1 i.) filtering and
 % (B1 ii.) fitting.
 
-WITio.misc.edit(); % Open this code in Editor
+WITio.self.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
@@ -17,15 +17,15 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 
 %-------------------------------------------------------------------------%
-WITio.misc.license;
+WITio.self.license;
 
-h = WITio.misc.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE B1:}' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE B1:}' ...
 '{\bf\fontsize{12}DATA FILTERING FOR LINESHAPE ' ...
 'PARAMETERS}' ...
 '' ...
 '\bullet Using ''A\_v5.wip'' WITec Project -file, which has Raman data from exfoliated graphene with 1-, ' ...
 '2- and 3-layer areas on 285 nm SiO2/Si-substrate.'}, '-TextWrapping', false);
-WITio.misc.uiwait(h); % Wait for WITio.misc.msgbox to be closed before continuing.
+WITio.self.uiwait(h); % Wait for WITio.self.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -54,7 +54,7 @@ O_Point = O_Points(end); % Get the last TDGraph Point in the file
 
 
 %-------------------------------------------------------------------------%
-h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(B1 i.)} Apply filters on the Raman D-, ' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(B1 i.)} Apply filters on the Raman D-, ' ...
 'G- and 2D-peaks:}' ...
 '' ...
 '\bullet Please read the code that applies Sum and Center of Mass -filters over ' ...
@@ -97,14 +97,14 @@ Sum_D = sum(Data_D, 3);
 % utilizing a generic filter_fun (under @wid) like filter_sum and others.
 
 O_wip.manager;
-WITio.misc.uiwait(h);
+WITio.self.uiwait(h);
 close all; % Close Project Manager
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(B1 ii.)} Apply lineshape-fitting filters ' ...
+h = WITio.self.msgbox({'{\bf\fontsize{12}{\color{magenta}(B1 ii.)} Apply lineshape-fitting filters ' ...
 'on the Raman 0-, D-, G- and ' ...
 '2D-peaks:}' ...
 '' ...
@@ -120,7 +120,7 @@ h = WITio.misc.msgbox({'{\bf\fontsize{12}{\color{magenta}(B1 ii.)} Apply linesha
 %-------------------------------------------------------------------------%
 Range_0 = [-25 25]; % The spectral range of Rayleigh-peak (laser line) at (supposedly) zero
 
-if WITio.misc.verbose, % This is true by default (and can be set by WITio.misc.pref.set('Verbose', tf);)
+if WITio.self.verbose, % This is true by default (and can be set by WITio.self.pref.set('Verbose', tf);)
     % First fit Gaussian to Rayleigh-peak in order to find instrument-induced Fwhm_G (needed for Voigtian-fitting)
     [O_Point_0, ~, ~, Point_Fwhm_G] = O_Point.filter_gaussian(Range_0); % Gauss filtering after removal of linear background (using filter_bg)
 
@@ -141,7 +141,7 @@ end
 % Compare the experimental data with the fitting result using '-compare'-feature of obj.plot
 figure; O_Point.plot('-compare', O_Point_0(end), O_Point_D(end), O_Point_G(end), O_Point_2D(end)); % Show fitting results % Image<TDGraph with sidebar
 
-WITio.misc.uiwait(h);
+WITio.self.uiwait(h);
 close all; % Close the plot
 %-------------------------------------------------------------------------%
 
