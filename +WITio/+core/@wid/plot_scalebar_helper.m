@@ -134,7 +134,7 @@ function h = plot_scalebar_helper(Ax, image_size, image_size_in_SU, image_SU, va
         length_in_SU = auto_length_ratio.*image_size_in_SU(1);
 
         % Get the most significant digit
-        [digit, power] = WITio.fun.get_significant_digits_and_power(length_in_SU, 1);
+        [digit, power] = WITio.fun.misc.get_significant_digits_and_power(length_in_SU, 1);
 
         % Automatically floor the digit to
         for ii = numel(auto_floor_digit_to):-1:1,

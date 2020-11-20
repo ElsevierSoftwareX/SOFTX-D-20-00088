@@ -121,7 +121,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     % Consider implementing -absTol, -relTol, -maxIterations features (1.3.2019)
     
     %% PREPARATION
-    [Y, perm] = WITio.fun.dim_first_permute(Y, dim); % Permute dim to first
+    [Y, perm] = WITio.fun.misc.dim_first_permute(Y, dim); % Permute dim to first
     S = size(Y); % Dimensions of permuted matrix Y
     SD = prod(S(2:end)); % Number of datasets
     Y = Y(:,:); % Operate on first dimension

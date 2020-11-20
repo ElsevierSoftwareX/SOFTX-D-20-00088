@@ -63,7 +63,7 @@ function [out_2D, correction_2D, mask_2D] = WITio.fun.correct.apply_CMDLCA(in_2D
     end
     
     % Permute scanline dimension (= dim) to 1st
-    [in_2D, perm] = WITio.fun.dim_first_permute(in_2D, dim); % Permute dim to first
+    [in_2D, perm] = WITio.fun.misc.dim_first_permute(in_2D, dim); % Permute dim to first
     mask_2D = permute(mask_2D, perm); % Permute dim to first
     % Consider implementing PRIMARY and SECONDARY dim (to identify 2-D scan
     % dimensions) and assume that the content of the remaining dimensions

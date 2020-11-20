@@ -16,7 +16,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_polynomial(x, Y, ord
     if nargin < 4, dim = 1; end % By default, operate first dimension
     if nargin < 5, fitMany = true; end % By default, fit many polynomials.
     
-    [Y, perm] = WITio.fun.dim_first_permute(Y, dim); % Permute dim to first
+    [Y, perm] = WITio.fun.misc.dim_first_permute(Y, dim); % Permute dim to first
     S = size(Y); % Dimensions of permuted matrix Y
     Y = Y(:,:); % Operate on first dimension
     

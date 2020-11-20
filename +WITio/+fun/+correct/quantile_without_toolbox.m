@@ -9,7 +9,7 @@ function Y = quantile_without_toolbox(X, p, dim),
     if ~isscalar(p) || p < 0 || p > 1,
         error('Cumulative probability value, p must be a scalar [0, 1]!');
     end
-    X = WITio.fun.dim_first_permute(double(X), dim); % Minor bottleneck
+    X = WITio.fun.misc.dim_first_permute(double(X), dim); % Minor bottleneck
     S = size(X);
     X = sort(X(:,:), 1); % Sort first dimension (NaNs will end up last) % Major bottleneck
     S2 = size(X);
@@ -45,5 +45,5 @@ function Y = quantile_without_toolbox(X, p, dim),
 %     Y(bw_nz) = X(r_prev) + (0.5+r).*(X(r_next)-X(r_prev)); % Alternative
     
     % Restore y shape
-    Y = WITio.fun.dim_first_ipermute(reshape(Y, [1 S(2:end)]), dim);
+    Y = WITio.fun.misc.dim_first_ipermute(reshape(Y, [1 S(2:end)]), dim);
 end

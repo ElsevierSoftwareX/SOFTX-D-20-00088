@@ -27,7 +27,7 @@ function P0 = fit_lineshape_automatic_guess(x, Y, dim),
     if nargin < 3, dim = 3; end % By default, operate 3rd or spectral dimension
     
     %% INITIAL GUESS
-    [Y, perm] = WITio.fun.dim_first_permute(Y, dim); % Permute dim to first
+    [Y, perm] = WITio.fun.misc.dim_first_permute(Y, dim); % Permute dim to first
     S_orig = size(Y); % Dimensions of permuted matrix Y
     
     Y = Y(:,:); % Operate on the 1st dimension and merge the rest
@@ -53,7 +53,7 @@ function P0 = fit_lineshape_automatic_guess(x, Y, dim),
     I = max(Y, [], 1); % Noise sensitive parameter
     
     % Estimate lineshape integrated intensity
-    A = WITio.fun.mtrapz(x, Y, 1); % Robust parameter but overestimates, especially when the lineshape is fully within range.
+    A = WITio.fun.misc.mtrapz(x, Y, 1); % Robust parameter but overestimates, especially when the lineshape is fully within range.
     % IDEA: Readjust area estimator based on the found Fwhm
     % For Lorentzian function:
     % A = I.*Fwhm.*(atan(2.*A./Fwhm) + atan(2.*B./Fwhm))./2; % Integrated from Pos-A to Pos+B
@@ -61,7 +61,7 @@ function P0 = fit_lineshape_automatic_guess(x, Y, dim),
     % A = I.*Fwhm.*pi./2; % Integrated from -inf to inf
     
     % Estimate lineshape position using center of mass
-    Pos = WITio.fun.mtrapz(x, bsxfun(@times, x, Y), 1) ./ A; % Robust parameter
+    Pos = WITio.fun.misc.mtrapz(x, bsxfun(@times, x, Y), 1) ./ A; % Robust parameter
     
     % IDEA: Consider iterating cosmic rays away using antilines until none
     % is found anymore (17.12.2019)
