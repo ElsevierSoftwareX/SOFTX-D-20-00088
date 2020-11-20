@@ -21,7 +21,7 @@ function HtmlName = get_HtmlName(obj, isWorkspaceOptimized),
     HtmlName = strrep(HtmlName, '<', '&lt;'); % < (less than) becomes &lt;
     HtmlName = strrep(HtmlName, '>', '&gt;'); % > (greater than) becomes &gt;
     % Construct html string(s)
-    folder_reader = regexprep(WITio.icons.path, '^([^\\\/])', '\\$1'); % Handle file:/// local file -case
+    folder_reader = regexprep(WITio.path.icons, '^([^\\\/])', '\\$1'); % Handle file:/// local file -case
     folder_reader = ['file:' folder_reader]; % Append 'file:'
     for ii = 1:numel(obj),
         Type = obj(ii).Type; % Read the raw type
