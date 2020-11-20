@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function wip_wid_file_context_menus(),
+function wip_wid_context_menus(),
     % Implemented by Joonas T. Holmi (18.7.2018) based on the idea worked out
     % by Petri Mustonen. Supports only Microsoft Windows operating systems.
     

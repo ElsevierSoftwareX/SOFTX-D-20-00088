@@ -82,18 +82,18 @@ O_wip.write('A_v5.wip.zst'); % By default, use minimum compression for *.zst
 % O_wip.write('A_v5.wip.zst', '-Params', '--CompressionLevel', []); % Built-in default compression for *.zst
 % O_wip.write('A_v5.wip.zst', '-Params', '--CompressionLevel', 22); % Maximum compression for *.zst
 
-% For more customization details, see to WITio.compress.m. The
+% For more customization details, see to WITio.file.compress. The
 % second dash '-' in front, like in '--CompressionLevel', is needed because
 % the function is not called directly. For direct calls,
 % '-CompressionLevel' is the correct way.
 
-% It is worth noting that the above uses WITio.compress.m that
+% It is worth noting that the above uses WITio.file.compress that
 % performs dataset compression directly in memory.
 
 % The commented lines below demonstrates another way to do the same:
 % binary = O_wip.Tree.bwrite(); % First convert wip Project object to binary
-% WITio.compress('A_v5.wip.zip', 'A_v5.wip', binary); % Then compress the binary as *.zip
-% WITio.compress('A_v5.wip.zst', 'A_v5.wip', binary); % Then compress the binary as *.zst
+% WITio.file.compress('A_v5.wip.zip', 'A_v5.wip', binary); % Then compress the binary as *.zip
+% WITio.file.compress('A_v5.wip.zst', 'A_v5.wip', binary); % Then compress the binary as *.zst
 %-------------------------------------------------------------------------%
 
 
@@ -114,17 +114,17 @@ fprintf('\n----------------\nDECOMPRESSING...\n----------------\n');
 % filter the files extra parameter '--Files' like commented below:
 % [O_wid2, O_wip2, O_wid_HtmlNames2] = WITio.read('A_v5.wip.zip', '-all', '-Params', '--Files', 'A_v5.wip'); % Find and load 'A_v5.wip'
 
-% For more customization details, see to WITio.decompress.m. The
+% For more customization details, see to WITio.file.decompress. The
 % second dash '-' in front, like in '--Files', is needed because the
 % function is not called directly. For direct calls, '-Files' is the
 % correct way.
 
 % The compressed file names can also be loaded with one of the following lines:
-files_in_zip = WITio.decompress('A_v5.wip.zip'); % This loads files BUT SKIPS DATA DECOMPRESSION
-[files_in_zip, datasizes_in_zip] = WITio.decompress('A_v5.wip.zip', '-DataSizes'); % This loads files and data sizes BUT SKIPS DATA DECOMPRESSION
+files_in_zip = WITio.file.decompress('A_v5.wip.zip'); % This loads files BUT SKIPS DATA DECOMPRESSION
+[files_in_zip, datasizes_in_zip] = WITio.file.decompress('A_v5.wip.zip', '-DataSizes'); % This loads files and data sizes BUT SKIPS DATA DECOMPRESSION
 
 % The commented lines below demonstrates the actual decompression call:
-% [files_in_zip, datas_in_zip] = WITio.decompress('A_v5.wip.zip'); % This loads files and their DECOMPRESSED datas
+% [files_in_zip, datas_in_zip] = WITio.file.decompress('A_v5.wip.zip'); % This loads files and their DECOMPRESSED datas
 %-------------------------------------------------------------------------%
 
 
