@@ -5,6 +5,6 @@
 function map = colormap_mpl(m, option),
     if nargin < 1, m = []; end % empty by default
     if nargin < 2, option = 'cividis'; end % 'cividis' by default
-    warning('You are using a deprecated version! Call WITio.lib.perceptually_uniform_colormap(option, m) instead.');
-    map = WITio.lib.perceptually_uniform_colormap(option, m);
+    warning('You are using a deprecated version! Call WITio.fun.lib.perceptually_uniform_colormap(option, m) instead.');
+    map = WITio.fun.lib.perceptually_uniform_colormap(option, m);
 end

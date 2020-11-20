@@ -126,7 +126,7 @@ J. T. Holmi (2019). WITio: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wi
 [MATLAB]: https://www.mathworks.com/products/matlab.html
 [the latest toolbox installer]: ./WITio.mltbx
 [the latest zip archive]: https://gitlab.com/jtholmi/wit_io/-/archive/master/wit_io-master.zip
-[third party]: ./+WITio/+lib
+[third party]: ./+WITio/+fun/+lib
 [examples]: ./+WITio/+examples
 [scripts]: ./+WITio/+scripts
 [WITio.m]: ./WITio.m
