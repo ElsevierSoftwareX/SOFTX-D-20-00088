@@ -3,8 +3,8 @@
 % All rights reserved.
 
 % Used by WITio.fun.correct.apply_MDLCA
-function Y = nanmedian_without_toolbox(X, dim),
+function Y = mynanmedian(X, dim),
     % Mimics built-in nanmedian, which requires Statistics and Machine
     % Learning Toolbox. Input values are converted to double-type.
-    Y = WITio.fun.correct.quantile_without_toolbox(X, 0.5, dim);
+    Y = WITio.fun.indep.myquantile(X, 0.5, dim);
 end

@@ -2,8 +2,8 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Used by WITio.fun.correct.nanmedian_without_toolbox
-function Y = quantile_without_toolbox(X, p, dim),
+% Used by WITio.fun.indep.mynanmedian
+function Y = myquantile(X, p, dim),
     % Mimics built-in quantile, which requires Statistics and Machine
     % Learning Toolbox. Input values are converted to double-type.
     if ~isscalar(p) || p < 0 || p > 1,

@@ -94,7 +94,7 @@ function [out_2D, correction_2D, mask_2D] = apply_MDLCA(in_2D, dim, mask_2D),
     
     % In principle, sets median differences along SECONDARY scan direction to zero.
     d = in_2D(2:end,:)-in_2D(1:end-1,:); % Difference matrix (between neighbouring pixels along SECONDARY scan direction)
-    m = WITio.fun.correct.nanmedian_without_toolbox(d, 2); % Use median to find most common differences % nanmedian REQUIRES Statistics and Machine Learning Toolbox
+    m = WITio.fun.indep.mynanmedian(d, 2); % Use median to find most common differences % nanmedian REQUIRES Statistics and Machine Learning Toolbox
     m(isnan(m)) = 0; % Preserve differences between fully unused rows
     correction_2D = [0; cumsum(m)]; % Calculate correction vector
     
