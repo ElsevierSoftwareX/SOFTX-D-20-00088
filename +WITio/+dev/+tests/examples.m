@@ -58,7 +58,7 @@ function examples(ExampleCases, AutoCloseInSeconds, AutoStopEdit, Verbose),
         str_dashes = repmat('-', [1 max(numel(str_msg), numel(names{ii}))]);
         fprintf('%s\n%s\n%s\n%s\n\n', str_dashes, str_msg, names{ii}, str_dashes);
         tictoc = tic;
-        isPassed(ii) = WITio.tests.examples_helper(names{ii});
+        isPassed(ii) = WITio.dev.tests.examples_helper(names{ii});
         elapsedTimeInSeconds(ii) = toc(tictoc);
         fprintf('\n\n');
     end
