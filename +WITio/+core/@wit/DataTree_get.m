@@ -89,7 +89,7 @@ function out = DataTree_get(parent, format),
     % important when generated field names begin to overlap each other and
     % we need to ensure that results of predefined names remain unchanged.
     all_names = [predefined_names_sorted; children_names_no_link_sorted];
-    all_fields = WITio.fun.get_valid_and_unique_names(all_names); % Performance bottleneck is here in the underlying MATLAB built-in functions!
+    all_fields = WITio.fun.indep.get_valid_and_unique_names(all_names); % Performance bottleneck is here in the underlying MATLAB built-in functions!
     
     % Generate UNSORTED indices to predefined names or P and children names or C
     ind_P = 1:numel(predefined_names_sorted); % Indices to sorted predefined names

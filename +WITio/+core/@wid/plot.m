@@ -312,14 +312,14 @@ function h = plot(obj, varargin),
     function updateGraphVolume(filter_range),
         set(0, 'CurrentFigure', Fig);
         Data_range = WITio.core.wid.crop_Graph_with_bg_helper(Data, Info.Graph, filter_range);
-        data_plot_Volume(WITio.fun.mynansum(Data_range, 3));
+        data_plot_Volume(WITio.fun.indep.mynansum(Data_range, 3));
     end
     % Update Graph Image
     function updateGraphImage(filter_range),
         set(0, 'CurrentFigure', Fig);
         Data_range = WITio.core.wid.crop_Graph_with_bg_helper(Data, Info.Graph, filter_range);
         bw_isnan_3rd_dim = all(isnan(Data_range), 3); % Test if all NaN in the same location
-        sum_3rd_dim = WITio.fun.mynansum(Data_range, 3);
+        sum_3rd_dim = WITio.fun.indep.mynansum(Data_range, 3);
         sum_3rd_dim(bw_isnan_3rd_dim) = NaN; % Restore NaN if all NaN in the same location
         plot_Image(sum_3rd_dim, Info.DataUnit, Info.XUnit, Info.XLength, Info.YLength);
     end

@@ -238,7 +238,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
         r(:,bw) = weights(:,bw).*(Y(:,bw)-Y_fit(:,bw)); % With linear weight contribution
 
         % Bookkeeping
-        SSres(ii+1,bw) = WITio.fun.mynansum(r(:,bw).^2, 1); % Sum squares of residuals
+        SSres(ii+1,bw) = WITio.fun.indep.mynansum(r(:,bw).^2, 1); % Sum squares of residuals
         R2(ii+1,bw) = 1-SSres(ii+1,bw)./SStot(:,bw);
         N_iterations(:,bw) = ii;
         
@@ -284,12 +284,12 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
                 % Update converged
                 bw_converged(:,bw) = ...
                     bw_dP_all_zero(:,bw) | ... % Converged if all derivatives are zero
-                    repmat(abs(WITio.fun.mynansum(SSres(ii+1,bw)-SSres(ii,bw),2)) <= max(tol_rel*abs(WITio.fun.mynansum(SSres(ii+1,bw),2)), tol_abs), [1 SD]); % Converged if within absolute/relative tolerances
+                    repmat(abs(WITio.fun.indep.mynansum(SSres(ii+1,bw)-SSres(ii,bw),2)) <= max(tol_rel*abs(WITio.fun.indep.mynansum(SSres(ii+1,bw),2)), tol_abs), [1 SD]); % Converged if within absolute/relative tolerances
 
                 % Update diverged
                 bw_diverged(:,bw) = ...
                     bw_dP_any_nan(:,bw) | bw_dP_any_inf(:,bw) | ... % Diverged if any derivates are NaN or Inf
-                    repmat(WITio.fun.mynansum(SSres(ii+1,bw),2)./WITio.fun.mynansum(SSres(1,bw),2) >= 10, [1 SD]); % Diverged if an order of magnitude increase compared to the initial guess
+                    repmat(WITio.fun.indep.mynansum(SSres(ii+1,bw),2)./WITio.fun.indep.mynansum(SSres(1,bw),2) >= 10, [1 SD]); % Diverged if an order of magnitude increase compared to the initial guess
             else,
                 % Update converged
                 bw_converged(:,bw) = ...
@@ -310,7 +310,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
             Ns = sum(bw_dP_any_nan);
             Is = sum(bw_dP_any_inf);
             Zs = sum(bw_dP_all_zero);
-            fprintf_if_permitted('ii = %d: U = %d, D = %d, C = %d, N = %d, I = %d, Z = %d -> TSSres = %.5g (DSSres = %.5g)\n', ii, Undone, Diverged, Converged, Ns, Is, Zs, WITio.fun.mynansum(SSres(ii+1,:)), WITio.fun.mynansum(SSres(ii+1,:)-SSres(ii,:)));
+            fprintf_if_permitted('ii = %d: U = %d, D = %d, C = %d, N = %d, I = %d, Z = %d -> TSSres = %.5g (DSSres = %.5g)\n', ii, Undone, Diverged, Converged, Ns, Is, Zs, WITio.fun.indep.mynansum(SSres(ii+1,:)), WITio.fun.indep.mynansum(SSres(ii+1,:)-SSres(ii,:)));
             
             % TEST IF TO EXIT THE MAIN LOOP
             if all(~bw) || ii >= N_max_iterations,
@@ -343,7 +343,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
 
         % Evaluate Jacobian matrix of the weighted residual squared function
         Jf_reshaped = reshape(Jf, S(1), SD_reduced, SP_unlocked);
-        Jr2 = -2.*WITio.fun.mynansum(bsxfun(@times, weights(:,bw).*r(:,bw), Jf_reshaped), 1);
+        Jr2 = -2.*WITio.fun.indep.mynansum(bsxfun(@times, weights(:,bw).*r(:,bw), Jf_reshaped), 1);
         
         if ~lowOnMemory,
             % First term of Hr2 is outer product of Jf
@@ -355,7 +355,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
 
             % Evaluate Hessian of r2 (or Jacobian of Jr2)
             % Always symmetric if Hf is symmetric
-            Hr2 = 2.*WITio.fun.mynansum(JfJf-rHf, 1); % Sums of Hessian matrices
+            Hr2 = 2.*WITio.fun.indep.mynansum(JfJf-rHf, 1); % Sums of Hessian matrices
         else, % LOW-ON-MEMORY LOOP ALTERNATIVE (VERIFIED 20.9.2018)
             % NOTE: NOT numerically equivalent DOWN TO MACHINE PRECISION.
             % Improve the loop by providing a Jacobian sparsity matrix.
@@ -363,8 +363,8 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
             for ind = 1:SP_unlocked.^2,
                 [kk, ll] = ind2sub([SP_unlocked SP_unlocked], ind);
                 w_Jf_kk_ll = weights(:,bw).^2.*Jf_reshaped(:,:,kk).*Jf_reshaped(:,:,ll);
-                if ~evalHessian, Hr2(1,:,ind) = 2.*WITio.fun.mynansum(w_Jf_kk_ll, 1);
-                else, Hr2(1,:,ind) = 2.*WITio.fun.mynansum(w_Jf_kk_ll - rHf(:,:,ind), 1); end
+                if ~evalHessian, Hr2(1,:,ind) = 2.*WITio.fun.indep.mynansum(w_Jf_kk_ll, 1);
+                else, Hr2(1,:,ind) = 2.*WITio.fun.indep.mynansum(w_Jf_kk_ll - rHf(:,:,ind), 1); end
             end
 %              max(abs(Hr2(:)-Hr2(:))) % Should be (nearly) ZERO!
 %              sum(abs(Hr2(:)-Hr2(:)) > eps) % Should be (nearly) ZERO!
@@ -377,8 +377,8 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
         end
 
         if ~fitMany, % Fit only one set of parameters to all datasets!
-            Jr2 = WITio.fun.mynansum(Jr2, 2);
-            Hr2 = WITio.fun.mynansum(Hr2, 2);
+            Jr2 = WITio.fun.indep.mynansum(Jr2, 2);
+            Hr2 = WITio.fun.indep.mynansum(Hr2, 2);
         end
         
         if ~avoidLMA, % Fit using the Levenberg-Marquardt algorithm

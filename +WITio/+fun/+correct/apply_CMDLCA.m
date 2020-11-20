@@ -118,7 +118,7 @@ function [out_2D, correction_2D, mask_2D] = WITio.fun.correct.apply_CMDLCA(in_2D
     function bw = bw_remove_pixel_noise(bw, bw_noise_type),
         % Safely remove the one-pixel (either true or false) noise
         D = WITio.fun.lib.bwdistsc2d.bwdistsc2d(xor(bw, bw_noise_type)); % Get the Euclidean distance
-        D_nearby = WITio.fun.mynanmaxfilt2(D, 3); % Get maximum of 4-conn neighbours
+        D_nearby = WITio.fun.indep.mynanmaxfilt2(D, 3); % Get maximum of 4-conn neighbours
         bw(D_nearby <= 1) = ~bw_noise_type; % Remove the one-pixel noise (that are surrounded by one-pixel noise)
     end
 end

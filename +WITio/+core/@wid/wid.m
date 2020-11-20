@@ -325,7 +325,7 @@ classdef wid < handle, % Since R2008a
             LinksToOthers = struct.empty;
             if isfield(obj.Tag, 'Data'),
                 Tag_Id = obj.Tag.Data.regexp('^[^<]+ID(<[^<]*)*$'); % Should not match with ID under TData!
-                strs = WITio.fun.get_valid_and_unique_names({Tag_Id.Name}); % Convert all wit Names to struct-compatible versions
+                strs = WITio.fun.indep.get_valid_and_unique_names({Tag_Id.Name}); % Convert all wit Names to struct-compatible versions
                 for ii = 1:numel(Tag_Id),
                     if Tag_Id(ii).Data ~= 0, % Ignore if zero
                         LinksToOthers(1).(strs{ii}) = obj.Project.find_Data(Tag_Id(ii).Data);

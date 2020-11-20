@@ -109,10 +109,10 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
                         drawLine(CP(1), CP(2), old_CP(1,1), old_CP(1,2));
                         % Then mark insides (even if self-intersecting!)
                         L = WITio.fun.lib.label.label(image_mask);
-                        stats = WITio.fun.myregionprops(L);
+                        stats = WITio.fun.indep.myregionprops(L);
                         PILS = cellfun(@(pil) pil(1), {stats.PixelIdxList});
                         [XS, YS] = ind2sub(size(image_mask), PILS);
-                        in = WITio.fun.myinpolygon(XS, YS, old_CP(:,1), old_CP(:,2));
+                        in = WITio.fun.indep.myinpolygon(XS, YS, old_CP(:,1), old_CP(:,2));
                         for ii = 1:numel(in),
                             if ~in(ii), L(L == ii) = 0; end
                         end
@@ -136,7 +136,7 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
             elseif masking_mode == 3 && image_mask(round(CP(1)),round(CP(2))) ~= masking_value, % Fill-mode
                 L = WITio.fun.lib.label.label(image_mask);
                 l = L(round(CP(1)),round(CP(2)));
-                stats = WITio.fun.myregionprops(L);
+                stats = WITio.fun.indep.myregionprops(L);
                 image_mask(stats(l).PixelIdxList) = masking_value;
             end
             

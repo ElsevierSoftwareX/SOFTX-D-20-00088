@@ -635,8 +635,8 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
         I_test = I_test(ind1_test,ind2_test,:); % Keep the test area
         
         % Evaluate local variance in the test area
-        local_var_test(ii) = WITio.fun.mynansum(reshape(WITio.fun.mynanstdfilt2(I_test, LocalWindowSize).^2, [], 1)); % Minimize this
-%         local_var_test(ii) = WITio.fun.mynansum(reshape(stdfilt(I_test, local_var_kernel).^2, [], 1)); % Minimize this
+        local_var_test(ii) = WITio.fun.indep.mynansum(reshape(WITio.fun.indep.mynanstdfilt2(I_test, LocalWindowSize).^2, [], 1)); % Minimize this
+%         local_var_test(ii) = WITio.fun.indep.mynansum(reshape(stdfilt(I_test, local_var_kernel).^2, [], 1)); % Minimize this
         
         fprintf(' -> Local variance of %g', local_var_test(ii));
         
@@ -721,14 +721,14 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
             end
             
             % Remove mean value to minimize changes to the original image
-            P_offset(cc) = WITio.fun.mynanmean(P_cc(:));
+            P_offset(cc) = WITio.fun.indep.mynanmean(P_cc(:));
             P_cc = P_cc - P_offset(cc);
             
             % Take into account the blockwise averaging
             if ~IsFlat,
                 P_cc_offset = repmat(P_cc_offset, [S_P(1) S_P(2)]);
                 P_cc_offset(B_cc) = NaN;
-                P_offset(cc) = WITio.fun.mynanmean(P_cc_offset(:)) + P_offset(cc);
+                P_offset(cc) = WITio.fun.indep.mynanmean(P_cc_offset(:)) + P_offset(cc);
             end
             
             % Replace NaNs with linearly interpolated values

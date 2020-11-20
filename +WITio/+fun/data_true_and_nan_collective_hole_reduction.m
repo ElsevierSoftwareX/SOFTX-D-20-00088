@@ -30,7 +30,7 @@ function varargout = data_true_and_nan_collective_hole_reduction(varargin),
     
     % Near-safely remove the one-pixel noise. This attempts to avoid
     % eroding away wider one-pixel thick connected regions with Area >= 4
-    D_nearby = WITio.fun.mynanmaxfilt2(D, 3); % Get maximum of 4-conn neighbours
+    D_nearby = WITio.fun.indep.mynanmaxfilt2(D, 3); % Get maximum of 4-conn neighbours
 %     D_nearby = ordfilt2(D, 9, ones(3)); % Same as above
     bw_erode = D_nearby <= 1;
     
@@ -43,7 +43,7 @@ function varargout = data_true_and_nan_collective_hole_reduction(varargin),
         L = WITio.fun.lib.label.label(DBWnot, 4);
         clear DBWnot; % Free memory!
     end
-    stats = WITio.fun.myregionprops(L);
+    stats = WITio.fun.indep.myregionprops(L);
     PixelIdxList = {stats.PixelIdxList};
     Area = cellfun(@numel, PixelIdxList);
     MaxIntensity = cellfun(@(pil) max(D(pil)), PixelIdxList);

@@ -81,7 +81,7 @@ function out = DataTree_get(parent, format),
     % retain self-consistency of generated fields in case of duplicates.
     [out_names, ind_sort] = sort([out_names out_default_names]);
     out_values = [out_values out_default_values]; % Unsorted
-    out_fields = WITio.fun.get_valid_and_unique_names(out_names); % Sorted
+    out_fields = WITio.fun.indep.get_valid_and_unique_names(out_names); % Sorted
     out_fields(ind_sort) = out_fields; % Unsorted
     
     if ~isempty(out_fields),

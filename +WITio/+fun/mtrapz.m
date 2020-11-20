@@ -29,7 +29,7 @@ function Z = mtrapz(X, Y, dim),
     H = (Y(1:end-1,:) + Y(2:end,:))./2; % Column width (from N-D to 2-D)
     W = X(2:end,:) - X(1:end-1,:); % Average column height (from N-D to 2-D)
     A = W.*H; % Column area
-    Z = WITio.fun.mynansum(A, 1); % Total column area (and discard the NaN values)
+    Z = WITio.fun.indep.mynansum(A, 1); % Total column area (and discard the NaN values)
     
     % Further performance boost may be achieved through use of sparse
     % matrices if they can be constructed cheaply.
