@@ -56,7 +56,7 @@ function [fun_refresh, h_edit_1, h_edit_2, h_button_1, h_button_2, h_button_3, h
         h_image = findobj(Ax, 'Type', 'image');
         CData = get(h_image, 'CData');
         if ~isempty(CData),
-            set(h_image, 'CData', WITio.fun.correct.apply_MRLCM(CData, 1)); % Preserve ratios (i.e. A, I, Sum)
+            set(h_image, 'CData', WITio.fun.image.apply_MRLCM(CData, 1)); % Preserve ratios (i.e. A, I, Sum)
         end
     end
     
@@ -64,7 +64,7 @@ function [fun_refresh, h_edit_1, h_edit_2, h_button_1, h_button_2, h_button_3, h
         h_image = findobj(Ax, 'Type', 'image');
         CData = get(h_image, 'CData');
         if ~isempty(CData),
-            set(h_image, 'CData', WITio.fun.correct.apply_MDLCA(CData, 1)); % Preserve differences (i.e. Fwhm, Pos)
+            set(h_image, 'CData', WITio.fun.image.apply_MDLCA(CData, 1)); % Preserve differences (i.e. Fwhm, Pos)
         end
     end
     

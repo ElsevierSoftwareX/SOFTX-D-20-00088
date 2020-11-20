@@ -11,7 +11,7 @@
 % Implementation may be improved by utilizing memory of the previous
 % calculus on the matrix columns and rows.
 
-% Used by WITio.fun.correct.apply_MDLCA, WITio.fun.correct.apply_CMDLCA and
+% Used by WITio.fun.image.apply_MDLCA, WITio.fun.image.apply_CMDLCA and
 % WITio.fun.image.data_true_and_nan_collective_hole_reduction
 function B = mynanmaxfilt2(A, W),
     if numel(W) == 1, W = [W W]; end

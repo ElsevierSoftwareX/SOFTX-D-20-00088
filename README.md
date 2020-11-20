@@ -133,5 +133,5 @@ J. T. Holmi (2019). WITio: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wi
 [WITio.file.wip_wid_context_menus.m]: ./+WITio/+file/wip_wid_context_menus.m
 [README on WIT-tag format.txt]: ./+WITio/+doc/README%20on%20WIT-tag%20format.txt
 [clever_statistics_and_outliers.m]: ./+WITio/+fun/clever_statistics_and_outliers.m
-[myinpolygon.m]: ./+WITio/+fun/myinpolygon.m
-[apply_MRLCM.m]: ./+WITio/+fun/+correct/apply_MRLCM.m
+[myinpolygon.m]: ./+WITio/+fun/+indep/myinpolygon.m
+[apply_MRLCM.m]: ./+WITio/+fun/+image/apply_MRLCM.m

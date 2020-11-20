@@ -45,7 +45,7 @@
 % The automated mask generation in this algorithm (and its data-transformed
 % version) heavily rely on the code in clever_statistics_and_outliers.m.
 
-function [out_2D, correction_2D, mask_2D] = WITio.fun.correct.apply_CMDLCA(in_2D, dim, mask_2D),
+function [out_2D, correction_2D, mask_2D] = WITio.fun.image.apply_CMDLCA(in_2D, dim, mask_2D),
     % CLEVER Median Difference Line Correction by Addition. This ADDITIVE
     % method preserves DIFFERENCES (but does NOT preserve RATIOS)! In order
     % to preserve RATIOS, use MULTIPLICATIVE method (CMRLCM) instead!

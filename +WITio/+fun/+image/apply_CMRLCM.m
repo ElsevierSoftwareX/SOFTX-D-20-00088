@@ -44,7 +44,7 @@
 % http://urn.fi/URN:NBN:fi:aalto-201605122027
 % The automated mask generation in this algorithm (and its data-transformed
 % version) heavily rely on the code in clever_statistics_and_outliers.m.
-function [out_2D, correction_2D, mask_2D] = WITio.fun.correct.apply_CMRLCM(in_2D, dim, mask_2D),
+function [out_2D, correction_2D, mask_2D] = WITio.fun.image.apply_CMRLCM(in_2D, dim, mask_2D),
     % CLEVER Median Ratio Line Correction by Multiplication. This
     % MULTIPLICATIVE method preserves RATIOS (but does NOT preserve
     % DIFFERENCES)! In order to preserve DIFFERENCES, use ADDITIVE method
@@ -62,8 +62,8 @@ function [out_2D, correction_2D, mask_2D] = WITio.fun.correct.apply_CMRLCM(in_2D
     % log(rX) = dY OR rX = exp(dY) AND log(X) = Y OR X = exp(Y)
     in_2D = double(in_2D); % Required for boolean and integer input
     in_2D = log(in_2D); % Complex input are excluded by apply_MDLCA!
-    if nargin < 3, [out_2D, correction_2D, mask_2D] = WITio.fun.correct.apply_CMDLCA(in_2D, dim);
-    else, [out_2D, correction_2D, mask_2D] = WITio.fun.correct.apply_CMDLCA(in_2D, dim, mask_2D); end
+    if nargin < 3, [out_2D, correction_2D, mask_2D] = WITio.fun.image.apply_CMDLCA(in_2D, dim);
+    else, [out_2D, correction_2D, mask_2D] = WITio.fun.image.apply_CMDLCA(in_2D, dim, mask_2D); end
     % Then restore linear-transformed data!
     out_2D = real(exp(out_2D)); % And ensure that imaginary-part is removed!
     correction_2D = real(exp(correction_2D)); % And ensure that imaginary-part is removed!

@@ -22,9 +22,9 @@ wit_io_pref_set = @WITio.core.pref.set;
 wit_io_compress = @WITio.fun.file.compress;
 wit_io_decompress = @WITio.fun.file.decompress;
 
-apply_CMDLCA = @WITio.fun.correct.apply_CMDLCA;
-apply_CMRLCM = @WITio.fun.correct.apply_CMRLCM;
-apply_MDLCA = @WITio.fun.correct.apply_MDLCA;
-apply_MRLCM = @WITio.fun.correct.apply_MRLCM;
+apply_CMDLCA = @WITio.fun.image.apply_CMDLCA;
+apply_CMRLCM = @WITio.fun.image.apply_CMRLCM;
+apply_MDLCA = @WITio.fun.image.apply_MDLCA;
+apply_MRLCM = @WITio.fun.image.apply_MRLCM;
 
 data_true_and_nan_collective_hole_reduction = @WITio.fun.image.data_true_and_nan_collective_hole_reduction;

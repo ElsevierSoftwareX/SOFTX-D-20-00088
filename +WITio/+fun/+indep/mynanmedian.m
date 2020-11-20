@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Used by WITio.fun.correct.apply_MDLCA
+% Used by WITio.fun.image.apply_MDLCA
 function Y = mynanmedian(X, dim),
     % Mimics built-in nanmedian, which requires Statistics and Machine
     % Learning Toolbox. Input values are converted to double-type.

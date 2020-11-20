@@ -57,8 +57,8 @@ function [out_2D, correction_2D, mask_2D] = apply_MRLCM(in_2D, dim, mask_2D),
     % log(rX) = dY OR rX = exp(dY) AND log(X) = Y OR X = exp(Y)
     in_2D = double(in_2D); % Required for boolean and integer input
     in_2D = log(in_2D); % Complex input are excluded by apply_MDLCA!
-    if nargin < 3, [out_2D, correction_2D, mask_2D] = WITio.fun.correct.apply_MDLCA(in_2D, dim);
-    else, [out_2D, correction_2D, mask_2D] = WITio.fun.correct.apply_MDLCA(in_2D, dim, mask_2D); end
+    if nargin < 3, [out_2D, correction_2D, mask_2D] = WITio.fun.image.apply_MDLCA(in_2D, dim);
+    else, [out_2D, correction_2D, mask_2D] = WITio.fun.image.apply_MDLCA(in_2D, dim, mask_2D); end
     % Then restore linear-transformed data!
     out_2D = real(exp(out_2D)); % And ensure that imaginary-part is removed!
     correction_2D = real(exp(correction_2D)); % And ensure that imaginary-part is removed!
