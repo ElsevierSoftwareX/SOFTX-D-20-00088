@@ -7,7 +7,7 @@
 % is always taken as target file. If not given, then Project's File is
 % used. This can be customized with the following case-insensitive extra
 % inputs: '-Params' (= none by default): Can be used to provide parameters
-% to the underlying writing function, i.e. WITio.file.compress.m. See its
+% to the underlying writing function, i.e. WITio.fun.file.compress.m. See its
 % documentation for more details.
 function write(obj, varargin),
     % First char array input is always File if non-dashed
@@ -66,6 +66,6 @@ function write(obj, varargin),
     end
     
     function OnWriteCompress_helper(obj, File),
-        WITio.file.compress(File, File_uncompressed, obj.bwrite(), '-ProgressBar', Params{:}); % Compress binary as *.zip/*.zst file
+        WITio.fun.file.compress(File, File_uncompressed, obj.bwrite(), '-ProgressBar', Params{:}); % Compress binary as *.zip/*.zst file
     end
 end

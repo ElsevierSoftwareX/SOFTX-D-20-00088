@@ -127,7 +127,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
         FileName = [name ext];
         fprintf('\nReading from file: %s\n', FileName);
         % Decompress
-        [~, zip_datas] = WITio.file.decompress(File, '-FilterExtension', '.wip', '.wid', '-ProgressBar', Params{:}); % Decompress binary from zip archive
+        [~, zip_datas] = WITio.fun.file.decompress(File, '-FilterExtension', '.wip', '.wid', '-ProgressBar', Params{:}); % Decompress binary from zip archive
         % Loop through data entries
         for jj = 1:numel(zip_datas),
             obj_new = WITio.core.wit.read(File, LimitedRead, [], [], '-CustomFun', @OnReadDecompress_helper, '-Silent');
