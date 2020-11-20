@@ -6,13 +6,13 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_voigtian(x
     % Parse extra arguments
     
     % Check if Fwhm_G was specified (in order to lock that parameter)
-    datas = WITio.self.varargin_dashed_str.datas('Fwhm_G', varargin, -1);
+    datas = WITio.fun.varargin_dashed_str.datas('Fwhm_G', varargin, -1);
     if numel(datas) > 0,
         Fwhm_G = datas{1};
         Fwhm_G = Fwhm_G(:).'; % Force a row vector
         P0(5,:) = Fwhm_G; % Works if Fwhm_G is a scalar or a same sized matrix
         P0(3,:) = max(P0(3,:)-Fwhm_G, 0); % Remove the Fwhm_G component from a width guess (but mimimum at zero)
-        varargin = WITio.self.varargin_dashed_str.removed('Fwhm_G', varargin); % Remove this option from varargin!
+        varargin = WITio.fun.varargin_dashed_str.removed('Fwhm_G', varargin); % Remove this option from varargin!
         % Add -Locks-parameter, which tells fit_lineshape_arbitrary to keep
         % the 5th parameter (= Fwhm_G) as a constant!
         varargin{end+1} = '-Locks';

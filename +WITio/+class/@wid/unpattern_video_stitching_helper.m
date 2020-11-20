@@ -115,64 +115,64 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     %% Parsing the varargin
     
     % Parse varargin before any dashed str
-    out = WITio.self.varargin_dashed_str.removed('', varargin);
+    out = WITio.fun.varargin_dashed_str.removed('', varargin);
     N_test = [];
     if numel(out) > 0, N_test = out{1}; end
     
     % Parse varargin input
-    RestoreTooBright = WITio.self.varargin_dashed_str.exists('RestoreTooBright', varargin); % By default, do not restore too bright
-    IsFlat = WITio.self.varargin_dashed_str.exists('Flat', varargin); % By default, do not assume flatness
-    AdditiveMode = WITio.self.varargin_dashed_str.exists('AdditiveMode', varargin); % By default, fix in a multiplicative mode
-    UseMedian = WITio.self.varargin_dashed_str.exists('UseMedian', varargin); % By default, use mean values
-    RollingWindowAnalysis = WITio.self.varargin_dashed_str.exists('RollingWindowAnalysis', varargin); % By default, smoothen the image
-    GlobalRollingWindowAnalysis = WITio.self.varargin_dashed_str.exists('GlobalRollingWindowAnalysis', varargin); % By default, smoothen the image
-    CropEdgePatterns = WITio.self.varargin_dashed_str.exists('Crop', varargin); % By default, do not crop the image
-    AutoIgnoreChannels = ~WITio.self.varargin_dashed_str.exists('DisableAutoIgnoreChannels', varargin); % By default, automatically ignore channels that have 50% too dark or too bright in the image
-    NoReferences = ~WITio.self.varargin_dashed_str.exists('BestContinuity', varargin); % By default, do not use references to improve the pattern-to-pattern continuity
-    Debug = WITio.self.varargin_dashed_str.exists('Debug', varargin); % By default, do not show Debug visuals
+    RestoreTooBright = WITio.fun.varargin_dashed_str.exists('RestoreTooBright', varargin); % By default, do not restore too bright
+    IsFlat = WITio.fun.varargin_dashed_str.exists('Flat', varargin); % By default, do not assume flatness
+    AdditiveMode = WITio.fun.varargin_dashed_str.exists('AdditiveMode', varargin); % By default, fix in a multiplicative mode
+    UseMedian = WITio.fun.varargin_dashed_str.exists('UseMedian', varargin); % By default, use mean values
+    RollingWindowAnalysis = WITio.fun.varargin_dashed_str.exists('RollingWindowAnalysis', varargin); % By default, smoothen the image
+    GlobalRollingWindowAnalysis = WITio.fun.varargin_dashed_str.exists('GlobalRollingWindowAnalysis', varargin); % By default, smoothen the image
+    CropEdgePatterns = WITio.fun.varargin_dashed_str.exists('Crop', varargin); % By default, do not crop the image
+    AutoIgnoreChannels = ~WITio.fun.varargin_dashed_str.exists('DisableAutoIgnoreChannels', varargin); % By default, automatically ignore channels that have 50% too dark or too bright in the image
+    NoReferences = ~WITio.fun.varargin_dashed_str.exists('BestContinuity', varargin); % By default, do not use references to improve the pattern-to-pattern continuity
+    Debug = WITio.fun.varargin_dashed_str.exists('Debug', varargin); % By default, do not show Debug visuals
     
-%     EdgePatterns = ~WITio.self.varargin_dashed_str.exists('DisableEdgePatterns', varargin); % By default, enable edge patterns
+%     EdgePatterns = ~WITio.fun.varargin_dashed_str.exists('DisableEdgePatterns', varargin); % By default, enable edge patterns
 % '-DisableEdgePatterns': Disables the edge pattern calculations. Can be
 % provided with [left, right, top, bottom] input for customization.
 
     % Check if Outliers was specified
-    datas = WITio.self.varargin_dashed_str.datas('Outliers', varargin, -1);
+    datas = WITio.fun.varargin_dashed_str.datas('Outliers', varargin, -1);
     B_Outliers = false(W, H);
     if numel(datas) > 0, B_Outliers = datas{1}; end
 
     % Check if MinSigmasThreshold was specified
-    datas = WITio.self.varargin_dashed_str.datas('MinSigmasThreshold', varargin, -1);
+    datas = WITio.fun.varargin_dashed_str.datas('MinSigmasThreshold', varargin, -1);
     MinSigmasThreshold = 2; % 2.25 % Too low (<~2) begins to label true data as outliers but too high (>~4) is contaminated by outliers
     if numel(datas) > 0, MinSigmasThreshold = datas{1}; end
     
     % Check if TrueBlackColor was specified
-    datas = WITio.self.varargin_dashed_str.datas('TrueBlackColor', varargin, -1);
+    datas = WITio.fun.varargin_dashed_str.datas('TrueBlackColor', varargin, -1);
     TrueBlackColor = 0;
     if numel(datas) > 0, TrueBlackColor = datas{1}; end
     TrueBlackColor = reshape(TrueBlackColor, 1, 1, []); % Enforce correct shape
     
     % Check if LocalWindowSize was specified
-    datas = WITio.self.varargin_dashed_str.datas('LocalWindowSize', varargin, -1);
+    datas = WITio.fun.varargin_dashed_str.datas('LocalWindowSize', varargin, -1);
     LocalWindowSize = 17;
     if numel(datas) > 0, LocalWindowSize = datas{1}; end
     
     % Check if OverlapRatio was specified
-    datas = WITio.self.varargin_dashed_str.datas('OverlapRatio', varargin, -1);
+    datas = WITio.fun.varargin_dashed_str.datas('OverlapRatio', varargin, -1);
     OverlapRatio = 0.05; % Interpreted from experimental data
     if numel(datas) > 0, OverlapRatio = datas{1}; end
     
     % Check if LowResMaxPixels was specified
-    datas = WITio.self.varargin_dashed_str.datas('LowResMaxPixels', varargin, -1);
+    datas = WITio.fun.varargin_dashed_str.datas('LowResMaxPixels', varargin, -1);
     LowResMaxPixels = 1024.^2; % Interpreted from experimental data
     if numel(datas) > 0, LowResMaxPixels = datas{1}; end
     
     % Check if HighResMaxPixels was specified
-    datas = WITio.self.varargin_dashed_str.datas('HighResMaxPixels', varargin, -1);
+    datas = WITio.fun.varargin_dashed_str.datas('HighResMaxPixels', varargin, -1);
     HighResMaxPixels = 64e6; % Interpreted from experimental data
     if numel(datas) > 0, HighResMaxPixels = datas{1}; end
     
     % Check if IgnoreChannels was specified
-    datas = WITio.self.varargin_dashed_str.datas('IgnoreChannels', varargin, -1);
+    datas = WITio.fun.varargin_dashed_str.datas('IgnoreChannels', varargin, -1);
     IgnoreChannels = [];
     if numel(datas) > 0, IgnoreChannels = datas{1}; end
     if numel(IgnoreChannels) == 1, IgnoreChannels = repmat(IgnoreChannels, [1 D]); end

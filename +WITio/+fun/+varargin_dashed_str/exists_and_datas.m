@@ -20,11 +20,11 @@
 %   IF NEGATIVE: It reverses order of the matches and keeps last N!
 
 % OUTPUTS:
-% (1) datas: The cell array of the datas of the given single-dashed string.
-% (2) in_wo: Inputs without the given single-dashed string and its datas.
+% (1) exists: Whether or not the given single-dashed string exists.
+% (2) datas: The cell array of the datas of the given single-dashed string.
+% (3) in_wo: Inputs without the given single-dashed string and its datas.
 
-function varargout = datas(varargin),
-    if nargout > 0,
-        [~, varargout{1:nargout}] = WITio.self.varargin_dashed_str.exists_and_datas(varargin{:});
-    end
+function varargout = exists_and_datas(varargin),
+    [varargout{1:nargout}] = WITio.fun.varargin_dashed_str.inds_and_datas(varargin{:});
+    if nargout > 0, varargout{1} = ~isempty(varargout{1}); end % Test if exists
 end

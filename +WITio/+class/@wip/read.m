@@ -32,14 +32,14 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     % START OF VARARGIN PARSING
     
     % Parse input file and extra arguments
-    ind_extra_begin = WITio.self.varargin_dashed_str.inds('', varargin);
+    ind_extra_begin = WITio.fun.varargin_dashed_str.inds('', varargin);
     if isempty(ind_extra_begin), files = varargin;
     else, files = varargin(1:ind_extra_begin(1)-1); end
     
-    showProjectManager = ~WITio.self.varargin_dashed_str.exists('all', varargin); % By default, show Project Manager
-    show_ui_ifall = WITio.self.varargin_dashed_str.exists('ifall', varargin);
+    showProjectManager = ~WITio.fun.varargin_dashed_str.exists('all', varargin); % By default, show Project Manager
+    show_ui_ifall = WITio.fun.varargin_dashed_str.exists('ifall', varargin);
     
-    [exists, datas] = WITio.self.varargin_dashed_str.exists_and_datas('LimitedRead', varargin, -1);
+    [exists, datas] = WITio.fun.varargin_dashed_str.exists_and_datas('LimitedRead', varargin, -1);
     LimitedRead = Inf; % By default, unlimited read
     if exists,
         LimitedRead = 4096; % Default limited read in bytes
@@ -47,7 +47,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     end
     
     % Check if Params was specified
-    Params = WITio.self.varargin_dashed_str.datas('Params', varargin);
+    Params = WITio.fun.varargin_dashed_str.datas('Params', varargin);
     
     if isempty(files),
         filter = {'*.wip;*.wiP;*.wIp;*.wIP;*.Wip;*.WiP;*.WIp;*.WIP;*.wid;*.wiD;*.wId;*.wID;*.Wid;*.WiD;*.WId;*.WID;*.zip;*.ziP;*.zIp;*.zIP;*.Zip;*.ZiP;*.ZIp;*.ZIP;*.zst;*.zsT;*.zSt;*.zST;*.Zst;*.ZsT;*.ZSt;*.ZST', 'WITec Project/Data Files (*.wip/*.wid) or Compressed Files (*.zip/*.zst)'; ...
@@ -92,19 +92,19 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     
     % Force DataUnit, SpaceUnit, SpectralUnit, TimeUnit:
     % Parse input arguments
-    datas = WITio.self.varargin_dashed_str.datas('DataUnit', varargin, -1);
+    datas = WITio.fun.varargin_dashed_str.datas('DataUnit', varargin, -1);
     if numel(datas) > 0, O_wip.ForceDataUnit = datas{1}; end
     
-    datas = WITio.self.varargin_dashed_str.datas('SpectralUnit', varargin, -1);
+    datas = WITio.fun.varargin_dashed_str.datas('SpectralUnit', varargin, -1);
     if numel(datas) > 0, O_wip.ForceSpectralUnit = datas{1}; end
     
-    datas = WITio.self.varargin_dashed_str.datas('SpaceUnit', varargin, -1);
+    datas = WITio.fun.varargin_dashed_str.datas('SpaceUnit', varargin, -1);
     if numel(datas) > 0, O_wip.ForceSpaceUnit = datas{1}; end
     
-    datas = WITio.self.varargin_dashed_str.datas('TimeUnit', varargin, -1);
+    datas = WITio.fun.varargin_dashed_str.datas('TimeUnit', varargin, -1);
     if numel(datas) > 0, O_wip.ForceTimeUnit = datas{1}; end
     
-    datas = WITio.self.varargin_dashed_str.datas('Manager', varargin);
+    datas = WITio.fun.varargin_dashed_str.datas('Manager', varargin);
     ManagerVarargin = {};
     if numel(datas) == 1 && iscell(datas{1}), ManagerVarargin = datas{1}; % Special case of {}-enclosed inputs
     elseif numel(datas) > 0, ManagerVarargin = datas; end

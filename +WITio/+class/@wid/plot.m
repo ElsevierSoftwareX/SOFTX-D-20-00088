@@ -42,12 +42,12 @@ function h = plot(obj, varargin),
     srcCopyingQueue = [];
     evtCopyingQueue = [];
     
-    showSidebar = ~WITio.self.varargin_dashed_str.exists('nosidebar', varargin); % By default, show sidebar
-    showPreview = ~WITio.self.varargin_dashed_str.exists('nopreview', varargin); % By default, show preview
-    showCursor = ~WITio.self.varargin_dashed_str.exists('nocursor', varargin); % By default, show cursor
-    showPosition = WITio.self.varargin_dashed_str.datas('position', varargin);
-    [showScalebar, vararginScalebar] = WITio.self.varargin_dashed_str.exists_and_datas('scalebar', varargin);
-    obj_compare = WITio.self.varargin_dashed_str.datas('compare', varargin);
+    showSidebar = ~WITio.fun.varargin_dashed_str.exists('nosidebar', varargin); % By default, show sidebar
+    showPreview = ~WITio.fun.varargin_dashed_str.exists('nopreview', varargin); % By default, show preview
+    showCursor = ~WITio.fun.varargin_dashed_str.exists('nocursor', varargin); % By default, show cursor
+    showPosition = WITio.fun.varargin_dashed_str.datas('position', varargin);
+    [showScalebar, vararginScalebar] = WITio.fun.varargin_dashed_str.exists_and_datas('scalebar', varargin);
+    obj_compare = WITio.fun.varargin_dashed_str.datas('compare', varargin);
     fun_auto = @(x) true; % By default, enable autoscaling
     
     Name = obj.Name;
@@ -74,7 +74,7 @@ function h = plot(obj, varargin),
     set(Fig, 'Units', Units); % Restore Units
     
     % Mask Data
-    MaskDatas = WITio.self.varargin_dashed_str.datas('mask', varargin);
+    MaskDatas = WITio.fun.varargin_dashed_str.datas('mask', varargin);
     for ii = 1:numel(MaskDatas), [~, Data] = WITio.fun.data_mask(Data, MaskDatas{ii}.Data); end
     
     if ~isempty(Data),

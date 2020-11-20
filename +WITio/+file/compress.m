@@ -69,7 +69,7 @@ function compress(file, files, datas, varargin),
     jrt = java.lang.Runtime.getRuntime();
     
     % Parse extra inputs: Compressor
-    parsed = WITio.self.varargin_dashed_str.datas('Compressor', varargin, -1);
+    parsed = WITio.fun.varargin_dashed_str.datas('Compressor', varargin, -1);
     Compressor = []; % By default, determine compressor from the file extension
     if numel(parsed) > 0, Compressor = parsed{1}; end
     if isempty(Compressor), [~, ~, Compressor] = fileparts(file); end
@@ -102,11 +102,11 @@ function compress(file, files, datas, varargin),
     end
     
     % Parse extra inputs: MaxBlockSize
-    parsed = WITio.self.varargin_dashed_str.datas('MaxBlockSize', varargin, -1);
+    parsed = WITio.fun.varargin_dashed_str.datas('MaxBlockSize', varargin, -1);
     if numel(parsed) > 0, MaxBlockSize = parsed{1}; end
     
     % Parse extra inputs: MaxSubBlockSize
-    parsed = WITio.self.varargin_dashed_str.datas('MaxSubBlockSize', varargin, -1);
+    parsed = WITio.fun.varargin_dashed_str.datas('MaxSubBlockSize', varargin, -1);
     if numel(parsed) > 0, MaxBlockSize = parsed{1}; end
     
     % Make 'files' and 'datas' a cell arrays if not so
@@ -119,12 +119,12 @@ function compress(file, files, datas, varargin),
     end
     
     % Parse extra inputs: CompressionLevel
-    parsed = WITio.self.varargin_dashed_str.datas('CompressionLevel', varargin, -1);
+    parsed = WITio.fun.varargin_dashed_str.datas('CompressionLevel', varargin, -1);
     CompressionLevel = 1; % By default, minimum compression
     if numel(parsed) > 0, CompressionLevel = parsed{1}; end
     
     % Parse extra inputs: ProgressBar
-    [ProgressBar, parsed] = WITio.self.varargin_dashed_str.exists_and_datas('ProgressBar', varargin, -1);
+    [ProgressBar, parsed] = WITio.fun.varargin_dashed_str.exists_and_datas('ProgressBar', varargin, -1);
     if ProgressBar, ProgressBar = @WITio.class.wit.progress_bar; end
     if numel(parsed) > 0, ProgressBar = parsed{1}; end
     verbose = isa(ProgressBar, 'function_handle');

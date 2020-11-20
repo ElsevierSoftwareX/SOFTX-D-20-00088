@@ -14,12 +14,12 @@ function obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteri
     if nargin < 4, error_criteria_for_obj = []; end % By default: no criteria!
     
     % Check if CustomFun was specified
-    datas = WITio.self.varargin_dashed_str.datas('CustomFun', varargin, -1);
+    datas = WITio.fun.varargin_dashed_str.datas('CustomFun', varargin, -1);
     CustomFun = [];
     if numel(datas) > 0, CustomFun = datas{1}; end
     
     % Check if Silent was specified
-    Silent = WITio.self.varargin_dashed_str.exists('Silent', varargin);
+    Silent = WITio.fun.varargin_dashed_str.exists('Silent', varargin);
     
     % Try to get full path from relative path.
     FileFull = which(File); % This might fail for network addresses

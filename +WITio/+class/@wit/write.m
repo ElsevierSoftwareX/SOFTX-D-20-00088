@@ -25,7 +25,7 @@ function write(obj, varargin),
     end
     
     % Check if CustomFun was specified
-    datas = WITio.self.varargin_dashed_str.datas('CustomFun', varargin, -1);
+    datas = WITio.fun.varargin_dashed_str.datas('CustomFun', varargin, -1);
     CustomFun = [];
     if numel(datas) > 0, CustomFun = datas{1}; end
     
