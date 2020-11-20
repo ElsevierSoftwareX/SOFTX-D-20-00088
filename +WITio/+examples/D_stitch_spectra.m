@@ -9,7 +9,7 @@ WITio.core.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
-pathstr = fullfile(WITio.path.package, '+examples'); % Get folder of this script
+pathstr = fullfile(WITio.core.path.package, '+examples'); % Get folder of this script
 file = fullfile(pathstr, 'D_stitch_spectra_v7.wip'); % Construct full path of the example file
 
 

@@ -4,6 +4,5 @@
 
 % This function return the WITio package folder.
 function path = package(),
-    path = fileparts([mfilename('fullpath') '.m']);
-    path = regexprep(path, '[\\\/]+\+[^\\\/]*$', ''); % Step back one package '+'-prefixed folder
+    path = fullfile(WITio.core.path.toolbox, '+WITio'); % Step into the main package folder
 end

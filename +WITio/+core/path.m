@@ -4,7 +4,7 @@
 
 % Gets to the toolbox main folder
 function path(),
-    WITio_folder = WITio.path.toolbox;
+    WITio_folder = WITio.core.path.toolbox;
     fprintf('Changing current folder to the main folder of the WITio toolbox:\n%s\n', WITio_folder);
     
     % Change folder to the toolbox main folder

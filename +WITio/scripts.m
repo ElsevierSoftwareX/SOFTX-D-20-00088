@@ -5,7 +5,7 @@
 % This function changes to the scripts folder and lists them
 function scripts(),
     % Get the toolbox examples folder
-    path = fullfile(WITio.path.package, '+scripts');
+    path = fullfile(WITio.core.path.package, '+scripts');
     fprintf('Changing current folder to the scripts folder of the WITio toolbox:\n%s\n', path);
     
     % Change folder to the toolbox scripts folder

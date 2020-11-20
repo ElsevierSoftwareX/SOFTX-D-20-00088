@@ -184,7 +184,7 @@ function O_wid = manager(obj, varargin),
         % Create list using HTML5
         hcontainer = uihtml(fig);
         hcontainer.Position = [0 height_table Position(3) Position(4)-height_table];
-        hcontainer.HTMLSource = fullfile(WITio.path.icons, 'uihtml_JList.html');
+        hcontainer.HTMLSource = fullfile(WITio.core.path.icons, 'uihtml_JList.html');
         drawnow;
         hcontainer.Data = S;
         hcontainer.DataChangedFcn = @ReleasedCallback;

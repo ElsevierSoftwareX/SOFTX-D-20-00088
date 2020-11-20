@@ -24,7 +24,7 @@ function examples(ExampleCases, AutoCloseInSeconds, AutoStopEdit, Verbose),
     ocu3 = onCleanup(@() WITio.core.pref.set('Verbose', old_Verbose)); % Restore original value on close
     
     % Find all example cases
-    pathstr = fullfile(WITio.path.package, '+examples');
+    pathstr = fullfile(WITio.core.path.package, '+examples');
     S = dir(pathstr);
     S = S(~[S.isdir]); % Exclude directories
     
