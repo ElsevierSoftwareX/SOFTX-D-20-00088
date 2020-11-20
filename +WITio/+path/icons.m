@@ -4,5 +4,5 @@
 
 % This function return the WITio.icons package folder.
 function path = icons(),
-    path = fullfile(WITio.path.package, '+icons');
+    path = fullfile(WITio.path.package, '+self', '+icons');
 end
