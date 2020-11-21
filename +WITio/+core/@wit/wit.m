@@ -617,19 +617,11 @@ classdef wit < handle, % Since R2008a
         %% OTHER METHODS
         % Object copying, destroying, writing, reloading
         new = copy(obj); % Copy obj
-        destroy(obj); % Deprecated! Use delete instead!
         write(obj, varargin); % Write obj to file
         update(obj); % Update file format header information
         reload(obj); % Reload obj.Data from file
         
-        % Add children
-        adopt(obj, varargin); % DEPRECATED! TO BE REMOVED!
-        
         % Conversion to/from binary form
-        buffer = binary(obj, swapEndianess); % DEPRECATED! Use bwrite instead!
-        binaryread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj); % DEPRECATED! Use bread instead!
-        ind_begin = binaryread_Data(obj, buffer, N_bytes_max, swapEndianess); % DEPRECATED! Use bread_Data instead!
-        
         buffer = bwrite(obj, swapEndianess, fun_progress_bar);
         bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress_bar);
         bread_Data(obj, buffer, N_bytes_max, swapEndianess);
@@ -645,9 +637,6 @@ classdef wit < handle, % Since R2008a
         tags = regexp_ancestors(obj, pattern, FirstOnly, LayersFurther);
         tags = search_ancestors(obj, varargin);
         tags = match_by_Data_criteria(obj, test_fun);
-        
-        % Object debugging
-        S = collapse(obj);
         
         % Override built-in addlistener to include some optimizations
         function event_listener = addlistener(obj, varargin),

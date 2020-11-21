@@ -358,7 +358,6 @@ classdef wip < handle, % Since R2008a
         
         % Remove saved Viewer-settings
         destroy_all_Viewers(obj);
-        reset_Viewers(obj); % Deprecated version! Use destroy_all_Viewers.m instead.
         
         % Helper functions for adding, removing and finding wid-objects
         O_wid = find_Data(obj, ID);

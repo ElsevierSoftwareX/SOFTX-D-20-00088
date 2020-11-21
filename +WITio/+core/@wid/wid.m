@@ -405,10 +405,7 @@ classdef wid < handle, % Since R2008a
         new = copy(obj); % Copy-method
         varargout = copy_Others_if_shared_and_unshare(obj, varargin); % Copy given shared linked objects and relink
         copy_LinksToOthers(obj); % Copy linked objects (i.e. transformations and interpretations) and relink
-        copy_Links(obj); % Deprecated version! Use copy_LinksToOthers
-        destroy(obj); % Deprecated! Use delete instead!
         destroy_LinksToOthers(obj); % Destroy links to objects (i.e. transformations and interpretations)
-        destroy_Links(obj); % Deprecated version! Use destroy_LinksToOthers
         write(obj, File); % Ability to write selected objects to *.WID-format
         
         % Merge multiple object Data or Graph together (if possible)

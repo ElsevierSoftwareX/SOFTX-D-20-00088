@@ -27,10 +27,9 @@
 % OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 % OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-% Use this instead of collapse-function under wit-class if you want direct
-% READ+WRITE access to Name-Value pairs of each tag. This is particularly
-% useful for quick modifications of small wit-formatted files. For larger
-% files, use struct-based collapse-function under wit-class instead.
+% Use this if you want direct READ+WRITE access to Name-Value
+% pairs of each tag. This is particularly useful for quick
+% modifications of small wit-formatted files.
 classdef debug < dynamicprops, % Since R2008a
     methods
         % Use this constructor for reverse engineering to achieve interoperability.

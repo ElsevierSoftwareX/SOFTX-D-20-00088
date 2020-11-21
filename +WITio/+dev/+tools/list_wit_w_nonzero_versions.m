@@ -36,5 +36,29 @@ UNIQUE_O_wit_w_version = O_wit_w_version(ind_unique);
 UNIQUE_O_wit_w_nonzero_version = O_wit_w_nonzero_version(ind_unique_nonzero);
 
 % See the tree structure by double-clicking either variable under Workspace
-C_static_tree = O_wit.collapse; % Fast to load because it is ONLY READ!
+C_static_tree = collapse(O_wit); % Fast to load because it is ONLY READ!
 % C_dynamic_tree = WITio.core.debug(O_wit); % Slow to load because it is READ+WRITE!
+
+% This function collapses the WIT tree structure into an all summarizing
+% READ-only struct. This is an essential tool to reverse engineer new file
+% versions for interoperability and implement them into MATLAB. If you want
+% to have WRITE+READ version of this, then use debug-class instead.
+
+% This code is deprecated and may be removed in the future revisions due to
+% addition of wit-class 'DataTree_get' and 'DataTree_set' static functions.
+function S = collapse(obj),
+    S = struct();
+    for ii = 1:numel(obj),
+        Id = sprintf(sprintf('%%0%dd', floor(log10(numel(obj))+1)), ii);
+        S.(['Tag_' Id]) = obj(ii);
+        S.(['Name_' Id]) = obj(ii).Name;
+        if isa(obj(ii).Data, 'WITio.core.wit'),
+            S_sub = collapse(obj(ii).Data);
+            C_sub = struct2cell(S_sub);
+            subfields = cellfun(@(s) sprintf('%s_%s', ['Data_' Id], s), fieldnames(S_sub), 'UniformOutput', false);
+            for jj = 1:numel(subfields),
+                S.(subfields{jj}) = C_sub{jj};
+            end
+        else, S.(['Data_' Id]) = obj(ii).Data; end
+    end
+end

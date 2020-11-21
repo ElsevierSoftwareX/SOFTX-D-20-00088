@@ -33,13 +33,37 @@ fprintf('RIGHT: File = %s\nVersion = %d\n', file_right{1}, WITio.core.wip.get_Ro
 
 [C_only_left, C_only_right, C_differ] = helper(O_wit_left, O_wit_right);
 
-S_only_left = C_only_left.collapse;
-S_only_right = C_only_right.collapse;
-S_differ_left = C_differ(:,1).collapse;
-S_differ_right = C_differ(:,2).collapse;
+S_only_left = collapse(C_only_left);
+S_only_right = collapse(C_only_right);
+S_differ_left = collapse(C_differ(:,1));
+S_differ_right = collapse(C_differ(:,2));
 
 DT_left = WITio.core.wit.DataTree_get(O_wit_left);
 DT_right = WITio.core.wit.DataTree_get(O_wit_right);
+
+% This function collapses the WIT tree structure into an all summarizing
+% READ-only struct. This is an essential tool to reverse engineer new file
+% versions for interoperability and implement them into MATLAB. If you want
+% to have WRITE+READ version of this, then use debug-class instead.
+
+% This code is deprecated and may be removed in the future revisions due to
+% addition of wit-class 'DataTree_get' and 'DataTree_set' static functions.
+function S = collapse(obj),
+    S = struct();
+    for ii = 1:numel(obj),
+        Id = sprintf(sprintf('%%0%dd', floor(log10(numel(obj))+1)), ii);
+        S.(['Tag_' Id]) = obj(ii);
+        S.(['Name_' Id]) = obj(ii).Name;
+        if isa(obj(ii).Data, 'WITio.core.wit'),
+            S_sub = collapse(obj(ii).Data);
+            C_sub = struct2cell(S_sub);
+            subfields = cellfun(@(s) sprintf('%s_%s', ['Data_' Id], s), fieldnames(S_sub), 'UniformOutput', false);
+            for jj = 1:numel(subfields),
+                S.(subfields{jj}) = C_sub{jj};
+            end
+        else, S.(['Data_' Id]) = obj(ii).Data; end
+    end
+end
 
 function [C_only_left, C_only_right, C_differ] = helper(C_left, C_right, level),
     if nargin < 3, level = 0; end
