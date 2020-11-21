@@ -360,6 +360,8 @@ classdef wip < handle, % Since R2008a
         destroy_all_Viewers(obj);
         
         % Helper functions for adding, removing and finding wid-objects
+        add_Data(obj, varargin); % DEPRECATED!
+        destroy_Data(obj, varargin); % DEPRECATED!
         O_wid = find_Data(obj, ID);
         
         % Transformations and interpretations (project version)
