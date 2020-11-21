@@ -105,7 +105,7 @@ Please report any bugs in [Issues](https://gitlab.com/jtholmi/wit_io/issues)-pag
 ### Citation *(optional)*
 J. T. Holmi (2019). WITio: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wid) files (https://gitlab.com/jtholmi/wit_io), GitLab. Version \<x.y.z\>. Retrieved \<Month\> \<Day\>, \<Year\>.
 
-### 3rd party content
+### Third party content
 * [export_fig](https://se.mathworks.com/matlabcentral/fileexchange/23629-export_fig)
 * [mpl colormaps](https://bids.github.io/colormap/)
 * [The Voigt/complex error function (second version)](https://se.mathworks.com/matlabcentral/fileexchange/47801-the-voigt-complex-error-function-second-version)
