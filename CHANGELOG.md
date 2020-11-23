@@ -63,7 +63,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
   - Move the content of `dev`-folder as renamed under `WITio.dev`-package and its new subpackages.
   - Move the old example cases as renamed under `WITio.demo`-package: remove the filename `'E_'`-prefixes and change the filename numbering system.
   - Move the old script cases as renamed under `WITio.batch`-package: remove the filename `'S_'`-prefixes.
-- [`wip`][2.0.0,C12]-class: Transition to *event-oriented programming* in order to **synchronize** the created objects with the underlying `wit Tree` objects and fix the garbage collection issues. From now on, create only one `wip Project` object instance per one root of an `wit Tree` object. In effect, `add_Data` and `destroy_Data` methods are not anymore needed to manually update the `wip Project` object.
+- [`wip`][2.0.0,C12]-class: Transition to *event-oriented programming* in order to **synchronize** the created objects with the underlying `wit Tree` objects and fix the garbage collection issues. From now on, create only one `wip Project` object instance per one root of an `wit Tree` object. In effect, `add_Data`, `destroy_Data` and `update` methods are not anymore needed to manually update the `wip Project` object.
 - Rename the toolbox from **wit_io** to **WITio**, but keep the code repository folder name as is.
 - [`wit`][2.0.0,C13]-class: Make `Listeners`-property return an array of objects rather than a cell array of objects.
 - [`wid`][2.0.0,C14]-class: Its constructor now accepts a `wip Project` object as input and returns empty for invalid or deleted input.
@@ -86,7 +86,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 ### Deprecated
 
-- [`wip`][2.0.0,D1]-class: New event-based synchronization makes `add_Data` and `destroy_Data` methods obsolete, which from now on do nothing and warn if they are used.
+- [`wip`][2.0.0,D1]-class: New event-based synchronization makes `add_Data`, `destroy_Data` and `update` methods obsolete, which from now on do nothing and warn if they are used.
 
 [2.0.0,D1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+tests/demo.m
 

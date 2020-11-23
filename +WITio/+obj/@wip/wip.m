@@ -351,7 +351,7 @@ classdef wip < handle, % Since R2008a
         write(obj, varargin);
         
         % Update Data-property according to Tree-property contents
-        update(obj);
+        update(obj); % DEPRECATED!
         
         % Destroy duplicate transformations 
         destroy_duplicate_Transformations(obj);
