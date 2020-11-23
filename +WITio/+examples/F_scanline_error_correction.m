@@ -9,23 +9,23 @@
 % AFM, CRM and SNOM stand for Atomic Force Microscopy, Confocal Raman
 % Microscopy and Scanning Near-Field Optical Microscopy, respectively.
 
-WITio.core.edit(); % Open this code in Editor
+WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
-pathstr = fullfile(WITio.core.path.package, '+examples'); % Get folder of this script
+pathstr = fullfile(WITio.tbx.path.package, '+examples'); % Get folder of this script
 file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 
 %-------------------------------------------------------------------------%
-WITio.core.license;
+WITio.tbx.license;
 
-h = WITio.core.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE F:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE F:}' ...
 '{\bf\fontsize{12}SCANLINE ERROR ' ...
 'CORRECTION}' ...
 '' ...
 '\bullet If unfamiliar with ''WITio'', then go through the previous ' ...
 'examples first.'}, '-TextWrapping', false);
-WITio.core.uiwait(h); % Wait for WITio.core.msgbox to be closed before continuing.
+WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -46,7 +46,7 @@ figure; O_Image.plot;
 
 
 %-------------------------------------------------------------------------%
-h = WITio.core.msgbox({'{\bf\fontsize{12}{\color{magenta}(F)} Scanline error correction of images:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}{\color{magenta}(F)} Scanline error correction of images:}' ...
 '' ...
 '\bullet This plotted image shows clear horizontal scanline errors. The image ' ...
 'represents the integrated intensity of Raman Si-peak, for which reason the ' ...
@@ -72,7 +72,7 @@ h = WITio.core.msgbox({'{\bf\fontsize{12}{\color{magenta}(F)} Scanline error cor
 'code documentation.' ...
 '' ...
 '\ldots Close this dialog to display the corrected image and END.'}, '-TextWrapping', false);
-WITio.core.uiwait(h); % Wait for WITio.core.msgbox to be closed before continuing.
+WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 

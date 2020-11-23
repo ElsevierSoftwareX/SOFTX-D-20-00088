@@ -3,36 +3,36 @@
 % All rights reserved.
 
 %% WIT_IO EXAMPLE CASE A 1: FILE IMPORTING TO GET STARTED
-% Simple examples of (A1 i-iv.) file importing to get started. This calls WITio.core.wip.read
+% Simple examples of (A1 i-iv.) file importing to get started. This calls WITio.obj.wip.read
 % under '@wip'-folder to load WITec Project/Data (*.wip/*.wid) -files
 % directly to the MATLAB environment without manual exporting/importing.
 
-WITio.core.edit(); % Open this code in Editor
+WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
-pathstr = fullfile(WITio.core.path.package, '+examples'); % Get folder of this script
+pathstr = fullfile(WITio.tbx.path.package, '+examples'); % Get folder of this script
 file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-WITio.core.license;
+WITio.tbx.license;
 
-h = WITio.core.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE A1:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE A1:}' ...
 '{\bf\fontsize{12}FILE IMPORTING TO GET STARTED}' ...
 '' ...
 '\bullet Using ''A\_v5.wip'' WITec Project -file, which has Raman data from ' ...
 'exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm ' ...
 'SiO2/Si-substrate.'}, '-TextWrapping', false);
-WITio.core.uiwait(h); % Wait for WITio.core.msgbox to be closed before continuing.
+WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-WITio.core.msgbox({'{\bf\fontsize{12}{\color{magenta}(A1 i.)} Load and browse file contents in a ' ...
+WITio.tbx.msgbox({'{\bf\fontsize{12}{\color{magenta}(A1 i.)} Load and browse file contents in a ' ...
 'GUI by executing:}' ...
 '' ...
 '{\bf\fontname{Courier}[O\_wid, O\_wip, O\_wid\_HtmlNames] = ' ...
@@ -115,7 +115,7 @@ close all; % Close all windows before continuing
 
 
 %-------------------------------------------------------------------------%
-h = WITio.core.msgbox({'{\bf\fontsize{12}{\color{magenta}(A1 ii.)} OR, load all file contents without GUI by executing:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}{\color{magenta}(A1 ii.)} OR, load all file contents without GUI by executing:}' ...
 '' ...
 '{\bf\fontname{Courier}[...] = WITio.read(file, ''-all'');}' ...
 '' ...
@@ -132,7 +132,7 @@ h = WITio.core.msgbox({'{\bf\fontsize{12}{\color{magenta}(A1 ii.)} OR, load all 
 '\bullet Read the code for more details.' ...
 '' ...
 '\ldots Close this to END.'}, '-TextWrapping', false);
-WITio.core.uiwait(h); % Wait for WITio.core.msgbox to be closed before continuing.
+WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 

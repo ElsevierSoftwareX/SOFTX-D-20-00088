@@ -7,7 +7,7 @@
 % related or neighboring rights have been waived by its authors. See
 % <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-% Used by @wid\plot.m and WITio.core.ui.sidebar_perceptually_uniform_colormaps.m
+% Used by @wid\plot.m and WITio.tbx.ui.sidebar_perceptually_uniform_colormaps.m
 function cmap = perceptually_uniform_colormap(option, m),
     % This function profiles several perceptually uniform colormap OPTIONS,
     % which are as follows: 'magma', 'inferno', 'plasma', 'viridis',

@@ -17,9 +17,9 @@ if folder ~= 0, file = fullfile(folder, filename);
 else, return; end % Abort as no file was selected!
 
 % Read file wit-tags
-O_wit = WITio.core.wit.read(file{1});
+O_wit = WITio.obj.wit.read(file{1});
 if isempty(O_wit), return; end
-fprintf('File = %s\nVersion = %d\n', file{1}, WITio.core.wip.get_Root_Version(O_wit));
+fprintf('File = %s\nVersion = %d\n', file{1}, WITio.obj.wip.get_Root_Version(O_wit));
 
 % Find tags with nonzero Versions
 O_wit_w_version = O_wit.regexp('^Version<');
@@ -37,7 +37,7 @@ UNIQUE_O_wit_w_nonzero_version = O_wit_w_nonzero_version(ind_unique_nonzero);
 
 % See the tree structure by double-clicking either variable under Workspace
 C_static_tree = collapse(O_wit); % Fast to load because it is ONLY READ!
-% C_dynamic_tree = WITio.core.debug(O_wit); % Slow to load because it is READ+WRITE!
+% C_dynamic_tree = WITio.obj.debug(O_wit); % Slow to load because it is READ+WRITE!
 
 % This function collapses the WIT tree structure into an all summarizing
 % READ-only struct. This is an essential tool to reverse engineer new file
@@ -52,7 +52,7 @@ function S = collapse(obj),
         Id = sprintf(sprintf('%%0%dd', floor(log10(numel(obj))+1)), ii);
         S.(['Tag_' Id]) = obj(ii);
         S.(['Name_' Id]) = obj(ii).Name;
-        if isa(obj(ii).Data, 'WITio.core.wit'),
+        if isa(obj(ii).Data, 'WITio.obj.wit'),
             S_sub = collapse(obj(ii).Data);
             C_sub = struct2cell(S_sub);
             subfields = cellfun(@(s) sprintf('%s_%s', ['Data_' Id], s), fieldnames(S_sub), 'UniformOutput', false);

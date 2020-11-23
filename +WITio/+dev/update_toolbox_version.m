@@ -19,7 +19,7 @@ function update_toolbox_version(old_version, new_version),
     % Get the toolbox folder
     stored_cd = cd;
     cd_onCleanup = onCleanup(@() cd(stored_cd)); % Return to original folder upon exit or error
-    cd(WITio.core.path.toolbox); % Go to the toolbox folder
+    cd(WITio.tbx.path.toolbox); % Go to the toolbox folder
     
     %% UPDATE Contents.m
     file = 'Contents.m';

@@ -11,20 +11,20 @@ function examples(ExampleCases, AutoCloseInSeconds, AutoStopEdit, Verbose),
     if nargin < 3 || isempty(AutoStopEdit), AutoStopEdit = true; end % By default, auto stop editor opening
     if nargin < 4 || isempty(Verbose), Verbose = false; end % By default, less verbose for faster non-interactive mode
     
-    old_AutoCloseInSeconds = WITio.core.pref.get('AutoCloseInSeconds', Inf);
-    WITio.core.pref.set('AutoCloseInSeconds', AutoCloseInSeconds);
-    ocu = onCleanup(@() WITio.core.pref.set('AutoCloseInSeconds', old_AutoCloseInSeconds)); % Restore original value on close
+    old_AutoCloseInSeconds = WITio.tbx.pref.get('AutoCloseInSeconds', Inf);
+    WITio.tbx.pref.set('AutoCloseInSeconds', AutoCloseInSeconds);
+    ocu = onCleanup(@() WITio.tbx.pref.set('AutoCloseInSeconds', old_AutoCloseInSeconds)); % Restore original value on close
     
-    old_AutoStopEdit = WITio.core.pref.get('AutoStopEdit', false);
-    WITio.core.pref.set('AutoStopEdit', AutoStopEdit);
-    ocu2 = onCleanup(@() WITio.core.pref.set('AutoStopEdit', old_AutoStopEdit)); % Restore original value on close
+    old_AutoStopEdit = WITio.tbx.pref.get('AutoStopEdit', false);
+    WITio.tbx.pref.set('AutoStopEdit', AutoStopEdit);
+    ocu2 = onCleanup(@() WITio.tbx.pref.set('AutoStopEdit', old_AutoStopEdit)); % Restore original value on close
     
-    old_Verbose = WITio.core.pref.get('Verbose', true);
-    WITio.core.pref.set('Verbose', Verbose);
-    ocu3 = onCleanup(@() WITio.core.pref.set('Verbose', old_Verbose)); % Restore original value on close
+    old_Verbose = WITio.tbx.pref.get('Verbose', true);
+    WITio.tbx.pref.set('Verbose', Verbose);
+    ocu3 = onCleanup(@() WITio.tbx.pref.set('Verbose', old_Verbose)); % Restore original value on close
     
     % Find all example cases
-    pathstr = fullfile(WITio.core.path.package, '+examples');
+    pathstr = fullfile(WITio.tbx.path.package, '+examples');
     S = dir(pathstr);
     S = S(~[S.isdir]); % Exclude directories
     

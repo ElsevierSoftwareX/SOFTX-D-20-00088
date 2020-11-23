@@ -28,7 +28,7 @@
 % blocks in order to allow smoother user interrupts and less communication
 % with MATLAB. MaxBlockSize should be divisible by this. For .zip, default
 % value is 1048576 or 1 MB. For .zst, default value is 4194304 or 4 MB.
-% '-ProgressBar' (= none): Use verbose WITio.core.wit.progress_bar in Command
+% '-ProgressBar' (= none): Use verbose WITio.obj.wit.progress_bar in Command
 % Window. If a function handle (with equivalent input/output arguments) is
 % provided, then use it instead.
 function [files, datas] = decompress(file, varargin),
@@ -104,7 +104,7 @@ function [files, datas] = decompress(file, varargin),
         % Documentation: https://www.javadoc.io/doc/com.github.luben/zstd-jni/latest/index.html
         if isempty(zst_library), % Load java library only once per session
             decompressor_library = {'+fun', '+lib', '+zstd-jni', 'zstd-jni-1.4.5-12.jar'};
-            zst_library = fullfile(WITio.core.path.package, decompressor_library{:});
+            zst_library = fullfile(WITio.tbx.path.package, decompressor_library{:});
             javaaddpath(zst_library);
         end
         decompressor_constructor = @decompress_zst_construct;
@@ -144,7 +144,7 @@ function [files, datas] = decompress(file, varargin),
     
     % Parse extra inputs: ProgressBar
     [ProgressBar, parsed] = WITio.fun.varargin_dashed_str.exists_and_datas('ProgressBar', varargin, -1);
-    if ProgressBar, ProgressBar = @WITio.core.wit.progress_bar; end
+    if ProgressBar, ProgressBar = @WITio.obj.wit.progress_bar; end
     if numel(parsed) > 0, ProgressBar = parsed{1}; end
     verbose = isa(ProgressBar, 'function_handle');
     

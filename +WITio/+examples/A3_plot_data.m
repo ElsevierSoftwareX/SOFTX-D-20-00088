@@ -5,26 +5,26 @@
 %% WIT_IO EXAMPLE CASE A 3: DATA PLOTTING
 % Simple demonstration of (A3) data plotting.
 
-WITio.core.edit(); % Open this code in Editor
+WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
 % Example file
-pathstr = fullfile(WITio.core.path.package, '+examples'); % Get folder of this script
+pathstr = fullfile(WITio.tbx.path.package, '+examples'); % Get folder of this script
 file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 
 
 
 %-------------------------------------------------------------------------%
-WITio.core.license;
+WITio.tbx.license;
 
-h = WITio.core.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE A3:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE A3:}' ...
 '{\bf\fontsize{12}DATA PLOTTING}' ...
 '' ...
 '\bullet Using ''A\_v5.wip'' WITec Project -file, which has Raman data from ' ...
 'exfoliated graphene with 1-, 2- and 3-layer areas on 285 nm ' ...
 'SiO2/Si-substrate.'}, '-TextWrapping', false);
-WITio.core.uiwait(h); % Wait for WITio.core.msgbox to be closed before continuing.
+WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 
 
@@ -42,7 +42,7 @@ O_Mask = O_wid(7); % Get object of "1-layer Gr<Mask 2" at index 7
 
 
 %-------------------------------------------------------------------------%
-h = WITio.core.msgbox({'{\bf\fontsize{12}{\color{magenta}(A3)} Plot data}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}{\color{magenta}(A3)} Plot data}' ...
 '' ...
 '\bullet Although the plottable wid objects are of Types: TDBitmap, TDGraph, ' ...
 'TDImage and TDText, the non-plottable objects are plotted like TDText but via ' ...
@@ -70,7 +70,7 @@ figure; O_Text.plot(); % TDText with sidebar'
 % Non-plottable objects like TDSpaceTransformation
 figure; O_Bitmap.Info.XTransformation.plot(); % TDBitmap's TDSpaceTransformation with sidebar
 
-WITio.core.uiwait(h);
+WITio.tbx.uiwait(h);
 close all; % Close the plot
 %-------------------------------------------------------------------------%
 
