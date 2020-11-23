@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE A 1: FILE IMPORTING TO GET STARTED
+%% WIT_IO DEMO CASE A 1: FILE IMPORTING TO GET STARTED
 % Simple examples of (A1 i-iv.) file importing to get started. This calls WITio.obj.wip.read
 % under '@wip'-folder to load WITec Project/Data (*.wip/*.wid) -files
 % directly to the MATLAB environment without manual exporting/importing.
@@ -10,9 +10,9 @@
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
-% Example file
-pathstr = fullfile(WITio.tbx.path.package, '+examples'); % Get folder of this script
-file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
+% Demo file
+pathstr = WITio.tbx.path.demo; % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the demo file
 %-------------------------------------------------------------------------%
 
 
@@ -20,7 +20,7 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 WITio.tbx.license;
 
-h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE A1:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}DEMO CASE A1:}' ...
 '{\bf\fontsize{12}FILE IMPORTING TO GET STARTED}' ...
 '' ...
 '\bullet Using ''A\_v5.wip'' WITec Project -file, which has Raman data from ' ...

@@ -2,16 +2,16 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE B 4: DATA POSITION AND SCALEBAR PLOTTING
+%% WIT_IO DEMO CASE B 4: DATA POSITION AND SCALEBAR PLOTTING
 % Simple examples of (B4) data position and scalebar plotting in order to
 % see their positions with respect to each other.
 
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
-% Example file
-pathstr = fullfile(WITio.tbx.path.package, '+examples'); % Get folder of this script
-file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
+% Demo file
+pathstr = WITio.tbx.path.demo; % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the demo file
 %-------------------------------------------------------------------------%
 
 
@@ -19,7 +19,7 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 WITio.tbx.license;
 
-h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE B4:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}DEMO CASE B4:}' ...
 '{\bf\fontsize{12}DATA POSITION AND SCALEBAR ' ...
 'PLOTTING}' ...
 '' ...

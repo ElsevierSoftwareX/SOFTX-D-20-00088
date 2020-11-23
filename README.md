@@ -64,11 +64,11 @@ context menus to enable a quick call to `[O_wid, O_wip, O_wid_HtmlNames] = WITio
 **This also requires administration rights.**
 
 ### Example cases
-Run *(or F5)* interactive code (*\*.m*) under *'[examples]'*-package to
-learn **WITio**. Begin by opening and running *'WITio.examples.A1_import_file_to_get_started'*.
+Run *(or F5)* interactive code (*\*.m*) under *'[demo]'*-package to
+learn **WITio**. Begin by opening and running *'WITio.demo.A1_import_file_to_get_started'*.
 
-### Semi-automated scripts
-Consider using semi-automated scripts under *'[scripts]'*-package on your
+### Semi-automated batch scripts
+Consider using semi-automated batch scripts under *'[batch]'*-package on your
 WITec Project/Data files. They will read the given file, interact with the
 user, process the relevant file contents and finally write back to the original
 file.
@@ -127,8 +127,8 @@ J. T. Holmi (2019). WITio: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wi
 [the latest toolbox installer]: ./WITio.mltbx
 [the latest zip archive]: https://gitlab.com/jtholmi/wit_io/-/archive/master/wit_io-master.zip
 [third party]: ./+WITio/+fun/+lib
-[examples]: ./+WITio/+examples
-[scripts]: ./+WITio/+scripts
+[demo]: ./+WITio/+demo
+[batch]: ./+WITio/+batch
 [WITio.m]: ./WITio.m
 [WITio.file.wip_wid_context_menus.m]: ./+WITio/+file/wip_wid_context_menus.m
 [README on WIT-tag format.txt]: ./+WITio/+doc/README%20on%20WIT-tag%20format.txt

@@ -3,7 +3,7 @@
 % All rights reserved.
 
 % This script imports all the necessary WITec toolbox packages and
-% functions in order to make the old example cases of wit_io v1.x.x work.
+% functions in order to make the old demo cases of wit_io v1.x.x work.
 
 %% Define wid, wip and wip classes
 import WITio.tbx.*;

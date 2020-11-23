@@ -3,10 +3,10 @@
 % All rights reserved.
 
 % This is helper function to prevent unintentional mixing of variables.
-function tf = examples_helper(example_case),
+function tf = demo_helper(demo_case),
     try,
         % Use run rather than eval for better safety
-        WITio.examples.(example_case); % Assuming that the called function does not CLEAR ALL, which would stop NON-INTERACTIVE MODE!
+        WITio.demo.(demo_case); % Assuming that the called function does not CLEAR ALL, which would stop NON-INTERACTIVE MODE!
         tf = true;
     catch me,
         disp(getReport(me, 'extended', 'hyperlinks', 'on'));

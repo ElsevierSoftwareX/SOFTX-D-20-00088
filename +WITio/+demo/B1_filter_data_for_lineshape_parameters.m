@@ -2,16 +2,16 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE B 1: DATA FILTERING FOR LINESHAPE PARAMETERS
+%% WIT_IO DEMO CASE B 1: DATA FILTERING FOR LINESHAPE PARAMETERS
 % Simple examples of data post processing like (B1 i.) filtering and
 % (B1 ii.) fitting.
 
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
-% Example file
-pathstr = fullfile(WITio.tbx.path.package, '+examples'); % Get folder of this script
-file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
+% Demo file
+pathstr = WITio.tbx.path.demo; % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the demo file
 %-------------------------------------------------------------------------%
 
 
@@ -19,7 +19,7 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 WITio.tbx.license;
 
-h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE B1:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}DEMO CASE B1:}' ...
 '{\bf\fontsize{12}DATA FILTERING FOR LINESHAPE ' ...
 'PARAMETERS}' ...
 '' ...

@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE A 5: COMPRESS AND DECOMPRESS FILES
+%% WIT_IO DEMO CASE A 5: COMPRESS AND DECOMPRESS FILES
 % Simple examples of (A5) compressing and decompressing files to save
 % hard disk space. This is beneficial because the WIT-formatted files can
 % often be significantly compressed in size.
@@ -10,9 +10,9 @@
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
-% Example file
-pathstr = fullfile(WITio.tbx.path.package, '+examples'); % Get folder of this script
-file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
+% Demo file
+pathstr = WITio.tbx.path.demo; % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the demo file
 %-------------------------------------------------------------------------%
 
 
@@ -20,7 +20,7 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 WITio.tbx.license;
 
-h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE A5:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}DEMO CASE A5:}' ...
 '{\bf\fontsize{12}COMPRESS AND DECOMPRESS ' ...
 'FILES}'}, '-TextWrapping', false);
 WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.

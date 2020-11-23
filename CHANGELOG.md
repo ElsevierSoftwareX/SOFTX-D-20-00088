@@ -36,7 +36,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 - [`WITio.read`][2.0.0,A4]: New wrapper function to call legacy `WITio.obj.wip.read`.
 - `wit`-class: Add `disableObjectModified`, `enableObjectModified` and `notifyObjectModified` methods to more easily control the event firing outside the class. For the first two, if an output is stored, then the effect will be temporary until the output cleanup.
 - [`@wit/addlistener`][2.0.0,A5]: Accept `PreSet`, `PostSet`, `PreGet`, `PostGet` property events and store the created listeners to new `PropListeners`-property.
-- [`WITio.examples`][2.0.0,A6] and [`WITio.scripts`][2.0.0,A7]: New functions to list the available examples and scripts.
+- [`WITio.demo`][2.0.0,A6] and [`WITio.batch`][2.0.0,A7]: New functions to list the available demos and batches.
 - [`@wid/delete_wrapper`][2.0.0,A8]: New destructor method to only destroy the wid object but not its underlying `wit Tree` objects.
 - `wid`-class: New `Parent`-field to `Tag`-property struct.
 - `wid`-class: Its constructor now accepts numeric size input to preallocate objects similar to built-in `zeros`.
@@ -46,21 +46,21 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 [2.0.0,A3]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+obj/@handle_listener/handle_listener.m
 [2.0.0,A4]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/read.m
 [2.0.0,A5]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+obj/@wit/wit.m
-[2.0.0,A6]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/examples.m
-[2.0.0,A7]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/scripts.m
+[2.0.0,A6]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/demo.m
+[2.0.0,A7]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/batch.m
 [2.0.0,A8]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+obj/@wid/wid.m
 
 ### Changed
 
-- **Breaking change**: Package the whole WITio toolbox as [`WITio`][2.0.0,C1]-package and distribute everything under [`dev`][2.0.0,C2], [`doc`][2.0.0,C3], [`examples`][2.0.0,C4], [`fun`][2.0.0,C5], [`obj`][2.0.0,C6], [`scripts`][2.0.0,C7] and [`tbx`][2.0.0,C8] subpackages. It is *highly recommended* to go through [the updated example cases][2.0.0,C4]. The most notable **breaking changes** are as follows:
+- **Breaking change**: Package the whole WITio toolbox as [`WITio`][2.0.0,C1]-package and distribute everything under [`batch`][2.0.0,C2], [`demo`][2.0.0,C3], [`dev`][2.0.0,C4], [`doc`][2.0.0,C5], [`fun`][2.0.0,C6], [`obj`][2.0.0,C7] and [`tbx`][2.0.0,C8] subpackages. It is *highly recommended* to go through [the updated example cases][2.0.0,C4]. The most notable **breaking changes** are as follows:
   - Move the classes under `WITio.obj`-package and rename `wit_debug`-class to `debug`-class.
   - Move the content of `helper`-folder under `WITio.fun`-package and its new subpackages, and rename some like the `varargin_dashed_str`-prefixed functions.
   - Move `wit_io_compress` and `wit_io_decompress` as renamed under [`WITio.fun.file`][2.0.0,C9]-package.
   - Move the content of `ui`-folder as renamed under [`WITio.tbx.ui`][2.0.0,C10]-package.
   - Move the content of `icons`-folder under [`WITio.tbx.icons`][2.0.0,C11]-package.
   - Move the content of `dev`-folder as renamed under `WITio.dev`-package and its new subpackages.
-  - Move the example cases as renamed under `WITio.examples`-package: remove the filename `'E_'`-prefixes and change the filename numbering system.
-  - Move the script cases as renamed under `WITio.scripts`-package: remove the filename `'S_'`-prefixes.
+  - Move the old example cases as renamed under `WITio.demo`-package: remove the filename `'E_'`-prefixes and change the filename numbering system.
+  - Move the old script cases as renamed under `WITio.batch`-package: remove the filename `'S_'`-prefixes.
 - [`wip`][2.0.0,C12]-class: Transition to *event-oriented programming* in order to **synchronize** the created objects with the underlying `wit Tree` objects and fix the garbage collection issues. From now on, create only one `wip Project` object instance per one root of an `wit Tree` object. In effect, `add_Data` and `destroy_Data` methods are not anymore needed to manually update the `wip Project` object.
 - Rename the toolbox from **wit_io** to **WITio**, but keep the code repository folder name as is.
 - [`wit`][2.0.0,C13]-class: Make `Listeners`-property return an array of objects rather than a cell array of objects.
@@ -68,12 +68,12 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 - `wip`-class: Its constructor now accepts a `wid Data` object array as input and returns empty for invalid or deleted input.
 
 [2.0.0,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/
-[2.0.0,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+dev/
-[2.0.0,C3]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+doc/
-[2.0.0,C4]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+examples/
-[2.0.0,C5]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+fun/
-[2.0.0,C6]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+obj/
-[2.0.0,C7]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+scripts/
+[2.0.0,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+batch/
+[2.0.0,C3]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+demo/
+[2.0.0,C4]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+dev/
+[2.0.0,C5]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+doc/
+[2.0.0,C6]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+fun/
+[2.0.0,C7]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+obj/
 [2.0.0,C8]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+tbx/
 [2.0.0,C9]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+fun/+file/
 [2.0.0,C10]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+tbx/+ui/
@@ -86,15 +86,15 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 - [`wip`][2.0.0,D1]-class: New event-based synchronization makes `add_Data` and `destroy_Data` methods obsolete, which from now on do nothing and warn if they are used.
 
-[2.0.0,D1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+tests/examples.m
+[2.0.0,D1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+tests/demo.m
 
 ### Removed
 
 - Delete deprecated `colormaps_mpl`, `@wit/adopt`, `@wit/binary`, `@wit/binaryread`, `@wit/binaryread_Data`, `@wit/collapse`, `@wit/destroy`, `@wid/copy_Links`, `@wid/destroy`, `@wid/destroy_Links` and `@wip/reset_Viewers`.
-- Replace [`wit_io_for_code_ocean_compute_capsule`][2.0.0,R1] with [`WITio.tests.examples`][2.0.0,R2] and [`WITio.tests`][2.0.0,R3]. Here former is more verbose and accepts strings as input in order to manually run only the selected example cases.
+- Replace [`wit_io_for_code_ocean_compute_capsule`][2.0.0,R1] with [`WITio.tests.demo`][2.0.0,R2] and [`WITio.tests`][2.0.0,R3]. Here former is more verbose and accepts strings as input in order to manually run only the selected example cases.
 
 [2.0.0,R1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.4.0/wit_io_for_code_ocean_compute_capsule.m
-[2.0.0,R2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+tests/examples.m
+[2.0.0,R2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+tests/demo.m
 [2.0.0,R3]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/tests.m
 
 ### Fixed
@@ -103,7 +103,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 - [`@wip/manager`][2.0.0,F2]: Correct passing of `varargin`.
 - [`WITio.tbx.license`][2.0.0,F3]: Add missing support to the non-interactive testing mode.
 - Remove the toolbox installer dependency on `Image Processing Toolbox`.
-- Improve non-interactive mode by new [`WITio.tbx.edit`][2.0.0,F4] and [`WITio.tbx.verbose`][2.0.0,F5] functions, which make running the example cases faster for testing purposes.
+- Improve non-interactive mode by new [`WITio.tbx.edit`][2.0.0,F4] and [`WITio.tbx.verbose`][2.0.0,F5] functions, which make running the demo cases faster for testing purposes.
 
 [2.0.0,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+tbx/msgbox.m
 [2.0.0,F2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+obj/@wip/manager.m
@@ -114,10 +114,10 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 ### Performance
 
 - [`wid`][2.0.0,P1]-class: Construction and copying of objects is now much faster.
-- [**Example cases**][2.0.0,P2]: Solve major performance bottleneck (especially with R2011a) by pre-wrapping text inputs of [`WITio.tbx.msgbox`][2.0.0,P3], obtained using its new 2nd output.
+- [**Demo cases**][2.0.0,P2]: Solve major performance bottleneck (especially with R2011a) by pre-wrapping text inputs of [`WITio.tbx.msgbox`][2.0.0,P3], obtained using its new 2nd output.
 
 [2.0.0,P1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+obj/@wid/wid.m
-[2.0.0,P2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+examples/
+[2.0.0,P2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+demo/
 [2.0.0,P3]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+tbx/msgbox.m
 
 

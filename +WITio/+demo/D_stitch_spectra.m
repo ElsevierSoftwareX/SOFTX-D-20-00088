@@ -2,22 +2,22 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE D: SPECTRAL STITCHING
+%% WIT_IO DEMO CASE D: SPECTRAL STITCHING
 % Simple example of (D) spectral stitching.
 
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
-% Example file
-pathstr = fullfile(WITio.tbx.path.package, '+examples'); % Get folder of this script
-file = fullfile(pathstr, 'D_stitch_spectra_v7.wip'); % Construct full path of the example file
+% Demo file
+pathstr = WITio.tbx.path.demo; % Get folder of this script
+file = fullfile(pathstr, 'D_stitch_spectra_v7.wip'); % Construct full path of the demo file
 
 
 
 %-------------------------------------------------------------------------%
 WITio.tbx.license;
 
-h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE D:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}DEMO CASE D:}' ...
 '{\bf\fontsize{12}SPECTRAL STITCHING}' ...
 '' ...
 '\bullet If unfamiliar with ''WITio'', then go through the previous ' ...

@@ -2,15 +2,15 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE A 2: FORCING UNITS
+%% WIT_IO DEMO CASE A 2: FORCING UNITS
 % Simple examples of (A2 i-iv.) forcing of the content units on the fly.
 
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
-% Example file
-pathstr = fullfile(WITio.tbx.path.package, '+examples'); % Get folder of this script
-file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
+% Demo file
+pathstr = WITio.tbx.path.demo; % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the demo file
 %-------------------------------------------------------------------------%
 
 
@@ -18,7 +18,7 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 WITio.tbx.license;
 
-h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE A2:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}DEMO CASE A2:}' ...
 '{\bf\fontsize{12}FORCING UNITS}' ...
 '' ...
 '\bullet Using ''A\_v5.wip'' WITec Project -file, which has Raman data from ' ...

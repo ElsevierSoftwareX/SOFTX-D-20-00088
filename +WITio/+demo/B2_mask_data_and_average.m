@@ -2,16 +2,16 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE B 2: DATA MASKING AND SPATIAL AVERAGING
+%% WIT_IO DEMO CASE B 2: DATA MASKING AND SPATIAL AVERAGING
 % Simple examples of data post processing like (B2 i.) masking and
 % (B2 ii.) spatial averaging.
 
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
-% Example file
-pathstr = fullfile(WITio.tbx.path.package, '+examples'); % Get folder of this script
-file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
+% Demo file
+pathstr = WITio.tbx.path.demo; % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the demo file
 %-------------------------------------------------------------------------%
 
 
@@ -19,7 +19,7 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 WITio.tbx.license;
 
-h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE B2:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}DEMO CASE B2:}' ...
 '{\bf\fontsize{12}DATA MASKING AND SPATIAL ' ...
 'AVERAGING}' ...
 '' ...

@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE Z: CUSTOMIZE DATA AND EXPORT
+%% WIT_IO DEMO CASE Z: CUSTOMIZE DATA AND EXPORT
 % Illustrating the creation of Project, its customized objects and writing
 % to a new file. Customized object examples for TDBitmap, Image<TDGraph,
 % TDImage and TDText datatypes (and some related transformations and
@@ -12,16 +12,16 @@
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
-% Example file
-pathstr = fullfile(WITio.tbx.path.package, '+examples'); % Get folder of this script
-file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
+% Demo file
+pathstr = WITio.tbx.path.demo; % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the demo file
 
 
 
 %-------------------------------------------------------------------------%
 WITio.tbx.license;
 
-h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE Z:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}DEMO CASE Z:}' ...
 '{\bf\fontsize{12}CUSTOMIZE DATA AND ' ...
 'EXPORT}' ...
 '' ...

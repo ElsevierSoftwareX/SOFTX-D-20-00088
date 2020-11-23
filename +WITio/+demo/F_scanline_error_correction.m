@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE F: SCANLINE ERROR CORRECTION
+%% WIT_IO DEMO CASE F: SCANLINE ERROR CORRECTION
 % Simple example of (F) correcting images with scanline errors, which can
 % be additive (for height images from AFM or peak position images from CRM)
 % or multiplicative (for intensity images from CRM or SNOM) in nature. Here
@@ -12,14 +12,14 @@
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
-% Example file
-pathstr = fullfile(WITio.tbx.path.package, '+examples'); % Get folder of this script
-file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
+% Demo file
+pathstr = WITio.tbx.path.demo; % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the demo file
 
 %-------------------------------------------------------------------------%
 WITio.tbx.license;
 
-h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE F:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}DEMO CASE F:}' ...
 '{\bf\fontsize{12}SCANLINE ERROR ' ...
 'CORRECTION}' ...
 '' ...

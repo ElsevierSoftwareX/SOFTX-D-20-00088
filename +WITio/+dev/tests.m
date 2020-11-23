@@ -4,5 +4,5 @@
 
 % Runs all available tests
 function tests(),
-    WITio.dev.tests.examples;
+    WITio.dev.tests.demo;
 end

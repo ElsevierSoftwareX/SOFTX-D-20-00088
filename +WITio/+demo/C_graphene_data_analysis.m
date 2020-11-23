@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE C: GRAPHENE DATA ANALYSIS
+%% WIT_IO DEMO CASE C: GRAPHENE DATA ANALYSIS
 % Graphene data analysis case with examples of (C i.) laser line
 % recalibration, (C ii.) lineshape fitting, (C iii.) result cleaning and
 % (C iv.) histogram generation.
@@ -10,9 +10,9 @@
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
-% Example file
-pathstr = fullfile(WITio.tbx.path.package, '+examples'); % Get folder of this script
-file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
+% Demo file
+pathstr = WITio.tbx.path.demo; % Get folder of this script
+file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the demo file
 %-------------------------------------------------------------------------%
 
 
@@ -20,7 +20,7 @@ file = fullfile(pathstr, 'A_v5.wip'); % Construct full path of the example file
 %-------------------------------------------------------------------------%
 WITio.tbx.license;
 
-h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE C:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}DEMO CASE C:}' ...
 '{\bf\fontsize{12}GRAPHENE DATA ANALYSIS}' ...
 '' ...
 '\bullet Using ''A\_v5.wip'' WITec Project -file, which has Raman data from ' ...
@@ -72,8 +72,8 @@ O_Point_Info_GraphInterpretation.Data.TDSpectralInterpretation.ExcitationWaveLen
 O_ImageScan_Info_GraphInterpretation = O_ImageScan.Info.GraphInterpretation; % Make line below backward compatible with R2011a
 O_ImageScan_Info_GraphInterpretation.Data.TDSpectralInterpretation.ExcitationWaveLength = Rayleigh_nm; % Permanently recalibrate the Rayleigh peak to zero!
 
-% Alternatively, try and run an semi-automated script under scripts-folder
-% on your file contents of interest: recalibrate_rayleigh_peak_to_zero.m
+% Alternatively, try and run an semi-automated batch script under batch-package
+% on your file contents of interest: WITio.batch.zero_rayleigh_peak
 
 O_Point.Name = sprintf('Zeroed<%s', O_Point.Name);
 figure; O_Point_old.plot('-compare', O_Point); % Show fitting results % Image<TDGraph with sidebar

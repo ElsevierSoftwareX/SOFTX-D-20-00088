@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE A 4: PERMANENT USER PREFERENCES
+%% WIT_IO DEMO CASE A 4: PERMANENT USER PREFERENCES
 % Simple examples of (A4) storing permanent user preferences.
 
 WITio.tbx.edit(); % Open this code in Editor
@@ -14,7 +14,7 @@ close all; % Close figures
 %-------------------------------------------------------------------------%
 WITio.tbx.license;
 
-h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE A4:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}DEMO CASE A4:}' ...
 '{\bf\fontsize{12}PERMANENT USER ' ...
 'PREFERENCES}'}, '-TextWrapping', false);
 WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.

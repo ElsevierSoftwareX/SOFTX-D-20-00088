@@ -2,16 +2,16 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% This function changes to the scripts folder and lists them
-function scripts(),
-    % Get the toolbox examples folder
-    path = fullfile(WITio.tbx.path.package, '+scripts');
-    fprintf('Changing current folder to the scripts folder of the WITio toolbox:\n%s\n', path);
+% This function changes to the batch folder and lists all the batch cases
+function batch(),
+    % Get the toolbox batch folder
+    path = WITio.tbx.path.batch;
+    fprintf('Changing current folder to the batch folder of the WITio toolbox:\n%s\n', path);
     
-    % Change folder to the toolbox scripts folder
+    % Change folder to the toolbox batch folder
     cd(path);
     
-    % Find all script cases
+    % Find all batch cases
     S = dir(path);
     S = S(~[S.isdir]); % Exclude directories
     [~, names, ext] = cellfun(@fileparts, {S.name}, 'UniformOutput', false);
@@ -19,6 +19,6 @@ function scripts(),
     
     % List them
     for ii = 1:numel(names),
-        fprintf('WITio.scripts.%s\n', names{ii});
+        fprintf('WITio.batch.%s\n', names{ii});
     end
 end

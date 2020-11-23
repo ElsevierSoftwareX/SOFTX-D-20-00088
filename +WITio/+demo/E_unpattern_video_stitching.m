@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-%% WIT_IO EXAMPLE CASE E: UNPATTERN VIDEO STITCHING IMAGES
+%% WIT_IO DEMO CASE E: UNPATTERN VIDEO STITCHING IMAGES
 % Simple example of (E) unpatterning the Video Stitching images, removing
 % the grid pattern arising during stitching procedure due to the imperfect
 % view at the Video camera per frame. Frame imperfections may be caused,
@@ -11,14 +11,14 @@
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
-% Example file
-pathstr = fullfile(WITio.tbx.path.package, '+examples'); % Get folder of this script
-file = fullfile(pathstr, 'E_unpattern_video_stitching_v7.wip'); % Construct full path of the example file
+% Demo file
+pathstr = WITio.tbx.path.demo; % Get folder of this script
+file = fullfile(pathstr, 'E_unpattern_video_stitching_v7.wip'); % Construct full path of the demo file
 
 %-------------------------------------------------------------------------%
 WITio.tbx.license;
 
-h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}EXAMPLE CASE E:}' ...
+h = WITio.tbx.msgbox({'{\bf\fontsize{12}\color{magenta}DEMO CASE E:}' ...
 '{\bf\fontsize{12}UNPATTERN VIDEO STITCHING ' ...
 'IMAGES}' ...
 '' ...
