@@ -31,7 +31,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 ### Added
 
-- [`WITio.backward_compatible`][2.0.0,A1]: New function to import all needed classes and functions to run [WITio v1.4.0 example cases][2.0.0,A2].
+- [`WITio.tbx.backward_compatible`][2.0.0,A1]: New function to import all needed classes and functions to run [WITio v1.4.0 example cases][2.0.0,A2].
 - [`handle_listener`][2.0.0,A3]-class: New class (used by redesigned `wip`-class) to track any handle object without preventing its automated garbage collection.
 - [`WITio.read`][2.0.0,A4]: New wrapper function to call legacy `WITio.obj.wip.read`.
 - `wit`-class: Add `disableObjectModified`, `enableObjectModified` and `notifyObjectModified` methods to more easily control the event firing outside the class. For the first two, if an output is stored, then the effect will be temporary until the output cleanup.
@@ -41,7 +41,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 - `wid`-class: New `Parent`-field to `Tag`-property struct.
 - `wid`-class: Its constructor now accepts numeric size input to preallocate objects similar to built-in `zeros`.
 
-[2.0.0,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/backward_compatible.m
+[2.0.0,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+tbx/backward_compatible.m
 [2.0.0,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.4.0/EXAMPLE%20cases/
 [2.0.0,A3]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+obj/@handle_listener/handle_listener.m
 [2.0.0,A4]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/read.m
