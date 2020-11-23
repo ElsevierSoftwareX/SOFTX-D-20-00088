@@ -40,6 +40,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 - [`@wid/delete_wrapper`][2.0.0,A8]: New destructor method to only destroy the wid object but not its underlying `wit Tree` objects.
 - `wid`-class: New `Parent`-field to `Tag`-property struct.
 - `wid`-class: Its constructor now accepts numeric size input to preallocate objects similar to built-in `zeros`.
+- [`WITio.dev.package_toolbox`][2.0.0,A9]: New function to generate new toolbox installer, requiring MATLAB R2014b.
 
 [2.0.0,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+tbx/backward_compatible.m
 [2.0.0,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.4.0/EXAMPLE%20cases/
@@ -49,6 +50,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 [2.0.0,A6]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/demo.m
 [2.0.0,A7]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/batch.m
 [2.0.0,A8]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+obj/@wid/wid.m
+[2.0.0,A9]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+dev/package_toolbox.m
 
 ### Changed
 

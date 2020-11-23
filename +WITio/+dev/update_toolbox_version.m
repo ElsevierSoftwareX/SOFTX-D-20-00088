@@ -76,22 +76,4 @@ function update_toolbox_version(old_version, new_version),
     if fid == -1, error('Cannot open ''%s'' for writing.', file); end
     fwrite(fid, data, 'uint8');
     fclose(fid);
-    
-    %% UPDATE WITio.prj
-    file = 'WITio.prj';
-    
-    % Read from file
-    fid = fopen(file, 'r');
-    if fid == -1, error('Cannot open ''%s'' for reading.', file); end
-    data = reshape(fread(fid, inf, 'uint8=>char'), 1, []);
-    fclose(fid);
-    
-    % Update file
-    data = strrep(data, ['<param.version>' old_version '</param.version>'], ['<param.version>' new_version '</param.version>']);
-    
-    % Write to file
-    fid = fopen(file, 'w');
-    if fid == -1, error('Cannot open ''%s'' for writing.', file); end
-    fwrite(fid, data, 'uint8');
-    fclose(fid);
 end
