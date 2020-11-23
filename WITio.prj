@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="" file="C:\Users\jtmakin1\Downloads\GIT\wit_io\WITio.prj" location="C:\Users\jtmakin1\Downloads\GIT\wit_io" name="WITio" target="target.toolbox" target-name="Package Toolbox">
+  <configuration build-checksum="1125447488" file="C:\Users\jtmakin1\Downloads\GIT\wit_io\WITio.prj" location="C:\Users\jtmakin1\Downloads\GIT\wit_io" name="WITio" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>WITio</param.appname>
     <param.authnamewatermark>Joonas T. Holmi</param.authnamewatermark>
     <param.email>jtholmi@gmail.com</param.email>
@@ -25,12 +25,9 @@ Please report any bugs in https://gitlab.com/jtholmi/wit_io/issues.</param.descr
       <item>8.4</item>
     </param.products.version>
     <param.platforms />
-    <param.guid />
+    <param.guid>6b0c2e31-be11-4377-a983-3d823a044309</param.guid>
     <param.exclude.filters>.git/*
-*.sh
-*.prj
-*.mlappinstall
-*.mltbx</param.exclude.filters>
+*.sh</param.exclude.filters>
     <param.examples />
     <param.demosxml />
     <param.apps />
@@ -38,7 +35,6 @@ Please report any bugs in https://gitlab.com/jtholmi/wit_io/issues.</param.descr
     <unset>
       <param.output />
       <param.platforms />
-      <param.guid />
       <param.examples />
       <param.demosxml />
       <param.apps />
