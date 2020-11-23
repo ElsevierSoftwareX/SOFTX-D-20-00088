@@ -4,5 +4,5 @@
 
 % This function return the WITio package folder.
 function path = package(),
-    path = fullfile(WITio.tbx.path.toolbox, '+WITio'); % Step into the main package folder
+    path = fullfile(WITio.tbx.path, '+WITio'); % Step into the main package folder
 end

@@ -2,11 +2,8 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Gets to the toolbox main folder
-function path(),
-    WITio_folder = WITio.tbx.path.toolbox;
-    fprintf('Changing current folder to the main folder of the WITio toolbox:\n%s\n', WITio_folder);
-    
-    % Change folder to the toolbox main folder
-    cd(WITio_folder);
+% This function returns the WITio toolbox folder.
+function path = path(),
+    path = fileparts([mfilename('fullpath') '.m']);
+    path = regexprep(path, '([\\\/]+\+[^\\\/]*)+$', ''); % Step back the package '+'-prefixed folders
 end
