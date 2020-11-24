@@ -48,6 +48,8 @@ classdef wit < handle, % Since R2008a
     
     % Main file-format parameters
     properties (Dependent) % READ-WRITE, DEPENDENT
+        % The typical characters in Name-property are [0-9a-zA-z_\-\{\}]
+        % (written in regexp-notation), verified using 250 files.
         Name; % Rely on internal NameNow
         Data; % Rely on internal DataNow
     end

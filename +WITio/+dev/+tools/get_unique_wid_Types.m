@@ -8,7 +8,7 @@
 % all the unique wid-class Types. This can be used to find certain kinds of
 % files quickly among hundreds of files.
 function [unique_wid_Types, B_diversity_matrix, versions, files] = get_unique_wid_Types(files),
-    if nargin == 0, files = WITio.dev.get_dir_files_recursively(); end
+    if nargin == 0, files = WITio.dev.tools.get_dir_files_recursively(); end
     
     % Keep only *.wip and *.wid files
     [~, ~, ext] = cellfun(@fileparts, files, 'UniformOutput', false);
@@ -19,7 +19,7 @@ function [unique_wid_Types, B_diversity_matrix, versions, files] = get_unique_wi
     unique_wid_Types_per_file = cell(size(files));
     versions = nan(size(files));
     for ii = 1:numel(files),
-        fprintf('File %d/%d OR %s:\n', ii, numel(files), files{ii});
+        fprintf('\nFile %d/%d OR %s:\n', ii, numel(files), files{ii});
         O_wit = WITio.obj.wit.read(files{ii}, 4096, @skip_Data_criteria_for_obj);
         Version = WITio.obj.wip.get_Root_Version(O_wit);
         if ~isempty(Version), versions(ii) = Version; end

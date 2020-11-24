@@ -6,7 +6,7 @@
 % files at once. If no 'files' are given, then it opens a folder selection
 % dialog box.
 function [versions, files] = get_Versions(files),
-    if nargin == 0, files = WITio.dev.get_dir_files_recursively(); end
+    if nargin == 0, files = WITio.dev.tools.get_dir_files_recursively(); end
     
     % Keep only *.wip and *.wid files
     [~, ~, ext] = cellfun(@fileparts, files, 'UniformOutput', false);

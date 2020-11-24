@@ -17,7 +17,7 @@ function files = get_dir_files_recursively(folder),
         if strcmp(subfolders{ii}, '.') || strcmp(subfolders{ii}, '..'),
             continue; % Skip . and ..
         end
-        files = [files WITio.dev.get_dir_files_recursively(fullfile(folder, subfolders{ii}))];
+        files = [files WITio.dev.tools.get_dir_files_recursively(fullfile(folder, subfolders{ii}))];
     end
     files = files(:); % Force column vector
 end
