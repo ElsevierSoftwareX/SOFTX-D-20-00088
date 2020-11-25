@@ -131,7 +131,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     SX = size(X);
     if numel(SX) == numel(S) && all(SX == S), % Proceed if size of X is equal to size of Y
         X = X(:,:); % Convert into a 2-D matrix
-    elseif sum(SX ~= 1) == 1, % Proceed if X is a vector 
+    elseif sum(SX ~= 1) <= 1, % Proceed if X is a vector 
         X = repmat(X(:), [1 SD]); % Convert the vector into a 2-D matrix
     else,
         error('Input X must either be a vector or a same size matrix as Y!');

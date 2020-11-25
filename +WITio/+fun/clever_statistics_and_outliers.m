@@ -80,7 +80,7 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % This was written, tested and optimized for MATLAB R2010b-R2018b using
     % the built-in functions and does not require any toolboxes to be used.
     
-    % Updated 19.2.2020 by Joonas T. Holmi
+    % Updated 26.11.2020 by Joonas T. Holmi
     
     % ---------------------------------------------------------------------
     
@@ -186,6 +186,8 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     % Negative values are NOT operations. Sign mixing is not allowed.
     
     % IMPROVED DOCUMENTING AND VERIFICATIONS (12.7.2019)
+    
+    % FIXED error with empty input BUG (26.11.2020)
     
     % ---------------------------------------------------------------------
     
@@ -299,8 +301,13 @@ function [isOutlier, cmean, cvar, cstd, cmedian, cmin, cmax, sigmas] = ...
     CS_pos = cumsum(X_sorted.*(X_sorted>0), 1); % Forward cumsum positive side (backward compatible)
     
     % Case j == 0: (If no outliers == regular mean and variance)
-    S = CS_neg(1, :) + CS_pos(end, :); % S = nansum(X_sorted, 1);
-    S2 = CS2_neg(1, :) + CS2_pos(end, :); % S2 = nansum(X_sorted_2, 1);
+    if isempty(X_sorted), % Special case: empty input
+        S = zeros(1, size(X_sorted, 2));
+        S2 = zeros(1, size(X_sorted, 2));
+    else,
+        S = CS_neg(1, :) + CS_pos(end, :); % S = nansum(X_sorted, 1);
+        S2 = CS2_neg(1, :) + CS2_pos(end, :); % S2 = nansum(X_sorted_2, 1);
+    end
     N0 = sum(~B_nan, 1); % Initial number of elements per column
     cmean = S./N0; % Regular mean
     cvar = (S2-S.*cmean)./(N0-1); % Regular variance

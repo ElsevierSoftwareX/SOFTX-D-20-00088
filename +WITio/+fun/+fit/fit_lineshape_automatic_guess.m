@@ -38,6 +38,9 @@ function P0 = fit_lineshape_automatic_guess(x, Y, dim),
     x = double(x);
     
     % Discard all-NaN datasets (to be restored later in the end)
+    B_discard = ~isnan(x);
+    Y = Y(B_discard,:);
+    x = x(B_discard);
     B_allnan = all(isnan(Y), 1);
     Y = Y(:,~B_allnan);
     S = size(Y);
