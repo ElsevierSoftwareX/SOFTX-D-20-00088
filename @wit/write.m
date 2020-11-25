@@ -49,7 +49,7 @@ function write(obj, varargin),
         lowOnMemory = false;
         try, % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
             % Avoid call to builtin 'memory', which is Octave-incompatible!
-            buffer = zeros(FileSize, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
+            buffer = zeros(obj.End, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
             clear buffer;
         catch, % OTHERWISE USE LOW-ON-MEMORY SCHEME!
             lowOnMemory = true;

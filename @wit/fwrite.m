@@ -135,7 +135,7 @@ function fwrite(obj, fid, swapEndianess, fun_progress_bar),
                             str_ii = strs{ii};
                             if ~swapEndianess, fwrite(fid, numel(str_ii), 'uint32', 0, 'l');
                             else, fwrite(fid, numel(str_ii), 'uint32', 0, 'b'); end
-                            fwrite(fid, str_ii, 'char*1', 0, 'l');
+                            fwrite(fid, str_ii, 'uint8', 0, 'l');
                         end
                     end
                 otherwise,
