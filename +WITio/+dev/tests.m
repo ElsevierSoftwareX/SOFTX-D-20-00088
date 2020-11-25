@@ -5,4 +5,5 @@
 % Runs all available tests
 function tests(),
     WITio.dev.tests.demo;
+    WITio.dev.tests.try_catch('dev.tests.wit_bread_bwrite');
 end
