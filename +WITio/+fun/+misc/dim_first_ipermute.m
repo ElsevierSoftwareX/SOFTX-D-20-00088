@@ -7,7 +7,7 @@ function [A, order_B_to_A] = dim_first_ipermute(B, dim),
     % BENEFIT 2: Code can be made to exploit linear indices.
     
     % Specify order so that selected dim will be first
-    order_A_to_B = [dim:ndims(B) 1:dim-1];
+    order_A_to_B = [dim:max(dim,ndims(B)) 1:dim-1];
     
     % Reverse order
     order_B_to_A(order_A_to_B) = 1:numel(order_A_to_B);
