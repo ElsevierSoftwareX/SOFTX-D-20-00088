@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% This function lists all the demo cases
+% Display the content of demo-package
 function demo(),
-    WITio.fun.href_dir(WITio.tbx.path.demo, 'm;wip');
+    WITio.fun.href_dir(WITio.tbx.path.demo);
 end
