@@ -27,6 +27,17 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
+## [1.4.0.1] - 2020-11-26
+
+### Added
+
+- [`@wit/write`][1.4.0,A1] and [`@wit/fwrite`][1.4.0,A2]: Hotfix of file writing corruption. Typo from commit `f9ec61d` of v1.2.3 forced `write` to call `fwrite`, which since commit `b487cf4` of v1.2.3 has been faulty at writing `Type == 9`, corrupting the written file.
+
+[1.4.0.1,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.4.0.1/@wit/write.m
+[1.4.0.1,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v1.4.0.1/@wit/fwrite.m
+
+
+
 ## [1.4.0] - 2020-11-11
 
 ### Added
@@ -578,7 +589,8 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
-[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.4.0...develop
+[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.4.0.1...develop
+[1.4.0.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.4.0...v1.4.0.1
 [1.4.0]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.2.1...v1.4.0
 [1.3.2.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.2...v1.3.2.1
 [1.3.2]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.1...v1.3.2
