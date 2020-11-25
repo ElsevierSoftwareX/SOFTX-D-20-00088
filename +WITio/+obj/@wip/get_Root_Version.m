@@ -3,6 +3,7 @@
 % All rights reserved.
 
 % Return empty if no Version is found
+% THIS DOES NOT SUPPORT WIP PROJECT OBJECT ARRAYS!
 function Version = get_Root_Version(obj) % Can be wid-, wip- or wit-class
     Version = []; % If not found
     if ~isempty(obj),

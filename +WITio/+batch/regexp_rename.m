@@ -5,10 +5,8 @@
 % Renames the selected data names using regexprep-syntax [1].
 % [1] https://se.mathworks.com/help/matlab/ref/regexprep.html
 
-% This interactive script was implemented 7.2.2020 by Joonas Holmi
-
 % Load and select the datas of interest
-[O_wid, O_wip, O_wid_HtmlNames] = WITio.read('-ifall', '-Manager', ...
+[O_wid, O_wip, O_wid_HtmlNames] = WITio.read('-ifall', '-batch', '-Manager', ...
     '--all', '--nopreview', '--Title', 'SELECT DATA TO RENAME');
 if isempty(O_wid), return; end
 
@@ -49,8 +47,8 @@ fprintf('Total number of renamed objects: %d\n', count);
 if ~ishandle(h), return; end % Abort if cancelled!
 waitbar(1, h, 'Completed! Writing...');
 
-% Overwrite the file
-O_wip.write();
+% Overwrite the files
+for ii = 1:numel(O_wip), O_wip(ii).write(); end
 
 % Close the waitbar
 delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Avoids the closing issues with close-function!

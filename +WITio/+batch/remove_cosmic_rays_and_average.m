@@ -8,11 +8,9 @@
 % Algorithm is based on an article written by G. Buzzi-Ferraris and
 % F. Manenti: 'Outlier detection in large data sets'
 % Source: http://dx.doi.org/10.1016/j.compchemeng.2010.11.004
-%
-% This interactive script was implemented 24.7.2018 by Joonas Holmi
 
 % Load and select the datas of interest
-[O_wid, O_wip, O_wid_HtmlNames] = WITio.read('-ifall', '-Manager', '--closepreview', '--Type', 'TDGraph', '--SubType', 'Time');
+[O_wid, O_wip, O_wid_HtmlNames] = WITio.read('-batch', '-ifall', '-Manager', '--closepreview', '--Type', 'TDGraph', '--SubType', 'Time');
 if isempty(O_wid), return; end
 
 % Ask if to make copies
@@ -32,8 +30,8 @@ end
 if ~ishandle(h), return; end % Abort if cancelled!
 waitbar(1, h, 'Completed! Writing...');
 
-% Overwrite the file
-O_wip.write();
+% Overwrite the files
+for ii = 1:numel(O_wip), O_wip(ii).write(); end
 
 % Close the waitbar
 delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Avoids the closing issues with close-function!

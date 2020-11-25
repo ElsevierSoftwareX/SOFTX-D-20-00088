@@ -2,6 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
+% THIS DOES NOT SUPPORT WIP PROJECT OBJECT ARRAYS!
 function [ValueUnit, varargout] = transform(T, varargin),
     ValueUnit = WITio.obj.wip.ArbitraryUnit; % Default ValueUnit
     varargout = cellfun(@double, varargin, 'UniformOutput', false); % Default Value

@@ -3,6 +3,7 @@
 % All rights reserved.
 
 % Set Version if found
+% THIS DOES NOT SUPPORT WIP PROJECT OBJECT ARRAYS!
 function set_Root_Version(obj, Version) % Can be wid-, wip- or wit-class
     if ~isempty(obj),
         O_wit = WITio.obj.wit.empty; 

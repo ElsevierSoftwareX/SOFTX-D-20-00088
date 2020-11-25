@@ -38,6 +38,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     
     showProjectManager = ~WITio.fun.varargin_dashed_str.exists('all', varargin); % By default, show Project Manager
     show_ui_ifall = WITio.fun.varargin_dashed_str.exists('ifall', varargin);
+    doAppend = ~WITio.fun.varargin_dashed_str.exists('batch', varargin);
     
     [exists, datas] = WITio.fun.varargin_dashed_str.exists_and_datas('LimitedRead', varargin, -1);
     LimitedRead = Inf; % By default, unlimited read
@@ -78,31 +79,47 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
         OnReadDecompress = any(strcmpi(compressed_ext, ext));
         
         if OnReadDecompress, % Read compressed
-            O_wit = OnReadDecompress_loop(O_wit, files{ii});
+            O_wit(end+1,1) = OnReadDecompress_loop(O_wit, files{ii});
         else, % Read uncompressed
-            O_wit_new = WITio.obj.wit.read(files{ii}, LimitedRead);
-            O_wit = WITio.obj.wip.append(O_wit, O_wit_new);
+            O_wit(end+1,1) = WITio.obj.wit.read(files{ii}, LimitedRead);
         end
     end
     if ~ishandle(h), return; end % Abort if cancelled!
     waitbar(1, h, 'Completed!');
     delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Avoids the closing issues with close-function!
     if isempty(O_wit), return; end % Abort if no file to read!
-    O_wip = WITio.obj.wip(O_wit);
+    
+    % Append wit Tree objects together if '-batch'-parameter was not given
+    if doAppend,
+        Versions = arrayfun(@WITio.obj.wip.get_Root_Version, O_wit);
+        Versions(Versions < 5) = 5; % All versions less than or equal to 5 can be safely appended together
+        if numel(unique(Versions)) == 1, % Append ONLY IF EVERYTHING SAME VERSION
+            O_wit = WITio.obj.wip.append(O_wit, O_wit(2:end));
+            O_wip = WITio.obj.wip(O_wit);
+        else, % OTHERWISE, WARN AND GO FOR BATCH-MODE
+            warning('Safe appending of mixed-version (v5-v7) WIT-formatted files is not implemented yet! Continuing by switching on ''-batch''-flag in order to keep the wip Project objects separate...');
+            doAppend = false;
+        end
+    end
+    
+    % Double-check if '-batch'-flag has been enabled
+    if ~doAppend,
+        O_wip = arrayfun(@WITio.obj.wip, O_wit);
+    end
     
     % Force DataUnit, SpaceUnit, SpectralUnit, TimeUnit:
     % Parse input arguments
     datas = WITio.fun.varargin_dashed_str.datas('DataUnit', varargin, -1);
-    if numel(datas) > 0, O_wip.ForceDataUnit = datas{1}; end
+    if numel(datas) > 0, for ii = 1:numel(O_wip), O_wip(ii).ForceDataUnit = datas{1}; end; end
     
     datas = WITio.fun.varargin_dashed_str.datas('SpectralUnit', varargin, -1);
-    if numel(datas) > 0, O_wip.ForceSpectralUnit = datas{1}; end
+    if numel(datas) > 0, for ii = 1:numel(O_wip), O_wip(ii).ForceSpectralUnit = datas{1}; end; end
     
     datas = WITio.fun.varargin_dashed_str.datas('SpaceUnit', varargin, -1);
-    if numel(datas) > 0, O_wip.ForceSpaceUnit = datas{1}; end
+    if numel(datas) > 0, for ii = 1:numel(O_wip), O_wip(ii).ForceSpaceUnit = datas{1}; end; end
     
     datas = WITio.fun.varargin_dashed_str.datas('TimeUnit', varargin, -1);
-    if numel(datas) > 0, O_wip.ForceTimeUnit = datas{1}; end
+    if numel(datas) > 0, for ii = 1:numel(O_wip), O_wip(ii).ForceTimeUnit = datas{1}; end; end
     
     datas = WITio.fun.varargin_dashed_str.datas('Manager', varargin);
     ManagerVarargin = {};
@@ -130,8 +147,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
         [~, zip_datas] = WITio.fun.file.decompress(File, '-FilterExtension', '.wip', '.wid', '-ProgressBar', Params{:}); % Decompress binary from zip archive
         % Loop through data entries
         for jj = 1:numel(zip_datas),
-            obj_new = WITio.obj.wit.read(File, LimitedRead, [], [], '-CustomFun', @OnReadDecompress_helper, '-Silent');
-            obj = WITio.obj.wip.append(obj, obj_new);
+            obj(end+1,1) = WITio.obj.wit.read(File, LimitedRead, [], [], '-CustomFun', @OnReadDecompress_helper, '-Silent');
         end
         function OnReadDecompress_helper(obj, File),
             obj.bread(zip_datas{jj});

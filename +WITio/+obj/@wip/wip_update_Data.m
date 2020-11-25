@@ -4,6 +4,7 @@
 
 % Update is always called when wip Project object may need to be updated
 % with respect to its underlying wit Tree object.
+% THIS DOES NOT SUPPORT WIP PROJECT OBJECT ARRAYS!
 function wip_update_Data(obj, isObjectBeingDestroyed),
     if nargin < 2, isObjectBeingDestroyed = false; end
 

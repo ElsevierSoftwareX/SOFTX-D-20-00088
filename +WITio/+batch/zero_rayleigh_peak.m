@@ -6,11 +6,9 @@
 % automatically fitting a Gaussian function to the peak within range of
 % [-25, 25] rel. 1/cm and reshifting of the X-axis with the new laser
 % excitation wavelength.
-%
-% This interactive script was implemented 6.5.2019 by Joonas Holmi
 
 % Load and select the data with Rayleigh-peak
-[O_wid_w_Rayleigh, O_wip, ~] = WITio.read('-SpectralUnit', 'rel. 1/cm', '-Manager', ...
+[O_wid_w_Rayleigh, O_wip, ~] = WITio.read('-batch', '-SpectralUnit', 'rel. 1/cm', '-Manager', ...
     '--closepreview', '--singlesection', '--Title', 'SELECT ONE DATA WITH RAYLEIGH-PEAK', '--Type', 'TDGraph');
 if isempty(O_wid_w_Rayleigh), return; end
 
@@ -42,8 +40,8 @@ end
 if ~ishandle(h), return; end % Abort if cancelled!
 waitbar(1, h, 'Completed! Writing...');
 
-% Overwrite the file
-O_wip.write();
+% Overwrite the files
+for ii = 1:numel(O_wip), O_wip(ii).write(); end
 
 % Close the waitbar
 delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Avoids the closing issues with close-function!

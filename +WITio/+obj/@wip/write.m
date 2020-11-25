@@ -10,6 +10,8 @@
 % to the underlying writing function, i.e. WITio.fun.file.compress.m. See its
 % documentation for more details.
 function write(obj, varargin),
+    if isempty(obj), return; end % Do nothing if empty Project
+    if numel(obj) > 1, error('Accepting only a scalar wip Project object!'); end % Error if many Projects
     % First char array input is always File if non-dashed
     if nargin > 1 && ischar(varargin{1}) && ~strncmp(varargin{1}, '-', 1),
         File = varargin{1};

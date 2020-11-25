@@ -4,7 +4,7 @@
 
 function O_wid = manager(obj, varargin),
     persistent latest_fig;
-    if isempty(obj), error('No project given!'); end
+    if isempty(obj), error('No project(s) given!'); end
     
     % START OF VARARGIN PARSING
     
@@ -39,9 +39,9 @@ function O_wid = manager(obj, varargin),
     
     % Check if Data was specified
     datas = WITio.fun.varargin_dashed_str.datas('Data', varargin, -1);
-    O_wid = obj.Data; % Get all the objects in the project % ASSUMING THAT PROJECT HAS SELF-CONSISTENT WID-DATA!
-    if numel(datas) > 0, O_wid = datas{1}; end
-    if isempty(O_wid), return; end % Exit if no project data
+    O_wid = {obj.Data}; % Get all the objects in the projects % ASSUMING THAT PROJECT HAS SELF-CONSISTENT WID-DATA!
+    if numel(datas) > 0, O_wid = datas(1); end
+    if isempty(O_wid) || sum(cellfun(@numel, O_wid)) == 0, return; end % Exit if no project data
     
     % END OF VARARGIN PARSING
     
@@ -53,6 +53,18 @@ function O_wid = manager(obj, varargin),
     %http://undocumentedmatlab.com/blog/matlab-java-memory-leaks-performance
     %http://undocumentedmatlab.com/blog/setting-status-bar-components
     %http://undocumentedmatlab.com/blog/matlab-callbacks-for-java-events
+    
+    % Sort by ID (within each wip Project object)
+    if show_sorted,
+        for ii = 1:numel(obj),
+            O_wid_ii = O_wid{ii};
+            [~, idx_sorted] = sort([O_wid_ii.Id]);
+            O_wid{ii} = O_wid_ii(idx_sorted);
+        end
+    end
+    
+    % Remove cell-container
+    O_wid = vertcat(O_wid{:});
     
     % Keep only the plottable types
     if ~show_all,
@@ -66,12 +78,6 @@ function O_wid = manager(obj, varargin),
         end
         O_wid = O_wid(bw);
         if isempty(O_wid), return; end % Exit if no project data
-    end
-    
-    % Sort by ID
-    if show_sorted,
-        [~, idx_sorted] = sort([O_wid.Id]);
-        O_wid = O_wid(idx_sorted);
     end
     
     % Do not show manager if specified so, and exit
@@ -193,7 +199,7 @@ function O_wid = manager(obj, varargin),
     % Create preview checkbox
     isPreview = show_preview;
     h_table = uitable(fig, ...
-        'Data', {isPreview obj.ForceDataUnit obj.ForceSpaceUnit obj.ForceSpectralUnit obj.ForceTimeUnit}, ...
+        'Data', {isPreview obj(1).ForceDataUnit obj(1).ForceSpaceUnit obj(1).ForceSpectralUnit obj(1).ForceTimeUnit}, ...
         'RowName', [], ...
         'ColumnName', {'Preview', 'DataUnit', 'SpaceUnit', 'SpectralUnit', 'TimeUnit'}, ...
         'ColumnFormat', {'logical', 'char', 'char', 'char', 'char'}, ...
@@ -322,10 +328,10 @@ function O_wid = manager(obj, varargin),
         if UnitInd == 0, isPreview = Value; % Preview
         else, % DataUnit, SpaceUnit, SpectralUnit or TimeUnit
             switch(UnitInd),
-                case 1, obj.ForceDataUnit = Value; Value = obj.ForceDataUnit;
-                case 2, obj.ForceSpaceUnit = Value; Value = obj.ForceSpaceUnit;
-                case 3, obj.ForceSpectralUnit = Value; Value = obj.ForceSpectralUnit;
-                case 4, obj.ForceTimeUnit = Value; Value = obj.ForceTimeUnit;
+                case 1, for ll = 1:numel(obj), obj(ll).ForceDataUnit = Value; Value = obj(ll).ForceDataUnit; end
+                case 2, for ll = 1:numel(obj), obj(ll).ForceSpaceUnit = Value; Value = obj(ll).ForceSpaceUnit; end
+                case 3, for ll = 1:numel(obj), obj(ll).ForceSpectralUnit = Value; Value = obj(ll).ForceSpectralUnit; end
+                case 4, for ll = 1:numel(obj), obj(ll).ForceTimeUnit = Value; Value = obj(ll).ForceTimeUnit; end
             end
             % hObject.Data{UnitInd+1} = Value; % replaced for backward compability
             Data = get(hObject, 'Data');
