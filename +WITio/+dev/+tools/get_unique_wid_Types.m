@@ -27,7 +27,7 @@ function [unique_wid_Types, B_diversity_matrix, versions, files] = get_unique_wi
         DataClassNames = Tag_Data.search({'^DataClassName \d+$'}, 'Data');
         unique_wid_Types_per_file{ii} = unique({DataClassNames.Data});
         fprintf('Number of unique wid Types = %d\n', numel(unique_wid_Types_per_file{ii}));
-        fprintf('Unique wid Types = %s\n', strjoin(unique_wid_Types_per_file{ii}, ', '));
+        fprintf('Unique wid Types = %s\n', mystrjoin(unique_wid_Types_per_file{ii}, ', '));
     end
     
     % Generate the diversity matrix
@@ -35,7 +35,7 @@ function [unique_wid_Types, B_diversity_matrix, versions, files] = get_unique_wi
     if isempty(unique_wid_Types), unique_wid_Types = {}; end % Handle case of no unique wid Types
     unique_wid_Types = reshape(unique_wid_Types, 1, []); % Force row column
     fprintf('\nNumber of all unique wid Types = %d\n', numel(unique_wid_Types));
-    fprintf('All unique wid Types = %s\n', strjoin(unique_wid_Types, ', '));
+    fprintf('All unique wid Types = %s\n', mystrjoin(unique_wid_Types, ', '));
     B_diversity_matrix = false(numel(files), numel(unique_wid_Types));
     for ii = 1:numel(unique_wid_Types),
         B_diversity_matrix(:,ii) = cellfun(@(s) any(strcmp(s, unique_wid_Types{ii})), unique_wid_Types_per_file);

@@ -31,7 +31,7 @@ function [unique_wit_Names, B_diversity_matrix, versions, files] = get_unique_wi
         end
         unique_wit_Names_per_file{ii} = unique(Names);
         fprintf('Number of unique wit Names = %d\n', numel(unique_wit_Names_per_file{ii}));
-        fprintf('Unique wit Names = %s\n', strjoin(unique_wit_Names_per_file{ii}, ', '));
+        fprintf('Unique wit Names = %s\n', mystrjoin(unique_wit_Names_per_file{ii}, ', '));
     end
     
     % Generate the diversity matrix
@@ -39,7 +39,7 @@ function [unique_wit_Names, B_diversity_matrix, versions, files] = get_unique_wi
     if isempty(unique_wit_Names), unique_wit_Names = {}; end % Handle case of no unique wit Names
     unique_wit_Names = reshape(unique_wit_Names, 1, []); % Force row column
     fprintf('\nNumber of all unique wit Names = %d\n', numel(unique_wit_Names));
-    fprintf('All unique wit Names = %s\n', strjoin(unique_wit_Names, ', '));
+    fprintf('All unique wit Names = %s\n', mystrjoin(unique_wit_Names, ', '));
     B_diversity_matrix = false(numel(files), numel(unique_wit_Names));
     for ii = 1:numel(unique_wit_Names),
         B_diversity_matrix(:,ii) = cellfun(@(s) any(strcmp(s, unique_wit_Names{ii})), unique_wit_Names_per_file);
