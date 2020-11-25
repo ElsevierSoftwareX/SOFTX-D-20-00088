@@ -58,14 +58,14 @@ function package_toolbox(),
     fprintf(fid_prj, '    <param.email>%s</param.email>\n', WITio_email);
     fprintf(fid_prj, '    <param.company>%s</param.company>\n', WITio_company);
     fprintf(fid_prj, '    <param.summary>%s</param.summary>\n', WITio_summary);
-    fprintf(fid_prj, '    <param.description>%s</param.description>\n', strjoin(WITio_description, sprintf('\n')));
+    fprintf(fid_prj, '    <param.description>%s</param.description>\n', WITio.fun.indep.mystrjoin(WITio_description, sprintf('\n')));
     fprintf(fid_prj, '    <param.screenshot>%s</param.screenshot>\n', WITio_screenshot);
     fprintf(fid_prj, '    <param.version>%s</param.version>\n', WITio_version);
     fprintf(fid_prj, '    <param.output>%s</param.output>\n', fullfile(WITio_folder, file_mltbx));
     fprintf(fid_prj, '    <param.products.name><item>MATLAB</item></param.products.name>\n');
     fprintf(fid_prj, '    <param.products.id><item>1</item></param.products.id>\n');
     fprintf(fid_prj, '    <param.products.version><item>8.4</item></param.products.version>\n');
-    fprintf(fid_prj, '    <param.exclude.filters>%s</param.exclude.filters>\n', strjoin(WITio_exclude_filters, sprintf('\n')));
+    fprintf(fid_prj, '    <param.exclude.filters>%s</param.exclude.filters>\n', WITio.fun.indep.mystrjoin(WITio_exclude_filters, sprintf('\n')));
     fprintf(fid_prj, '    <fileset.rootdir><file>%s</file></fileset.rootdir>\n', WITio_folder);
     fprintf(fid_prj, '  </configuration>\n');
     fprintf(fid_prj, '</deployment-project>');

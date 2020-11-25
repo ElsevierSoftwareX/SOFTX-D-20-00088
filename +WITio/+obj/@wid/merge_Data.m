@@ -7,7 +7,7 @@ function Data_merged = merge_Data(obj, dim),
     Data_classes = cellfun(@class, Datas, 'UniformOutput', false);
     Data_classes = unique(Data_classes);
     if numel(unique(Data_classes)) > 1,
-        error('FAIL: Cannot merge Datas of multiple classes (%s) together!', strjoin(Data_classes, ', '));
+        error('FAIL: Cannot merge Datas of multiple classes (%s) together!', WITio.fun.indep.mystrjoin(Data_classes, ', '));
     end
     % IMPLEMENTATION IDEA for parse_consistently_or_abort:
     % uint64/int64 can contain EXACTLY itself, uint32/int32, uint16/int16, uint8/int8 and logical.

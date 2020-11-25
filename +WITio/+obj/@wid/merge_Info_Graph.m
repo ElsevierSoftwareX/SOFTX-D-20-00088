@@ -8,7 +8,7 @@ function Info_Graph_merged = merge_Info_Graph(obj, dim),
     Graph_classes = cellfun(@class, Graphs, 'UniformOutput', false);
     Graph_classes = unique(Graph_classes);
     if numel(unique(Graph_classes)) > 1,
-        error('FAIL: Cannot merge Graphs of multiple classes (%s) together!', strjoin(Graph_classes, ', '));
+        error('FAIL: Cannot merge Graphs of multiple classes (%s) together!', WITio.fun.indep.mystrjoin(Graph_classes, ', '));
     end
     % IMPLEMENTATION IDEA for parse_consistently_or_abort:
     % uint64/int64 can contain EXACTLY itself, uint32/int32, uint16/int16, uint8/int8 and logical.

@@ -108,6 +108,6 @@ function href_dir(path, exts),
         ind_pkg_begin = find(~bw_pkg, 1, 'last')+1; % First index of first package folder
         pkgs = m_file_split(ind_pkg_begin:end-1); % Package folders
         [~, m] = fileparts(m_file);
-        str_eval = strjoin([pkgs {m}], '.'); % Command to the m-file
+        str_eval = WITio.fun.indep.mystrjoin([pkgs {m}], '.'); % Command to the m-file
     end
 end

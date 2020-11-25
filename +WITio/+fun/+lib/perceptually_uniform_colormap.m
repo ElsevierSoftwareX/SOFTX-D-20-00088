@@ -74,7 +74,7 @@ function cmap = perceptually_uniform_colormap(option, m),
             ind = 1:numel(options);
             bw = strcmp(options, option);
             if any(bw), option = ind(bw);
-            else error('OPTION can be one of these: %s!', strjoin(options, ', ')); end
+            else error('OPTION can be one of these: %s!', WITio.fun.indep.mystrjoin(options, ', ')); end
         end
     else error('OPTION must be a string!'); end
     
