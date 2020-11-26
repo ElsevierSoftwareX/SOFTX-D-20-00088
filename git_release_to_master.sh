@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x #echo on
 git checkout master
-read -p 'New branch name (i.e. release-v1.0.0): ' new_branch_name
+read -p 'New branch name (i.e. release-v2.0.0): ' new_branch_name
 git merge $new_branch_name --no-ff
 git push origin master
 git branch -D $new_branch_name
