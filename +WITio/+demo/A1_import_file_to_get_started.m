@@ -89,26 +89,27 @@ WITio.tbx.msgbox({'{\bf\fontsize{12}{\color{magenta}(A1 i.)} Load and browse fil
 % !!! Meaning of the OUTPUT variables:
 %
 % * O_wid:
-% Selected datas loaded as WID-class objects. Each object has the following
-% properties Type, Name, Data, Info, DataTree, Version, Id, ImageIndex,
-% OrdinalNumber, SubType, LinksToOthers, AllLinksToOthers, LinksToThis,
-% AllLinksToThis, Tag and Project. To see these, double-click O_wid under
-% Workspace to see each of these. Code interprets these from the loaded
-% file WIT-node tree structure.
+% Selected datas loaded as wid Data objects. Each object has the following
+% properties File, Name, Data, Type, Version, Info, DataTree, Id,
+% ImageIndex, OrdinalNumber, SubType, LinksToOthers, AllLinksToOthers,
+% LinksToThis, AllLinksToThis, Tag and Project. To see these, double-click
+% O_wid under Workspace to see each of these. Code interprets these from
+% the loaded file WIT-node tree structure.
 %
 % * O_wip:
-% Resulting project loaded as WIP-class object. Its properties are File,
-% Version, Data, Tree, ForceDataUnit, ForceSpaceUnit, ForceSpectralUnit,
-% ForceTimeUnit, AutoNanInvalid, AutoCreateObj, AutoCopyObj, AutoModifyObj,
-% FullStandardUnits, ArbitraryUnit, DefaultSpaceUnit, DefaultSpectralUnit
-% and DefaultTimeUnit.
+% Resulting project loaded as wip Project object. Its properties are File,
+% Name, Data, Type, Version, Tree, ForceDataUnit, ForceSpaceUnit,
+% ForceSpectralUnit, ForceTimeUnit, OnWriteDestroyAllViewers,
+% OnWriteDestroyDuplicateTransformations, AutoNanInvalid, AutoCreateObj,
+% AutoCopyObj, AutoModifyObj, FullStandardUnits, ArbitraryUnit,
+% DefaultSpaceUnit, DefaultSpectralUnit, DefaultTimeUnit and Projects.
 %
 % * O_wid_HtmlNames:
 % The Html names of the selected datas. Double-click O_wid_HtmlNames under
 % Workspace to see these (and rescale the 1st column by holding left-mouse
 % on the border between 1 and 2). This is useful feature, when loading a
 % lot of data at once. Alternatively, call 'O_wid.manager;' to open
-% selected WID-class objects in Project Manager view.
+% selected wid Data objects in Project Manager view.
 %-------------------------------------------------------------------------%
 
 
