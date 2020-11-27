@@ -3,7 +3,7 @@
 % All rights reserved.
 
 function format = DataTree_format_TDTransformation(Version_or_obj),
-    if nargin == 0, Version_or_obj = []; end
+    if nargin == 0 || numel(Version_or_obj) ~= 1, Version_or_obj = []; end
     
     % Parse Project from input
     Project = WITio.obj.wip.empty;

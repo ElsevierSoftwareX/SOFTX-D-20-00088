@@ -3,7 +3,7 @@
 % All rights reserved.
 
 function format = DataTree_format_TDInterpretation(Version_or_obj),
-    if nargin == 0, Version_or_obj = []; end
+    if nargin == 0 || numel(Version_or_obj) ~= 1, Version_or_obj = []; end
     
     % Each row: wit-tag name, isVisible, {write-parser; read-parser}
     subformat_TDInterpretation = ... % Excluding the Version-tag

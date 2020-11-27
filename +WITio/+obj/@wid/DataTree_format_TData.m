@@ -3,7 +3,7 @@
 % All rights reserved.
 
 function format = DataTree_format_TData(Version_or_obj),
-    if nargin == 0, Version_or_obj = []; end
+    if nargin == 0 || numel(Version_or_obj) ~= 1, Version_or_obj = []; end
     
     Version = Version_or_obj;
     if isa(Version_or_obj, 'WITio.obj.wid') || isa(Version_or_obj, 'WITio.obj.wip') || isa(Version_or_obj, 'WITio.obj.wit'),
