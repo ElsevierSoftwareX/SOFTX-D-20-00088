@@ -21,7 +21,7 @@ function out = wid_Data_get_Graph(obj),
         else,
             out = permute(reshape(obj.wid_Data_get_DataType(in), [SizeGraph SizeY SizeX]), [3 2 1]);
         end
-        if WITio.tbx.pref.get('wip_UseLineValid', true),
+        if WITio.tbx.pref.get('wip_AutoNanInvalid', true),
             out = obj.wid_Data_get_LineValid(out);
         end
     elseif Version >= 0 && Version <= 5 || Version == 6, % Legacy versions OR WITec Project 4.x
@@ -35,7 +35,7 @@ function out = wid_Data_get_Graph(obj),
         SizeGraph = TDGraph.regexp('^SizeGraph<', true).Data;
         % Reshape to user format
         out = permute(reshape(obj.wid_Data_get_DataType(in), [SizeGraph SizeY SizeX]), [3 2 1]);
-        if WITio.tbx.pref.get('wip_UseLineValid', true),
+        if WITio.tbx.pref.get('wip_AutoNanInvalid', true),
             out = obj.wid_Data_get_LineValid(out);
         end
     else, error('Unimplemented Version (%d)!', Version); end

@@ -99,7 +99,7 @@ WITio.tbx.msgbox({'{\bf\fontsize{12}{\color{magenta}(A1 i.)} Load and browse fil
 % * O_wip:
 % Resulting project loaded as WIP-class object. Its properties are File,
 % Version, Data, Tree, ForceDataUnit, ForceSpaceUnit, ForceSpectralUnit,
-% ForceTimeUnit, UseLineValid, AutoCreateObj, AutoCopyObj, AutoModifyObj,
+% ForceTimeUnit, AutoNanInvalid, AutoCreateObj, AutoCopyObj, AutoModifyObj,
 % FullStandardUnits, ArbitraryUnit, DefaultSpaceUnit, DefaultSpectralUnit
 % and DefaultTimeUnit.
 %

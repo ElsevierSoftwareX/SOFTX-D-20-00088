@@ -74,7 +74,7 @@ classdef wip < handle, % Since R2008a
     
     properties (Dependent) % READ-WRITE, DEPENDENT
         % The following properties are shared by all wip Project objects!
-        UseLineValid; % A feature of TDGraph and TDImage. If used, shows NaN where invalid.
+        AutoNanInvalid; % A feature of TDGraph and TDImage. If used, shows NaN where invalid.
         AutoCreateObj; % Automatically create a new object (whenever applicable). If false, then new_obj output should be empty.
         AutoCopyObj; % Automatically make a copy of the original object (whenever applicable). If false, then obj output should be originals.
         AutoModifyObj; % Automatically modify either the original object or its copy (whenever applicable). If false, then obj output should not be modified.
@@ -145,7 +145,7 @@ classdef wip < handle, % Since R2008a
                     obj.ForceTimeUnit = WITio.tbx.pref.get('wip_ForceTimeUnit', obj.ForceTimeUnit);
                     obj.OnWriteDestroyAllViewers = WITio.tbx.pref.get('wip_OnWriteDestroyAllViewers', obj.OnWriteDestroyAllViewers);
                     obj.OnWriteDestroyDuplicateTransformations = WITio.tbx.pref.get('wip_OnWriteDestroyDuplicateTransformations', obj.OnWriteDestroyDuplicateTransformations);
-                    obj.UseLineValid = WITio.tbx.pref.get('wip_UseLineValid', obj.UseLineValid);
+                    obj.AutoNanInvalid = WITio.tbx.pref.get('wip_AutoNanInvalid', obj.AutoNanInvalid);
                     obj.AutoCreateObj = WITio.tbx.pref.get('wip_AutoCreateObj', obj.AutoCreateObj);
                     obj.AutoCopyObj = WITio.tbx.pref.get('wip_AutoCopyObj', obj.AutoCopyObj);
                     obj.AutoModifyObj = WITio.tbx.pref.get('wip_AutoModifyObj', obj.AutoModifyObj);
@@ -312,14 +312,14 @@ classdef wip < handle, % Since R2008a
         
         
         %% OTHER METHODS
-        % LIFO (last in, first out) concept for UseLineValid
+        % LIFO (last in, first out) concept for AutoNanInvalid
         function latest = popUseLineValid(obj),
-            warning('Deprecated call! Use globally dependent UseLineValid-property instead!');
-            latest = WITio.tbx.pref.get('wip_UseLineValid', true); % With default
+            warning('Deprecated call! Use globally dependent AutoNanInvalid-property instead!');
+            latest = WITio.tbx.pref.get('wip_AutoNanInvalid', true); % With default
         end
         function pushUseLineValid(obj, latest),
-            warning('Deprecated call! Use globally dependent UseLineValid-property instead!');
-            WITio.tbx.pref.set('wip_UseLineValid', latest);
+            warning('Deprecated call! Use globally dependent AutoNanInvalid-property instead!');
+            WITio.tbx.pref.set('wip_AutoNanInvalid', latest);
         end
         
         % LIFO (last in, first out) concept for AutoCreateObj
@@ -352,11 +352,11 @@ classdef wip < handle, % Since R2008a
             WITio.tbx.pref.set('wip_AutoModifyObj', latest);
         end
         
-        function value = get.UseLineValid(obj),
-            value = WITio.tbx.pref.get('wip_UseLineValid', true); % With default
+        function value = get.AutoNanInvalid(obj),
+            value = WITio.tbx.pref.get('wip_AutoNanInvalid', true); % With default
         end
-        function set.UseLineValid(obj, value),
-            WITio.tbx.pref.set('wip_UseLineValid', value);
+        function set.AutoNanInvalid(obj, value),
+            WITio.tbx.pref.set('wip_AutoNanInvalid', value);
         end
         function value = get.AutoCreateObj(obj),
             value = WITio.tbx.pref.get('wip_AutoCreateObj', true); % With default
