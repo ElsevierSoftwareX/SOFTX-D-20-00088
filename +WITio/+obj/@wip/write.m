@@ -53,11 +53,11 @@ function write(obj, varargin),
         warning('Adding expected ''%s'' file extension!', required_ext);
     end
     
-    if obj.OnWriteDestroyAllViewers,
-        obj.destroy_all_Viewers;
+    if WITio.tbx.pref.get('wip_AutoDestroyViewers', true),
+        obj.destroy_Viewers;
     end
     
-    if obj.OnWriteDestroyDuplicateTransformations,
+    if WITio.tbx.pref.get('wip_AutoDestroyDuplicateTransformations', true),
         obj.destroy_duplicate_Transformations;
     end
     

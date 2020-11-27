@@ -99,10 +99,10 @@ WITio.tbx.msgbox({'{\bf\fontsize{12}{\color{magenta}(A1 i.)} Load and browse fil
 % * O_wip:
 % Resulting project loaded as wip Project object. Its properties are File,
 % Name, Data, Type, Version, Tree, ForceDataUnit, ForceSpaceUnit,
-% ForceSpectralUnit, ForceTimeUnit, OnWriteDestroyAllViewers,
-% OnWriteDestroyDuplicateTransformations, AutoNanInvalid, AutoCreateObj,
-% AutoCopyObj, AutoModifyObj, FullStandardUnits, ArbitraryUnit,
-% DefaultSpaceUnit, DefaultSpectralUnit, DefaultTimeUnit and Projects.
+% ForceSpectralUnit, ForceTimeUnit, AutoCopyObj, AutoCreateObj,
+% AutoModifyObj, AutoNanInvalid, AutoDestroyDuplicateTransformations,
+% AutoDestroyViewers, FullStandardUnits, ArbitraryUnit, DefaultSpaceUnit,
+% DefaultSpectralUnit, DefaultTimeUnit and Projects.
 %
 % * O_wid_HtmlNames:
 % The Html names of the selected datas. Double-click O_wid_HtmlNames under

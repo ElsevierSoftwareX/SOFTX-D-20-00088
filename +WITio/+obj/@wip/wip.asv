@@ -347,18 +347,15 @@ classdef wip < handle, % Since R2008a
             WITio.tbx.pref.set('wip_AutoModifyObj', latest);
         end
         
-        function value = get.AutoCopyObj(~), value = WITio.tbx.pref.get('wip_AutoCopyObj', true); end % With default
-        function set.AutoCopyObj(~, value), WITio.tbx.pref.set('wip_AutoCopyObj', value); end
-        function value = get.AutoCreateObj(~), value = WITio.tbx.pref.get('wip_AutoCreateObj', true); end % With default
-        function set.AutoCreateObj(~, value), WITio.tbx.pref.set('wip_AutoCreateObj', value); end
-        function value = get.AutoModifyObj(~), value = WITio.tbx.pref.get('wip_AutoModifyObj', true); end % With default
-        function set.AutoModifyObj(~, value), WITio.tbx.pref.set('wip_AutoModifyObj', value); end
-        function value = get.AutoNanInvalid(~), value = WITio.tbx.pref.get('wip_AutoNanInvalid', true); end % With default
-        function set.AutoNanInvalid(~, value), WITio.tbx.pref.set('wip_AutoNanInvalid', value); end
-        function value = get.AutoDestroyDuplicateTransformations(~), value = WITio.tbx.pref.get('wip_AutoDestroyDuplicateTransformations', true); end % With default
-        function set.AutoDestroyDuplicateTransformations(~, value), WITio.tbx.pref.set('wip_AutoDestroyDuplicateTransformations', value); end
-        function value = get.AutoDestroyViewers(~), value = WITio.tbx.pref.get('wip_AutoDestroyViewers', true); end % With default
-        function set.AutoDestroyViewers(~, value), WITio.tbx.pref.set('wip_AutoDestroyViewers', value); end
+        function value = get.AutoCopyObj(obj), value = WITio.tbx.pref.get('wip_AutoCopyObj', true); end % With default
+        function set.AutoCopyObj(obj, value), WITio.tbx.pref.set('wip_AutoCopyObj', value); end
+        function value = get.AutoCreateObj(obj),
+            value = WITio.tbx.pref.get('wip_AutoCreateObj', true); end
+        function set.AutoCreateObj(obj, value), WITio.tbx.pref.set('wip_AutoCreateObj', value); end
+        function value = get.AutoModifyObj(obj), value = WITio.tbx.pref.get('wip_AutoModifyObj', true); end % With default
+        function set.AutoModifyObj(obj, value), WITio.tbx.pref.set('wip_AutoModifyObj', value); end
+        function value = get.AutoNanInvalid(obj), value = WITio.tbx.pref.get('wip_AutoNanInvalid', true); end % With default
+        function set.AutoNanInvalid(obj, value), WITio.tbx.pref.set('wip_AutoNanInvalid', value); end
         
         
         
