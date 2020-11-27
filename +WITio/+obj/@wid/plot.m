@@ -30,6 +30,8 @@ function h = plot(obj, varargin),
     % MATLAB R2014b and newer have different HOLD ON behaviour.
     % http://se.mathworks.com/help/matlab/graphics_transition/why-are-plot-lines-different-colors.html
     % This is taken into account in this code.
+	
+    if numel(obj) ~= 1, error('Provide a single wid Data object!'); end
     
     Fig = gcf; % By default, update gcf
     Fig_sub = []; % Handle to preview-figure
