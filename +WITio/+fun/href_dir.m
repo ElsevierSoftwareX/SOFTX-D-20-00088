@@ -2,11 +2,15 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% List the path content using clickable html links. The file extensions can
-% be filtered by the OPTIONAL 2nd input is a char array (i.e. 'm;mat' for
-% *.m and *.mat files). All but MATLAB m-files are colored in red.
-function href_dir(path, exts),
-    if nargin == 0 || isempty(path), path = '.'; end % Browse the current folder by default
+% List the path content using clickable html links. All but MATLAB m-files
+% are colored in red for visual contrast. The file extensions can be
+% filtered by the providing char array as 2nd input (i.e. 'm;mat' for *.m
+% and *.mat files). Either omit 2nd input or provide [] for no filtering.
+% All inputs are optional.
+function href_dir(path, exts, fun_prior),
+    if nargin < 1 || isempty(path), path = '.'; end % Browse the current folder by default
+    if nargin < 2, exts = []; end % No filtering by default
+    if nargin < 3, fun_prior = []; end % No default prior function call
     S = dir(path);
     if isempty(S), return; end % Do nothing if empty struct
     
@@ -15,15 +19,16 @@ function href_dir(path, exts),
     path = cd(old_path);
     
     % Parse optional input
-    nofiltering = nargin < 2;
+    nofiltering = ~ischar(exts);
     
     % Generate eval string to this call and its optional 2nd input
     str_this = m_file_eval_str([mfilename('fullpath') '.m']);
     
     % Clear Command Window and fprintf the content
     clc;
-    if nofiltering, fprintf('\nFolders and files in <a href="matlab:cd(''%s'')">%s</a>:\n', path, path); 
-    else, fprintf('\nFolders and files (ext=''%s'') in <a href="matlab:cd(''%s'')">%s</a>:\n', exts, path, path); end
+    if isa(fun_prior, 'function_handle'), fun_prior(); end % Call prior function if given
+    if nofiltering, fprintf('Folders and files in <a href="matlab:cd(''%s'')">%s</a>:\n', path, path); 
+    else, fprintf('Folders and files (ext=''%s'') in <a href="matlab:cd(''%s'')">%s</a>:\n', exts, path, path); end
     
     % First, show the folders
     if nofiltering, fprintf('<a href="matlab:%s(''%s'')">%s..</a>', str_this, fullfile(path, '..'), filesep); % Display link
