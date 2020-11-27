@@ -7,6 +7,9 @@
 % hard disk space. This is beneficial because the WIT-formatted files can
 % often be significantly compressed in size.
 
+% Temporarily set user preferences
+resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCreateObj', 'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {true, true, true}); % The original values prior to this call are restored when resetOnCleanup-variable is cleared.
+
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
@@ -126,5 +129,8 @@ files_in_zip = WITio.fun.file.decompress('A_v5.wip.zip'); % This loads files BUT
 % The commented lines below demonstrates the actual decompression call:
 % [files_in_zip, datas_in_zip] = WITio.fun.file.decompress('A_v5.wip.zip'); % This loads files and their DECOMPRESSED datas
 %-------------------------------------------------------------------------%
+
+% Reset user preferences
+clear resetOnCleanup; % The original values are restored here.
 
 

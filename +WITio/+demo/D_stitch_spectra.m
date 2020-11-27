@@ -5,6 +5,9 @@
 %% WIT_IO DEMO CASE D: SPECTRAL STITCHING
 % Simple example of (D) spectral stitching.
 
+% Temporarily set user preferences
+resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCreateObj', 'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {true, true, true}); % The original values prior to this call are restored when resetOnCleanup-variable is cleared.
+
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
@@ -80,5 +83,8 @@ WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 close all;
 figure; O_result.plot;
 %-------------------------------------------------------------------------%
+
+% Reset user preferences
+clear resetOnCleanup; % The original values are restored here.
 
 

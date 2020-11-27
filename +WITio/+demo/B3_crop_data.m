@@ -5,6 +5,9 @@
 %% WIT_IO DEMO CASE B 3: DATA CROPPING
 % Simple examples of (B3) data cropping.
 
+% Temporarily set user preferences
+resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCreateObj', 'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {true, true, true}); % The original values prior to this call are restored when resetOnCleanup-variable is cleared.
+
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
@@ -110,5 +113,8 @@ O_wip.destroy_duplicate_Transformations; % Do it immediately
 % O_wip.OnWriteDestroyDuplicateTransformations = true; % OR do it later on write
 % WITio.tbx.pref.set('wip_OnWriteDestroyDuplicateTransformations', true); % Permanently change its user preference for the future runs
 %-------------------------------------------------------------------------%
+
+% Reset user preferences
+clear resetOnCleanup; % The original values are restored here.
 
 

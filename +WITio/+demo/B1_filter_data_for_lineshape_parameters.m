@@ -6,6 +6,9 @@
 % Simple examples of data post processing like (B1 i.) filtering and
 % (B1 ii.) fitting.
 
+% Temporarily set user preferences
+resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCreateObj', 'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {true, true, true}); % The original values prior to this call are restored when resetOnCleanup-variable is cleared.
+
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
@@ -144,5 +147,8 @@ figure; O_Point.plot('-compare', O_Point_0(end), O_Point_D(end), O_Point_G(end),
 WITio.tbx.uiwait(h);
 close all; % Close the plot
 %-------------------------------------------------------------------------%
+
+% Reset user preferences
+clear resetOnCleanup; % The original values are restored here.
 
 

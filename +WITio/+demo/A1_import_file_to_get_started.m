@@ -7,6 +7,9 @@
 % under '@wip'-folder to load WITec Project/Data (*.wip/*.wid) -files
 % directly to the MATLAB environment without manual exporting/importing.
 
+% Temporarily set user preferences
+resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCreateObj', 'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {true, true, true}); % The original values prior to this call are restored when resetOnCleanup-variable is cleared.
+
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
@@ -143,5 +146,8 @@ WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 % [O_wid, O_wip, O_wid_HtmlNames] = WITio.read(file, '-ifall'); % (1C) Ask whether to browse or load the file content
 % [O_wid, O_wip, O_wid_HtmlNames] = WITio.read(); % (1D) Browse the file system
 %-------------------------------------------------------------------------%
+
+% Reset user preferences
+clear resetOnCleanup; % The original values are restored here.
 
 

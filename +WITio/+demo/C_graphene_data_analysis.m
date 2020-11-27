@@ -7,6 +7,9 @@
 % recalibration, (C ii.) lineshape fitting, (C iii.) result cleaning and
 % (C iv.) histogram generation.
 
+% Temporarily set user preferences
+resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCreateObj', 'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {true, true, true}); % The original values prior to this call are restored when resetOnCleanup-variable is cleared.
+
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
@@ -208,5 +211,8 @@ figure; O_hist_I_2DperG.plot();
 WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
+
+% Reset user preferences
+clear resetOnCleanup; % The original values are restored here.
 
 

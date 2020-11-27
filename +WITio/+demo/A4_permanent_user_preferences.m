@@ -5,6 +5,9 @@
 %% WIT_IO DEMO CASE A 4: PERMANENT USER PREFERENCES
 % Simple examples of (A4) storing permanent user preferences.
 
+% Temporarily set user preferences
+resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCreateObj', 'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {true, true, true}); % The original values prior to this call are restored when resetOnCleanup-variable is cleared.
+
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 %-------------------------------------------------------------------------%
@@ -112,5 +115,8 @@ WITio.tbx.pref.rm(); % Removes all the user preferences
 % modifications during this example script.
 WITio.tbx.pref.set(pref_value_pairs_struct);
 %-------------------------------------------------------------------------%
+
+% Reset user preferences
+clear resetOnCleanup; % The original values are restored here.
 
 

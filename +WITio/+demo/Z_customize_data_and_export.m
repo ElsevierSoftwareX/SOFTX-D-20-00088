@@ -9,6 +9,9 @@
 % interpretations). The created WIP-file can then be opened in WITec's
 % external softwares.
 
+% Temporarily set user preferences
+resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCreateObj', 'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {true, true, true}); % The original values prior to this call are restored when resetOnCleanup-variable is cleared.
+
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
@@ -229,5 +232,8 @@ h = WITio.tbx.msgbox({'{\bf\fontsize{12}{\color{magenta}(Z)} Customizing data an
 WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 close all;
 %-------------------------------------------------------------------------%
+
+% Reset user preferences
+clear resetOnCleanup; % The original values are restored here.
 
 

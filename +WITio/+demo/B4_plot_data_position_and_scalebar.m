@@ -6,6 +6,9 @@
 % Simple examples of (B4) data position and scalebar plotting in order to
 % see their positions with respect to each other.
 
+% Temporarily set user preferences
+resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCreateObj', 'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {true, true, true}); % The original values prior to this call are restored when resetOnCleanup-variable is cleared.
+
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
@@ -121,5 +124,8 @@ figure(4); h4b = O_ImageScan.plot_scalebar('-Length', 3.5, '-TextHeightRatio', 0
 % [2] https://www.mathworks.com/help/matlab/ref/matlab.graphics.primitive.line-properties.html
 % [3] https://www.mathworks.com/help/matlab/ref/matlab.graphics.primitive.text-properties.html
 %-------------------------------------------------------------------------%
+
+% Reset user preferences
+clear resetOnCleanup; % The original values are restored here.
 
 

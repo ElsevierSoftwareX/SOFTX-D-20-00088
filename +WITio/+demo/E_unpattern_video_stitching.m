@@ -8,6 +8,9 @@
 % view at the Video camera per frame. Frame imperfections may be caused,
 % for instance, by vignetting or varying pixel sensitivity.
 
+% Temporarily set user preferences
+resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCreateObj', 'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {true, true, true}); % The original values prior to this call are restored when resetOnCleanup-variable is cleared.
+
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
@@ -114,5 +117,8 @@ figure; O_new_Bitmap_crop.plot;
 
 % O_wip.write(); % Save the results by overwriting the original file
 %-------------------------------------------------------------------------%
+
+% Reset user preferences
+clear resetOnCleanup; % The original values are restored here.
 
 

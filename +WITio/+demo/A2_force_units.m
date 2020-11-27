@@ -5,6 +5,9 @@
 %% WIT_IO DEMO CASE A 2: FORCING UNITS
 % Simple examples of (A2 i-iv.) forcing of the content units on the fly.
 
+% Temporarily set user preferences
+resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCreateObj', 'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {true, true, true}); % The original values prior to this call are restored when resetOnCleanup-variable is cleared.
+
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
@@ -129,5 +132,8 @@ Graph_Raman = O_ImageScan.interpret_Graph('rel. 1/cm'); % Convert the INTERNAL i
 [GraphUnit_Raman_2, Graph_Raman_2] = ...
     WITio.obj.wip.interpret(O_ImageScan_Info.GraphInterpretation, 'rel. 1/cm', O_ImageScan_Info.GraphUnit, O_ImageScan_Info.Graph); % More generic than previous line, assuming that O_ImageScan_Info.GraphInterpretation exists (as it usually does for Graph-axis).
 %-------------------------------------------------------------------------%
+
+% Reset user preferences
+clear resetOnCleanup; % The original values are restored here.
 
 

@@ -9,6 +9,9 @@
 % AFM, CRM and SNOM stand for Atomic Force Microscopy, Confocal Raman
 % Microscopy and Scanning Near-Field Optical Microscopy, respectively.
 
+% Temporarily set user preferences
+resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCreateObj', 'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {true, true, true}); % The original values prior to this call are restored when resetOnCleanup-variable is cleared.
+
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
@@ -107,5 +110,8 @@ O_Image_2.Data = WITio.fun.image.apply_MRLCM(O_Image_2.Data, 2); % Correct the d
 
 figure; O_Image_2.plot;
 %-------------------------------------------------------------------------%
+
+% Reset user preferences
+clear resetOnCleanup; % The original values are restored here.
 
 

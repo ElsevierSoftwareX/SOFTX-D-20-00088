@@ -5,6 +5,9 @@
 %% WIT_IO DEMO CASE A 3: DATA PLOTTING
 % Simple demonstration of (A3) data plotting.
 
+% Temporarily set user preferences
+resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCreateObj', 'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {true, true, true}); % The original values prior to this call are restored when resetOnCleanup-variable is cleared.
+
 WITio.tbx.edit(); % Open this code in Editor
 close all; % Close figures
 
@@ -73,5 +76,8 @@ figure; O_Bitmap.Info.XTransformation.plot(); % TDBitmap's TDSpaceTransformation
 WITio.tbx.uiwait(h);
 close all; % Close the plot
 %-------------------------------------------------------------------------%
+
+% Reset user preferences
+clear resetOnCleanup; % The original values are restored here.
 
 
