@@ -12,33 +12,27 @@ function resetOnCleanup = set(pref, value),
         if isstruct(pref), % SPECIAL CASE: a struct input
             if nargin == 1, value = struct2cell(pref); end
             pref = fieldnames(pref);
-            if nargout > 0, % TEMPORARY SETPREF
-                B_old = ispref('WITio', pref);
+        elseif nargin == 1,
+            if ischar(pref), value = [];
+            else, value = cell(size(pref)); end
+        end
+        if nargout > 0, % TEMPORARY SETPREF
+            B_old = ispref('WITio', pref);
+            if ischar(pref), % SPECIAL CASE: a char input
+                if B_old,
+                    value_old = getpref('WITio', pref);
+                    resetOnCleanup{1} = onCleanup(@() setpref('WITio', pref, value_old)); % Reset original value to preference
+                else,
+                    resetOnCleanup{1} = onCleanup(@() rmpref('WITio', pref)); % Remove originally nonexistent preference
+                end
+            else,
                 value_old = getpref('WITio', pref(B_old));
                 resetOnCleanup{1} = onCleanup(@() setpref('WITio', pref(B_old), value_old)); % Reset original values to preferences
                 resetOnCleanup{2} = onCleanup(@() rmpref('WITio', pref(~B_old))); % Remove originally nonexistent preferences
             end
-        elseif nargin == 1,
-            if ischar(pref),
-                value = [];
-                if nargout > 0, % TEMPORARY SETPREF
-                    if ispref('WITio', pref),
-                        value_old = getpref('WITio', pref);
-                        resetOnCleanup{1} = onCleanup(@() setpref('WITio', pref, value_old)); % Reset original value to preference
-                    else,
-                        resetOnCleanup{1} = onCleanup(@() rmpref('WITio', pref)); % Remove originally nonexistent preference
-                    end
-                end
-            else,
-                value = cell(size(pref));
-                if nargout > 0, % TEMPORARY SETPREF
-                    B_old = ispref('WITio', pref);
-                    value_old = getpref('WITio', pref(B_old));
-                    resetOnCleanup{1} = onCleanup(@() setpref('WITio', pref(B_old), value_old)); % Reset original values to preferences
-                    resetOnCleanup{2} = onCleanup(@() rmpref('WITio', pref(~B_old))); % Remove originally nonexistent preferences
-                end
-            end
         end
         setpref('WITio', pref, value);
+    elseif nargout > 0,
+        resetOnCleanup = [];
     end
 end
