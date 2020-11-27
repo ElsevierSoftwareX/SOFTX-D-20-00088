@@ -10,19 +10,14 @@
 % * Assumes that fun uses bsxfun-functionality, because I and X do not need
 % to be same size and only size(I, dim) == size(X, dim) is quaranteed!
 function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin),
-    % Get obj Project (even if it does not exist)
-    Project = obj.Project;
-    
-    % Pop states (even if not used to avoid push-pop bugs)
-    AutoCreateObj = Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
-    
     new_obj = WITio.obj.wid.empty;
     
-    Project.pushAutoCopyObj(false); % Temporarily don't allow copying
-    Project.pushAutoModifyObj(false); % Temporarily don't allow modifying
+    resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {false, false}); % Temporarily don't allow copying and modifying
     
     % Limit the 3rd dimension range and apply linear background removal (if set)
     [~, Data_range, Graph_range, Data_range_bg] = obj.filter_bg(varargin{:});
+    
+    clear resetOnCleanup; % Restore the original state
     
     % If a scalar or vector Graph_range, then force it to the dim'th dimension
     if sum(size(Graph_range) ~= 1) <= 1, 
@@ -46,7 +41,7 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin),
     Version = WITio.obj.wip.get_Root_Version(obj);
     Root = obj.Tag.Root;
     
-    % Get transformations and interpretations (but do not copy them even if popAutoCopyObj == true)
+    % Get transformations and interpretations (but do not copy them even if wip_AutoCopyObj == true)
     SpaceT = [obj.Tag.Data.regexp('^SpaceTransformationID<TDGraph<', true).Data 0];
     if Version == 7,
         SpaceST = [obj.Tag.Data.regexp('^SecondaryTransformationID<TDGraph<', true).Data 0]; %v7
@@ -60,7 +55,7 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin),
         varargout{ii} = result_ii; % Store this result as (ii+1)'th output
         
         % Create new object if permitted
-        if AutoCreateObj,
+        if WITio.tbx.pref.get('wip_AutoCreateObj', true),
             new_obj(ii) = WITio.obj.wid.new_Image(Root); % This does not add newly created object to Project yet!
             new_obj(ii).Name = sprintf('%s[%g-%g]<%s', str_fun{ii}, varargin{1}(1), varargin{1}(2), Name); % Generate new name
             new_obj(ii).Data = result_ii; % Save result-variable content as Data
@@ -82,13 +77,14 @@ function [new_obj, varargout] = filter_fun(obj, fun, str_fun, varargin),
         varargout{end+1} = Data_range_new; % Store this result as last output
         
         % Create new object if permitted
-        if AutoCreateObj, 
-            Project.pushAutoCopyObj(true); % Temporarily allow copying
-            Project.pushAutoModifyObj(true); % Temporarily allow modifying
-
+        if WITio.tbx.pref.get('wip_AutoCreateObj', true),
+            resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {true, true}); % Temporarily allow copying and modifying
+            
             new_TDGraph = obj.crop_Graph([], Data_range_new, Graph_range); % Which uses wid.copy-function that automatically appends new copy (and its LinksToOthers) to the Project
             new_TDGraph.Name = sprintf('%s[%g-%g]<%s', str_fun{end}, varargin{1}(1), varargin{1}(2), Name); % Generate new name
-
+            
+            clear resetOnCleanup; % Restore the original state
+            
             new_obj = [new_obj new_TDGraph]; % Also return new_TDGraph
         end
     end

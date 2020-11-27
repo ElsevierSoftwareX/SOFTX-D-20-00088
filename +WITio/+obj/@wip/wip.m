@@ -70,12 +70,14 @@ classdef wip < handle, % Since R2008a
         % Configure writing behaviour
         OnWriteDestroyAllViewers = true; % If true, then removes all the Viewer windows (shown on the WITec software side). This avoids possible corruption of the modified files, because WITio mostly ignores Viewers.
         OnWriteDestroyDuplicateTransformations = true; % If true, then removes all the duplicate Transformations (and keeps the first one).
-        % Below LIFO (last in, first out) arrays with their default values.
-        % Update the default values (if changed) in their pop-functions.
-        UseLineValid = true; % A feature of TDGraph and TDImage. If used, shows NaN where invalid.
-        AutoCreateObj = true; % Automatically create a new object (whenever applicable). If false, then new_obj output should be empty.
-        AutoCopyObj = true; % Automatically make a copy of the original object (whenever applicable). If false, then obj output should be originals.
-        AutoModifyObj = true; % Automatically modify either the original object or its copy (whenever applicable). If false, then obj output should not be modified.
+    end
+    
+    properties (Dependent) % READ-WRITE, DEPENDENT
+        % The following properties are shared by all wip Project objects!
+        UseLineValid; % A feature of TDGraph and TDImage. If used, shows NaN where invalid.
+        AutoCreateObj; % Automatically create a new object (whenever applicable). If false, then new_obj output should be empty.
+        AutoCopyObj; % Automatically make a copy of the original object (whenever applicable). If false, then obj output should be originals.
+        AutoModifyObj; % Automatically modify either the original object or its copy (whenever applicable). If false, then obj output should not be modified.
     end
     
     properties (Constant) % READ-ONLY, CONSTANT
@@ -312,34 +314,67 @@ classdef wip < handle, % Since R2008a
         %% OTHER METHODS
         % LIFO (last in, first out) concept for UseLineValid
         function latest = popUseLineValid(obj),
-            latest = obj.popBoolean('UseLineValid', WITio.tbx.pref.get('wip_UseLineValid', true)); % With default
+            warning('Deprecated call! Use globally dependent UseLineValid-property instead!');
+            latest = WITio.tbx.pref.get('wip_UseLineValid', true); % With default
         end
         function pushUseLineValid(obj, latest),
-            obj.pushBoolean('UseLineValid', latest);
+            warning('Deprecated call! Use globally dependent UseLineValid-property instead!');
+            WITio.tbx.pref.set('wip_UseLineValid', latest);
         end
         
         % LIFO (last in, first out) concept for AutoCreateObj
         function latest = popAutoCreateObj(obj),
-            latest = obj.popBoolean('AutoCreateObj', WITio.tbx.pref.get('wip_AutoCreateObj', true)); % With default
+            warning('Deprecated call! Use globally dependent AutoCreateObj-property instead!');
+            latest = WITio.tbx.pref.get('wip_AutoCreateObj', true); % With default
         end
         function pushAutoCreateObj(obj, latest),
-            obj.pushBoolean('AutoCreateObj', latest);
+            warning('Deprecated call! Use globally dependent AutoCreateObj-property instead!');
+            WITio.tbx.pref.set('wip_AutoCreateObj', latest);
         end
         
         % LIFO (last in, first out) concept for AutoCopyObj
         function latest = popAutoCopyObj(obj),
-            latest = obj.popBoolean('AutoCopyObj', WITio.tbx.pref.get('wip_AutoCopyObj', true)); % With default
+            warning('Deprecated call! Use globally dependent AutoCopyObj-property instead!');
+            latest = WITio.tbx.pref.get('wip_AutoCopyObj', true); % With default
         end
         function pushAutoCopyObj(obj, latest),
-            obj.pushBoolean('AutoCopyObj', latest);
+            warning('Deprecated call! Use globally dependent AutoCopyObj-property instead!');
+            WITio.tbx.pref.set('wip_AutoCopyObj', latest);
         end
         
         % LIFO (last in, first out) concept for AutoModifyObj
         function latest = popAutoModifyObj(obj),
-            latest = obj.popBoolean('AutoModifyObj', WITio.tbx.pref.get('wip_AutoModifyObj', true)); % With default
+            warning('Deprecated call! Use globally dependent AutoModifyObj-property instead!');
+            latest = WITio.tbx.pref.get('wip_AutoModifyObj', true); % With default
         end
         function pushAutoModifyObj(obj, latest),
-            obj.pushBoolean('AutoModifyObj', latest);
+            warning('Deprecated call! Use globally dependent AutoModifyObj-property instead!');
+            WITio.tbx.pref.set('wip_AutoModifyObj', latest);
+        end
+        
+        function value = get.UseLineValid(obj),
+            value = WITio.tbx.pref.get('wip_UseLineValid', true); % With default
+        end
+        function set.UseLineValid(obj, value),
+            WITio.tbx.pref.set('wip_UseLineValid', value);
+        end
+        function value = get.AutoCreateObj(obj),
+            value = WITio.tbx.pref.get('wip_AutoCreateObj', true); % With default
+        end
+        function set.AutoCreateObj(obj, value),
+            WITio.tbx.pref.set('wip_AutoCreateObj', value);
+        end
+        function value = get.AutoCopyObj(obj),
+            value = WITio.tbx.pref.get('wip_AutoCopyObj', true); % With default
+        end
+        function set.AutoCopyObj(obj, value),
+            WITio.tbx.pref.set('wip_AutoCopyObj', value);
+        end
+        function value = get.AutoModifyObj(obj),
+            value = WITio.tbx.pref.get('wip_AutoModifyObj', true); % With default
+        end
+        function set.AutoModifyObj(obj, value),
+            WITio.tbx.pref.set('wip_AutoModifyObj', value);
         end
         
         
@@ -374,29 +409,6 @@ classdef wip < handle, % Since R2008a
         % Update Tree- and Data-properties according to wit Tree object changes
         wip_update_Tree(obj);
         wip_update_Data(obj, isObjectBeingDestroyed);
-        
-        % GENERIC BOOLEAN LIFO (last in, first out) concept
-        function latest = popBoolean(obj, field, default),
-            if isempty(obj),
-                latest = default(end); % Return (last) default value if an empty wip
-            else,
-                lifo_array = obj.(field);
-                latest = lifo_array(end);
-                if numel(lifo_array) > 1, % Pop element if not first
-                    obj.(field) = lifo_array(1:end-1);
-                end
-            end
-        end
-        function pushBoolean(obj, field, latest),
-            if ~islogical(latest) && ~isnumeric(latest),
-                error('Accepting only logical or numeric arrays!');
-            end
-            if ~isempty(obj), % Continue only if non-empty wip
-                latest = logical(latest(:)); % Force to logical column vector
-                ind_latest = 1:numel(latest);
-                obj.(field)(end+ind_latest) = latest; % Push elements in the given order
-            end
-        end
     end
     
     methods (Static)

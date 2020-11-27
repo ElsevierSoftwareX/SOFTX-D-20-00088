@@ -12,9 +12,6 @@
 % to UNPHYSICAL stitching result in the overlapping regions, even if their
 % apparent stitching result looks smooth!
 function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin),
-    % Pop states (even if not used to avoid push-pop bugs)
-    AutoCreateObj = obj(1).Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
-    
     new_obj = WITio.obj.wid.empty;
     
     % Add obj(s) as varargin
@@ -48,7 +45,7 @@ function [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin),
     
     % Create new object if permitted
     obj = O_wid(1);
-    if AutoCreateObj,
+    if WITio.tbx.pref.get('wip_AutoCreateObj', true),
         new_obj = obj.copy(); % Copy first object, because all of them must be of same spatial size
         delete(new_obj.LinksToOthers.XTransformationID); % But destroy copied TDSpectralTransformation
         

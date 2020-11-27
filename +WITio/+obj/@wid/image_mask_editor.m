@@ -5,11 +5,6 @@
 function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
     if numel(obj) > 1, error('Provide either an empty or a single wid Data object!'); end
     
-    % Pop states (even if not used to avoid push-pop bugs)
-    Project = [obj.Project];
-    if isempty(Project), AutoCreateObj = false;
-    else, AutoCreateObj = Project.popAutoCreateObj; end % Get the latest value (may be temporary or permanent or default)
-    
     new_obj = WITio.obj.wid.empty;
     
     % MASK GENERATION IF NO MASK INPUT / MASK EDITING IF NO MAIN INPUT
@@ -52,7 +47,7 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
     end
     
     % Create new object if permitted
-    if AutoCreateObj,
+    if WITio.tbx.pref.get('wip_AutoCreateObj', true),
         new_obj = WITio.obj.wid.new_Image(obj.Tag.Root); % This does not add newly created object to Project yet!
         new_obj.Name = sprintf('Mask<%s', obj.Name); % Generate new name
         new_obj.Data = image_mask;

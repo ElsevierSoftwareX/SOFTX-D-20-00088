@@ -3,9 +3,6 @@
 % All rights reserved.
 
 function [new_obj, Bin_Counts, Bin_Centers] = histogram(obj, N_bins, lower_quantile, upper_quantile, range_scaling),
-    % Pop states (even if not used to avoid push-pop bugs)
-    AutoCreateObj = obj.Project.popAutoCreateObj; % Get the latest value (may be temporary or permanent or default)
-    
     % Accepts inputs like in WITec Project 2.10
     if nargin < 5, range_scaling = 2; end % 200%
     if nargin < 4, upper_quantile = 0.95; end % 95%
@@ -56,7 +53,7 @@ function [new_obj, Bin_Counts, Bin_Centers] = histogram(obj, N_bins, lower_quant
     % Create a new TDGraph object for histogram
     
     % Create new object if permitted
-    if AutoCreateObj,
+    if WITio.tbx.pref.get('wip_AutoCreateObj', true),
         new_obj = WITio.obj.wid.new_Graph(obj.Tag.Root); % This does not add newly created object to Project yet!
         new_obj.Name = sprintf('Histogram[%s%d bins]<%s', Method_bins, N_bins, obj.Name); % Generate new name
         new_obj.Data = reshape(Bin_Counts, 1, 1, []);

@@ -68,8 +68,9 @@ O_masked = O_ImageScan.image_mask(O_Mask); % Mask data (second input is mask)
 
 % CASE (B2 i. C.):
 % O_mask = O_ImageScan.image_mask_editor(); % Create a new mask using O_ImageScan as background!
-O_wip.pushAutoCreateObj(false); % Avoid TEMPORARILY creating a new mask object
+resetOnCleanup = WITio.tbx.pref.set('wip_AutoCreateObj', false); % Avoid TEMPORARILY creating a new mask object
 [~, O_Mask.Data] = O_ImageScan.image_mask_editor(O_Mask.Data); % Edit mask O_mask using O_ImageScan as background!
+clear resetOnCleanup; % Restore the original state
 close all; % Close the plot
 %-------------------------------------------------------------------------%
 

@@ -70,12 +70,12 @@ h = WITio.tbx.msgbox({'{\bf\fontsize{12}{\color{magenta}(B1 i.)} Apply filters o
 %-------------------------------------------------------------------------%
 % Determine project parameters (but not needed because AutoCreateObj,
 % AutoCopyObj and AutoModifyObj are true by default).
-% O_wip.AutoCreateObj = true; % If wid-class functions should ALWAYS create new object
-% O_wip.AutoCopyObj = true; % If wid-class functions should ALWAYS copy object
-% O_wip.AutoModifyObj = true; % If wid-class functions should ALWAYS modify object
-% O_wip.pushAutoCreateObj(true); % If wid-class functions should ONLY ONCE create new object
-% O_wip.pushAutoCopyObj(true); % If wid-class functions should ONLY ONCE copy object
-% O_wip.pushAutoModifyObj(true); % If wid-class functions should ONLY ONCE modify object
+% WITio.tbx.pref.set('wip_AutoCreateObj', true); % If wid-class functions should ALWAYS create new object
+% WITio.tbx.pref.set('wip_AutoCopyObj', true); % If wid-class functions should ALWAYS copy object
+% WITio.tbx.pref.set('wip_AutoModifyObj', true); % If wid-class functions should ALWAYS modify object
+% resetOnCleanup = WITio.tbx.pref.set('wip_AutoCreateObj', true); % If wid-class functions should TEMPORARILY create new object until 'resetOnCleanup' is cleared
+% resetOnCleanup = WITio.tbx.pref.set('wip_AutoCopyObj', true); % If wid-class functions should TEMPORARILY copy object until 'resetOnCleanup' is cleared
+% resetOnCleanup = WITio.tbx.pref.set('wip_AutoModifyObj', true); % If wid-class functions should TEMPORARILY modify object until 'resetOnCleanup' is cleared
 
 % Specify the spectral ranges for the Raman D, G and 2D-peaks of graphene
 Range_D = [1300 1400]; % Filtering range for the D-peak

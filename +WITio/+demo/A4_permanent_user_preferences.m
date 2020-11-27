@@ -91,6 +91,12 @@ WITio.tbx.pref.set('wip_AutoModifyObj', false);
 
 
 
+% Temporarily set user preferences
+resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCreateObj', 'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {false, false, false}); % The original values prior to this call are restored when resetOnCleanup-variable is cleared.
+clear resetOnCleanup; % The original values are restored here.
+
+
+
 % Removing user preferences (and returning to the default values for the
 % next created objects).
 WITio.tbx.pref.rm('wip_ForceTimeUnit'); % Removes the specified user preference

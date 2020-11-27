@@ -27,10 +27,6 @@ function [obj, N_bests, Datas] = unpattern_video_stitching(obj, varargin),
     
     % Call a helper function
     for ii = 1:numel(obj),
-        % Pop states for each object (even if not used to avoid push-pop bugs)
-        AutoCopyObj = obj(ii).Project.popAutoCopyObj; % Get the latest value (may be temporary or permanent or default)
-        AutoModifyObj = obj(ii).Project.popAutoModifyObj; % Get the latest value (may be temporary or permanent or default)
-        
         % Get the related TDText object (or error)
         if ~isempty(TDText), O_Text = TDText(ii);
         else, O_Text = obj(ii).Project.find_Data(obj(ii).Id+1); end % Next object after TDBitmap should be the related TDText object
@@ -54,19 +50,19 @@ function [obj, N_bests, Datas] = unpattern_video_stitching(obj, varargin),
         [Datas{ii}, N_bests(ii), cropIndices] = WITio.obj.wid.unpattern_video_stitching_helper(obj(ii).Data, [N_X N_Y], varargin{:});
         
         % Copy the object if permitted
-        if AutoCopyObj, obj(ii) = obj(ii).copy(); end
+        if WITio.tbx.pref.get('wip_AutoCopyObj', true), obj(ii) = obj(ii).copy(); end
         
         % Modify the object (or its copy) if permitted
-        if AutoModifyObj,
+        if WITio.tbx.pref.get('wip_AutoModifyObj', true),
             obj(ii).Data = Datas{ii};
             obj(ii).Name = sprintf('Pattern Removal<%s', obj(ii).Name);
         end
         
         % Crop image transformations if needed
         if ~isempty(cropIndices),
-            obj(ii).Project.pushAutoCopyObj(false); % Temporarily don't allow copying
-            obj(ii).Project.pushAutoModifyObj(true); % Temporarily allow modifying
+            resetOnCleanup = WITio.tbx.pref.set({'wip_AutoCopyObj', 'wip_AutoModifyObj'}, {false, true}); % Temporarily don't allow copying but allow modifying
             obj(ii).crop(cropIndices(1), cropIndices(2), cropIndices(3), cropIndices(4), [], [], [], [], true);
+            clear resetOnCleanup; % Restore the original state
         end
     end
 end

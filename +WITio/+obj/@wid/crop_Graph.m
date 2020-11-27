@@ -6,12 +6,9 @@
 % the given pixel indices [ind_range(1), ind_range(2)]. It is assumed that
 % the given object and pixel indices are valid.
 function [obj, Data_cropped, Graph_cropped] = crop_Graph(obj, ind_range, Data_cropped, Graph_cropped),
-    % Pop states (even if not used to avoid push-pop bugs)
-    AutoCopyObj = obj.Project.popAutoCopyObj; % Get the latest value (may be temporary or permanent or default)
-    AutoModifyObj = obj.Project.popAutoModifyObj; % Get the latest value (may be temporary or permanent or default)
     
     % Copy the object if permitted
-    if AutoCopyObj, obj = obj.copy(); end
+    if WITio.tbx.pref.get('wip_AutoCopyObj', true), obj = obj.copy(); end
     
     % Load the object Info and Graph once
     Info = obj.Info;
@@ -37,7 +34,7 @@ function [obj, Data_cropped, Graph_cropped] = crop_Graph(obj, ind_range, Data_cr
     end
     
     % Modify the object (or its copy) if permitted
-    if AutoModifyObj,
+    if WITio.tbx.pref.get('wip_AutoModifyObj', true),
         % Update the object
         obj.Data = Data_cropped; % Updating this affects Info.Graph calculus. Correct order is to do this last.
         
