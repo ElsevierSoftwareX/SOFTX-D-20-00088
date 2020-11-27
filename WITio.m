@@ -4,5 +4,20 @@
 
 % Display the content of the toolbox
 function WITio(),
-    WITio.fun.href_dir(WITio.tbx.path);
+    WITio.fun.href_dir(WITio.tbx.path, [], @WITio_helper);
+    
+    function WITio_helper(),
+        p = path; % Get old path
+        p_split = regexp(p, pathsep, 'split'); % Split by the path separator
+        isThisToolbox = strcmp(p_split, WITio.tbx.path); % Find this toolbox
+        if ~any(isThisToolbox),
+            fprintf('Cannot find this version in the MATLAB search path! Click <a href="matlab:WITio.tbx.rmpath_addpath;">here</a> to resolve it.\n\n');
+        else,
+            p_match = regexp(p_split(~isThisToolbox), ['.*\' filesep '(wit_io|WITio)\' filesep '?.*'], 'match', 'once'); % Match any old toolboxes
+            isOldToolbox = ~cellfun(@isempty, p_match); % Find old toolboxes
+            if any(isOldToolbox),
+                fprintf('Found other versions in the MATLAB search path! Click <a href="matlab:WITio.tbx.rmpath_addpath;">here</a> to resolve it.\n\n');
+            end
+        end
+    end
 end
