@@ -1,11 +1,11 @@
-# [WITio: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wid) files][file-exchange]
+# [WITio: A MATLAB data evaluation toolbox for WITec Project/Data (\*.wip/\*.wid) files][file-exchange]
 
 [![WITio v2.0.0 Changelog Badge][changelog-badge]][changelog] [![BSD License Badge][license-badge]][license]
 
 [changelog-badge]: https://img.shields.io/badge/changelog-WITio_v2.0.0-0000ff.svg
 
-Toolbox can directly **read**/**write** [WITec] Project/Data (\*.wip/\*.wid)
-files in [MATLAB] with or without GUI. It also provides data analysis tools.
+**WITio** is a [MATLAB] data evaluation toolbox to **read**/**write** [WITec] Project/Data (\*.wip/\*.wid)
+files with GUI or without.
 
 ![Example image](README.png)
 
@@ -14,58 +14,56 @@ files in [MATLAB] with or without GUI. It also provides data analysis tools.
 ## Overview
 
 ### Description
-This [MATLAB] toolbox is intended for users of [WITec.de][WITec] microscopes
-(i.e. Raman or SNOM), who work with **\*.wip**/**\*.wid** files (**v0** &ndash; **v7**)
-and wish to directly **read**/**write** and **analyze** them in MATLAB. The
-main aim of this project is to reduce the time consumed by importing, exporting
-and various post-processing steps. Toolbox can also [read/write **any** WIT-tag
-formatted files](#any-wit-tag-formatted-file).
+**WITio** is intended for users of [WITec] microscopes, who work with
+**\*.wip**/**\*.wid** files (from **v0** to **v7**) and want to enrich
+their data evaluation within [MATLAB] environment. **WITio** makes it
+possible to use the best of both [WITec] software and [MATLAB], because of
+its bidirectional read/write capabilities. It not only reduces the time
+spent at exporting data from [WITec] software and importing to other data
+evaluation software like [MATLAB], but also provides a platform to automate
+data analysis and post-processing by scripting.
 
 ### Background
-The **WITio** (or formerly **wit_io** for v1.x or *wip_reader* for v0.x) project began in 2016 as a side product
-of MATLAB analysis of huge Raman spectroscopic datasets obtained by WITec Raman
-Alpha 300 RA. The hope was to reduce time spent to manual exporting (from WITec
-software) and importing (in MATLAB software) and benefit from MATLAB's many
-libraries, scriptability, customizability and better suitability to BIG data
-analysis. During its development author worked for prof. Harri Lipsanen's group
-in Aalto University, Finland.
-
-
+**WITio** (or formerly *wit_io* for v1 or *wip_reader* for v0) project began
+in 2016 as a by-product of on-going [MATLAB] data evaluation of large Raman
+spectroscopic datasets obtained by *WITec Raman Alpha 300 RA*. The initial
+purpose was to reduce time spent at manual exporting and importing, and benefit
+from MATLAB's many libraries, script language and improved suitability to big
+data evaluation. During its development author has worked for prof. Harri
+Lipsanen's group in Aalto University, Finland.
 
 ## Usage
 
 ### License
 This is published under **free** and **permissive** [BSD 3-Clause License][license].
-Only exceptions to this license can be found in the *'[third party]'* folder.
+Only exceptions to this license can be found in the *'[third party]'* package.
 
 ### Installation to MATLAB (for R2014b or newer)
-Download [the latest toolbox installer] and double-click it to
-install it.
+Download [the latest toolbox installer] and double-click it to install it.
 
 ### Installation to MATLAB (from R2011a to R2014a)
 Download [the latest zip archive] and extract it as a new folder (i.e. *'wit_io'*)
 to your workfolder.
 
-**For the first time**, go to the created folder and run *(or F5)* *'[WITio.m]'*
-to **permanently** add it and its subfolders to MATLAB path so that the toolbox
-can be called from anywhere. **This requires administration rights.**
+**For the first time**, go to the created folder and run (or press *F5*-key)
+*'[WITio.m]'* to **permanently** add its folder to the MATLAB path so that the
+toolbox packages are found. **This requires administration rights.**
 * Without the rights, do one of the following once per MATLAB instance to make
-**wit_io** findable:
-    1. Execute `addpath(genpath('toolbox_path'));`, where `'toolbox_path'`
-is **wit_io**'s full installation path.
-    2. Manually right-click **wit_io**'s main folder in "Current Folder"-view
-and from the context menu left-click "Add to Path" and "Selected Folders and
-Subfolders".
+**WITio** findable:
+    1. Execute `addpath('toolbox_path');`, where `'toolbox_path'` is **WITio**'s 
+    full installation path.
+    2. Manually right-click **WITio**'s main folder in "Current Folder"-view and 
+    from the context menu left-click "Add to Path" and "Selected Folders and Subfolders".
 
 ### Installation to context menus (for MATLAB R2011a or newer)
-**Optionally**, run *(or F5)* also *'[WITio.tbx.wip_wid_context_menus.m]'*
-to add *'MATLAB'*-option to the **\*.wip** and **\*.wid** file right-click
-context menus to enable a quick call to `[O_wid, O_wip, O_wit] = WITio.read(file);`.
+**Optionally**, run also *'[WITio.tbx.wip_wid_context_menus.m]'* to add
+*'MATLAB'*-option to the **\*.wip** and **\*.wid** file right-click context
+menus to enable a quick call to `[O_wid, O_wip, O_wit] = WITio.read(file);`.
 **This also requires administration rights.**
 
-### Example cases
-Run *(or F5)* interactive code (*\*.m*) under *'[demo]'*-package to
-learn **WITio**. Begin by opening and running *'WITio.demo.A1_import_file_to_get_started'*.
+### Demo cases
+Execute `WITio.demo` in *Command Window* to list all available demo cases and
+left-mouse click to run `WITio.demo.A1_import_file_to_get_started` and so on.
 
 ### Semi-automated batch scripts
 Consider using semi-automated batch scripts under *'[batch]'*-package on your
@@ -73,20 +71,24 @@ WITec Project/Data files. They will read the given file, interact with the
 user, process the relevant file contents and finally write back to the original
 file.
 
+### Backward compatibility with *wit_io* v1.4.0.1 (or older) scripts
+Transition from v1.4.0.1 to v2.0.0 involves **major and minor breaking changes**,
+all described in [CHANGELOG.md][changelog]. It is highly recommended to go through
+all renewed demo cases and inspect *'[WITio.tbx.backward_compatible.m]'* as well. Pass
+on any questions to jtholmi@gmail.com
+
 ### Requirements and compatibility:
-* Requires [MATLAB](https://www.mathworks.com/products/matlab.html).
-* Compatible with MATLAB R2011a (or newer) in Windows, macOS and Linux operating
-systems.
+* Requires [MATLAB] on Windows, macOS and Linux operating systems.
+* Compatible with MATLAB R2011a (or newer), but in the future may be limited
+MATLAB R2014b to ensure improved OOP performance.
 
 ## Advanced users
 
 ### Any WIT-tag formatted file
-Toolbox can also **read** from and **write** to **arbitrary** WIT-tag formatted
-files with use of `O_wit = WITio.obj.wit.read(file);` and `O_wit.write();`, respectively.
+**WITio* can also **read** from and **write** to **arbitrary** WIT-tag formatted
+files by `O_wit = WITio.obj.wit.read(file);` and `O_wit.write();`, respectively.
 Any WIT-tag tree content can be modified using `S_DT = WITio.obj.wit.DataTree_get(O_wit);`
-and `WITio.obj.wit.DataTree_set(O_wit, S_DT);` class functions. Trees can also be viewed
-in collapsed form from workspace after call to `S = O_wit.collapse();` (read-only)
-or `O_wit_debug = WITio.obj.debug(O_wit);` (read+write).
+and `WITio.obj.wit.DataTree_set(O_wit, S_DT);`.
 
 ### Format details of \*.wip/\*.wid-files
 For more information, read *'[README on WIT-tag format.txt]'*. Please note
@@ -131,6 +133,7 @@ J. T. Holmi (2019). WITio: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wi
 [batch]: ./+WITio/+batch
 [WITio.m]: ./WITio.m
 [WITio.tbx.wip_wid_context_menus.m]: ./+WITio/+tbx/wip_wid_context_menus.m
+[WITio.tbx.backward_compatible.m]: ./+WITio/+tbx/backward_compatible.m
 [README on WIT-tag format.txt]: ./+WITio/+doc/README%20on%20WIT-tag%20format.txt
 [clever_statistics_and_outliers.m]: ./+WITio/+fun/clever_statistics_and_outliers.m
 [myinpolygon.m]: ./+WITio/+fun/+indep/myinpolygon.m
