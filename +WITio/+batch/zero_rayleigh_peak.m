@@ -8,7 +8,7 @@
 % excitation wavelength.
 
 % Load and select the data with Rayleigh-peak
-[O_wid_w_Rayleigh, O_wip, ~] = WITio.read('-batch', '-SpectralUnit', 'rel. 1/cm', '-Manager', ...
+[O_wid_w_Rayleigh, O_wip, ~] = WITio.read('-SpectralUnit', 'rel. 1/cm', '-Manager', ...
     '--closepreview', '--singlesection', '--Title', 'SELECT ONE DATA WITH RAYLEIGH-PEAK', '--Type', 'TDGraph');
 if isempty(O_wid_w_Rayleigh), return; end
 

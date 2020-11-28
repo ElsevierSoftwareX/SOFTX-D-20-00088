@@ -10,7 +10,7 @@
 % Source: http://dx.doi.org/10.1016/j.compchemeng.2010.11.004
 
 % Load and select the datas of interest
-[O_wid, O_wip, O_wit] = WITio.read('-batch', '-ifall', '-Manager', '--closepreview', '--Type', 'TDGraph', '--SubType', 'Time');
+[O_wid, O_wip, O_wit] = WITio.read('-ifall', '-Manager', '--closepreview', '--Type', 'TDGraph', '--SubType', 'Time');
 if isempty(O_wid), return; end
 
 % Ask if to make copies

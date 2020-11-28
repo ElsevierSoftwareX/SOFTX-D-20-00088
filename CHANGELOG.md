@@ -33,7 +33,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 - [`WITio.tbx.backward_compatible`][2.0.0,A1]: New function to import all needed classes and functions to run [WITio v1.4.0.1 example cases][2.0.0,A2].
 - [`handle_listener`][2.0.0,A3]-class: New class (used by redesigned `wip`-class) to track any handle object without preventing its automated garbage collection.
-- [`WITio.read`][2.0.0,A4]: New wrapper function to call legacy `WITio.obj.wip.read`. It accepts new `'-batch'`-flag to keep the `wip Project` objects separate, allowing true file batch working.
+- [`WITio.read`][2.0.0,A4]: New wrapper function to call legacy `WITio.obj.wip.read`.
 - `wit`-class: Add `disableObjectModified`, `enableObjectModified` and `notifyObjectModified` methods to more easily control the event firing outside the class. For the first two, if an output is stored, then the effect will be temporary until the output cleanup.
 - [`@wit/addlistener`][2.0.0,A5]: Accept `PreSet`, `PostSet`, `PreGet`, `PostGet` property events and store the created listeners to new `PropListeners`-property.
 - New `WITio`, `WITio.batch`, `WITio.demo`, `WITio.dev`, `WITio.doc`, `WITio.fun`, `WITio.obj` and `WITio.tbx` functions to quickly show package contents as a traversable and clickable list using new [`WITio.fun.href_dir`][2.0.0,A6] function.
@@ -67,8 +67,9 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 - **Minor breaking change**: Simplify use of [`wip`][2.0.0,C12]-class `AutoNanInvalid` (formerly `UseLineValid`), `AutoCreateObj`, `AutoCopyObj` and `AutoModifyObj` properties by making their values globally shared among all `wip Project` objects with `WITio.tbx.pref`-package functions and abandoning use of more complicated pop/push-functions.
 - **Minor breaking change**: Rename [`wip`][2.0.0,C12]-class `OnWriteDestroyAllViewers` and `OnWriteDestroyDuplicateTransformations` properties as `AutoDestroyDuplicateTransformations` and `AutoDestroyViewers`, respectively, and make them globally shared like above.
 - **Minor breaking change**: Encourage use of `manager`-method by replacing the 3rd output `O_wid_HtmlNames` of `WITio.read`, `WITio.obj.wid.read` and `WITio.obj.wip.read` by `O_wit`.
+- **Minor breaking change**: When reading multiple files by `WITio.read`, make new default behaviour to keep files in separate `wip Project` objects. For legacy behaviour, new `'-append'`-parameter was added to replicate the old behaviour, where subsequent projects were appended to the first project.
 - `wip`-class: Transition to *event-oriented programming* in order to **synchronize** the created objects with the underlying `wit Tree` objects and fix the garbage collection issues. From now on, create only one `wip Project` object instance per one root of an `wit Tree` object. In effect, `add_Data`, `destroy_Data` and `update` methods are not anymore needed to manually update the `wip Project` object.
-- `WITio.read`: Warn if attempting to append mixed version (v5-v7) WIT-formatted files and force `'-batch'`-flag on, avoiding the corruption of such saved files!
+- `WITio.read`: Warn if attempting to append mixed version (v5-v7) WIT-formatted files and disable `'-append'`-flag, avoiding the corruption of such saved files!
 - Rename the toolbox from **wit_io** to **WITio**, but keep the code repository folder name as is.
 - [`wit`][2.0.0,C13]-class: Make `Listeners`-property return an array of objects rather than a cell array of objects.
 - [`wid`][2.0.0,C14]-class: Its constructor now accepts a `wip Project` object as input and returns empty for invalid or deleted input.

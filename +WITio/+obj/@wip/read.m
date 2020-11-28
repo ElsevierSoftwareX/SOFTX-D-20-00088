@@ -8,6 +8,11 @@ function [O_wid, O_wip, O_wit] = read(varargin),
     % 0) Input is parsed into files and extra case-insensitive options:
     % *Option '-all': Skip Project Manager and load all data in the files.
     % *Option '-ifall': Inquery the user whether or not to do '-all'.
+    % *Option '-append': Appends all subsequent projects into the first
+    % project. Before WITio v2.0.0 this was the default behaviour when
+    % multiple files were read. Since WITio v2.0.0 it has been disabled and
+    % replaced by new default behaviour, namely file batch mode, in which
+    % the projects are kept separate.
     % *Option '-LimitedRead': If given, then limit file content reading to
     % the specified number of bytes per Data and skip any exceeding Data.
     % The skipped Data is read from file later only if requested by a user.
@@ -38,7 +43,7 @@ function [O_wid, O_wip, O_wit] = read(varargin),
     
     showProjectManager = ~WITio.fun.varargin_dashed_str.exists('all', varargin); % By default, show Project Manager
     show_ui_ifall = WITio.fun.varargin_dashed_str.exists('ifall', varargin);
-    doAppend = ~WITio.fun.varargin_dashed_str.exists('batch', varargin);
+    doAppend = WITio.fun.varargin_dashed_str.exists('append', varargin);
     
     [exists, datas] = WITio.fun.varargin_dashed_str.exists_and_datas('LimitedRead', varargin, -1);
     LimitedRead = Inf; % By default, unlimited read
@@ -88,7 +93,7 @@ function [O_wid, O_wip, O_wit] = read(varargin),
     WITio.tbx.delete_waitbars; % Close the waitbar
     if isempty(O_wit), return; end % Abort if no file to read!
     
-    % Append wit Tree objects together if '-batch'-parameter was not given
+    % Append wit Tree objects together if '-append'-parameter was given
     if doAppend,
         Versions = arrayfun(@WITio.obj.wip.get_Root_Version, O_wit);
         Versions(Versions < 5) = 5; % All versions less than or equal to 5 can be safely appended together
@@ -96,12 +101,12 @@ function [O_wid, O_wip, O_wit] = read(varargin),
             O_wit = WITio.obj.wip.append(O_wit, O_wit(2:end));
             O_wip = WITio.obj.wip(O_wit);
         else, % OTHERWISE, WARN AND GO FOR BATCH-MODE
-            warning('Safe appending of mixed-version (v5-v7) WIT-formatted files is not implemented yet! Continuing by switching on ''-batch''-flag in order to keep the wip Project objects separate...');
+            warning('Safe appending of mixed-version (v5-v7) WIT-formatted files is not implemented yet! Continuing by switching on the file batch mode in order to keep the wip Project objects separate...');
             doAppend = false;
         end
     end
     
-    % Double-check if '-batch'-flag has been enabled
+    % Double-check if '-append'-flag has not been given
     if ~doAppend,
         O_wip = arrayfun(@WITio.obj.wip, O_wit);
     end

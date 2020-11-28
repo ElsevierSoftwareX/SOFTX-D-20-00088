@@ -13,7 +13,7 @@
 % Source: http://dx.doi.org/10.1016/j.compchemeng.2010.11.004
 
 % Load and select the dark current
-[O_wid_dark, O_wip, ~] = WITio.read('-batch', '-Manager', ...
+[O_wid_dark, O_wip, ~] = WITio.read('-Manager', ...
     '--closepreview', '--singlesection', '--Title', 'SELECT ONE DARK', '--Type', 'TDGraph');
 if isempty(O_wid_dark), return; end
 

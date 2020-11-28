@@ -65,7 +65,7 @@ WITio.tbx.msgbox({'{\bf\fontsize{12}{\color{magenta}(A1 i.)} Load and browse fil
 
 %-------------------------------------------------------------------------%
 % This opens the specified file in a Project Manager -window.
-[O_wid, O_wip, O_wit] = WITio.read(file); % (1A) Browse the file contents
+[O_wid, O_wip, O_wit] = WITio.read(file); % (A1 i.) Browse the file contents
 
 % '-Manager'-option with single-dashed options require enclosing by
 % {}-brackets:
@@ -146,9 +146,15 @@ WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 
 %-------------------------------------------------------------------------%
 % This opens the specified file. Then automatically loads all.
-% [O_wid, O_wip, O_wit] = WITio.read(file, '-all'); % (1B) Load all file content
-% [O_wid, O_wip, O_wit] = WITio.read(file, '-ifall'); % (1C) Ask whether to browse or load the file content
-% [O_wid, O_wip, O_wit] = WITio.read(); % (1D) Browse the file system
+% [O_wid, O_wip, O_wit] = WITio.read(file, '-all'); % (A1 ii.) Load all file content
+% [O_wid, O_wip, O_wit] = WITio.read(file, '-ifall'); % (A1 iii.) Ask whether to browse or load the file content
+% [O_wid, O_wip, O_wit] = WITio.read(); % (A1 iv.) Browse the file system
+
+% For legacy users before WITio v2.0.0: When reading multiple files, in
+% order to replicate default behavior in older WITio versions, add
+% '-append'-parameters to the inputs. New default behaviour is to operate
+% in file batch mode, where each file are kept in separate wip Project
+% objects.
 %-------------------------------------------------------------------------%
 
 % Reset user preferences
