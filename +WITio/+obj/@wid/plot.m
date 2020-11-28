@@ -30,7 +30,7 @@ function h = plot(obj, varargin),
     % MATLAB R2014b and newer have different HOLD ON behaviour.
     % http://se.mathworks.com/help/matlab/graphics_transition/why-are-plot-lines-different-colors.html
     % This is taken into account in this code.
-	
+    
     if isempty(obj), return; end % Do nothing if empty
     if numel(obj) > 1, error('Provide either an empty or a single wid Data object!'); end
     

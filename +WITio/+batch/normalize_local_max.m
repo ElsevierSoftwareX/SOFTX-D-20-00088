@@ -39,5 +39,4 @@ waitbar(1, h, 'Completed! Writing...');
 % Overwrite the files
 for ii = 1:numel(O_wip), O_wip(ii).write(); end
 
-% Close the waitbar
-delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Avoids the closing issues with close-function!
+WITio.tbx.delete_waitbars; % Close the waitbar

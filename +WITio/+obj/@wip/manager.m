@@ -280,7 +280,7 @@ function O_wid = manager(obj, varargin),
                 end
             end
     %         if N_new > 0, set(hcontainer2, 'Visible', 'off'); drawnow; hcomponent2.setValue(0); end % Java waitbar
-            delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Solves the closing issues with close(h_Waitbar);
+            WITio.tbx.delete_waitbars; % Close the waitbar
             isBusy = false;
             if isQueue, % Release queue
                 isQueue = false;

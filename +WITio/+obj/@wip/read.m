@@ -85,7 +85,7 @@ function [O_wid, O_wip, O_wit] = read(varargin),
     end
     if ~ishandle(h), return; end % Abort if cancelled!
     waitbar(1, h, 'Completed!');
-    delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Avoids the closing issues with close-function!
+    WITio.tbx.delete_waitbars; % Close the waitbar
     if isempty(O_wit), return; end % Abort if no file to read!
     
     % Append wit Tree objects together if '-batch'-parameter was not given

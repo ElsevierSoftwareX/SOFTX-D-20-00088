@@ -49,7 +49,7 @@ function sidebar_export(Fig),
         setpref('export_fig', 'promo_time', now); % Stop export_fig from promoting consulting services once a week!
         WITio.fun.lib.export_fig.export_fig(file, Fig, export_opt{:}, '-silent');
         waitbar(1, h_waitbar);
-        delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Solves the closing issues with close(h_Waitbar);
+        WITio.tbx.delete_waitbars; % Close the waitbar
     end
     
     % Restore mainbar and sidebar if they existed

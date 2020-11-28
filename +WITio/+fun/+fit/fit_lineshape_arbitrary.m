@@ -413,7 +413,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
         P(~locks,bw) = P(~locks,bw) + dP; % P(n+1)-P(n) = dP(n) = - Hr2(n)\Jr2(n);
     end
     waitbar(1);
-    delete(findobj(allchild(0), 'flat', 'Tag', 'TMWWaitbar')); % Solves the closing issues with close(h_Waitbar);
+    WITio.tbx.delete_waitbars; % Close the waitbar
     
     % Restore the warning state
     warning(w_old_state);
