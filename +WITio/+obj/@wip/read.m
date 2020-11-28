@@ -108,7 +108,7 @@ function [O_wid, O_wip, O_wit] = read(varargin),
     
     % Double-check if '-append'-flag has not been given
     if ~doAppend,
-        O_wip = arrayfun(@WITio.obj.wip, O_wit);
+        for ii = numel(O_wit):-1:1, O_wip(ii,1) = WITio.obj.wip(O_wit(ii)); end % Use loop instead of arrayfun due to found incompatibility with MATLAB R2014b
     end
     
     % Force DataUnit, SpaceUnit, SpectralUnit, TimeUnit:
