@@ -44,7 +44,7 @@ function wip_wid_context_menus(),
     fprintf(fid, '[%s\\command]\n', subroot1);
     fprintf(fid, '@="\\"%s\\""\n', MatlabExe);
     fprintf(fid, '[%s\\ddeexec]\n', subroot1);
-    fprintf(fid, '@="[filepath, name, ext] = fileparts(''%%1''); cd(filepath); [O_wid, O_wip, O_wid_HtmlNames] = WITio.read(fullfile(filepath, [name ext]));"\n');
+    fprintf(fid, '@="[filepath, name, ext] = fileparts(''%%1''); cd(filepath); [O_wid, O_wip, O_wit] = WITio.read(fullfile(filepath, [name ext]));"\n');
     fprintf(fid, '[%s\\ddeexec\\application]\n', subroot1);
     fprintf(fid, '@="%s"\n', ShellVerbs);
     fprintf(fid, '[%s\\ddeexec\\topic]\n', subroot1);
@@ -57,7 +57,7 @@ function wip_wid_context_menus(),
     fprintf(fid, '[%s\\command]\n', subroot2);
     fprintf(fid, '@="\\"%s\\""\n', MatlabExe);
     fprintf(fid, '[%s\\ddeexec]\n', subroot2);
-    fprintf(fid, '@="[filepath, name, ext] = fileparts(''%%1''); cd(filepath); [O_wid, O_wip, O_wid_HtmlNames] = WITio.read(fullfile(filepath, [name ext]));"\n');
+    fprintf(fid, '@="[filepath, name, ext] = fileparts(''%%1''); cd(filepath); [O_wid, O_wip, O_wit] = WITio.read(fullfile(filepath, [name ext]));"\n');
     fprintf(fid, '[%s\\ddeexec\\application]\n', subroot2);
     fprintf(fid, '@="%s"\n', ShellVerbs);
     fprintf(fid, '[%s\\ddeexec\\topic]\n', subroot2);

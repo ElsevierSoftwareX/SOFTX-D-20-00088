@@ -33,14 +33,14 @@ WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 
 
 %-------------------------------------------------------------------------%
-[O_wid, O_wip, O_wid_HtmlNames] = WITio.read(file, '-all', '-SpectralUnit', 'rel. 1/cm'); % Load all the file plottable content
+[O_wid, O_wip, O_wit] = WITio.read(file, '-all', '-SpectralUnit', 'rel. 1/cm'); % Load all the file plottable content
 
 % Get handles to some specific data
 O_Text = O_wid(1); % Get object of "Global (Calibration Information)" at index 1
 O_Bitmap = O_wid(2); % Get object of "Exfoliated graphene (Gr) on SiO2/Si-substrate<Video Image (Data)" at index 2
 O_ImageScan = O_wid(3); % Get object of "Reduced<Image Scan 1 (Data)" at index 3
 O_Mask = O_wid(7); % Get object of "1-layer Gr<Mask 2" at index 7
-% To see these names, double-click O_wid_HtmlNames-variable under your Workspace!
+% To see these names, either call 'O_wid(1).Name' or 'O_wid.manager;' in Command Window!
 
 
 

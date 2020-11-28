@@ -33,7 +33,7 @@ WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 
 
 %-------------------------------------------------------------------------%
-[O_wid, O_wip, O_wid_HtmlNames] = WITio.read(file, '-all', '-SpectralUnit', 'rel. 1/cm'); % Load all the file plottable content
+[O_wid, O_wip, O_wit] = WITio.read(file, '-all', '-SpectralUnit', 'rel. 1/cm'); % Load all the file plottable content
 
 % Get handles to some specific data
 O_Bitmap = O_wid(2); % Get object of "Exfoliated graphene (Gr) on SiO2/Si-substrate<Video Image (Data)" at index 2

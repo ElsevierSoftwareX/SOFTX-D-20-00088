@@ -6,7 +6,7 @@
 % [1] https://se.mathworks.com/help/matlab/ref/regexprep.html
 
 % Load and select the datas of interest
-[O_wid, O_wip, O_wid_HtmlNames] = WITio.read('-ifall', '-batch', '-Manager', ...
+[O_wid, O_wip, O_wit] = WITio.read('-ifall', '-batch', '-Manager', ...
     '--all', '--nopreview', '--Title', 'SELECT DATA TO RENAME');
 if isempty(O_wid), return; end
 

@@ -35,7 +35,7 @@ WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 
 %-------------------------------------------------------------------------%
 % Load all TDImages.
-[O_wid, O_wip, O_wid_HtmlNames] = WITio.read(file, '-all', '-Manager', '--Type', 'TDImage');
+[O_wid, O_wip, O_wit] = WITio.read(file, '-all', '-Manager', '--Type', 'TDImage');
 
 O_Image = O_wid(7); % Get object of "Raman Si-peak<Sum[500-550]<Image Scan 2" at index 7
 

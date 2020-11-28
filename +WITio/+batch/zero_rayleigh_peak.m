@@ -19,7 +19,7 @@ C_0 = O_wid_w_Rayleigh.filter_gaussian(Range_0); % Gauss filtering with removal 
 Rayleigh_nm = O_wid_w_Rayleigh.interpret_Graph('(nm)', Rayleigh_rel_invcm); % Calculate mean excitation wavelength
 
 % Load and select the datas of interest
-[O_wid, O_wip, O_wid_HtmlNames] = WITio.read(O_wip.File, '-ifall', '-Manager', ...
+[O_wid, O_wip, O_wit] = WITio.read(O_wip.File, '-ifall', '-Manager', ...
     '--nopreview', '--Title', 'SELECT DATA THAT CAN BE CORRECTED', '--Type', 'TDGraph');
 if isempty(O_wid), return; end
 

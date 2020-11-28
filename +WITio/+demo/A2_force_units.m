@@ -75,7 +75,7 @@ WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 % corresponding units. For '-DataUnit', the input can be a string (new name
 % of the Unit). For others, the input can be an integer (UnitIndex) or a
 % search string.
-[O_wid, O_wip, O_wid_HtmlNames] = WITio.read(file, '-all', ...
+[O_wid, O_wip, O_wit] = WITio.read(file, '-all', ...
     '-DataUnit', 'Counts', ... % Can be a string
     '-SpaceUnit', 'um', ... % Can be an integer (0-5) or a search string
     '-SpectralUnit', 'nm', ... % Can be an integer (0-7) or a search string

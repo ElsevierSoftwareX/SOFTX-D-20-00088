@@ -408,7 +408,7 @@ classdef wip < handle, % Since R2008a
         [O_wit, varargout] = append(varargin);
         
         % File reader
-        [O_wid, O_wip, O_wid_HtmlNames] = read(varargin);
+        [O_wid, O_wip, O_wit] = read(varargin);
         Version = read_Version(File);
         
         % File version

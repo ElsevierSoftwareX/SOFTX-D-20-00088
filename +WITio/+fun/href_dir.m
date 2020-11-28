@@ -85,11 +85,11 @@ function href_dir(path, exts, fun_prior),
                 fprintf(2, '<a href="matlab:load(''%s'');" style="font-weight:bold">load</a> ', files_valid{ii}); % Display red link (stderr)
                 fprintf('\b)\n');
             case {'wid', 'wip'},
-                fprintf(2, '<a href="matlab:[O_wid,O_wip,O_wid_HtmlNames]=WITio.read(''%s'');">%s</a>%s', files_valid{ii}, names_valid{ii}, str_spaces); % Display red link (stderr)
+                fprintf(2, '<a href="matlab:[O_wid,O_wip,O_wit]=WITio.read(''%s'');">%s</a>%s', files_valid{ii}, names_valid{ii}, str_spaces); % Display red link (stderr)
                 fprintf('(');
-                fprintf(2, '<a href="matlab:[O_wid,O_wip,O_wid_HtmlNames]=WITio.read(''%s'');" style="font-weight:bold">with manager</a> ', files_valid{ii}); % Display red link (stderr)
+                fprintf(2, '<a href="matlab:[O_wid,O_wip,O_wit]=WITio.read(''%s'');" style="font-weight:bold">with manager</a> ', files_valid{ii}); % Display red link (stderr)
                 fprintf('or ');
-                fprintf(2, '<a href="matlab:[O_wid,O_wip,O_wid_HtmlNames]=WITio.read(''%s'', ''-all'');">without</a> ', files_valid{ii}); % Display red link (stderr)
+                fprintf(2, '<a href="matlab:[O_wid,O_wip,O_wit]=WITio.read(''%s'', ''-all'');">without</a> ', files_valid{ii}); % Display red link (stderr)
                 fprintf('\b)\n');
             case exts_show,
                 fprintf(2, '<a href="matlab:figure;imshow(imread(''%s''));">%s</a>%s', files_valid{ii}, names_valid{ii}, str_spaces); % Display red link (stderr)

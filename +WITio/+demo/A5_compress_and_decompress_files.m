@@ -35,7 +35,7 @@ WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 h = WITio.tbx.msgbox({'{\bf\fontsize{12}{\color{magenta}(A5)} Compress and decompress files:}' ...
 '' ...
 '\bullet Decompressing is done automatically if ''.zip'' or ''.zst'' extension is detected:' ...
-'{\bf\fontname{Courier}[O\_wid, O\_wip, O\_wid\_HtmlNames] = ' ...
+'{\bf\fontname{Courier}[O\_wid, O\_wip, O\_wit] = ' ...
 'WITio.read(''example.wip.zip'', ''-all'');}' ...
 '' ...
 '\bullet Compressing is done automatically if ''.zip'' or ''.zst'' extension is detected:' ...
@@ -57,7 +57,7 @@ WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 %-------------------------------------------------------------------------%
 % Load example file as uncompressed
 fprintf('\n----------------------\nINITIAL PREPARATION...\n----------------------\n');
-[O_wid, O_wip, O_wid_HtmlNames] = WITio.read(file, '-all');
+[O_wid, O_wip, O_wit] = WITio.read(file, '-all');
 %-------------------------------------------------------------------------%
 
 
@@ -104,8 +104,8 @@ O_wip.write('A_v5.wip.zst'); % By default, use minimum compression for *.zst
 %-------------------------------------------------------------------------%
 % Decompress the compressed example file
 fprintf('\n----------------\nDECOMPRESSING...\n----------------\n');
-[O_wid2, O_wip2, O_wid_HtmlNames2] = WITio.read('A_v5.wip.zip', '-all');
-[O_wid2, O_wip2, O_wid_HtmlNames2] = WITio.read('A_v5.wip.zst', '-all');
+[O_wid2, O_wip2, O_wit2] = WITio.read('A_v5.wip.zip', '-all');
+[O_wid2, O_wip2, O_wit2] = WITio.read('A_v5.wip.zst', '-all');
 
 % By default, only the *.wid and *.wip are decompressed from *.zip and
 % *.zst files and all the others are ignored. For *.zip, if there are
@@ -115,7 +115,7 @@ fprintf('\n----------------\nDECOMPRESSING...\n----------------\n');
 
 % If it is important to load only certain files from *.zip file, then
 % filter the files extra parameter '--Files' like commented below:
-% [O_wid2, O_wip2, O_wid_HtmlNames2] = WITio.read('A_v5.wip.zip', '-all', '-Params', '--Files', 'A_v5.wip'); % Find and load 'A_v5.wip'
+% [O_wid2, O_wip2, O_wit2] = WITio.read('A_v5.wip.zip', '-all', '-Params', '--Files', 'A_v5.wip'); % Find and load 'A_v5.wip'
 
 % For more customization details, see to WITio.fun.file.decompress. The
 % second dash '-' in front, like in '--Files', is needed because the

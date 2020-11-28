@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
+function [O_wid, O_wip, O_wit] = read(varargin),
     % WITec Project/Data (*.WIP/*.WID) -file data reader. Returns the
     % selected data when the Project Manager -window (if opened) is CLOSED.
     % 0) Input is parsed into files and extra case-insensitive options:
@@ -27,7 +27,7 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     % By default, empty output
     O_wid = WITio.obj.wid.empty;
     O_wip = WITio.obj.wip.empty;
-    O_wid_HtmlNames = cell.empty;
+    O_wit = WITio.obj.wit.empty;
     
     % START OF VARARGIN PARSING
     
@@ -68,7 +68,6 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     compressed_ext = {'.zip', '.zst'};
     
     % Read all files preferring limited read and append them together
-    O_wit = WITio.obj.wit.empty;
     h = waitbar(0, 'Please wait...');
     for ii = 1:numel(files),
         if ~ishandle(h), return; end % Abort if cancelled!
@@ -131,12 +130,10 @@ function [O_wid, O_wip, O_wid_HtmlNames] = read(varargin),
     if ~showProjectManager, ManagerVarargin{end+1} = '-nomanager'; end
     O_wid = O_wip.manager(ManagerVarargin{:});
     
-    % Get html names with icons
-    O_wid_HtmlNames = O_wid.get_HtmlName();
-    
     % Force output to column (More user-friendly!)
     O_wid = O_wid(:);
-    O_wid_HtmlNames = O_wid_HtmlNames(:); % Much more user-friendly this way!
+    O_wip = O_wip(:);
+    O_wit = O_wit(:);
     
     function obj = OnReadDecompress_loop(obj, File),
         % Get file name

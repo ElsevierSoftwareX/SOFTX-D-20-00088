@@ -32,7 +32,7 @@ WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 
 %-------------------------------------------------------------------------%
 % Load all TDGraphs and set their SpectralUnits to '(nm)'.
-[O_wid, O_wip, O_wid_HtmlNames] = WITio.read(file, '-all', '-Manager', '--Type', 'TDGraph', '-SpectralUnit', 'nm');
+[O_wid, O_wip, O_wit] = WITio.read(file, '-all', '-Manager', '--Type', 'TDGraph', '-SpectralUnit', 'nm');
 %-------------------------------------------------------------------------%
 
 
