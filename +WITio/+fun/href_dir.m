@@ -107,10 +107,7 @@ function href_dir(path, exts, fun_prior),
                     fprintf(2, '<a href="matlab:load(''%s'');" style="font-weight:bold">load</a> ', files_valid{ii}); % Display red link (stderr)
                     fprintf('\b)\n');
                 else,
-                    fprintf(2, '%s%s', names_valid{ii}, str_spaces);
-                    fprintf('(');
-                    fprintf(2, 'load ');
-                    fprintf('\b)\n');
+                    fprintf('%s%s(load)\n', names_valid{ii}, str_spaces);
                 end
             case {'wid', 'wip'},
                 if isDesktop,
@@ -121,12 +118,7 @@ function href_dir(path, exts, fun_prior),
                     fprintf(2, '<a href="matlab:[O_wid,O_wip,O_wit]=WITio.read(''%s'', ''-all'');">without</a> ', files_valid{ii}); % Display red link (stderr)
                     fprintf('\b)\n');
                 else,
-                    fprintf(2, '%s%s', names_valid{ii}, str_spaces);
-                    fprintf('(');
-                    fprintf(2, 'with manager ');
-                    fprintf('or ');
-                    fprintf(2, 'without ');
-                    fprintf('\b)\n');
+                    fprintf('%s%s(with manager or without)\n', names_valid{ii}, str_spaces);
                 end
             case exts_show,
                 if isDesktop,
@@ -135,10 +127,7 @@ function href_dir(path, exts, fun_prior),
                     fprintf(2, '<a href="matlab:figure;imshow(imread(''%s''));" style="font-weight:bold">show</a> ', files_valid{ii}); % Display red link (stderr)
                     fprintf('\b)\n');
                 else,
-                    fprintf(2, '%s%s', names_valid{ii}, str_spaces);
-                    fprintf('(');
-                    fprintf(2, 'show ');
-                    fprintf('\b)\n');
+                    fprintf('%s%s(show)\n', names_valid{ii}, str_spaces);
                 end
             otherwise,
                 if isDesktop,
@@ -147,10 +136,7 @@ function href_dir(path, exts, fun_prior),
                     fprintf(2, '<a href="matlab:edit(''%s'')" style="font-weight:bold">edit</a> ', files_valid{ii}); % Display red link (stderr)
                     fprintf('\b)\n');
                 else,
-                    fprintf(2, '%s%s', names_valid{ii}, str_spaces);
-                    fprintf('(');
-                    fprintf(2, 'edit ');
-                    fprintf('\b)\n');
+                    fprintf('%s%s(edit)\n', names_valid{ii}, str_spaces);
                 end
         end
     end

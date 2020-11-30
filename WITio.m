@@ -19,6 +19,7 @@ function WITio(),
             else,
                 fprintf('Cannot find this version in the MATLAB search path! Executing WITio.tbx.rmpath_addpath; to resolve it.\n\n');
                 WITio.tbx.rmpath_addpath;
+                fprintf('\n');
             end
         else,
             p_match = regexp(p_split(~isThisToolbox), ['.*\' filesep '(wit_io|WITio)\' filesep '?.*'], 'match', 'once'); % Match any old toolboxes
@@ -29,6 +30,7 @@ function WITio(),
                 else,
                     fprintf('Found other versions in the MATLAB search path! Executing WITio.tbx.rmpath_addpath; to resolve it.\n\n');
                     WITio.tbx.rmpath_addpath;
+                    fprintf('\n');
                 end
             end
         end
