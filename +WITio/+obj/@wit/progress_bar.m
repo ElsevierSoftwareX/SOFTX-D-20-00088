@@ -15,6 +15,10 @@
 function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max, varargin),
     persistent tictoc N_dots_lower N_bytes_lower N_dots_upper N_bytes_upper latest_text latest_text_toc;
     
+    % Determine whether or not to use \b to update fprintf
+    isDesktop = usejava('desktop'); % The \b to update fprintf is possible only if MATLAB is running in Desktop-mode
+    % If false, then fun_now_text does nothing!
+    
     % Parse extra inputs: Width
     parsed = WITio.fun.varargin_dashed_str.datas('Width', varargin, -1);
     width_in_characters = 50; % By default, use 50 characters wide progress bar
@@ -51,41 +55,53 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
     N_bytes_lower = N_bytes(N_dots_lower + 1);
     N_dots_upper = 1;
     N_bytes_upper = N_bytes(N_dots_upper + 1);
+    N_dots_lower_nodisplay = 0; % Store previous N_dots_lower when -nodisplay
     
     % Initialize text-related variables
     latest_text = '';
     latest_text_toc = 0;
     
     % Determine in which way to update the progress bar
-    if Reverse,
-        if FlipStartEnd, progress_bar_now = @progress_bar_now_yes_reverse_yes_flip;
-        else, progress_bar_now = @progress_bar_now_yes_reverse_no_flip; end
-    else,
-        if FlipStartEnd, progress_bar_now = @progress_bar_now_no_reverse_yes_flip;
-        else, progress_bar_now = @progress_bar_now_no_reverse_no_flip; end
+    if isDesktop,
+        if Reverse,
+            if FlipStartEnd, progress_bar_now = @progress_bar_now_yes_reverse_yes_flip;
+            else, progress_bar_now = @progress_bar_now_yes_reverse_no_flip; end
+        else,
+            if FlipStartEnd, progress_bar_now = @progress_bar_now_no_reverse_yes_flip;
+            else, progress_bar_now = @progress_bar_now_no_reverse_no_flip; end
+        end
+    else, % Enforce No Reverse and No Flip for -nodesktop
+        progress_bar_now = @progress_bar_now_no_reverse_no_flip;
     end
     
     % Return the key functions to operate the progress bar
     fun_start = @progress_bar_start;
-    if OnlyIncreasing,
-        if FlipStartEnd, fun_now = @progress_bar_now_only_decrease;
-        else, fun_now = @progress_bar_now_only_increase; end
-    elseif OnlyDecreasing,
-        if FlipStartEnd, fun_now = @progress_bar_now_only_increase;
-        else, fun_now = @progress_bar_now_only_decrease; end
-    else,
-        fun_now = @progress_bar_now_either_increase_or_decrease;
+    if isDesktop,
+        if OnlyIncreasing,
+            if FlipStartEnd, fun_now = @progress_bar_now_only_decrease;
+            else, fun_now = @progress_bar_now_only_increase; end
+        elseif OnlyDecreasing,
+            if FlipStartEnd, fun_now = @progress_bar_now_only_increase;
+            else, fun_now = @progress_bar_now_only_decrease; end
+        else,
+            fun_now = @progress_bar_now_either_increase_or_decrease;
+        end
+    else, % Enforce Only Increasing for -nodesktop
+        fun_now = @progress_bar_now_only_increase;
     end
     fun_end = @progress_bar_end; % Can be combined with onCleanup when used
     
-    fun_now_text = @progress_bar_now_text; % Optional function to fprintf text
+    % Optional function to fprintf text
+    if isDesktop, fun_now_text = @progress_bar_now_text;
+    else, fun_now_text = @progress_bar_now_test_nodisplay; end
     
     function progress_bar_start(N_bytes_now),
         % Initialize the progress bar
         tictoc = tic;
         if Reverse, fprintf([' 100%%' repmat(' ', [1 floor(width_in_characters./2)-4]) '50%%' repmat(' ', [1 ceil(width_in_characters./2)-5]) '0%% complete!\n']);
         else, fprintf([' 0%%' repmat(' ', [1 ceil(width_in_characters./2)-5]) '50%%' repmat(' ', [1 floor(width_in_characters./2)-4]) '100%% complete!\n']); end
-        fprintf([' ' repmat(' ', [1 width_in_characters]) ' \n']); % Reserve next line
+        if isDesktop, fprintf([' ' repmat(' ', [1 width_in_characters]) ' \n']); % Reserve next line
+        else, fprintf('['); end % Special case: -nodisplay
         progress_bar_now_either_increase_or_decrease(N_bytes_now);
     end
     function progress_bar_now_either_increase_or_decrease(N_bytes_now, fun_before, fun_after),
@@ -164,11 +180,16 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
         fprintf([repmat('\b', [1 numel(latest_text)+width_in_characters+3]) '[' repmat(Character, [1 width_in_characters-N_dots_lower]) repmat(' ', [1 N_dots_lower]) ']\n%s'], latest_text);
     end
     function progress_bar_now_no_reverse_no_flip(),
-        fprintf([repmat('\b', [1 numel(latest_text)+width_in_characters+3]) '[' repmat(Character, [1 N_dots_lower]) repmat(' ', [1 width_in_characters-N_dots_lower]) ']\n%s'], latest_text);
+        if isDesktop, fprintf([repmat('\b', [1 numel(latest_text)+width_in_characters+3]) '[' repmat(Character, [1 N_dots_lower]) repmat(' ', [1 width_in_characters-N_dots_lower]) ']\n%s'], latest_text);
+        else,
+            fprintf(repmat(Character, [1 N_dots_lower-N_dots_lower_nodisplay]));
+            N_dots_lower_nodisplay = N_dots_lower; % Update for -nodisplay
+        end
     end
     function progress_bar_end(),
         % Finalize the progress bar
-        fprintf([repmat('\b', [1 numel(latest_text)])]); % Undo latest fprintf
+        if isDesktop, fprintf([repmat('\b', [1 numel(latest_text)])]); % Undo latest fprintf
+        else, fprintf([repmat(' ', [1 width_in_characters-N_dots_lower_nodisplay]) ']\n']); end % Special case: -nodisplay
         latest_text = '';
         toc(tictoc);
     end
@@ -178,5 +199,8 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
         latest_text_toc = text_toc;
         fprintf([repmat('\b', [1 numel(latest_text)]) '%s'], text); % Undo latest fprintf before showing the text
         latest_text = text;
+    end
+    function progress_bar_now_test_nodisplay(test),
+        % DO NOTHING!
     end
 end
