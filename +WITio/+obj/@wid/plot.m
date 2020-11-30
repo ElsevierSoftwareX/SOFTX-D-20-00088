@@ -157,7 +157,7 @@ function h = plot(obj, varargin),
                 end
                 % Create uitable
                 set(Fig, 'MenuBar', 'none', 'ToolBar', 'none');
-                if ~isDesktop,
+                if isDesktop,
                     h = uitable(Fig, 'Data', Data, 'RowName', [], 'Units', 'normalized', 'Position', [0 0 1 1], ...
                         'CellSelectionCallback', @uitable_selection_to_clipboard, ...
                         'TooltipString', '<html><b>Select to copy:</b><br>Any selection is automatically copied to<br>clipboard in fixed-width representation!</html>');
