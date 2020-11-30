@@ -73,10 +73,10 @@ function [O_wid, O_wip, O_wit] = read(varargin),
     compressed_ext = {'.zip', '.zst'};
     
     % Read all files preferring limited read and append them together
-    h = waitbar(0, 'Please wait...');
+    h = WITio.tbx.waitbar(0, 'Please wait...');
     for ii = 1:numel(files),
         if ~ishandle(h), return; end % Abort if cancelled!
-        waitbar((ii-1)/numel(files), h, sprintf('Loading file %d/%d. Please wait...', ii, numel(files)));
+        WITio.tbx.waitbar((ii-1)/numel(files), h, sprintf('Loading file %d/%d. Please wait...', ii, numel(files)));
         
         % Add the required file extension if it is missing nor is compression used
         [~, ~, ext] = fileparts(files{ii});
@@ -89,7 +89,7 @@ function [O_wid, O_wip, O_wit] = read(varargin),
         end
     end
     if ~ishandle(h), return; end % Abort if cancelled!
-    waitbar(1, h, 'Completed!');
+    WITio.tbx.waitbar(1, h, 'Completed!');
     WITio.tbx.delete_waitbars; % Close the waitbar
     if isempty(O_wit), return; end % Abort if no file to read!
     

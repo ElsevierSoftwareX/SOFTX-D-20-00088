@@ -228,7 +228,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     % Main loop
     ii = 0; % Consider the guess as 0th iteration
     jj = 0; % Sub iterations of LMA
-    h_Waitbar = waitbar(0, 'Please wait...', 'Name', 'Lineshape fitting');
+    h_Waitbar = WITio.tbx.waitbar(0, 'Please wait...', 'Name', 'Lineshape fitting');
     bw_diag = reshape(logical(eye(SP_unlocked)), [], 1);
     while true, % DO-WHILE STRUCTURE
         %% TEST CURRENT PARAMETERS
@@ -328,7 +328,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
         %% CALCULATE NEXT PARAMETERS
         % Update iterations
         ii = ii + 1;
-        waitbar(ii / N_max_iterations);
+        WITio.tbx.waitbar(ii / N_max_iterations);
         
         % Evaluate Jacobian (and Hessian if requested)
         if evalHessian, % Newton-Raphson iteration step
@@ -412,7 +412,7 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
         % Update (unlocked) parameters
         P(~locks,bw) = P(~locks,bw) + dP; % P(n+1)-P(n) = dP(n) = - Hr2(n)\Jr2(n);
     end
-    waitbar(1);
+    WITio.tbx.waitbar(1);
     WITio.tbx.delete_waitbars; % Close the waitbar
     
     % Restore the warning state

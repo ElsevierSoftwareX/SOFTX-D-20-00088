@@ -27,10 +27,10 @@ if isempty(O_wid), return; end
 makecopies = strncmp(questdlg('Would you like to 1) make copies OR 2) overwrite original?', 'How to proceed?', '1) Make copies', '2) Overwrite original', '1) Make copies'), '1)', 2);
 
 % Recalibrate the Rayleigh-peaks to zero
-h = waitbar(0, 'Please wait...');
+h = WITio.tbx.waitbar(0, 'Please wait...');
 for ii = 1:numel(O_wid),
     if ~ishandle(h), return; end % Abort if cancelled!
-    waitbar((ii-1)/numel(O_wid), h, sprintf('Processing data %d/%d. Please wait...', ii, numel(O_wid)));
+    WITio.tbx.waitbar((ii-1)/numel(O_wid), h, sprintf('Processing data %d/%d. Please wait...', ii, numel(O_wid)));
     if makecopies, O_wid_new = O_wid(ii).copy(); % Make a copy
     else, O_wid_new = O_wid(ii); end % Do not make a copy
     GI = O_wid_new.Info.GraphInterpretation;
@@ -38,7 +38,7 @@ for ii = 1:numel(O_wid),
     O_wid_new.Name = sprintf('Rayleigh@0<%s', O_wid_new.Name);
 end
 if ~ishandle(h), return; end % Abort if cancelled!
-waitbar(1, h, 'Completed! Writing...');
+WITio.tbx.waitbar(1, h, 'Completed! Writing...');
 
 % Overwrite the files
 for ii = 1:numel(O_wip), O_wip(ii).write(); end

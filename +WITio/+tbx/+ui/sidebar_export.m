@@ -47,7 +47,7 @@ function sidebar_export(Fig, file),
             file = fullfile(pathname, filename);
             WITio.tbx.pref.set('latest_folder', pathname); % Remember permanently the latest folder
         end
-        h_waitbar = waitbar(0, 'Please wait...', 'Name', 'Exporting figure');
+        h_waitbar = WITio.tbx.waitbar(0, 'Please wait...', 'Name', 'Exporting figure');
         export_opt = {['-' get(0, 'defaultFigureRenderer')], ... % Use default renderer
             sprintf('-r%d', DPI), ... % Dots Per Inch (DPI), ...
             '-nofontswap', ... % Preserves original fonts for vector formats
@@ -57,7 +57,7 @@ function sidebar_export(Fig, file),
         end
         setpref('export_fig', 'promo_time', now); % Stop export_fig from promoting consulting services once a week!
         export_fig(file, Fig, export_opt{:}, '-silent');
-        waitbar(1, h_waitbar);
+        WITio.tbx.waitbar(1, h_waitbar);
         WITio.tbx.delete_waitbars; % Close the waitbar
     end
     

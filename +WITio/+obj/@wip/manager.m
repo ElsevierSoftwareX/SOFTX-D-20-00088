@@ -244,7 +244,7 @@ function O_wid = manager(obj, varargin),
     function ReleasedCallback(h, varargin),
         if ~isBusy, % Proceed only if NOT busy
             isBusy = true;
-            if isPreview, h_Waitbar = waitbar(0, 'Please wait...'); end
+            if isPreview, h_Waitbar = WITio.tbx.waitbar(0, 'Please wait...'); end
 %             isPreview = get(c, 'Value'); % State of preview checkbox
             if ~preferHTML5overJAVACOMPONENT, % For versions older than R2019b
                 next_indices = h.getSelectedIndices()+1; % New indices
@@ -276,7 +276,7 @@ function O_wid = manager(obj, varargin),
                 if isPreview, 
                     WITio.fun.visual.invisible_figure(idx+fig_offset); % Create new invisible figure
                     plot(O_wid(next_indices(jj))); % Show data
-                    waitbar(jj / N_new);
+                    WITio.tbx.waitbar(jj / N_new);
                 end
             end
     %         if N_new > 0, set(hcontainer2, 'Visible', 'off'); drawnow; hcomponent2.setValue(0); end % Java waitbar
