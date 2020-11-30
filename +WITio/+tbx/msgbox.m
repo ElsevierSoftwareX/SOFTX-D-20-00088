@@ -72,6 +72,13 @@ function [h, rewrapped_message] = msgbox(message, varargin),
     set(0, 'Units', Units);
     HeightOffset = sum(MonitorPositions(:,4)); % Quaranteed to get out of screen(s)
     
+    % Determine whether or not to show dialog
+    isDesktop = usejava('desktop'); % The dialog is possible only if MATLAB is running in Desktop-mode
+    if ~isDesktop,
+        h = [];
+        return;
+    end
+    
     % Create the customized dialog for msgbox
     h = dialog('Name', title, 'Pointer', 'arrow', 'Units', 'points', ...
         'Visible', 'off', 'KeyPressFcn', @KeyPressFcn, ...
