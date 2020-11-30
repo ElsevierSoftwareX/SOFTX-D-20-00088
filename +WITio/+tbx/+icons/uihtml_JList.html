@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<!--
+% BSD 3-Clause License (LICENSE.txt)
+% Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
+% All rights reserved.
+
+This creates an interactive HTML5 <table>-based list when used with MATLAB's uihtml-functionality. The resemblance and the mouse and keyboard behaviour intentionally mimic that of the Java's JList wrapped in Java's JScrollPane. This file should be provided to uihtml's HTMLSource and drawnow called right after it.
+
+The list is generated and configured from uihtml's Data input, which can be provided at any given time. The following field names of a struct array are considered:
+* items: The list items are provided as a string array. Each string correspond to a list item and must include a row <tr>-tag and its cell <td>-tags, because they are used to the dynamic table construction. As a special case, the <tr>-tags of 'noid'-class will not have id numbers and are not selectable items. Also, any item consisting of <img>-tags much have relative src paths with respect to this file. The list will be reconstructed each time the code detects an 'items' field input in uihtml's Data struct array.
+* selection: Takes in a boolean array that determines whether or not each item is selected. It must have the same length as is the number of items.
+* selectionMode (= 2 by default): Here 0 = single selection, 1 = single interval selection and 2 = multiple interval selection, like in Java's JList implementation.
+* allowScrollbarKeydownEvents (= false by default): Enable/disable the keyboard space and arrow key events that move the uihtml's horizontal and vertical scrollbars. This is false by default in order to mimic JList (wrapped in JScrollPane) behaviour.
+* allowMouseHoverHighlights (= false by default): Enable/disable the highlights when hovering on items with a mouse cursor. This is false by default in order to mimic JList behaviour.
+
+The list interactions update uihtml's Data output and call uihtml's DataChangedFcn:
+User can interact with the list by mouse/keyboard-selecting the list items. A single item can be selected either by holding or clicking the left-mouse button on it. A range of items can be selected by combining the left-mouse and the Shift-key. Multiple items can be selected (or even deselected) by combining the left-mouse and the Ctrl-key. Also, the keyboard arrow up and down keys can be used to select items. Any described interactions with the list will update uihtml's Data with the selection indices. MATLAB is then automatically notified of such changes via uihtml's DataChangedFcn event listener interface.
+
+This code can be used only in MATLAB R2019b or newer, because they provide the needed uihtml-functionality. They transitioned from Java-based UI's to HTML, CSS and JS -based UI, which runs on built-in Chromium browser. The main reason to implement this file was to provide a "good enough" replacement to JAVACOMPONENT-based JList that supported items with HTML-styling, because MATLAB R2019b began to give a warning "Warning: JAVACOMPONENT will be removed in a future release." and MATLAB App Designer's UI has currently a limited HTML-styling support.
+
+* Java's JList (that could be used as JAVACOMPOMENT by MATLAB R2019a or older):
+https://docs.oracle.com/javase/7/docs/api/javax/swing/JList.html
+
+* See the related MATLAB functionality:
+https://se.mathworks.com/help/matlab/ref/uihtml.html
+https://se.mathworks.com/help/matlab/ref/jsonencode.html
+https://se.mathworks.com/help/matlab/ref/jsondecode.html
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify
+
+* Browser support tables for modern web technologies:
+https://caniuse.com
+
+* Chromium Web Development Style Guide: https://chromium.googlesource.com/chromium/src/+/master/styleguide/web/web.md
+* Google HTML/CSS Style Guide: https://google.github.io/styleguide/htmlcssguide.html
+* Google JavaScript Style Guide: https://google.github.io/styleguide/jsguide.html
+
+* CSS selectors: https://www.w3schools.com/cssref/css_selectors.asp
+
+* Conversion from tables to divs: https://softwareengineering.stackexchange.com/questions/277778/why-are-people-making-tables-with-divs
+
+* This may be a reason that MATLAB's Chromium browser does NOT support CSS-styling of the form controls: https://www.456bereastreet.com/archive/200701/styling_form_controls_with_css_revisited/
+-->
+<html>
+<head>
+<style> /*CSS-code*/
+/*Define colors as variables*/
+:root {
+  --border-color-for-both-hovered-and-selected: #ff8728; /*orange'ish*/
+  --border-color-for-only-hovered: #000000; /*black*/
+  --highlight-color-for-selected: #0078d7; /*blue'ish*/
+  --text-color-for-selected: #ffffff; /*white*/
+  /*--highlight-color-for-hovered: #7fbbeb;*/ /*light blue'ish*/
+  /*--text-color-for-hovered: #ffffff;*/ /*white*/
+}
+
+/*Adjust image margin and vertical alignment*/
+img {
+  margin: 0 -2px 0 0; /*JList behavior*/
+  vertical-align: middle;
+}
+
+/*The table (and its content) default styling*/
+table {
+  table-layout: fixed; /*for faster rendering*/
+  font-family: 'Segoe UI', sans-serif; /*JList default is 'Segoe UI' in W10 but use any sans-serif if not available*/
+  font-size: 12px; /*JList default is 12px in W10*/
+  border: none;
+  border-spacing: 0 0;
+  padding: 0 0 0 1px;
+  min-width: 100%;
+  min-height: 100%;
+  user-select: none; /*non-standard feature*/
+}
+tr {
+  vertical-align: middle;
+  background-color: #ffffff; /*white*/
+  white-space: nowrap; /*do not allow text wrapping*/
+}
+
+/*The table mouse/keyboard-selection styling*/
+tr.selected td {
+  background-color: var(--highlight-color-for-selected);
+  color: var(--text-color-for-selected);
+}
+
+/*Update the hovered style border colors*/
+tr td { /*by default add transparent borders in order to not push things around when mouse/keyboard hovering!*/
+  --border-color-for-hovered: transparent;
+}
+tr.hovered td { /*redefine color for hovered state*/
+  --border-color-for-hovered: var(--border-color-for-only-hovered);
+}
+tr.hovered.selected td { /*redefine color for hovered+selected state*/
+  --border-color-for-hovered: var(--border-color-for-both-hovered-and-selected);
+}
+
+/*The table mouse/keyboard-hovering styling*/
+tr td {
+  border-top: 1px dotted var(--border-color-for-hovered);
+  border-bottom: 1px dotted var(--border-color-for-hovered);
+}
+tr td:first-of-type { /*Add the left-most border*/
+  border-left: 1px dotted var(--border-color-for-hovered);
+}
+tr td:last-of-type { /*Add the right-most border*/
+  border-right: 1px dotted var(--border-color-for-hovered);
+}
+
+/*The text-selection styling*/
+::selection { /*disabled if 'user-select' in 'table' is set to 'none'*/
+  color: red;
+  background: yellow;
+}
+</style>
+
+<script type="text/javascript"> // Javascript-code
+function setup(htmlComponent) {
+  // Default listbox configurations (that can be modified via the uihtml's Data input)
+  var selectionMode = 2; // Here 0 = single selection, 1 = single interval selection and 2 = multiple interval selection, like in Java's JList implementation.
+  var allowScrollbarKeydownEvents = false; // JList behavior
+  var allowMouseHoverHighlights = false; // JList behavior
+  
+  // Define variables for table and its rows
+  var table = document.getElementById('dynamicTable');
+  var table_rows = table.rows;
+  
+  // Add event listener for MATLAB data input
+  htmlComponent.addEventListener('DataChanged', fromMATLABEvent);
+  
+  // Variables to limit overuse of toMATLABEvent
+  var isBlocked = false;
+  var isQueue = false;
+  var blockingTime = 20; // ms
+  var timeout_toMATLABEvent = null;
+  
+  // Disable scrollbar keyboard events to mimic JList behavior
+  window.addEventListener('keydown', scrollbarKeyDownEventDisabler);
+  
+  // Add keyboard event listeners for up and down arrow keys
+  document.addEventListener('keydown', keyDownEvent);
+  
+  // Add mouse event listener for left mouse key
+  var isLeftMouse = false; // Left-mouse status
+  table.addEventListener('mousemove', mouseMoveEvent);
+  table.addEventListener('mousedown', mouseDownEvent);
+  window.addEventListener('mouseup', mouseUpEvent); // Here window instead of table to always keep the left-mouse button status updated
+  
+  // Key variables used by the event listeners
+  var isSelected = []; // For each row store whether it has been selected (=true) or not (=false)
+  var latestHoverId = NaN; // Store latest hover event id
+  var latestSelectionId = NaN; // Store latest selection event id
+  var latestSingleSelectionId = NaN; // Store latest single selection event id
+  var latestSingleSelectionResult = false; // Store latest single selection event result (true = selected, false = unselected)
+  
+  // Dynamic table constructor / 'Data from MATLAB'-handler
+  function fromMATLABEvent(event) {
+    var obj = htmlComponent.Data; // Get latest data from MATLAB
+    if (Object.prototype.toString.call(obj) === '[object Object]') { // Do something only if an object
+      clearTimeout(timeout_toMATLABEvent); // Stop the timeouts before making changes to the list
+      if ('items' in obj) {
+        items = obj['items'];
+        table.innerHTML = items.join('');
+        var all_table_rows = table.rows;
+        table_rows = [];
+        // Give each table row its own id and append it to table_rows
+        for (var i = 0; i < all_table_rows.length; i++) {
+          var row = all_table_rows[i];
+          if (row.classList.contains('noid')) {
+            row.id = ''; // Remove any id if preset
+          } else { // Exclude any 'noid'-class row from the list
+            row.id = table_rows.length;
+            table_rows.push(row); // Append valid row
+          }
+        }
+        if (!('selection' in obj)) {
+          isSelected = Array(table_rows.length).fill(false);
+          toMATLABEvent();
+        }
+      }
+      if ('selection' in obj) {
+        isSelected = obj['selection'];
+        toMATLABEvent();
+      }
+      if ('selectionMode' in obj) {
+        selectionMode = obj['selectionMode'];
+      }
+      if ('allowScrollbarKeydownEvents' in obj) {
+        allowScrollbarKeydownEvents = obj['allowScrollbarKeydownEvents'];
+      }
+      if ('allowMouseHoverHighlights' in obj) {
+        allowMouseHoverHighlights = obj['allowMouseHoverHighlights'];
+      }
+    } else {
+      alert('ERROR! Expecting a MATLAB struct array as uihtml\'s Data input! See the documentation for the available field values.');
+    }
+  }
+  
+  // Dynamic table selection dispatcher / 'Data to MATLAB'-handler (via mouse or keyboard click events)
+  function toMATLABEvent() {
+    if (isBlocked) { // Do nothing if the blocking period has not ended
+      isQueue = true;
+      return; // Stop here to clean up the JS Callback Queue faster
+    } else {
+      isBlocked = true; // Block the consequtive function calls until the timer has ran out
+      isQueue = false; // Clear the queue status
+      timeout_toMATLABEvent = setTimeout(unblock_toMATLABEvent, blockingTime); // Unblock this function after the timer has ran out (and release the queue if present)
+    }
+    
+    // Select/deselect each table row by the boolean array
+    var indices_length = 0; // Needed later for Array preallocation
+    for (var i = 0; i < isSelected.length; i++) {
+      if (isSelected[i]) {
+        table_rows[i].classList.add('selected');
+        //table_rows[i].className = 'selected';
+        indices_length += 1; // Count number of selected items
+      } else {
+        table_rows[i].classList.remove('selected');
+        //table_rows[i].className = '';
+      }
+    }
+    
+    // Generate the selection indices
+    var indices = Array(indices_length); // Preallocate Array
+    for(var i = 0, j = 0; i < isSelected.length; i++){
+      if (isSelected[i]) {
+        indices[j++] = i;
+      }
+    }
+    // var indices = isSelected.reduce((out, bool, index) => bool ? out.push(index) : out, []);
+    
+    // Send indices to MATLAB
+    htmlComponent.Data = indices;
+  }
+  
+  function unblock_toMATLABEvent() { // Called only using setTimeout
+    isBlocked = false;
+    isQueue && toMATLABEvent(); // If queue, then call itself
+  }
+  
+  function hover(eventId) {
+    if (!isNaN(latestHoverId)) {
+      table_rows[latestHoverId].classList.remove('hovered');
+    }
+    latestHoverId = eventId;
+    table_rows[latestHoverId].classList.add('hovered');
+  }
+  
+  function select(eventId, isCtrl, isShift) {
+    // Override isCtrl and isShift values based on the current selection mode
+    isCtrl = selectionMode != 2 ? false : isCtrl; // Disable Ctrl when 'multiple interval selection'-mode is not set
+    isShift = selectionMode == 0 ? false : isShift; // Disable Shift when 'single selection'-mode is set
+    // If NO Ctrl and NO Shift
+    if (isNaN(latestSingleSelectionId) || (!isCtrl && !isShift)) {
+      // Quickly update the selection
+      for(var i = 0; i < isSelected.length; i++){
+        isSelected[i] = i == eventId ? true : false;
+      }
+      latestSingleSelectionId = eventId;
+      latestSingleSelectionResult = true;
+    // If NO Ctrl and YES Shift
+    } else if (!isCtrl && isShift) {
+      // Multiple-selection min/max when Shift is held down
+      var minId = latestSingleSelectionId < eventId ? latestSingleSelectionId : eventId; // Here latestSingleSelectionId can be NaN-valued!
+      var maxId = latestSingleSelectionId > eventId ? latestSingleSelectionId : eventId; // Here latestSingleSelectionId can be NaN-valued!
+      // Quickly update the selection
+      for(var i = 0; i < isSelected.length; i++){
+        isSelected[i] = i < minId ? false : i > maxId ? false : true;
+      }
+    // If YES Ctrl and NO Shift
+    } else if (isCtrl && !isShift) {
+      latestSingleSelectionId = eventId;
+      latestSingleSelectionResult = isSelected[eventId] ? false : true;
+      isSelected[eventId] = latestSingleSelectionResult; // Select/deselect
+    // If YES Ctrl and YES Shift
+    } else {
+      // Multiple-selection min/max when Shift is held down
+      var minId = latestSingleSelectionId < eventId ? latestSingleSelectionId : eventId; // Here latestSingleSelectionId can be NaN-valued!
+      var maxId = latestSingleSelectionId > eventId ? latestSingleSelectionId : eventId; // Here latestSingleSelectionId can be NaN-valued!
+      // Quickly update the selection
+      for(var i = minId; i <= maxId; i++){
+        isSelected[i] = latestSingleSelectionResult;
+      }
+    }
+    latestSelectionId = eventId;
+  }
+  
+  function mouseMoveEvent(event) { // Mimic that of JList behaviour
+    var row = event.target.closest('tr');
+    var eventId = row ? parseInt(row.id, 10) : NaN;
+    if (!isNaN(eventId) && eventId != latestSelectionId) { // Continue only if new selection
+      allowMouseHoverHighlights && hover(eventId);
+      // Consider only the holding of the left-mouse button only if keyboard Ctrl and Shift are not pressed. This mimics behaviour of JList.
+      if (isLeftMouse && !event.ctrlKey && !event.shiftKey) {
+        !allowMouseHoverHighlights && hover(eventId); // JList behavior
+        select(eventId, false, false); // Ignore Ctrl- and Shift-keys
+        toMATLABEvent(); // Notify MATLAB (when unblocked)
+      }
+    }
+  }
+  
+  function mouseDownEvent(event) { // Mimic that of JList behaviour
+    if (event.button == 0) { // Consider only the left-mouse button
+      isLeftMouse = true; // Update left-mouse status
+      var row = event.target.closest('tr');
+      var eventId = row ? parseInt(row.id, 10) : NaN;
+      if (!isNaN(eventId)) {
+        if (eventId != latestSelectionId || event.ctrlKey && !event.shiftKey || !latestSingleSelectionResult) { // Continue only if new selection or YES Ctrl and NO Shift or latest single selection result was false
+          hover(eventId); // JList behavior
+          select(eventId, event.ctrlKey, event.shiftKey);
+          toMATLABEvent(); // Notify MATLAB (when unblocked)
+        }
+      }
+    }
+  }
+  
+  function mouseUpEvent(event) { // Mimic that of JList behaviour
+    if (event.button == 0) { // Consider only the left-mouse button
+      isLeftMouse = false; // Update left-mouse status
+    }
+  }
+  
+  function keyDownEvent(event) { // Mimic that of JList behaviour
+    var eventId = NaN;
+    switch(event.keyCode) {
+      case 38: // CASE: Up-arrow
+        eventId = latestSelectionId-1 > 0 ? latestSelectionId-1 : 0; // Here latestSelectionId can be NaN-valued!
+        break;        
+      case 40: // CASE: Down-arrow
+        eventId = latestSelectionId+1 < isSelected.length-1 ? latestSelectionId+1 : isSelected.length-1; // Here latestSelectionId can be NaN-valued!
+        break;
+    }
+    if (!isNaN(eventId) && eventId != latestSelectionId) {
+      hover(eventId);
+      if (!event.ctrlKey || event.shiftKey) { // Skip for YES Ctrl and NO Shift combo
+        select(eventId, false, event.shiftKey); // Ignore Ctrl-key like in JList
+        toMATLABEvent(); // Notify MATLAB (when unblocked)
+      } else {
+        latestSelectionId = eventId; // Update this
+      }
+    }
+  }
+  
+  function scrollbarKeyDownEventDisabler(event) {
+    // Disable space and arrow keys
+    if([32, 37, 38, 39, 40].indexOf(event.keyCode) > -1) {
+      !allowScrollbarKeydownEvents && event.preventDefault();
+    }
+  }
+}
+</script>
+</head>
+<body>
+<table id="dynamicTable"></table>
+</body>
+</html>

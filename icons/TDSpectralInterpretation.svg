@@ -1,8 +1,0 @@
-<svg width="10mm" height="10mm" version="1.1" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
- <title>TDSpectralInterpretation</title>
- <g transform="translate(-1.9076865,-288.10791)">
-  <rect x="1.9076865" y="288.10791" width="10" height="10" fill="#fff"/>
-  <text x="0.8504464" y="292.29892" fill="#000000" font-family="sans-serif" font-size="10.58333302px" letter-spacing="0px" stroke-width=".26458332" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="0.8504464" y="301.66269" stroke-width=".26458332"/></text>
-  <text x="1.3194717" y="295.1459" fill="#000000" font-family="sans-serif" font-size="10.58333302px" letter-spacing="0px" stroke-width=".26458332" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="1.3194717" y="295.1459" fill="#00ff00" font-family="'Courier New'" font-size="10.58333302px" font-weight="bold" stroke="#000000" stroke-width=".26458332">I<tspan baseline-shift="sub" fill="#00ffff" font-family="'Source Code Pro'" font-size="64.99999762%" font-weight="bold">λ</tspan></tspan></text>
- </g>
-</svg>
