@@ -4,6 +4,7 @@
 
 % Runs all available tests
 function tests(),
+    WITio.tbx.pref.set('nodisplay_counter', 0); % Reset counter used for file exporting if -nodesktop mode
     WITio.dev.tests.demo;
     WITio.dev.tests.try_catch('dev.tests.wit_bread_bwrite');
 end
