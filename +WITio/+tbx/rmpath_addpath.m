@@ -14,6 +14,7 @@ function rmpath_addpath(),% Remove previous versions of this toolbox from path
     % Add this toolbox to path
     fprintf('Adding the new WITio toolbox folder to the MATLAB path if not found...\n');
     addpath(WITio.tbx.path); % Then add this toolbox
+    addpath(genpath(fullfile(WITio.tbx.path, 'third party'))); % And its 3rd party libraries
     
     % Try permanently save the new path (and it may require Admin-rights!)
     try, savepath; fprintf('Changes saved permanently!\n');

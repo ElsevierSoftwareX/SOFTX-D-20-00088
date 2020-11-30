@@ -427,7 +427,7 @@ function h = plot(obj, varargin),
                 if cmin == cmax || isnan(cmin) || isnan(cmax), h = WITio.fun.visual.nanimagesc(Data);
                 else, h = WITio.fun.visual.nanimagesc(Data, [cmin cmax]); end
             else, h = imagesc(Data); end % Plot logical data
-%             colormap(WITio.fun.lib.perceptually_uniform_colormap('inferno')); % Use inferno by default
+%             colormap(perceptually_uniform_colormap('inferno')); % Use inferno by default
             colorbar('HitTest', 'off'); % HitTest 'off' added for backward compability of WITio.tbx.ui.sidebar_cursor
         elseif size(Data, 3) == 3, h = image(Data); end % Plot colored data
 

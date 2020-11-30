@@ -51,9 +51,9 @@ function [h_popup, h_label] = sidebar_colormap_mpl(Fig),
     % Proper changing of the colormap
     function update(varargin),
         currentValue = get(h_popup, 'Value'); % Store as global option
-        set(0, 'DefaultFigureColormap', WITio.fun.lib.perceptually_uniform_colormap(C_options{currentValue})); % Set new default! Backward compatible!
+        set(0, 'DefaultFigureColormap', perceptually_uniform_colormap(C_options{currentValue})); % Set new default! Backward compatible!
         set(Fig, 'Colormap', 'default'); % Reset to new default! Backward compatible!
-%         set(Fig, 'Colormap', WITio.fun.lib.perceptually_uniform_colormap(C_options{currentValue}));
-%         colormap(Ax, WITio.fun.lib.perceptually_uniform_colormap(C_options{currentValue}));
+%         set(Fig, 'Colormap', perceptually_uniform_colormap(C_options{currentValue}));
+%         colormap(Ax, perceptually_uniform_colormap(C_options{currentValue}));
     end
 end

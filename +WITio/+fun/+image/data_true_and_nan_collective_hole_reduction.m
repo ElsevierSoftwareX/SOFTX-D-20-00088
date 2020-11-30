@@ -26,7 +26,7 @@ function varargout = data_true_and_nan_collective_hole_reduction(varargin),
     end
     
     % Distance to the nearest nonzero
-    D = WITio.fun.lib.bwdistsc2d.bwdistsc2d(bw); % Get the Euclidean distance
+    D = bwdistsc2d(bw); % Get the Euclidean distance
     
     % Near-safely remove the one-pixel noise. This attempts to avoid
     % eroding away wider one-pixel thick connected regions with Area >= 4
@@ -40,7 +40,7 @@ function varargout = data_true_and_nan_collective_hole_reduction(varargin),
     catch, % Otherwise use third party function
         DBWnot = double(~bw);
         DBWnot(bw) = NaN;
-        L = WITio.fun.lib.label.label(DBWnot, 4);
+        L = label(DBWnot, 4);
         clear DBWnot; % Free memory!
     end
     stats = WITio.fun.indep.myregionprops(L);

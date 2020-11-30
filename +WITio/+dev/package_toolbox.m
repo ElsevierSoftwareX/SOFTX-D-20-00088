@@ -76,4 +76,65 @@ function package_toolbox(),
     
     %% DELETE WITio.prj
     delete(file_prj);
+    
+    %% TRY UPDATE WITio.mltbx for 'third party'-folder
+    % THE FOLLOWING TWO LINES MAY NEED TO BE UPDATED!
+    exe = 'C:\Program Files\7-Zip\7z.exe'; % Full path to 7z
+
+    % Full absolute path to the toolbox installer
+    file_mltbx = fullfile(WITio_folder, file_mltbx);
+    
+    str = sprintf('Attempting to update configuration.xml in ''%s'' to include subfolders as addpath!', file_mltbx);
+    fprintf('%s\n%s\n%s\n', repmat('-', size(str)), str, repmat('-', size(str)));
+    
+    % First extract metadata\configuration.xml from toolbox installer
+    str = 'Extracting ''metadata\configuration.xml'' ...';
+    fprintf('%s\n%s\n%s\n', repmat('-', size(str)), str, repmat('-', size(str)));
+    
+    [status1, result1] = system(['"' exe '" x "' file_mltbx '" metadata\configuration.xml -aoa']);
+    disp(result1);
+    if status1 ~= 0, error('System command failed with status %d.', status1); end
+    
+    % Then load and modify it
+    str = 'Loading and modifying ''metadata\configuration.xml'' ...';
+    fprintf('%s\n%s\n%s\n', repmat('-', size(str)), str, repmat('-', size(str)));
+    
+    % Read from file
+    fid = fopen('metadata\configuration.xml', 'r');
+    if fid == -1, error('Cannot open ''metadata\configuration.xml'' for reading.'); end
+    data = reshape(fread(fid, inf, 'uint8=>char'), 1, []);
+    fclose(fid);
+    
+    % Get all relevant subfolders
+    strs = strrep(genpath(fullfile(WITio_folder, 'third party')), WITio_folder, ''); % From absolute to relative paths
+    strs = strrep(strs, '\', '/'); % Convert \'s to /'s
+    strs = strrep(strs, ';', '</matlabPath><matlabPath>'); % Convert ;'s
+    strs = strrep(strs, '<matlabPath>/metadata</matlabPath>', ''); % Remove metadata-folder
+    strs = regexprep(strs, '^</matlabPath>', ''); % Remove first </matlabPath>
+    strs = regexprep(strs, '<matlabPath>$', ''); % Remove last <matlabPath>
+    data = strrep(data, '<matlabPath>/</matlabPath>', ['<matlabPath>/</matlabPath>' strs]); % Append these paths to the current list
+    
+    % Write to file
+    fid = fopen('metadata\configuration.xml', 'w');
+    if fid == -1, error('Cannot open ''metadata\configuration.xml'' for writing.'); end
+    fwrite(fid, data, 'uint8');
+    fclose(fid);
+    
+    % Then update toolbox installer
+    str = 'Replacing old ''metadata\configuration.xml'' with new ...';
+    fprintf('%s\n%s\n%s\n', repmat('-', size(str)), str, repmat('-', size(str)));
+    
+    [status2, result2] = system(['"' exe '" u "' file_mltbx '" metadata\configuration.xml']);
+    disp(result2);
+    if status2 ~= 0, error('System command failed with status %d.', status2); end
+    
+    % Then remove configuration.xml and its temporary folder
+    delete('metadata\configuration.xml');
+    rmdir('metadata');
+    
+    str = 'Update successful!';
+    fprintf('%s\n%s\n%s\n', repmat('-', size(str)), str, repmat('-', size(str)));
+    
+    % Change folder back to the original folder
+    clear cd_onCleanup;
 end

@@ -33,8 +33,8 @@ function F = fun_lineshape_voigtian(P, X),
     % imag(z) >= 0, for which reason fadf operates in the stable region
     
     % Evaluate the real part of the Faddeeva function
-    nominator = real(WITio.fun.lib.fadf.fadf(Z)); % Voigtian lineshape profile
-    divisor = real(WITio.fun.lib.fadf.fadf(z)); % Maximum of the Voigtian lineshape profile % = exp(imag(z_max).^2).*erfc(imag(z_max));
+    nominator = real(fadf(Z)); % Voigtian lineshape profile
+    divisor = real(fadf(z)); % Maximum of the Voigtian lineshape profile % = exp(imag(z_max).^2).*erfc(imag(z_max));
     
     % Normalize the Voigtian lineshape profile to [0, 1]
     ratio = bsxfun(@rdivide, nominator, divisor);
@@ -43,7 +43,7 @@ function F = fun_lineshape_voigtian(P, X),
 %     % Utilize sign inversion relation (w(z) = 2.*exp(-z.^2) - w(-z)) to
 %     % evaluate the case B with better numerical stability.
 %     nominator_1 = real(2.*exp(-Z.^2));
-%     nominator_2 = real(-WITio.fun.lib.fadf.fadf(-Z)); % Shoots quickly to infinity when Z > 26
+%     nominator_2 = real(-fadf(-Z)); % Shoots quickly to infinity when Z > 26
 %     
 %     % Essential derivation:
 %     % ratio = nominator ./ divisor; % Utilize sign inversion relation here
@@ -57,7 +57,7 @@ function F = fun_lineshape_voigtian(P, X),
 %     % = real(2.*exp(-real(Z).^2+imag(Z).^2-2i.*real(Z).*imag(Z))) ...
 %     % = 2.*exp(imag(Z).^2-real(Z).^2).*cos(-2.*real(Z).*imag(Z));
 %     % 
-%     % divisor = real(WITio.fun.lib.fadf.fadf(z)) ...
+%     % divisor = real(fadf(z)) ...
 %     % = exp(imag(z).^2).*erfc(imag(z));
 %     % 
 %     % imag(z) == imag(Z)

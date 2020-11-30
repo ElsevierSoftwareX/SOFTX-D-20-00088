@@ -103,7 +103,7 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
                     if isMouseUp,
                         drawLine(CP(1), CP(2), old_CP(1,1), old_CP(1,2));
                         % Then mark insides (even if self-intersecting!)
-                        L = WITio.fun.lib.label.label(image_mask);
+                        L = label(image_mask);
                         stats = WITio.fun.indep.myregionprops(L);
                         PILS = cellfun(@(pil) pil(1), {stats.PixelIdxList});
                         [XS, YS] = ind2sub(size(image_mask), PILS);
@@ -129,7 +129,7 @@ function [new_obj, image_mask] = image_mask_editor(obj, image_mask),
                 if isMouseUp, old_CP = [];
                 else, old_CP = CP; end
             elseif masking_mode == 3 && image_mask(round(CP(1)),round(CP(2))) ~= masking_value, % Fill-mode
-                L = WITio.fun.lib.label.label(image_mask);
+                L = label(image_mask);
                 l = L(round(CP(1)),round(CP(2)));
                 stats = WITio.fun.indep.myregionprops(L);
                 image_mask(stats(l).PixelIdxList) = masking_value;

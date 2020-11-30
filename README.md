@@ -36,7 +36,7 @@ Lipsanen's group in Aalto University, Finland.
 
 ### License
 This is published under **free** and **permissive** [BSD 3-Clause License][license].
-Only exceptions to this license can be found in the *'[third party]'* package.
+Only exceptions to this license can be found in the *'[third party]'*-folder.
 
 ### Installation to MATLAB (for R2014b or newer)
 Download [the latest toolbox installer] and double-click it to install it.
@@ -128,7 +128,7 @@ J. T. Holmi (2019). WITio: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wi
 [MATLAB]: https://www.mathworks.com/products/matlab.html
 [the latest toolbox installer]: ./WITio.mltbx
 [the latest zip archive]: https://gitlab.com/jtholmi/wit_io/-/archive/master/wit_io-master.zip
-[third party]: ./+WITio/+fun/+lib
+[third party]: ./third party/
 [demo]: ./+WITio/+demo
 [batch]: ./+WITio/+batch
 [WITio.m]: ./WITio.m
