@@ -131,8 +131,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 [2.0.0,F9]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+fun/clever_statistics_and_outliers.m
 [2.0.0,F10]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+fun/+fit/fit_lineshape_arbitrary.m
 [2.0.0,F11]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+fun/+fit/fit_lineshape_automatic_guess.m
-[2.0.0,F12]:
-https://codeocean.com/
+[2.0.0,F12]: https://codeocean.com/
 
 ### Performance
 
