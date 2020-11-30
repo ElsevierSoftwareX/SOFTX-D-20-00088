@@ -433,7 +433,10 @@ function h = plot(obj, varargin),
                 if cmin == cmax || isnan(cmin) || isnan(cmax), h = WITio.fun.visual.nanimagesc(Data);
                 else, h = WITio.fun.visual.nanimagesc(Data, [cmin cmax]); end
             else, h = imagesc(Data); end % Plot logical data
-%             colormap(perceptually_uniform_colormap('inferno')); % Use inferno by default
+            if ~isDesktop,
+                set(0, 'DefaultFigureColormap', perceptually_uniform_colormap('inferno')); % Set new default! Backward compatible!
+                set(Fig, 'Colormap', 'default'); % Reset to new default! Backward compatible!
+            end
             colorbar('HitTest', 'off'); % HitTest 'off' added for backward compability of WITio.tbx.ui.sidebar_cursor
         elseif size(Data, 3) == 3, h = image(Data); end % Plot colored data
 
