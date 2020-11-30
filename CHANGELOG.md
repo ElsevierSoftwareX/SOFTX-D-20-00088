@@ -118,6 +118,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 - [`WITio.fun.misc.dim_first_ipermute`][2.0.0,F7] and [`WITio.fun.misc.dim_first_permute`][2.0.0,F8]: Correct permutation of 2-D matrices with dim set to 3 or larger.
 - [`WITio.fun.clever_statistics_and_outliers`][2.0.0,F9], [`WITio.fun.fit.fit_lineshape_arbitrary`][2.0.0,F10] and [`WITio.fun.fit.fit_lineshape_automatic_guess`][2.0.0,F11]: Fix error when providing empty input.
 - Make demo cases to ignore user preferences regarding `wip_AutoCreateObj`, `wip_AutoCopyObj` and `wip_AutoModifyObj`.
+- Many bug fixes when running MATLAB with -nodesktop flag (like [Code Ocean compute capsule][2.0.0,F12]).
 
 [2.0.0,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+tbx/msgbox.m
 [2.0.0,F2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+fun/+indep/mystrjoin.m
@@ -130,6 +131,8 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 [2.0.0,F9]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+fun/clever_statistics_and_outliers.m
 [2.0.0,F10]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+fun/+fit/fit_lineshape_arbitrary.m
 [2.0.0,F11]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.0/+WITio/+fun/+fit/fit_lineshape_automatic_guess.m
+[2.0.0,F12]:
+https://codeocean.com/
 
 ### Performance
 
