@@ -55,7 +55,7 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
     N_bytes_lower = N_bytes(N_dots_lower + 1);
     N_dots_upper = 1;
     N_bytes_upper = N_bytes(N_dots_upper + 1);
-    N_dots_lower_nodisplay = 0; % Store previous N_dots_lower when -nodisplay
+    N_dots_lower_nodesktop = 0; % Store previous N_dots_lower when -nodesktop
     
     % Initialize text-related variables
     latest_text = '';
@@ -93,7 +93,7 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
     
     % Optional function to fprintf text
     if isDesktop, fun_now_text = @progress_bar_now_text;
-    else, fun_now_text = @progress_bar_now_test_nodisplay; end
+    else, fun_now_text = @progress_bar_now_test_nodesktop; end
     
     function progress_bar_start(N_bytes_now),
         % Initialize the progress bar
@@ -101,7 +101,7 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
         if Reverse, fprintf([' 100%%' repmat(' ', [1 floor(width_in_characters./2)-4]) '50%%' repmat(' ', [1 ceil(width_in_characters./2)-5]) '0%% complete!\n']);
         else, fprintf([' 0%%' repmat(' ', [1 ceil(width_in_characters./2)-5]) '50%%' repmat(' ', [1 floor(width_in_characters./2)-4]) '100%% complete!\n']); end
         if isDesktop, fprintf([' ' repmat(' ', [1 width_in_characters]) ' \n']); % Reserve next line
-        else, fprintf('['); end % Special case: -nodisplay
+        else, fprintf('['); end % Special case: -nodesktop
         progress_bar_now_either_increase_or_decrease(N_bytes_now);
     end
     function progress_bar_now_either_increase_or_decrease(N_bytes_now, fun_before, fun_after),
@@ -182,14 +182,14 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
     function progress_bar_now_no_reverse_no_flip(),
         if isDesktop, fprintf([repmat('\b', [1 numel(latest_text)+width_in_characters+3]) '[' repmat(Character, [1 N_dots_lower]) repmat(' ', [1 width_in_characters-N_dots_lower]) ']\n%s'], latest_text);
         else,
-            fprintf(repmat(Character, [1 N_dots_lower-N_dots_lower_nodisplay]));
-            N_dots_lower_nodisplay = N_dots_lower; % Update for -nodisplay
+            fprintf(repmat(Character, [1 N_dots_lower-N_dots_lower_nodesktop]));
+            N_dots_lower_nodesktop = N_dots_lower; % Update for -nodesktop
         end
     end
     function progress_bar_end(),
         % Finalize the progress bar
         if isDesktop, fprintf([repmat('\b', [1 numel(latest_text)])]); % Undo latest fprintf
-        else, fprintf([repmat(' ', [1 width_in_characters-N_dots_lower_nodisplay]) ']\n']); end % Special case: -nodisplay
+        else, fprintf([repmat(' ', [1 width_in_characters-N_dots_lower_nodesktop]) ']\n']); end % Special case: -nodesktop
         latest_text = '';
         toc(tictoc);
     end
@@ -200,7 +200,7 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
         fprintf([repmat('\b', [1 numel(latest_text)]) '%s'], text); % Undo latest fprintf before showing the text
         latest_text = text;
     end
-    function progress_bar_now_test_nodisplay(test),
+    function progress_bar_now_test_nodesktop(test),
         % DO NOTHING!
     end
 end

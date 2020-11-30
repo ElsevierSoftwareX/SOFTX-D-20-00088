@@ -81,7 +81,7 @@ O_ImageScan_Info_GraphInterpretation.Data.TDSpectralInterpretation.ExcitationWav
 O_Point.Name = sprintf('Zeroed<%s', O_Point.Name);
 figure; O_Point_old.plot('-compare', O_Point); % Show fitting results % Image<TDGraph with sidebar
 xlim(Range_0); ylim('auto'); % Show only the region near the 0-peak
-WITio.tbx.nodisplay();
+WITio.tbx.ifnodesktop();
 
 WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 close all;
@@ -119,7 +119,7 @@ else,
 end
 
 % SHOWING FITTING RESULTS OF THE RAYLEIGH-, D-, G- AND 2D-PEAKS
-figure; O_ImageScan.plot('-compare', O_0(end), O_D(end), O_G(end), O_2D(end)); WITio.tbx.nodisplay(); % Show fitting results % Image<TDGraph with sidebar
+figure; O_ImageScan.plot('-compare', O_0(end), O_D(end), O_G(end), O_2D(end)); WITio.tbx.ifnodesktop(); % Show fitting results % Image<TDGraph with sidebar
 
 WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 close all;
@@ -183,7 +183,7 @@ O_I_2DperG.Name = 'Cleaned<I(2D)/I(G)';
 figure;
 subplot(1, 2, 1); WITio.fun.visual.nanimagesc(O_I_DperG.Data.'); daspect([1 1 1]); title(O_I_DperG.Name);
 subplot(1, 2, 2); WITio.fun.visual.nanimagesc(O_I_2DperG.Data.'); daspect([1 1 1]); title(O_I_2DperG.Name);
-WITio.tbx.nodisplay();
+WITio.tbx.ifnodesktop();
 
 WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 close all;
@@ -207,8 +207,8 @@ h = WITio.tbx.msgbox({'{\bf\fontsize{12}{\color{magenta}(C iv.)} Histograms of t
 % !!! (C iv.) CALCULATE AND SHOW HISTOGRAMS
 O_hist_I_DperG = O_I_DperG.histogram();
 O_hist_I_2DperG = O_I_2DperG.histogram();
-figure; O_hist_I_DperG.plot(); WITio.tbx.nodisplay();
-figure; O_hist_I_2DperG.plot(); WITio.tbx.nodisplay();
+figure; O_hist_I_DperG.plot(); WITio.tbx.ifnodesktop();
+figure; O_hist_I_2DperG.plot(); WITio.tbx.ifnodesktop();
 
 WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 close all;

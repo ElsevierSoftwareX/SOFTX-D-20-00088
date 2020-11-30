@@ -63,10 +63,10 @@ WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 
 %-------------------------------------------------------------------------%
 figure(1); h1 = O_Bitmap.plot('-position', O_wid([3 16 17]), '-scalebar'); % Show positions AND show default bottom-left auto-length scalebar with text
-WITio.tbx.nodisplay();
+WITio.tbx.ifnodesktop();
 figure(2); h2 = O_ImageScan.plot('-position', O_wid([2 16 17]), ... % Here ... allows multiline function calls
     '-scalebar', '--NoText', '--Anchor', [1 1], '--PositionRatio', [0.95 0.95]); % Show positions AND show bottom-right auto-length scalebar without text
-WITio.tbx.nodisplay();
+WITio.tbx.ifnodesktop();
 
 % Description of the '-position' option above. All the subsequent inputs
 % (until the next dashed string beginning with '-') are parsed for the
@@ -116,9 +116,9 @@ figure(4); h4a = O_ImageScan.plot_position(O_wid([2 16 17])); % Moved figure(4) 
 set(findall(h4a, 'Type', 'line', 'Marker', 'none'), 'Color', 'white', 'LineWidth', 2); % Set line color to white and its width to 3
 
 h3b = O_Bitmap.plot_scalebar(figure(3), '-NoText', '-Color', [0 0 0]); % Plot customized black scalebar without text
-WITio.tbx.nodisplay();
+WITio.tbx.ifnodesktop();
 figure(4); h4b = O_ImageScan.plot_scalebar('-Length', 3.5, '-TextHeightRatio', 0.075); % Plot customized scalebar with length of 3.5 um and 50% larger text
-WITio.tbx.nodisplay();
+WITio.tbx.ifnodesktop();
 
 % Please note that each of these graphical object arrays h1, h2, h3a, h3b,
 % h4a and h4b may be customized by their get/set-functions like shown
