@@ -90,7 +90,7 @@ h = WITio.tbx.msgbox({'{\bf\fontsize{12}{\color{magenta}(B2 ii.)} Getting spatia
 
 %-------------------------------------------------------------------------%
 O_avg = O_masked.spatial_average();
-figure; O_avg.plot; % Point<TDGraph with sidebar
+figure; O_avg.plot; WITio.tbx.nodisplay(); % Point<TDGraph with sidebar
 WITio.tbx.uiwait(h);
 close all; % Close the plot
 %-------------------------------------------------------------------------%

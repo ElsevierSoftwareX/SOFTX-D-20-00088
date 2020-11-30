@@ -65,13 +65,13 @@ h = WITio.tbx.msgbox({'{\bf\fontsize{12}{\color{magenta}(A3)} Plot data}' ...
 
 %-------------------------------------------------------------------------%
 % Plottable objects
-figure; O_Bitmap.plot(); % TDBitmap with sidebar
-figure; O_ImageScan.plot(); % TDGraph with sidebar
-figure; O_Mask.plot('-nosidebar'); % TDImage WITHOUT SIDEBAR
-figure; O_Text.plot(); % TDText with sidebar'
+figure; O_Bitmap.plot(); WITio.tbx.nodisplay(); % TDBitmap with sidebar
+figure; O_ImageScan.plot(); WITio.tbx.nodisplay(); % TDGraph with sidebar
+figure; O_Mask.plot('-nosidebar'); WITio.tbx.nodisplay(); % TDImage WITHOUT SIDEBAR
+figure; O_Text.plot(); WITio.tbx.nodisplay(); % TDText with sidebar'
 
 % Non-plottable objects like TDSpaceTransformation
-figure; O_Bitmap.Info.XTransformation.plot(); % TDBitmap's TDSpaceTransformation with sidebar
+figure; O_Bitmap.Info.XTransformation.plot(); WITio.tbx.nodisplay(); % TDBitmap's TDSpaceTransformation with sidebar
 
 WITio.tbx.uiwait(h);
 close all; % Close the plot

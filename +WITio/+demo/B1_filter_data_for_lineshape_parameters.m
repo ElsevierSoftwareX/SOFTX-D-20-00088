@@ -142,7 +142,7 @@ else,
 end
 
 % Compare the experimental data with the fitting result using '-compare'-feature of obj.plot
-figure; O_Point.plot('-compare', O_Point_0(end), O_Point_D(end), O_Point_G(end), O_Point_2D(end)); % Show fitting results % Image<TDGraph with sidebar
+figure; O_Point.plot('-compare', O_Point_0(end), O_Point_D(end), O_Point_G(end), O_Point_2D(end)); WITio.tbx.nodisplay(); % Show fitting results % Image<TDGraph with sidebar
 
 WITio.tbx.uiwait(h);
 close all; % Close the plot

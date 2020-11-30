@@ -38,7 +38,7 @@ WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 O_Bitmap = O_wid(1); % Get object of "7x5 Stitching Image_021 / Exfoliated graphene (Gr) on SiO2/Si-substrate" at index 1
 O_Text = O_wid(2); % Get object of "7x5 Stitching Image_021 Information" at index 2
 
-figure; O_Bitmap.plot;
+figure; O_Bitmap.plot; WITio.tbx.nodisplay();
 %-------------------------------------------------------------------------%
 
 
@@ -112,8 +112,8 @@ WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 
 
 %-------------------------------------------------------------------------%
-figure; O_new_Bitmap.plot;
-figure; O_new_Bitmap_crop.plot;
+figure; O_new_Bitmap.plot; WITio.tbx.nodisplay();
+figure; O_new_Bitmap_crop.plot; WITio.tbx.nodisplay();
 
 % O_wip.write(); % Save the results by overwriting the original file
 %-------------------------------------------------------------------------%

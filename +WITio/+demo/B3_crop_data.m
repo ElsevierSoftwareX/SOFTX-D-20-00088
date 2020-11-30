@@ -43,8 +43,8 @@ O_PointScan = O_wid(17); % Get object of "1-layer Gr<Point Scan 1 (Data)" at ind
 
 
 %-------------------------------------------------------------------------%
-figure; O_Bitmap.plot();
-figure; O_PointScan.plot();
+figure; O_Bitmap.plot(); WITio.tbx.nodisplay();
+figure; O_PointScan.plot(); WITio.tbx.nodisplay();
 %-------------------------------------------------------------------------%
 
 
@@ -91,8 +91,8 @@ O_PointScan_cropped = O_PointScan.crop_Graph([332 1130]);  % Start/end indices i
 
 
 %-------------------------------------------------------------------------%
-figure; O_Bitmap_cropped.plot(); % Cropped bitmap
-figure; O_PointScan_cropped.plot(); % Cropped spectrum
+figure; O_Bitmap_cropped.plot(); WITio.tbx.nodisplay(); % Cropped bitmap
+figure; O_PointScan_cropped.plot(); WITio.tbx.nodisplay(); % Cropped spectrum
 
 % It is worth noting that WHEN WRITING BACK TO WIP-FILE, the Viewer windows
 % (shown on the WITec software side) may become corrupted due to the Data

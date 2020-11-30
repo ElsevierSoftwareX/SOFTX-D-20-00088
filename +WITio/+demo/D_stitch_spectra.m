@@ -81,7 +81,7 @@ WITio.tbx.uiwait(h); % Wait for WITio.tbx.msgbox to be closed before continuing.
 
 %-------------------------------------------------------------------------%
 close all;
-figure; O_result.plot;
+figure; O_result.plot; WITio.tbx.nodisplay();
 %-------------------------------------------------------------------------%
 
 % Reset user preferences
