@@ -53,6 +53,10 @@ function h = plot(obj, varargin),
     obj_compare = WITio.fun.varargin_dashed_str.datas('compare', varargin);
     fun_auto = @(x) true; % By default, enable autoscaling
     
+    % Determine whether or not to use uicontrols
+    isDesktop = usejava('desktop'); % Test if MATLAB is running in Desktop-mode
+    if ~isDesktop, showSidebar = false; end % Disable sidebar if not
+    
     Name = obj.Name;
     Data = obj.Data;
     S_Data = size(Data);
