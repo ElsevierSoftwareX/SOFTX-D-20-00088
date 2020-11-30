@@ -27,6 +27,8 @@ function h = plot(obj, varargin),
     % -nopreview: Disables preview.
     % -nosidebar: Disables sidebar.
     
+    % -SumRange: The default Graph-axis summing range is [-inf inf].
+    
     % MATLAB R2014b and newer have different HOLD ON behaviour.
     % http://se.mathworks.com/help/matlab/graphics_transition/why-are-plot-lines-different-colors.html
     % This is taken into account in this code.
@@ -52,6 +54,10 @@ function h = plot(obj, varargin),
     [showScalebar, vararginScalebar] = WITio.fun.varargin_dashed_str.exists_and_datas('scalebar', varargin);
     obj_compare = WITio.fun.varargin_dashed_str.datas('compare', varargin);
     fun_auto = @(x) true; % By default, enable autoscaling
+    
+    datas = WITio.fun.varargin_dashed_str.datas('SumRange', varargin, -1);
+    SumRange = [-inf inf];
+    if numel(datas) > 0, SumRange = datas{1}; end
     
     % Determine whether or not to use uicontrols
     isDesktop = usejava('desktop'); % Test if MATLAB is running in Desktop-mode
@@ -93,8 +99,8 @@ function h = plot(obj, varargin),
                 % VERIFIED 25.7.2016 TO BE COMPLETE LIST!
                 switch(obj.SubType),
                     case 'Image', % Image
+                        updateGraphImage(SumRange);
                         if showSidebar,
-                            updateGraphImage([-inf inf]);
                             fun_refresh = WITio.tbx.ui.sidebar_clim(Fig);
                             WITio.tbx.ui.sidebar_perceptually_uniform_colormaps(Fig);
                             WITio.tbx.ui.sidebar_sum_filter(Fig, @updateGraphImage, fun_refresh);
@@ -102,9 +108,6 @@ function h = plot(obj, varargin),
                                 if ~showPreview, WITio.tbx.ui.sidebar_cursor(Fig, [], [], @transform_CP);
                                 else, WITio.tbx.ui.sidebar_cursor(Fig, @subPreview, [], @transform_CP); end
                             end
-                        else,
-                            if numel(varargin) > 0, updateGraphImage(varargin{1});
-                            else, updateGraphImage([-inf inf]); end
                         end
                     case 'Line', % Line
                         plotSpectrum(1, 1);
@@ -133,13 +136,10 @@ function h = plot(obj, varargin),
                         plotSpectrum(1, 1);
                         if showSidebar && showCursor, WITio.tbx.ui.sidebar_cursor(Fig); end        % CUSTOM TYPE
                     case 'Volume', % Volume (CUSTOM)
+                        updateGraphVolume(SumRange);
                         if showSidebar,
-                            updateGraphVolume([-inf inf]);
                             WITio.tbx.ui.sidebar_perceptually_uniform_colormaps(Fig);
                             WITio.tbx.ui.sidebar_sum_filter(Fig, @updateGraphVolume);
-                        else,
-                            if numel(varargin) > 0, updateGraphVolume(varargin{1});
-                            else, updateGraphVolume([-inf inf]); end
                         end
                 end
             case 'TDImage', % Image
