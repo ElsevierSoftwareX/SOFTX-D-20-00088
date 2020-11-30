@@ -2,7 +2,8 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% This is used to export figures when running MATLAB with -nodesktop.
+% This is used to export figures when running MATLAB with -nodesktop. Use
+% WITio.tbx.pref.set('ifnodesktop_dpi', dpi) to determine the export dpi.
 function ifnodesktop(fig),
     counter = WITio.tbx.pref.get('ifnodesktop_counter', 0) + 1;
     if nargin == 0, fig = gcf; end % By default, export the current figure
@@ -18,6 +19,12 @@ function ifnodesktop(fig),
     ext = WITio.tbx.pref.get('ifnodesktop_ext', '.png'); % Default export extension
     path = WITio.tbx.pref.get('ifnodesktop_path', WITio.tbx.path); % Default export path
     file = fullfile(path, [name ext]); % Construct full path
-    WITio.tbx.ui.sidebar_export(fig, file); % Try export figure to file
+    DPI = WITio.tbx.pref.get('ifnodesktop_dpi', 300); % Default DPI set to 300
+    export_opt = {['-' get(0, 'defaultFigureRenderer')], ... % Use default renderer
+        sprintf('-r%d', DPI), ... % Dots Per Inch (DPI), ...
+        '-nofontswap', ... % Preserves original fonts for vector formats
+        '-q101'}; % Quality: q > 100 ensures lossless compression!
+    setpref('export_fig', 'promo_time', now); % Stop export_fig from promoting consulting services once a week!
+    export_fig(file, fig, export_opt{:}, '-silent'); % Try export figure to file
     WITio.tbx.pref.set('ifnodesktop_counter', counter); % Update counter
 end

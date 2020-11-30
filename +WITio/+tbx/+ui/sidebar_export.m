@@ -2,7 +2,8 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-% Requires 3rd party export_fig
+% Requires 3rd party export_fig. Use WITio.tbx.pref.set('sidebar_dpi', dpi)
+% to determine the export dpi.
 function sidebar_export(Fig, file),
     if nargin < 1 || isempty(Fig), Fig = gcf; end % By default, update gcf
     h_sidebar = findobj(Fig, 'Type', 'uipanel', '-and', 'Tag', 'sidebar'); % Find sidebar uipanel
@@ -28,14 +29,16 @@ function sidebar_export(Fig, file),
         set(h_mainbar, 'Position', [mainbar_Position(1:2) mainbar_Position(3)+sidebar_Position(3) mainbar_Position(4)]);
     end
     
+    DPI = WITio.tbx.pref.get('sidebar_dpi', 300); % Default DPI set to 300
+    
     if nargin < 2,
         formats = {'*.png', 'Portable Network Graphics (*.png)'; ...
             '*.pdf', 'Portable Document Format (*.pdf)'};
         N_formats = size(formats, 1);
         % Add CROPPED versions of the formats
         formats(end+1:end+2,1) = formats(1:2,1);
-        formats(end-1:end,2) = WITio.fun.anyfun2cell(@(x) sprintf('CROP >> %s', x{1}), formats(1:2,2));
-        [filename, pathname, filterindex] = uiputfile(formats, 'Export figure >> 600 DPI >> ...', WITio.tbx.pref.get('latest_folder', cd));
+        formats(end-1:end,2) = WITio.fun.anyfun2cell(@(x) sprintf('Cropped<%s', x{1}), formats(1:2,2));
+        [filename, pathname, filterindex] = uiputfile(formats, sprintf('Export figure at %d DPI...', DPI), WITio.tbx.pref.get('latest_folder', cd));
     end
     
     % Export if filename is provided
@@ -45,7 +48,8 @@ function sidebar_export(Fig, file),
             WITio.tbx.pref.set('latest_folder', pathname); % Remember permanently the latest folder
         end
         h_waitbar = waitbar(0, 'Please wait...', 'Name', 'Exporting figure');
-        export_opt = {'-r600', ... % Dots Per Inch (DPI), ...
+        export_opt = {['-' get(0, 'defaultFigureRenderer')], ... % Use default renderer
+            sprintf('-r%d', DPI), ... % Dots Per Inch (DPI), ...
             '-nofontswap', ... % Preserves original fonts for vector formats
             '-q101'}; % Quality: q > 100 ensures lossless compression!
         if nargin == 2 || filterindex <= N_formats,

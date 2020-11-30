@@ -79,6 +79,8 @@ wip_AutoModifyObj = WITio.tbx.pref.get('wip_AutoModifyObj', true);
 % Set user preferences
 WITio.tbx.pref.set('license_dialog', true);
 WITio.tbx.pref.set('latest_folder', cd);
+WITio.tbx.pref.set('sidebar_dpi', 300); % Determine the dpi of exported figure (through sidebar)
+WITio.tbx.pref.set('ifnodesktop_dpi', 300); % Determine the dpi of exported figure (through ifnodesktop)
 WITio.tbx.pref.set('wip_ForceDataUnit', 'a.u.');
 WITio.tbx.pref.set('wip_ForceSpaceUnit', 'um');
 WITio.tbx.pref.set('wip_ForceSpectralUnit', 'nm');
