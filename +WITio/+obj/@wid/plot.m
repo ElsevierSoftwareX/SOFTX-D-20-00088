@@ -157,23 +157,25 @@ function h = plot(obj, varargin),
                 end
                 % Create uitable
                 set(Fig, 'MenuBar', 'none', 'ToolBar', 'none');
-                h = uitable(Fig, 'Data', Data, 'RowName', [], 'Units', 'normalized', 'Position', [0 0 1 1], ...
-                    'CellSelectionCallback', @uitable_selection_to_clipboard, ...
-                    'TooltipString', '<html><b>Select to copy:</b><br>Any selection is automatically copied to<br>clipboard in fixed-width representation!</html>');
-
-                % Automatically determine the minimum column widths needed in uitable.
-                % Create a temporary text object with the properties that of the table.
-                h_text = text(0, 0, '', 'HandleVisibility', 'off', 'Interpreter', 'none', ...
-                    'FontName', get(h, 'FontName'), 'FontSize', get(h, 'FontSize'), ...
-                    'FontWeight', get(h, 'FontWeight'), 'FontAngle', get(h, 'FontAngle'));
-                CW = zeros(S_Data);
-                for ii = 1:N_Data, % Loop through all texts
-                    set(h_text, 'String', Data{ii}, 'Units', 'pixels'); % Get in pixels
-                    extent = get(h_text, 'Extent'); % Get the text extent in pixels
-                    CW(ii) = extent(3); % Get the text width in pixels
+                if ~isDesktop,
+                    h = uitable(Fig, 'Data', Data, 'RowName', [], 'Units', 'normalized', 'Position', [0 0 1 1], ...
+                        'CellSelectionCallback', @uitable_selection_to_clipboard, ...
+                        'TooltipString', '<html><b>Select to copy:</b><br>Any selection is automatically copied to<br>clipboard in fixed-width representation!</html>');
+                
+                    % Automatically determine the minimum column widths needed in uitable.
+                    % Create a temporary text object with the properties that of the table.
+                    h_text = text(0, 0, '', 'HandleVisibility', 'off', 'Interpreter', 'none', ...
+                        'FontName', get(h, 'FontName'), 'FontSize', get(h, 'FontSize'), ...
+                        'FontWeight', get(h, 'FontWeight'), 'FontAngle', get(h, 'FontAngle'));
+                    CW = zeros(S_Data);
+                    for ii = 1:N_Data, % Loop through all texts
+                        set(h_text, 'String', Data{ii}, 'Units', 'pixels'); % Get in pixels
+                        extent = get(h_text, 'Extent'); % Get the text extent in pixels
+                        CW(ii) = extent(3); % Get the text width in pixels
+                    end
+%                     delete(h_text); % Delete the temporary text object
+                    set(h, 'ColumnWidth', num2cell(max(CW, [], 1)+2)); % Set new column widths
                 end
-                delete(h_text); % Delete the temporary text object
-                set(h, 'ColumnWidth', num2cell(max(CW, [], 1)+2)); % Set new column widths
                 
                 if showSidebar, % Show sidebar if requested
                     h_mainbar = WITio.tbx.ui.sidebar(Fig);
