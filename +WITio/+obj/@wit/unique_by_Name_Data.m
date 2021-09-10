@@ -26,7 +26,7 @@ function [obj_unique, ind_in, ind_out, ind_sort] = unique_by_Name_Data(obj), %#o
             Numel_ii = numel(Data_ii);
             Class_ii = class(Data_ii);
             Numels(ii) = Numel_ii;
-            NamesClassesNumels{ii} = [Names{ii} Class_ii char(typecast(Numel_ii, 'uint8'))];
+            NamesClassesNumels{ii} = [Names{ii} Class_ii char(typecast(Numel_ii, 'uint16'))];
             if strcmp(Class_ii, 'WITio.obj.wit'), B_wit(ii) = true; end %#ok
         end
 
@@ -102,13 +102,20 @@ function [obj_unique, ind_in, ind_out, ind_sort] = unique_by_Name_Data(obj), %#o
     end
     
     function str = to_char_array(input), %#ok
-        if islogical(input), str = char(uint8(reshape(input, 1, []))); %#ok % Handle casting of logicals
+        if islogical(input), %#ok % Handle casting of logicals
+            str = reshape(input, 1, []);
+            if mod(numel(input), 2), str(end+1) = false; end % Append false if odd length
+            str = char(typecast(uint8(str), 'uint16'));
         elseif iscell(input), %#ok
             str = cellfun(@to_char_array, reshape(input, 1, []), 'UniformOutput', false);
-            str = [cellfun(@(x) char(typecast(numel(x), 'uint8')), str, 'UniformOutput', false); str]; % Append typecasted numels as delimeters with no risk of false positives
+            str = [cellfun(@(x) char(typecast(numel(x), 'uint16')), str, 'UniformOutput', false); str]; % Append typecasted numels as delimeters with no risk of false positives
 %             str(2,:) = {char(0)}; % Append (unlikely) 0-characters as delimeters with small risk of false positives
             str = [str{:}]; % Merge together
         elseif ischar(input), str = reshape(input, 1, []);
-        else, str = char(typecast(reshape(input, 1, []), 'uint8')); end
+        elseif isa(input, 'uint8') || isa(input, 'int8'), %#ok % Handle casting of int8/uint8
+            str = reshape(input, 1, []);
+            if mod(numel(input), 2), str(end+1) = 0; end % Append 0 if odd length
+            str = char(typecast(str, 'uint16'));
+        else, str = char(typecast(reshape(input, 1, []), 'uint16')); end
     end
 end
