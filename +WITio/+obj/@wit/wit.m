@@ -691,6 +691,11 @@ classdef wit < handle, %#ok % Since R2008a
         tags = search_ancestors(obj, varargin);
         tags = match_by_Data_criteria(obj, test_fun);
         
+        % Object conversion, sort and unique
+        strs = char(obj); % to a cell of char arrays for vector-optimized purposes
+        [obj_sorted, ind_sort] = sort_by_Name_Data(obj, order);
+        [obj_unique, ind_in, ind_out, ind_sort] = unique_by_Name_Data(obj);
+        
         % Override built-in addlistener to include some optimizations
         function event_listener = addlistener(obj, varargin), %#ok
             if numel(varargin) == 2, %#ok
