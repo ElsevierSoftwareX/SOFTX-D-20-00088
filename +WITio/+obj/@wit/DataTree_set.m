@@ -8,7 +8,7 @@
 % between it and the underlying wit-tree. In conflicts, wit-tree content is
 % ignored, resulting in formatted tree with empty values. This destroys any
 % overridden wit-objects.
-function DataTree_set(parent, in, format),
+function DataTree_set(parent, in, format), %#ok
     if numel(parent) > 1, error('Cannot have multiple parents!'); end
     if ~isstruct(in), error('Only a nested struct can be a data tree!'); end
     
@@ -25,8 +25,8 @@ function DataTree_set(parent, in, format),
     predefined_values = format(:,3);
 
     % Get UNSORTED children names
-    children = reshape([parent.Children WITio.obj.wit.empty], [], 1); % Force column
-    children_names = reshape({children.Name}, [], 1); % Force column
+    children = reshape([parent.ChildrenNow WITio.obj.wit.empty], [], 1); % Force column
+    children_names = reshape({children.NameNow}, [], 1); % Force column
 
     % Get UNSORTED in-struct fields and values AND obey its ordering (SECONDARY)
     in_fields = fieldnames(in);
@@ -37,14 +37,14 @@ function DataTree_set(parent, in, format),
     ind_to_C_from_P = zeros(size(predefined_names));
     ind_to_I_from_P = zeros(size(predefined_fields));
     ind_to_P_from_I = zeros(size(in_fields));
-    for ii = 1:numel(predefined_names),
+    for ii = 1:numel(predefined_names), %#ok
         name = predefined_names{ii};
         field = predefined_fields{ii};
         value = predefined_values{ii};
 
         % Match with the first child
-        for jj = 1:numel(children),
-            if ~ind_to_P_from_C(jj) && strcmp(name, children_names(jj)), % Test for match
+        for jj = 1:numel(children), %#ok
+            if ~ind_to_P_from_C(jj) && strcmp(name, children_names(jj)), %#ok % Test for match
                 ind_to_P_from_C(jj) = ii;
                 ind_to_C_from_P(ii) = jj;
                 break;
@@ -52,8 +52,8 @@ function DataTree_set(parent, in, format),
         end
 
         % Match with the first in-struct field
-        for jj = 1:numel(in_fields),
-            if ~ind_to_P_from_I(jj) && strcmp(field, in_fields(jj)), % Test for match
+        for jj = 1:numel(in_fields), %#ok
+            if ~ind_to_P_from_I(jj) && strcmp(field, in_fields(jj)), %#ok % Test for match
                 ind_to_P_from_I(jj) = ii;
                 ind_to_I_from_P(ii) = jj;
                 break;
@@ -61,31 +61,31 @@ function DataTree_set(parent, in, format),
         end
 
         % Create a child if not found
-        if ind_to_C_from_P(ii),
+        if ind_to_C_from_P(ii), %#ok
             child = children(ind_to_C_from_P(ii));
-        else, % No child was found,
+        else, %#ok % No child was found,
             child = WITio.obj.wit(parent, name); % Append new child to the WIT-tree
         end
 
-        if isempty(value) || size(value, 2) == 3, % CASE: empty OR YES subformat
+        if isempty(value) || size(value, 2) == 3, %#ok % CASE: empty OR YES subformat
             % If formatting is given, then obey it and ignore the underlying wit-tree if needed.
-            if ind_to_I_from_P(ii), % CASE: YES found in-struct field
+            if ind_to_I_from_P(ii), %#ok % CASE: YES found in-struct field
                 WITio.obj.wit.DataTree_set(child, in_values{ind_to_I_from_P(ii)}, value);
-            else, % CASE: NO found in-struct field
+            else, %#ok % CASE: NO found in-struct field
                 WITio.obj.wit.DataTree_set(child, struct(), value);
             end
-        else, % CASE: YES parser
+        else, %#ok % CASE: YES parser
             % If formatting is given, then obey it and ignore the underlying wit-tree if needed.
             parser_write = value{1}; % Write-parser
             parser_read = value{2}; % Read-parser
             empty_default_value = parser_read([]); % Get write-compatible but empty default value
-            if ind_to_I_from_P(ii), % CASE: YES found in-struct field
-                delete(child.Children); % Destroy the underlying wit-tree
+            if ind_to_I_from_P(ii), %#ok % CASE: YES found in-struct field
+                delete_children(child); % Destroy the underlying wit-tree
                 % Try to apply parser to in-struct value
-                try, child.Data = parser_write(in_values{ind_to_I_from_P(ii)});
-                catch, child.Data = parser_write(empty_default_value); end
-            elseif ~ind_to_C_from_P(ii), % CASE: NO found in-struct field
-                delete(child.Children); % Destroy the underlying wit-tree
+                try, %#ok child.Data = parser_write(in_values{ind_to_I_from_P(ii)}); % Rely on the safety of set.Data
+                catch, child.Data = parser_write(empty_default_value); end % Rely on the safety of set.Data
+            elseif ~ind_to_C_from_P(ii), %#ok % CASE: NO found in-struct field
+                delete_children(child); % Destroy the underlying wit-tree % Rely on the safety of set.Data
                 child.Data = parser_write(empty_default_value);
             end
         end
@@ -109,13 +109,13 @@ function DataTree_set(parent, in, format),
     in_values = in_values(~ind_to_P_from_I);
     ind_to_I_from_C = zeros(size(children_fields_no_link_sorted));
     ind_to_C_from_I = zeros(size(in_fields));
-    for ii = 1:numel(in_fields),
+    for ii = 1:numel(in_fields), %#ok
         field = in_fields{ii};
         value = in_values{ii};
 
         % Match with the first non-linked child
-        for jj = 1:numel(children_no_link_sorted),
-            if ~ind_to_I_from_C(jj) && strcmp(field, children_fields_no_link_sorted(jj)), % Test for match
+        for jj = 1:numel(children_no_link_sorted), %#ok
+            if ~ind_to_I_from_C(jj) && strcmp(field, children_fields_no_link_sorted(jj)), %#ok % Test for match
                 ind_to_I_from_C(jj) = ii;
                 ind_to_C_from_I(ii) = jj;
                 break;
@@ -123,17 +123,17 @@ function DataTree_set(parent, in, format),
         end
 
         % Create a child if not found
-        if ind_to_C_from_I(ii),
+        if ind_to_C_from_I(ii), %#ok
             child = children_no_link_sorted(ind_to_C_from_I(ii));
-        else, % No child was found,
+        else, %#ok % No child was found,
             child = WITio.obj.wit(parent, field); % Non-linked in-struct field string is name
         end
 
-        if isstruct(value),
+        if isstruct(value), %#ok
             WITio.obj.wit.DataTree_set(child, value, {});
-        else,
-            delete(child.Children); % Destroy the underlying wit-tree
-            child.Data = value;
+        else, %#ok
+            delete_children(child); % Destroy the underlying wit-tree
+            child.Data = value; % Rely on the safety of set.Data
         end
     end
 end

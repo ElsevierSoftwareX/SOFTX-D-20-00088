@@ -11,7 +11,7 @@
 % wit-tree content is ignored, resulting in formatted tree with empty
 % structs. The generated field names obey first the sorted format names,
 % then the sorted unformatted wit-tree node names.
-function out = DataTree_get(parent, format),
+function out = DataTree_get(parent, format), %#ok
     if numel(parent) > 1, error('Cannot have multiple parents!'); end
     
     % Initialize empty format properly
@@ -24,15 +24,15 @@ function out = DataTree_get(parent, format),
     predefined_values = format(:,3);
 
     % Get UNSORTED children names AND obey the wit tree ordering (PRIMARY)
-    children = reshape([parent.Children WITio.obj.wit.empty], [], 1); % Force column
-    children_names = reshape({children.Name}, [], 1); % Force column
+    children = reshape([parent.ChildrenNow WITio.obj.wit.empty], [], 1); % Force column
+    children_names = reshape({children.NameNow}, [], 1); % Force column
 
     % Match children names with predefined names
     out_names = cell(size(children));
     out_values = cell(size(children));
     ind_to_P_from_C = zeros(size(children_names));
     ind_to_C_from_P = zeros(size(predefined_names));
-    for ii = 1:numel(children_names),
+    for ii = 1:numel(children_names), %#ok
         child = children(ii);
         name = children_names{ii};
 %         isVisible = isempty(format); % Only if no match is found
@@ -40,8 +40,8 @@ function out = DataTree_get(parent, format),
         value = {}; % Only if no match is found
 
         % Match with the first predefined
-        for jj = 1:numel(predefined_names),
-            if ~ind_to_C_from_P(jj) && strcmp(name, predefined_names{jj}), % Test for match
+        for jj = 1:numel(predefined_names), %#ok
+            if ~ind_to_C_from_P(jj) && strcmp(name, predefined_names{jj}), %#ok % Test for match
                 ind_to_P_from_C(ii) = jj;
                 ind_to_C_from_P(jj) = ii;
                 isVisible = predefined_isVisible{jj};
@@ -63,7 +63,7 @@ function out = DataTree_get(parent, format),
     predefined_values_no_link = predefined_values(~ind_to_C_from_P);
     out_default_names = cell(size(predefined_names_no_link));
     out_default_values = cell(size(predefined_names_no_link));
-    for ii = 1:numel(predefined_names_no_link),
+    for ii = 1:numel(predefined_names_no_link), %#ok
         name = predefined_names_no_link{ii};
         isVisible = predefined_isVisible_no_link{ii};
         value = predefined_values_no_link{ii};
@@ -103,28 +103,28 @@ function out = DataTree_get(parent, format),
     
     out = cell2struct(out_values, out_fields, 1);
     
-    function [out_name, out_value] = DataTree_get_helper(child, name, isVisible, value),
+    function [out_name, out_value] = DataTree_get_helper(child, name, isVisible, value), %#ok
         % Reload Data if not yet loaded
-        if isempty([child.Data]), child.reload(); end 
+        if isempty([child.DataNow]), child.reload(); end 
         
         out_name = ''; % Result upon failure
         out_value = []; % Result upon failure
-        if isVisible, % CASE: YES visible
-            if (isempty(value) && isa([child.Data], 'WITio.obj.wit')) ... % CASE: NO subformat AND child has YES children
-                    || size(value, 2) == 3, % OR CASE: YES subformat
+        if isVisible, %#ok % CASE: YES visible
+            if (isempty(value) && isa([child.DataNow], 'WITio.obj.wit')) ... % CASE: NO subformat AND child has YES children
+                    || size(value, 2) == 3, %#ok % OR CASE: YES subformat
                 % If formatting is given, then obey it and ignore the underlying wit-tree if needed.
                 out_name = name;
                 out_value = WITio.obj.wit.DataTree_get(child, value);
-            elseif (isempty(value) && ~isa([child.Data], 'WITio.obj.wit')) ... % CASE: NO parser AND child has NO children
-                    || size(value, 1) == 2, % OR CASE: YES parser
+            elseif (isempty(value) && ~isa([child.DataNow], 'WITio.obj.wit')) ... % CASE: NO parser AND child has NO children
+                    || size(value, 1) == 2, %#ok % OR CASE: YES parser
                 % If formatting is given, then obey it and ignore the underlying wit-tree if needed.
                 out_name = name;
-                if isempty(value), % CASE: No parser
-                     out_value = [child.Data];
-                else, % CASE: Parser
+                if isempty(value), %#ok % CASE: No parser
+                     out_value = [child.DataNow];
+                else, %#ok % CASE: Parser
                     parser_read = value{2}; % Read-parser
                     % Try to apply parser to child's Data.
-                    try, out_value = parser_read([child.Data]);
+                    try, %#ok out_value = parser_read([child.DataNow]);
                     catch, out_value = parser_read([]); end
                 end
             end
