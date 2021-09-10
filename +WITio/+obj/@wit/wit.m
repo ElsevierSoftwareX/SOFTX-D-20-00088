@@ -691,6 +691,9 @@ classdef wit < handle, %#ok % Since R2008a
         tags = search_ancestors(obj, varargin);
         tags = match_by_Data_criteria(obj, test_fun);
         
+        % Object hash
+        bytes = hash(obj); % to fixed-length bytes for vector-optimized comparisons
+        
         % Object conversion, sort and unique
         strs = char(obj); % to a cell of char arrays for vector-optimized purposes
         [obj_sorted, ind_sort] = sort_by_Name_Data(obj, order);
@@ -753,6 +756,9 @@ classdef wit < handle, %#ok % Since R2008a
         % Getters and setters for (un)formatted DataTree, also for debugging
         DataTree_set(parent, in, format); % For (un)formatted structs
         out = DataTree_get(parent, format); % For (un)formatted structs
+        
+        % Get XXH3 (64-bit) hash
+        hash_u64 = xxh3_64(input, seed_or_secret); % generates a fixed-length hash
         
         % Define Octave-compatible empty-function
         function empty = empty(), %#ok % Faster than MATLAB's built-in empty!
