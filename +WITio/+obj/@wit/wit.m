@@ -664,6 +664,10 @@ classdef wit < handle, %#ok % Since R2008a
         
         
         %% OTHER METHODS
+        % Object display
+        out = disp(obj, max_recursion);
+        disp_cmp(varargin);
+        
         % Object copying, destroying, writing, reloading
         new = copy(obj); % Copy obj
         write(obj, varargin); % Write obj to file
