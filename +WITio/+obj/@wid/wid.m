@@ -173,6 +173,22 @@ classdef wid < handle, % Since R2008a
             % https://blogs.mathworks.com/loren/2013/07/23/deconstructing-destructors/
         end
         
+        % Quicker delete-method for sibling wid Data objects
+        function delete_siblings(obj), %#ok
+            [Project, ~, ic] = unique([obj.Project]); %#ok
+            if numel(Project) ~= 1 || numel(ic) ~= numel(obj), %#ok
+                error('The given objects must be of the same wip Project!');
+            end
+            
+            % Delete their tree branches at once (for speed)
+            Tags = [obj.Tag];
+            Tags_DataClassName = [Tags.DataClassName];
+            Tags_Data = [Tags.Data];
+            delete_siblings([Tags_DataClassName Tags_Data]);
+            
+            delete_wrapper(obj);
+        end
+        
         % Delete wid Data objects without deleting underlying wit Tree objects
         function delete_wrapper(obj),
             for ii = 1:numel(obj),
