@@ -4,6 +4,7 @@
 
 % Display the content of the toolbox
 function WITio(),
+    folder_latest_WITio = WITio.tbx.path;
     WITio.fun.href_dir(WITio.tbx.path, [], @WITio_helper);
     
     function WITio_helper(),
@@ -12,13 +13,13 @@ function WITio(),
         
         p = path; % Get old path
         p_split = regexp(p, pathsep, 'split'); % Split by the path separator
-        isThisToolbox = strcmp(p_split, WITio.tbx.path); % Find this toolbox
+        isThisToolbox = strncmp(p_split, folder_latest_WITio, numel(folder_latest_WITio)); % Find this toolbox
         if ~any(isThisToolbox),
             if isDesktop,
-                fprintf('Cannot find this version in the MATLAB search path! Click <a href="matlab:WITio.tbx.rmpath_addpath;">here</a> to resolve it.\n\n');
+                fprintf('Cannot find this version in the MATLAB search path! Click <a href="matlab:WITio.tbx.rmpath_addpath(WITio.tbx.path);">here</a> to resolve it.\n\n');
             else,
-                fprintf('Cannot find this version in the MATLAB search path! Executing WITio.tbx.rmpath_addpath; to resolve it.\n\n');
-                WITio.tbx.rmpath_addpath(WITio.tbx.path);
+                fprintf('Cannot find this version in the MATLAB search path! Executing WITio.tbx.rmpath_addpath(WITio.tbx.path); to resolve it.\n\n');
+                WITio.tbx.rmpath_addpath(folder_latest_WITio);
                 fprintf('\n');
             end
         else,
@@ -26,10 +27,10 @@ function WITio(),
             isOldToolbox = ~cellfun(@isempty, p_match); % Find old toolboxes
             if any(isOldToolbox),
                 if isDesktop,
-                    fprintf('Found other versions in the MATLAB search path! Click <a href="matlab:WITio.tbx.rmpath_addpath;">here</a> to resolve it.\n\n');
+                    fprintf('Found other versions in the MATLAB search path! Click <a href="matlab:WITio.tbx.rmpath_addpath(WITio.tbx.path);">here</a> to resolve it.\n\n');
                 else,
-                    fprintf('Found other versions in the MATLAB search path! Executing WITio.tbx.rmpath_addpath; to resolve it.\n\n');
-                    WITio.tbx.rmpath_addpath(WITio.tbx.path);
+                    fprintf('Found other versions in the MATLAB search path! Executing WITio.tbx.rmpath_addpath(WITio.tbx.path); to resolve it.\n\n');
+                    WITio.tbx.rmpath_addpath(folder_latest_WITio);
                     fprintf('\n');
                 end
             end
