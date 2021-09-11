@@ -18,7 +18,7 @@ function value = get(pref, value),
             pref = fieldnames(pref);
         elseif nargin == 1, value = cell(size(pref)); end
         B_get = ispref('WITio', pref);
-        value(B_get) = getpref('WITio', pref(B_get));
+        if any(B_get), value(B_get) = getpref('WITio', pref(B_get)); end
         setpref('WITio', pref(~B_get), value(~B_get));
     end
 end
