@@ -45,7 +45,7 @@ function HtmlName = get_HtmlName(obj, isWorkspaceOptimized),
             else, % If R2019b or newer that use uihtml_JList.html via uihtml
                 [~, name, ext] = fileparts(ImageFile);
                 ImageFile = [name ext]; % Remove path, because uihtml_project_manager.html is located in the same folder as the icons
-                HtmlName{ii} = sprintf('<tr><td width="1px"><img height="%d" width="%d" src="file:%s"/></td><td>&nbsp;%s</td></tr>', info.Height, info.Width, strrep(ImageFile, '\', '/'), HtmlName{ii}); % height and width are required by R2019b and onwards
+                HtmlName{ii} = sprintf('<tr><td width="1px"><img height="%d" width="%d" src="%s"/></td><td>&nbsp;%s</td></tr>', info.Height, info.Width, strrep(ImageFile, '\', '/'), HtmlName{ii}); % height and width are required by R2019b and onwards
             end
         end
     end
