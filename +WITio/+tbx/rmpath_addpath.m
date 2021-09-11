@@ -17,8 +17,18 @@ function rmpath_addpath(), %#ok % Remove previous versions of this toolbox from 
     addpath(genpath(fullfile(WITio.tbx.path, 'third party'))); % And its 3rd party libraries
     
     % Try permanently save the new path (and it may require Admin-rights!)
-    try, status = savepath; %#ok
+    try, %#ok
+        status = savepath;
         if status == 0, fprintf('Changes saved permanently!\n');
-        else, warning('Cannot make permanent changes without Admin-rights!'); end
-    catch, warning('Cannot make permanent changes without Admin-rights!'); end
+        else, warn_about_admin_rights; end
+    catch, warn_about_admin_rights; end
+    
+    function warn_about_admin_rights(),
+        % Temporarily disable backtrace
+        prev_state = warning('query', 'backtrace');
+        warning('off', 'backtrace');
+        reset_warning_onCleanup = onCleanup(@() warning(prev_state));
+        % Then warn without backtrace
+        warning('Cannot make permanent changes without Admin-rights!');
+    end
 end
