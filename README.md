@@ -36,17 +36,17 @@ Lipsanen's group in Aalto University, Finland.
 
 ### License
 This is published under **free** and **permissive** [BSD 3-Clause License][license].
-Only exceptions to this license can be found in the *'[third party]'*-folder.
+Only exceptions to this license can be found in the *'[third party](./third party/)'*-folder.
 
 ### Installation to MATLAB (for R2014b or newer)
-Download [the latest toolbox installer] and double-click it to install it.
+Download [the latest toolbox installer](./WITio.mltbx) and double-click it to install it.
 
 ### Installation to MATLAB (from R2011a to R2014a)
-Download [the latest zip archive] and extract it as a new folder (i.e. *'wit_io'*)
+Download [the latest zip archive](https://gitlab.com/jtholmi/wit_io/-/archive/master/wit_io-master.zip) and extract it as a new folder (i.e. *'wit_io'*)
 to your workfolder.
 
 **For the first time**, go to the created folder and run (or press *F5*-key)
-*'[WITio.m]'* to **permanently** add its folder to the MATLAB path so that the
+*'[WITio.m](./WITio.m)'* to **permanently** add its folder to the MATLAB path so that the
 toolbox packages are found. **This requires administration rights.**
 * Without the rights, do one of the following once per MATLAB instance to make
 **WITio** findable:
@@ -56,7 +56,7 @@ toolbox packages are found. **This requires administration rights.**
     from the context menu left-click "Add to Path" and "Selected Folders and Subfolders".
 
 ### Installation to context menus (for MATLAB R2011a or newer)
-**Optionally**, run also *'[WITio.tbx.wip_wid_context_menus.m]'* to add
+**Optionally**, run also *'[WITio.tbx.wip_wid_context_menus.m](./+WITio/+tbx/wip_wid_context_menus.m)'* to add
 *'MATLAB'*-option to the **\*.wip** and **\*.wid** file right-click context
 menus to enable a quick call to `[O_wid, O_wip, O_wit] = WITio.read(file);`.
 **This also requires administration rights.**
@@ -66,7 +66,7 @@ Execute `WITio.demo` in *Command Window* to list all available demo cases and
 left-mouse click to run `WITio.demo.A1_import_file_to_get_started` and so on.
 
 ### Semi-automated batch scripts
-Consider using semi-automated batch scripts under *'[batch]'*-package on your
+Consider using semi-automated batch scripts under *'[batch](./+WITio/+batch)'*-package on your
 WITec Project/Data files. They will read the given file, interact with the
 user, process the relevant file contents and finally write back to the original
 file.
@@ -74,7 +74,7 @@ file.
 ### Backward compatibility with *wit_io* v1.4.0.1 (or older) scripts
 Transition from v1.4.0.1 to v2.0.0 involves **major and minor breaking changes**,
 all described in [CHANGELOG.md][changelog]. It is highly recommended to go through
-all renewed demo cases and inspect *'[WITio.tbx.backward_compatible.m]'* as well. Pass
+all renewed demo cases and inspect *'[WITio.tbx.backward_compatible.m](./+WITio/+tbx/backward_compatible.m)'* as well. Pass
 on any questions to jtholmi@gmail.com
 
 ### Requirements and compatibility:
@@ -91,7 +91,7 @@ Any WIT-tag tree content can be modified using `S_DT = WITio.obj.wit.DataTree_ge
 and `WITio.obj.wit.DataTree_set(O_wit, S_DT);`.
 
 ### Format details of \*.wip/\*.wid-files
-For more information, read *'[README on WIT-tag format.txt]'*. Please note
+For more information, read *'[README on WIT-tag format.txt](./+WITio/+doc/README%20on%20WIT-tag%20format.txt)'*. Please note
 that it is by no means an all exhaustive list, but rather consists of formatting
 for the relevant WIT-tags.
 
@@ -116,9 +116,9 @@ J. T. Holmi (2019). WITio: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wi
 
 ### Acknowledgments
 [*] [jtholmi](https://gitlab.com/jtholmi)'s supervisor: [Prof. Harri Lipsanen](https://people.aalto.fi/harri.lipsanen), Aalto University, Finland  
-[1] *'[clever_statistics_and_outliers.m]'*: G. Buzzi-Ferraris and F. Manenti (2011) "Outlier detection in large data sets", http://dx.doi.org/10.1016/j.compchemeng.2010.11.004  
-[2] *'[myinpolygon.m]'*: J. Hao et al. (2018) "Optimal Reliable Point-in-Polygon Test and Differential Coding Boolean Operations on Polygons", https://doi.org/10.3390/sym10100477  
-[3] *'[apply_MRLCM.m]'* (and deprecated *wip_reader*): J. T. Holmi (2016) "Determining the number of graphene layers by Raman-based Si-peak analysis", pp. 27&ndash;28,35, freely available to download at: http://urn.fi/URN:NBN:fi:aalto-201605122027  
+[1] *'[clever_statistics_and_outliers.m](./+WITio/+fun/clever_statistics_and_outliers.m)'*: G. Buzzi-Ferraris and F. Manenti (2011) "Outlier detection in large data sets", http://dx.doi.org/10.1016/j.compchemeng.2010.11.004  
+[2] *'[myinpolygon.m](./+WITio/+fun/+indep/myinpolygon.m)'*: J. Hao et al. (2018) "Optimal Reliable Point-in-Polygon Test and Differential Coding Boolean Operations on Polygons", https://doi.org/10.3390/sym10100477  
+[3] *'[apply_MRLCM.m](./+WITio/+fun/+image/apply_MRLCM.m)'* (and deprecated *wip_reader*): J. T. Holmi (2016) "Determining the number of graphene layers by Raman-based Si-peak analysis", pp. 27&ndash;28,35, freely available to download at: http://urn.fi/URN:NBN:fi:aalto-201605122027  
 
 [file-exchange]: https://se.mathworks.com/matlabcentral/fileexchange/70983-wit_io
 [changelog]: ./CHANGELOG.md
@@ -126,15 +126,3 @@ J. T. Holmi (2019). WITio: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wi
 [license-badge]: https://img.shields.io/badge/license-BSD-ff0000.svg
 [WITec]: https://witec.de/
 [MATLAB]: https://www.mathworks.com/products/matlab.html
-[the latest toolbox installer]: ./WITio.mltbx
-[the latest zip archive]: https://gitlab.com/jtholmi/wit_io/-/archive/master/wit_io-master.zip
-[third party]: ./third party/
-[demo]: ./+WITio/+demo
-[batch]: ./+WITio/+batch
-[WITio.m]: ./WITio.m
-[WITio.tbx.wip_wid_context_menus.m]: ./+WITio/+tbx/wip_wid_context_menus.m
-[WITio.tbx.backward_compatible.m]: ./+WITio/+tbx/backward_compatible.m
-[README on WIT-tag format.txt]: ./+WITio/+doc/README%20on%20WIT-tag%20format.txt
-[clever_statistics_and_outliers.m]: ./+WITio/+fun/clever_statistics_and_outliers.m
-[myinpolygon.m]: ./+WITio/+fun/+indep/myinpolygon.m
-[apply_MRLCM.m]: ./+WITio/+fun/+image/apply_MRLCM.m
