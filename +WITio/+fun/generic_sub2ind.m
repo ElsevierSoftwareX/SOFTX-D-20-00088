@@ -219,7 +219,7 @@ function [ind, isAnyAtClassMax, isAtClassMax] = generic_sub2ind(arraySize, varar
         
          % Grow ind
         if ~noBsxfun, ind = bsxfun(@plus, ind, ind_ii);
-        else, ind = ind + ind_ii;
+        else, ind = ind + ind_ii; end
     end
     
     % Replace some out-of-bound values by the specified value
