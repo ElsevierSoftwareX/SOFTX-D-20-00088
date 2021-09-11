@@ -26,9 +26,13 @@ function resetOnCleanup = set(pref, value),
                     resetOnCleanup{1} = onCleanup(@() rmpref('WITio', pref)); % Remove originally nonexistent preference
                 end
             else,
-                value_old = getpref('WITio', pref(B_old));
-                resetOnCleanup{1} = onCleanup(@() setpref('WITio', pref(B_old), value_old)); % Reset original values to preferences
-                resetOnCleanup{2} = onCleanup(@() rmpref('WITio', pref(~B_old))); % Remove originally nonexistent preferences
+                if any(B_old), % Avoid next line's unexpected error in R2016a!
+                    value_old = getpref('WITio', pref(B_old));
+                    resetOnCleanup{1} = onCleanup(@() setpref('WITio', pref(B_old), value_old)); % Reset original values to preferences
+                    resetOnCleanup{2} = onCleanup(@() rmpref('WITio', pref(~B_old))); % Remove originally nonexistent preferences
+                else,
+                    resetOnCleanup{1} = onCleanup(@() rmpref('WITio', pref(~B_old))); % Remove originally nonexistent preferences
+                end
             end
         end
         setpref('WITio', pref, value);
