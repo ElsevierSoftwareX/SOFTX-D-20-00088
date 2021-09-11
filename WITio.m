@@ -18,7 +18,7 @@ function WITio(),
                 fprintf('Cannot find this version in the MATLAB search path! Click <a href="matlab:WITio.tbx.rmpath_addpath;">here</a> to resolve it.\n\n');
             else,
                 fprintf('Cannot find this version in the MATLAB search path! Executing WITio.tbx.rmpath_addpath; to resolve it.\n\n');
-                WITio.tbx.rmpath_addpath;
+                WITio.tbx.rmpath_addpath(WITio.tbx.path);
                 fprintf('\n');
             end
         else,
@@ -29,7 +29,7 @@ function WITio(),
                     fprintf('Found other versions in the MATLAB search path! Click <a href="matlab:WITio.tbx.rmpath_addpath;">here</a> to resolve it.\n\n');
                 else,
                     fprintf('Found other versions in the MATLAB search path! Executing WITio.tbx.rmpath_addpath; to resolve it.\n\n');
-                    WITio.tbx.rmpath_addpath;
+                    WITio.tbx.rmpath_addpath(WITio.tbx.path);
                     fprintf('\n');
                 end
             end

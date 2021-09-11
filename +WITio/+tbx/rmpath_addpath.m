@@ -5,7 +5,7 @@
 % Prefer toolbox installer (*.mltbx) instead when using R2014b or newer!
 % Nevertheless, this is safe to call and will also remove all the previous
 % versions of this toolbox from the path.
-function rmpath_addpath(), %#ok % Remove previous versions of this toolbox from path
+function rmpath_addpath(folder_latest_WITio), %#ok % Remove previous versions of this toolbox from path
     fprintf('\nRemoving the old WITio toolbox folders from the MATLAB path if found...\n');
     p = path; % Get old path
     p = regexprep(p, ['[^\' pathsep ']*\' filesep '(wit_io|WITio)' '\' filesep '?[^\' pathsep ']*\' pathsep '?'], ''); % Remove any mention of wit_io
@@ -13,8 +13,8 @@ function rmpath_addpath(), %#ok % Remove previous versions of this toolbox from 
     
     % Add this toolbox to path
     fprintf('Adding the new WITio toolbox folder to the MATLAB path if not found...\n');
-    addpath(WITio.tbx.path); % Then add this toolbox
-    addpath(genpath(fullfile(WITio.tbx.path, 'third party'))); % And its 3rd party libraries
+    addpath(folder_latest_WITio); % Then add this toolbox
+    addpath(genpath(fullfile(folder_latest_WITio, 'third party'))); % And its 3rd party libraries
     
     % Try permanently save the new path (and it may require Admin-rights!)
     try, %#ok
