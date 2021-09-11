@@ -11,8 +11,11 @@ function destroy_duplicate_Transformations(obj),
         % Keep only the transformations
         B_T = ~cellfun(@isempty, regexp(Types, 'Transformation$', 'once'));
         O_wid = O_wid(B_T);
-        inds = 1:numel(O_wid);
         Tags = [O_wid.Tag];
+        % Stop if no transformation tags were found
+        if isempty(Tags), return; end % Required for backward compatibility with R2011a
+        
+        inds = 1:numel(O_wid);
         Tags_DataClassNames = [Tags.DataClassName]; % Skip major redundancy by avoiding implicit DataTree_get!
         DataClassNames = {Tags_DataClassNames.Data};
         DataClassNames_unique = unique(DataClassNames);
