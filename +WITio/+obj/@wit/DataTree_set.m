@@ -82,7 +82,7 @@ function DataTree_set(parent, in, format), %#ok
             if ind_to_I_from_P(ii), %#ok % CASE: YES found in-struct field
                 delete_children(child); % Destroy the underlying wit-tree
                 % Try to apply parser to in-struct value
-                try, %#ok child.Data = parser_write(in_values{ind_to_I_from_P(ii)}); % Rely on the safety of set.Data
+                try, child.Data = parser_write(in_values{ind_to_I_from_P(ii)}); %#ok % Rely on the safety of set.Data
                 catch, child.Data = parser_write(empty_default_value); end % Rely on the safety of set.Data
             elseif ~ind_to_C_from_P(ii), %#ok % CASE: NO found in-struct field
                 delete_children(child); % Destroy the underlying wit-tree % Rely on the safety of set.Data

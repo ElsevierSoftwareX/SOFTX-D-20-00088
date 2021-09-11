@@ -124,7 +124,7 @@ function out = DataTree_get(parent, format), %#ok
                 else, %#ok % CASE: Parser
                     parser_read = value{2}; % Read-parser
                     % Try to apply parser to child's Data.
-                    try, %#ok out_value = parser_read([child.DataNow]);
+                    try, out_value = parser_read([child.DataNow]); %#ok
                     catch, out_value = parser_read([]); end
                 end
             end
