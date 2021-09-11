@@ -27,6 +27,56 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
+### Added
+
+- Add: New wid-class `delete_siblings`-method to boost removal of large amounts of wid Data objects.
+- Add: New `char`, `sort_by_Name_Data` and `unique_by_Name_Data` methods that are vector-optimized for big data purposes.
+- Add: New `disp` and `disp_cmp` methods to display wit Tree objects in the Command Window (and compare them).
+- Add: New XXH3 (64-bit) hash algorithm as `hash` and (static) `xxh3_64` hashing functions in order to summarize the wit Tree content. This can be used to make new and more accurate unit tests.
+- Add: Allow video stitching unpatterning algorithm to ignore edges on demand.
+- Doc: For future, added a scale-invariance implementation idea to the arbitrary lineshape fitter.
+
+[2.0.1,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/*.m
+
+### Changed
+
+- [`WITio.tbx.rmpath_addpath`][2.0.1,C1]: Require input to `WITio.tbx.rmpath_addpath`, which is the latest WITio version folder. This fixes `forgetting` issue seen in R2011a.
+
+[2.0.1,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+tbx/rmpath_addpath.m
+
+### Fixed
+
+- Fix: (1) Make the wip Project autoupdates behave correct upon (partial) Data destruction, and (2) make them more robust to errors and user interrupts (Ctrl+C).
+- Fix: Correct the file browsing errors related to uiputfile/uigetfile-call folder-output mishandling.
+- Fix: A bugfix in R2017b, where Project Manager failed to load icons. Misbehaving built-in `imfinfo` (vs. i.e. R2011a, R2014b and R2021a) caused a filesystem encoding error in the wid-class `get_HtmlName`-method, which was resolved by a rewritten code.
+- (Fix: For R2019b or newer, restore Project Manager icons that didn`t show up.)
+- Fix: Remove typos in the function definitions.
+- Fix: Add missing `end`.
+- Fix: Make `WITio.tbx.pref.get` and `rm` compatible with R2016a.
+- Fix: Make `WITio.tbx.pref.set` compatible with R2016a.
+- Fix: `WITio` (1) wont give false positives regarding "found other versions", and (2) wont error when clicking its "resolve" link.
+- Fix: No more error in `WITio.tbx.rmpath_addpath`, when filesystem does not allow permanent savepath (at least in R2011a).
+- Fix: No more `WITio.tbx.rmpath_addpath` shows backtrace on the admin-rights warnings.
+- (Fix: Make `destroy_duplicate_Transformations` backward compatible with R2011a.)
+- Fix: Add %#ok to suppress Code Analyzer messages.
+- (Fix: Corrected two misplaced %#ok's that broke the code.)
+- Doc: Fix readme's links.
+
+[2.0.1,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/*.m
+
+### Performance
+
+- Performance: Remove big data bottleneck by rewriting duplicate Transformation destruction by the wit-class `unique_by_Name_Data` and `regexp_all_Names` methods, the wid-class `delete_siblings`-method and sparse matrix index mapping.
+- Performance: New `delete_siblings` and `delete_children` for much faster deletion.
+- (Performance: Halve the memory requirement of `char`, `sort_by_Name_Data` and `unique_by_Name_Data`.)
+- Performance: Use faster NameNow, DataNow, ChildrenNow and ParentNow whenever possible.
+- Performance: Make finding the linked wit Tree objects for wid Data object faster.
+- Performance: Slight removal of redundant code, namely costly object indexing.
+
+[2.0.1,P1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/*.m
+
+
+
 ## [2.0.0] - 2020-11-28
 
 ### Added
