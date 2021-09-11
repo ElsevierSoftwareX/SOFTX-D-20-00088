@@ -42,7 +42,7 @@ function sidebar_export(Fig, file),
     end
     
     % Export if filename is provided
-    if nargin == 2 || pathname ~= 0,
+    if nargin == 2 || ischar(pathname),
         if nargin < 2,
             file = fullfile(pathname, filename);
             WITio.tbx.pref.set('latest_folder', pathname); % Remember permanently the latest folder

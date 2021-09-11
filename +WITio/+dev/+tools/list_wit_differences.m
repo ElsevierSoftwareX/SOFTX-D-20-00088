@@ -13,7 +13,7 @@
     '*.*', 'WIT-formatted files (*.*)'}, ...
     'Open Project', 'MultiSelect', 'off');
 if ~iscell(filename), filename = {filename}; end
-if folder ~= 0, file_left = fullfile(folder, filename);
+if ischar(folder), file_left = fullfile(folder, filename);
 else, return; end % Abort as no file was selected!
 
 % Read file wit-tags
@@ -23,7 +23,7 @@ fprintf('LEFT: File = %s\nVersion = %d\n', file_left{1}, WITio.obj.wip.get_Root_
 
 [filename, folder] = uigetfile({'*.wip', 'WITec Project (*.WIP)'; '*.wid', 'WITec Data (*.WID)'; '*.*', 'WIT-formatted files (*.*)'}, 'Open Project', 'MultiSelect', 'off');
 if ~iscell(filename), filename = {filename}; end
-if folder ~= 0, file_right = fullfile(folder, filename);
+if ischar(folder), file_right = fullfile(folder, filename);
 else, return; end % Abort as no file was selected!
 
 % Read file wit-tags
