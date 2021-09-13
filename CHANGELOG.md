@@ -47,6 +47,8 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 ### Fixed
 
 - Fix: (1) Make the wip Project autoupdates behave correct upon (partial) Data destruction, and (2) make them more robust to errors and user interrupts (Ctrl+C).
+- Fix: Hotfix to an unnoticed but nasty non-deterministic unique sorting of object handles, which made the wid Data object ordering unintentionally random.
+- (Fix: Make 'destroy_duplicate_Transformations' actually update the IDs as intended.)
 - Fix: Correct the file browsing errors related to uiputfile/uigetfile-call folder-output mishandling.
 - Fix: A bugfix in R2017b, where Project Manager failed to load icons. Misbehaving built-in `imfinfo` (vs. i.e. R2011a, R2014b and R2021a) caused a filesystem encoding error in the wid-class `get_HtmlName`-method, which was resolved by a rewritten code.
 - (Fix: For R2019b or newer, restore Project Manager icons that didn`t show up.)
@@ -58,6 +60,8 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 - Fix: No more error in `WITio.tbx.rmpath_addpath`, when filesystem does not allow permanent savepath (at least in R2011a).
 - Fix: No more `WITio.tbx.rmpath_addpath` shows backtrace on the admin-rights warnings.
 - (Fix: Make `destroy_duplicate_Transformations` backward compatible with R2011a.)
+- Fix: Made wit-class 'disp'-method far more useful with html-enriched links that enable user interaction.
+- Fix: Make wit-class 'disp'-method disable html-links for datatipinfo-case (i.e. when mouse-hovering a variable in debug-mode).
 - Fix: Add %#ok to suppress Code Analyzer messages.
 - (Fix: Corrected two misplaced %#ok's that broke the code.)
 - Doc: Fix readme's links.
