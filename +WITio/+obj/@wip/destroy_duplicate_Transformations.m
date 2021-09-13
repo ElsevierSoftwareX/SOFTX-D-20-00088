@@ -49,9 +49,10 @@ function destroy_duplicate_Transformations(obj),
         
         % Update the Ids
         for jj = 1:numel(tags_Ids),
-            tags_Ids{jj} = int32(full(S(tags_Ids{jj}+1)));
+            tags(jj).Data = int32(full(S(tags_Ids{jj}+1)));
         end
         
+        % Remove duplicates
         delete_siblings(O_wid(~B_unique));
     end
 end
