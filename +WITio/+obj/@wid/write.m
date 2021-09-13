@@ -42,7 +42,12 @@ function write(obj, File) % For saving WIT-formatted WID-files!
                 end
             end
         end
-        O_wit = WITio.obj.wip.append(O_wit, unique(O_wits));
+        
+        % Remove duplicates
+        [~, ia] = unique([O_wits.Id]); % This should be deterministic, whereas the simple unique of object handles can be non-deterministic!
+        O_wits = O_wits(ia);
+        
+        O_wit = WITio.obj.wip.append(O_wit, O_wits);
         O_wit.write(File);
         delete(O_wit);
     end
