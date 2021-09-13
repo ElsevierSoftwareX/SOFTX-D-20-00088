@@ -22,6 +22,10 @@ function out = disp(obj, max_recursion, forceTooltip), %#ok
         if isempty(inputname_1), useHtmlLinks = false; end % Html cannot be used, because the input variable is not known
     end
     
+    % Disable html links if a special case of datatipinfo
+    ST = dbstack();
+    if numel(ST) > 1 && strcmp(ST(2).file, 'datatipinfo.p') && strcmp(ST(2).name, 'datatipinfo'), useHtmlLinks = false; end
+    
     % Generate lines
     lines = {sprintf('%s:\n', array_size_and_class_to_str(obj, 0))};
     disp_recursion(obj, 0);
