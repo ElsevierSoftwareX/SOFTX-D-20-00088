@@ -5,7 +5,7 @@
 % Disp-method for wit Tree objects, enriched with html-links when possible.
 % Optional 2nd input determines the maximum depth of recursion into the
 % given wit Tree array structure. Optional 3rd input is only needed if the
-% output shows pages when line count is more than 1000 to avoid hitting the
+% output shows pages when line count is more than 250 to avoid hitting the
 % Command Window buffer limit. (Optional 4th input is used internally.)
 % By default, no recursion is used, and tooltips are shown only once per
 % MATLAB instance. This function can optionally output to a cell of char
@@ -39,14 +39,14 @@ function out = disp(obj, max_recursion, show_page, force_tooltip), %#ok
     % Determine whether or not to output lines to Command Window
     if nargout, out = lines;
     else,
-        N_page_size = 1000;
+        N_page_size = 250;
         N_pages = floor((numel(lines)-1)./N_page_size)+1;
         if N_pages > 1,
-            if isempty(show_page), show_page = 1; end % By default, show only the first 1000 objects
-            page_link_fmt = sprintf(' <a href="matlab:clc;disp(%s,%d,%%d);">%%d</a>', inputname_1, max_recursion);
-            if show_page == 1, lines_page_links = {['[pages:' sprintf(' %d', show_page) sprintf(page_link_fmt, [show_page+1:N_pages; show_page+1:N_pages]) ']\n']};
-            elseif show_page == N_pages, lines_page_links = {['[pages:' sprintf(page_link_fmt, [1:show_page-1; 1:show_page-1]) sprintf(' %d', show_page) ']\n']};
-            else, lines_page_links = {['[pages:' sprintf(page_link_fmt, [1:show_page-1; 1:show_page-1]) sprintf(' %d', show_page) sprintf(page_link_fmt, [show_page+1:N_pages; show_page+1:N_pages]) ']\n']}; end
+            if isempty(show_page), show_page = 1; end % By default, show only the first <N_page_size> objects
+            if useHtmlLinks, % Use interactive links
+                page_link_fmt = sprintf(' <a href="matlab:clc;disp(%s,%d,%%d);">%%d</a>', inputname_1, max_recursion);
+                lines_page_links = {[sprintf('@: Page %d/%d:', show_page, N_pages) sprintf(page_link_fmt, [1:N_pages; 1:N_pages]) '\n']};
+            else, lines_page_links = {sprintf('@: Page %d/%d\n', show_page, N_pages)}; end % No interactive links
             lines = [lines(1); lines_page_links; lines(2+N_page_size.*(show_page-1):min(1+N_page_size.*show_page, end)); lines_page_links]; % Truncate the lines to the certain page and add page links to the beginning and the end
         end
         fprintf([lines{:}]);
@@ -54,7 +54,7 @@ function out = disp(obj, max_recursion, show_page, force_tooltip), %#ok
     
     % Show tooltip once
     if nargout == 0,
-        if isempty(showTooltip), %#ok
+        if isempty(showTooltip) || showTooltip, %#ok
             fprintf('\n?: (Index of nested array) Name of tag = Data of tag\n');
             fprintf('!: Run ''disp(O_wit, N, M);'' to show all nested wit Tree objects up to N (= 0 by default) recursions on the M''th page (= 1 by default).\n');
             showTooltip = false;
