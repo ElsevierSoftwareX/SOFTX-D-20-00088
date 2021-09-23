@@ -41,6 +41,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 ### Changed
 
 - [`WITio.tbx.rmpath_addpath`][2.0.1,C1]: Require input to `WITio.tbx.rmpath_addpath`, which is the latest WITio version folder. This fixes `forgetting` issue seen in R2011a.
+- (Change: Make wit-class disp-method always clear Command Window before outputting anything there.)
 
 [2.0.1,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+tbx/rmpath_addpath.m
 
@@ -62,6 +63,8 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 - (Fix: Make `destroy_duplicate_Transformations` backward compatible with R2011a.)
 - Fix: Made wit-class 'disp'-method far more useful with html-enriched links that enable user interaction.
 - Fix: Make wit-class 'disp'-method disable html-links for datatipinfo-case (i.e. when mouse-hovering a variable in debug-mode).
+- (Fix: Make wit-class disp-call show only 1000 objects at once to avoid hitting the Command Window buffer limit.)
+- (Fix: Make wit-class disp-method backward compatible with R2011a and work without interactive links.)
 - Fix: Add %#ok to suppress Code Analyzer messages.
 - (Fix: Corrected two misplaced %#ok's that broke the code.)
 - Doc: Fix readme's links.
