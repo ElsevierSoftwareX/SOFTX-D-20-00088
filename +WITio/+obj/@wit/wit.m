@@ -665,7 +665,7 @@ classdef wit < handle, %#ok % Since R2008a
         
         %% OTHER METHODS
         % Object display
-        out = disp(obj, max_recursion, forceTooltip);
+        out = disp(obj, max_recursion, show_lines, force_tooltip);
         disp_cmp(varargin);
         
         % Object copying, destroying, writing, reloading
