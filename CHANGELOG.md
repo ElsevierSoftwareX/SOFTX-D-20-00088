@@ -31,29 +31,27 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 ### Added
 
-- [`@wid/delete_siblings`][2.0.1,A1]: New high-performance destructor method to remove large `wid Data` object array at once from the same underlying tree branch.
-- [`@wit/sort_by_Name_Data`][2.0.1,A2] and [`@wit/unique_by_Name_Data`][2.0.1,A3]: New high-performance sorting and unique methods for `wit Tree` objects, both of which reorder by comparing the actual `Name` and `Data` content.
-- [`@wit/disp`][2.0.1,A4]: New display method to interactively show `wit Tree` object array content in Command Window. Each user interaction updates `ans`-variable and is enabled by the html-links (shown when running MATLAB in Desktop-mode).
-- [`@wit/char`][2.0.1,A5]: New high-performance binary conversion method, which converts `wit Tree` object array to a cell of char arrays. Such output enables calls to the built-in MATLAB calls like `sort` and `unique` with superior performance.
-- [`@wit/hash`][2.0.1,A6] and [`WITio.obj.wit.xxh3_64`][2.0.1,A7]: New hash generator (and its accompanying [XXH3 (64-bit) hash algorithm](https://cyan4973.github.io/xxHash/)). For example, the `hash`-method can be used summarize the `wit Tree` content into a fixed-length output. These are likely to be used to make new and more detailed `WITio.dev.tests` in the future.
-- [`@wit/disp_cmp`][2.0.1,A8]: New methods to display `wit Tree` objects in Command Window (and compare them).
-- [`@wid/unpattern_video_stitching` (and its `WITio.obj.wid.unpattern_video_stitching_helper`)][2.0.1,A9]: New optional extra argument, `'-IgnoreEdges'`, which is used to skip the edge regions in the corrections. For example, this is useful when iteratively applying the algorithm on the inside and the outside regions of the sample with help of the `'-Outliers'` option after masking the regions by [`WITio.fun.indep.myinpolygon`][2.0.1,A10].
+- [`@wit/sort_by_Name_Data`][2.0.1,A1] and [`@wit/unique_by_Name_Data`][2.0.1,A2]: New high-performance sorting and unique methods for `wit Tree` objects by their `Name` and `Data` contents.
+- [`@wit/disp`][2.0.1,A3]: New interactive display method to show `wit Tree` object array content in Command Window. In Desktop-mode, user interaction via html-links updates `ans`-variable.
+- [`@wit/char`][2.0.1,A4]: New high-performance method to convert `wit Tree` object array to a cell of char arrays, enabling the built-in MATLAB calls like `sort` with superior performance.
+- [`@wit/hash`][2.0.1,A5] and [`WITio.obj.wit.xxh3_64`][2.0.1,A6]: New [XXH3 (64-bit) hash algorithm](https://cyan4973.github.io/xxHash/). For example, the `hash`-method can summarize the `wit Tree` object content into a fixed-length output, enabling new more detailed `WITio.dev.tests` in the future.
+- [`@wid/unpattern_video_stitching` (and its `WITio.obj.wid.unpattern_video_stitching_helper`)][2.0.1,A7]: New optional extra argument, `'-IgnoreEdges'`, which is used to skip the edge regions in the corrections. For example, this is useful when iteratively applying the algorithm on the inside and the outside regions of the sample with help of the `'-Outliers'` option after masking the regions by [`WITio.fun.indep.myinpolygon`][2.0.1,A8].
+- [`@wit/disp_cmp`][2.0.1,A9]: New method to compare `wit Tree` objects side-by-side in Command Window.
 
-[2.0.1,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wid/wid.m
-[2.0.1,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/sort_by_Name_Data.m
-[2.0.1,A3]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/unique_by_Name_Data.m
-[2.0.1,A4]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/disp.m
-[2.0.1,A5]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/char.m
-[2.0.1,A6]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/hash.m
-[2.0.1,A7]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/xxh3_64.m
-[2.0.1,A8]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/disp_cmp.m
-[2.0.1,A9]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wid/unpattern_video_stitching_helper.m
-[2.0.1,A10]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+fun/+indep/myinpolygon.m
+[2.0.1,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/sort_by_Name_Data.m
+[2.0.1,A2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/unique_by_Name_Data.m
+[2.0.1,A3]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/disp.m
+[2.0.1,A4]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/char.m
+[2.0.1,A5]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/hash.m
+[2.0.1,A6]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/xxh3_64.m
+[2.0.1,A7]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wid/unpattern_video_stitching_helper.m
+[2.0.1,A8]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+fun/+indep/myinpolygon.m
+[2.0.1,A9]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/disp_cmp.m
 
 ### Changed
 
 - [`third-party`][2.0.1,C1]: Update the third-party files of `export_fig` to v3.16 and `zstd-jni` to v1.5.0-4.
-- [`WITio.tbx.rmpath_addpath`][2.0.1,C2]: From now on, it requires the latest WITio version folder as input, fixing the `WITio`-call's addpath issue in R2011a.
+- [`WITio.tbx.rmpath_addpath`][2.0.1,C2]: From now on, require the latest WITio version folder as input, fixing the `WITio`-call's addpath issue in R2011a.
 
 [2.0.1,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/third%20party/
 [2.0.1,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+tbx/rmpath_addpath.m
@@ -61,13 +59,13 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 ### Fixed
 
 - `wip`-class: Robustify the `wip Project` autoupdating and make it correctly get rid of the destroyed `wid Data` objects.
-- [`@wid/write`][2.0.1,F2], [`WITio.obj.wip.get_Data_DataClassName_pairs`][2.0.1,F3] and [`WITio.obj.wip.get_Viewer_ViewerClassName_pairs`][2.0.1,F4]: Avoid direct sorting of object handle arrays, which caused some nasty non-deterministic bugs. 
+- Avoid direct sorting of object handle arrays, which caused some nasty non-deterministic bugs in [`@wid/write`][2.0.1,F2], [`WITio.obj.wip.get_Data_DataClassName_pairs`][2.0.1,F3] and [`WITio.obj.wip.get_Viewer_ViewerClassName_pairs`][2.0.1,F4]. 
 - No more file browsing errors due to the incorrectly used `path`-output of `uiputfile`/`uigetfile`-calls.
-- [`@wid/get_HtmlName`][2.0.1,F5]: Solve a filesystem encoding error preventing `Project Manager` from loading icons due to misbehaving built-in `imfinfo` only in R2017b.
-- [`WITio.fun.image.apply_CMDLCA`][2.0.1,F6] and [`WITio.fun.image.apply_CMRLCM`][2.0.1,F7]: Remove typos in the function definitions.
+- [`@wid/get_HtmlName`][2.0.1,F5]: Solve the filesystem encoding error preventing `Project Manager` from loading icons due to misbehaving built-in `imfinfo` only in R2017b.
+- [`WITio.fun.image.apply_CMDLCA`][2.0.1,F6] and [`WITio.fun.image.apply_CMRLCM`][2.0.1,F7]: Remove typos in their function definitions.
 - [`WITio.tbx.pref.get`][2.0.1,F8], [`rm`][2.0.1,F9] and [`set`][2.0.1,F10]: Make them compatible with R2016a.
 - [`WITio`][2.0.1,F11]: Correct the search of other versions and the broken "resolve"-link.
-- [`WITio.tbx.rmpath_addpath`][2.0.1,F12]: In R2011a, no more error on failed `savepath`. Also, no more backtrace logs on its warnings.
+- [`WITio.tbx.rmpath_addpath`][2.0.1,F12]: In R2011a, no more error on failed `savepath`.
 - [`WITio.fun.generic_sub2ind`][2.0.1,F13]: Add missing `end`.
 - [`README.md`][2.0.1,F14]: Fix broken links.
 
@@ -88,20 +86,22 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 ### Performance
 
-- [`@wip/destroy_duplicate_Transformations`][2.0.1,P1]: Fix **major performance bottleneck** prior to writing big data back to file. The method was rewritten using the wit-class [`unique_by_Name_Data`][2.0.1,P2] and [`regexp_all_Names`][2.0.1,P3] methods, the wid-class [`delete_siblings`][2.0.1,P4]-method and index mapping by sparse matrices.
-- [`@wit/delete_siblings`][2.0.1,P5] and [`@wit/delete_children`][2.0.1,P5]: New destructor methods for much faster deletion of related `wit Tree` objects.
-- [`wit`-class methods][2.0.1,P6]: Boost dozens of methods like `search` and `regexp` using much faster read-only `NameNow`, `DataNow`, `ChildrenNow` and `ParentNow` properties.
-- [`@wid/find_linked_wits_to_this_wid`][2.0.1,P7]: Improve performance by replacing underlying `regexp` with `regexp_all_Names`.
-- [`@wid/wid.m`][2.0.1,P8]: Speed-up slightly the constructor method by reducing the unnecessary object indexing.
+- [`@wip/destroy_duplicate_Transformations`][2.0.1,P1]: Fix **major performance bottleneck** prior to writing big data back to file. The method was rewritten using the `wit`-class [`unique_by_Name_Data`][2.0.1,P2] and [`regexp_all_Names`][2.0.1,P3] methods, the `wid`-class [`delete_siblings`][2.0.1,P4]-method and index mapping by sparse matrices.
+- [`@wit/delete_siblings`][2.0.1,P5] and [`@wit/delete_children`][2.0.1,P5]: New destructor methods for much faster deletion of the related `wit Tree` objects.
+- [`@wid/delete_siblings`][2.0.1,P6]: New high-performance destructor method to remove large `wid Data` object array at once from the same underlying tree branch.
+- [`wit`-class methods][2.0.1,P7]: Boost dozens of methods like `search` and `regexp` using much faster read-only `NameNow`, `DataNow`, `ChildrenNow` and `ParentNow` properties.
+- [`@wid/find_linked_wits_to_this_wid`][2.0.1,P8]: Improve performance by replacing underlying `regexp` with `regexp_all_Names`.
+- [`@wid/wid.m`][2.0.1,P9]: Speed-up slightly the constructor method by reducing the unnecessary object indexing.
 
 [2.0.1,P1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wip/destroy_duplicate_Transformations.m
 [2.0.1,P2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/unique_by_Name_Data.m
 [2.0.1,P3]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/regexp_all_Names.m
 [2.0.1,P4]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wid/wid.m
 [2.0.1,P5]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/wit.m
-[2.0.1,P6]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/
-[2.0.1,P7]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wid/find_linked_wits_to_this_wid.m
-[2.0.1,P8]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wid/wid.m
+[2.0.1,P6]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wid/wid.m
+[2.0.1,P7]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/
+[2.0.1,P8]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wid/find_linked_wits_to_this_wid.m
+[2.0.1,P9]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wid/wid.m
 
 
 
