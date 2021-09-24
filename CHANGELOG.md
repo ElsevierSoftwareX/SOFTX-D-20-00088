@@ -27,7 +27,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
-## [2.0.1] - 2021-09-24
+## [2.0.1] - 2021-09-25
 
 ### Added
 
@@ -784,7 +784,8 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
-[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v2.0.0...develop
+[Unreleased]: https://gitlab.com/jtholmi/wit_io/-/compare/v2.0.1...develop
+[2.0.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v2.0.0...v2.0.1
 [2.0.0]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.4.0.1...v2.0.0
 [1.4.0.1]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.4.0...v1.4.0.1
 [1.4.0]: https://gitlab.com/jtholmi/wit_io/-/compare/v1.3.2.1...v1.4.0
