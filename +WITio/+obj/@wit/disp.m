@@ -33,7 +33,7 @@ function out = disp(obj, max_recursion, show_page, force_tooltip), %#ok
     if numel(ST) > 1 && strcmp(ST(2).file, 'datatipinfo.p') && strcmp(ST(2).name, 'datatipinfo'), useHtmlLinks = false; end
     
     % Generate lines (if not in the page mode)
-    if isempty(show_page) || isempty(lines_old),
+    if isempty(show_page) || isempty(lines_old), %#ok
         lines = {sprintf('%s:\n', array_size_and_class_to_str(obj, 0))};
         disp_recursion(obj, 0);
         lines_old = lines; % Update old lines for possible subsequent page click
@@ -41,28 +41,28 @@ function out = disp(obj, max_recursion, show_page, force_tooltip), %#ok
     
     % Determine whether or not to output lines to Command Window
     if nargout, out = lines;
-    else,
+    else, %#ok
         N_page_size = 250;
         N_pages = floor((numel(lines)-1)./N_page_size)+1;
-        if N_pages > 1,
+        if N_pages > 1, %#ok
             if isempty(show_page), show_page = 1; end % By default, show only the first <N_page_size> objects
-            if useHtmlLinks, % Use interactive links
+            if useHtmlLinks, %#ok % Use interactive links
                 page_link_fmt = sprintf(' <a href="matlab:%sdisp(%s,%d,%%d);%s">%%d</a>', str_cmd_begin, inputname_1, max_recursion, str_cmd_end);
                 lines_page_links = {[sprintf('@: Page %d/%d:', show_page, N_pages) sprintf(page_link_fmt, [1:N_pages; 1:N_pages]) '\n']};
             else, lines_page_links = {sprintf('@: Page %d/%d\n', show_page, N_pages)}; end % No interactive links
-            lines = [lines(1); lines_page_links; lines(2+N_page_size.*(show_page-1):min(1+N_page_size.*show_page, end)); lines_page_links]; % Truncate the lines to the certain page and add page links to the beginning and the end
+            lines = [lines(1); lines_page_links; lines(2+N_page_size.*(show_page-1):min(1+N_page_size.*show_page, end)); lines_page_links]; %#ok % Truncate the lines to the certain page and add page links to the beginning and the end
         end
         clc; % Always clear Command Window
         fprintf([lines{:}]);
     end
     
     % Show tooltip once
-    if nargout == 0,
+    if nargout == 0, %#ok
         if isempty(showTooltip) || showTooltip, %#ok
             fprintf('\n?: (Index of nested array) Name of tag = Data of tag\n');
             fprintf('!: Run ''disp(O_wit, N, M);'' to show all nested wit Tree objects up to N (= 0 by default) recursions on the M''th page (= 1 by default).\n');
             showTooltip = false;
-        elseif useHtmlLinks,
+        elseif useHtmlLinks, %#ok
             if isempty(show_page), fprintf('\n<a href="matlab:%sdisp(%s,%d,[],1);%s">?!</a>\n', str_cmd_begin, inputname_1, max_recursion, str_cmd_end); 
             else, fprintf('\n<a href="matlab:%sdisp(%s,%d,%d,1);%s">?!</a>\n', str_cmd_begin, inputname_1, max_recursion, show_page, str_cmd_end); end
         end
