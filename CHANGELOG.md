@@ -31,11 +31,11 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 ### Added
 
-- [`@wit/sort_by_Name_Data`][2.0.1,A1] and [`@wit/unique_by_Name_Data`][2.0.1,A2]: New high-performance sorting and unique methods for `wit Tree` objects by their `Name` and `Data` contents.
+- New high-performance [`@wit/sort_by_Name_Data`][2.0.1,A1] and [`@wit/unique_by_Name_Data`][2.0.1,A2] methods for `wit Tree` object arrays.
 - [`@wit/disp`][2.0.1,A3]: New interactive display method to show `wit Tree` object array content in Command Window. In Desktop-mode, user interaction via html-links updates `ans`-variable.
 - [`@wit/char`][2.0.1,A4]: New high-performance method to convert `wit Tree` object array to a cell of char arrays, enabling the built-in MATLAB calls like `sort` with superior performance.
 - [`@wit/hash`][2.0.1,A5] and [`WITio.obj.wit.xxh3_64`][2.0.1,A6]: New [XXH3 (64-bit) hash algorithm](https://cyan4973.github.io/xxHash/). For example, the `hash`-method can summarize the `wit Tree` object content into a fixed-length output, enabling new more detailed `WITio.dev.tests` in the future.
-- [`@wid/unpattern_video_stitching` (and its `WITio.obj.wid.unpattern_video_stitching_helper`)][2.0.1,A7]: New optional extra argument, `'-IgnoreEdges'`, which is used to skip the edge regions in the corrections. For example, this is useful when iteratively applying the algorithm on the inside and the outside regions of the sample with help of the `'-Outliers'` option after masking the regions by [`WITio.fun.indep.myinpolygon`][2.0.1,A8].
+- [`@wid/unpattern_video_stitching` (and its `WITio.obj.wid.unpattern_video_stitching_helper`)][2.0.1,A7]: New optional extra argument, `'-IgnoreEdges'` to skip the edge regions in the corrections. It enables iterative procedure, e.g., for the sample's in and out regions with help of the `'-Outliers'` option after masking them by [`WITio.fun.indep.myinpolygon`][2.0.1,A8].
 - [`@wit/disp_cmp`][2.0.1,A9]: New method to compare `wit Tree` objects side-by-side in Command Window.
 
 [2.0.1,A1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wit/sort_by_Name_Data.m
@@ -62,9 +62,9 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 - Avoid direct sorting of object handle arrays, which caused some nasty non-deterministic bugs in [`@wid/write`][2.0.1,F2], [`WITio.obj.wip.get_Data_DataClassName_pairs`][2.0.1,F3] and [`WITio.obj.wip.get_Viewer_ViewerClassName_pairs`][2.0.1,F4]. 
 - No more file browsing errors due to the incorrectly used `path`-output of `uiputfile`/`uigetfile`-calls.
 - [`@wid/get_HtmlName`][2.0.1,F5]: Solve the filesystem encoding error preventing `Project Manager` from loading icons due to misbehaving built-in `imfinfo` only in R2017b.
-- [`WITio.fun.image.apply_CMDLCA`][2.0.1,F6] and [`WITio.fun.image.apply_CMRLCM`][2.0.1,F7]: Remove typos in their function definitions.
+- Remove typos in the function definitions of [`WITio.fun.image.apply_CMDLCA`][2.0.1,F6] and [`WITio.fun.image.apply_CMRLCM`][2.0.1,F7].
 - [`WITio.tbx.pref.get`][2.0.1,F8], [`rm`][2.0.1,F9] and [`set`][2.0.1,F10]: Make them compatible with R2016a.
-- [`WITio`][2.0.1,F11]: Correct the search of other versions and the broken "resolve"-link.
+- [`WITio`][2.0.1,F11]: Fix the search of other WITio versions and the broken link.
 - [`WITio.tbx.rmpath_addpath`][2.0.1,F12]: In R2011a, no more error on failed `savepath`.
 - [`WITio.fun.generic_sub2ind`][2.0.1,F13]: Add missing `end`.
 - [`README.md`][2.0.1,F14]: Fix broken links.
