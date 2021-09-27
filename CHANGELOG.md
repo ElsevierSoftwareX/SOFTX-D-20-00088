@@ -27,7 +27,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
-## [2.0.1] - 2021-09-25
+## [2.0.1] - 2021-09-27
 
 ### Added
 
@@ -67,7 +67,8 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 - [`WITio`][2.0.1,F11]: Fix the search of other WITio versions and the broken link.
 - [`WITio.tbx.rmpath_addpath`][2.0.1,F12]: In R2011a, no more error on failed `savepath`.
 - [`WITio.fun.generic_sub2ind`][2.0.1,F13]: Add missing `end`.
-- [`README.md`][2.0.1,F14]: Fix broken links.
+- [developer tools][2.0.1,F14]: Add missing package-prefixes and make them handle subdirectories.
+- [`README.md`][2.0.1,F15]: Improve the text and fix the broken links.
 
 [2.0.1,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wip/wip.m
 [2.0.1,F2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wid/write.m
@@ -82,7 +83,8 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 [2.0.1,F11]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/WITio.m
 [2.0.1,F12]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+tbx/rmpath_addpath.m
 [2.0.1,F13]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+fun/generic_sub2ind.m
-[2.0.1,F14]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/README.md
+[2.0.1,F14]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+dev/
+[2.0.1,F15]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/README.md
 
 ### Performance
 
