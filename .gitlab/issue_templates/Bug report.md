@@ -8,9 +8,11 @@
 
 ### Specifications
 
-- WITio Version: <!-- Paste vA.B.C.D, e.g., from the last output line of `ver('wit_io');`. -->
-- MATLAB Version: <!-- Paste the `MATLAB Version:` line of `ver('MATLAB');`. -->
-- Java Version: <!-- Paste the `Java Version:` line of `ver('MATLAB');`. -->
+<!-- Run `ver('wit_io');` and fill-in the following specifications. -->
+- MATLAB Version: <!-- Replace with the matching line. -->
+- Operating System: <!-- Replace with the matching line. -->
+- Java Version: <!-- Replace with the matching line. -->
+- WIT In/Out Toolbox Version: <!-- Paste here A.B.C.D of the matching line. -->
 
 ## Current bug behavior
 
