@@ -252,11 +252,6 @@ function hash_u64 = xxh3_64(input, seed_or_secret), %#ok
             lhs_u64s = bitxor(add_u64(seed_u64, secret_u64s(1:2:end-1)), input_u64s(1:2:end-1));
             rhs_u64s = bitxor(add_u64(sub_u64(uint64(0), seed_u64), secret_u64s(2:2:end)), input_u64s(2:2:end));
             mixed_u64s = mul_u128_fold_u64(lhs_u64s, rhs_u64s);
-%             [lo_mixed_u64s, hi_mixed_u64s] = lohi_split_u64(mixed_u64s);
-%             lo_mixed_u64s_sum = sum(lo_mixed_u64s, 'native');
-%             hi_mixed_u64s_sum = sum(hi_mixed_u64s, 'native');
-%             [lo_acc_u64, hi_acc_u64] = lohi_split_u64(acc_u64);
-%             acc_u64 = lohi_merge_u64(lo_acc_u64+lo_mixed_u64s_sum, hi_acc_u64+hi_mixed_u64s_sum);
             for ii = 2*nbRounds+1:-2:1, %#ok
                 acc_u64 = add_u64(acc_u64, mixed_u64s(ii));
                 acc_u64 = add_u64(acc_u64, mixed_u64s(ii+1));
@@ -339,8 +334,6 @@ function hash_u64 = xxh3_64(input, seed_or_secret), %#ok
             rhs_u64 = sum(reshape(uint64(typecast(lo_hi_mul_u64_bitxor_striped(:), 'uint32')) + uint64(typecast(input_u64_blocks_striped(:), 'uint32')), 2, ACC_NB, nb_rounds, nb_blocks_mbs), 3, 'native');
             rhs_u64_lo = reshape(rhs_u64(1,:), ACC_NB, nb_blocks_mbs);
             rhs_u64_hi = reshape(rhs_u64(2,:), ACC_NB, nb_blocks_mbs);
-%             rhs_u64_lo = reshape(sum(bitshift(bitshift(input_u64_blocks_striped, 32), -32) + bitshift(bitshift(lo_hi_mul_u64_bitxor_striped, 32), -32), 2, 'native'), ACC_NB, nb_blocks_mbs);
-%             rhs_u64_hi = reshape(sum(bitshift(input_u64_blocks_striped, -32) + bitshift(lo_hi_mul_u64_bitxor_striped, -32), 2, 'native'), ACC_NB, nb_blocks_mbs);
             acc_u64_lo = bitshift(bitshift(acc_u64, 32), -32);
             acc_u64_hi = bitshift(acc_u64, -32);
             secret_u64_ACC_NB_lo = bitshift(bitshift(secret_u64_ACC_NB, 32), -32);
@@ -350,7 +343,6 @@ function hash_u64 = xxh3_64(input, seed_or_secret), %#ok
                 % Add low and high halves per stripe
                 acc_u64_lo = bitshift(bitshift(acc_u64_lo, 32), -32) + rhs_u64_lo(:,ii); % This wont overflow when high-half of acc_u64_lo is discarded
                 acc_u64_hi = bitshift(bitshift(bitshift(acc_u64_lo, -32) + acc_u64_hi + rhs_u64_hi(:,ii), 32), -32); % This wont overflow even if high-half of acc_u64_hi is not discarded and all parts are maxed out
-%                 acc_u64_lo = bitshift(bitshift(acc_u64_lo, 32), -32); % Discard high-half bits
                 % /* Scrambles input. This is usually written in SIMD code, as it is usually part of the main loop. */
                 acc_u64_lo = bitxor(bitxor(acc_u64_lo, bitshift(acc_u64_hi, -15)), secret_u64_ACC_NB_lo);
                 acc_u64_hi = bitxor(acc_u64_hi, secret_u64_ACC_NB_hi);
@@ -359,20 +351,6 @@ function hash_u64 = xxh3_64(input, seed_or_secret), %#ok
                 acc_u64_hi = bitshift(acc_u64_lo, -32) + acc_u64_hi .* PRIME32_1; % This wont overflow when high-half of acc_u64_hi is discarded
             end
             acc_u64 = bitor(bitshift(bitshift(acc_u64_lo, 32), -32), bitshift(acc_u64_hi, 32));
-
-            % Following approach is slightly slower than above
-%             rhs_u64 = bitxor(bitshift(bitshift(bitshift(bitshift(rhs_u64_lo, 32), -32), 1), -1) + bitshift(bitshift(bitshift(rhs_u64_hi, 32), 1), -1), bitshift(bitshift(bitxor(bitshift(bitshift(rhs_u64_lo, 32), -32), bitshift(rhs_u64_hi, 32)), -63), 63));
-%             for ii = 1:nb_blocks_mbs, % This main loop has been heavily optimized!
-%                 % Add low and high halves per stripe
-%                 rhs_u64_ii = rhs_u64(:,ii);
-%                 acc_u64 = bitxor(bitshift(bitshift(acc_u64, 1), -1) + bitshift(bitshift(rhs_u64_ii, 1), -1), bitshift(bitshift(bitxor(acc_u64, rhs_u64_ii), -63), 63));
-%                 % /* Scrambles input. This is usually written in SIMD code, as it is usually part of the main loop. */
-%                 acc_u64 = bitxor(bitxor(acc_u64, bitshift(acc_u64, -47)), secret_u64_ACC_NB);
-%                 % Multiply low and high halves by a prime
-%                 acc_u64_lo = bitshift(bitshift(acc_u64, 32), -32) .* PRIME32_1;
-%                 acc_u64_hi = bitshift(bitshift(acc_u64, -32) .* PRIME32_1, 32);
-%                 acc_u64 = bitxor(bitshift(bitshift(acc_u64_lo, 1), -1) + bitshift(bitshift(acc_u64_hi, 1), -1), bitshift(bitshift(bitxor(acc_u64_lo, acc_u64_hi), -63), 63));
-%             end
         end
         clear secret_u64_striped input_u64_blocks_striped lo_hi_mul_u64_bitxor_striped rhs_u64;
 
@@ -484,37 +462,6 @@ function hash_u64 = xxh3_64(input, seed_or_secret), %#ok
     function result_u64 = lo_hi_mul_u64(val_u64), %#ok
         result_u64 = bitshift(val_u64, -32).*bitshift(bitshift(val_u64, 32), -32);
     end
-
-%     % wrapping unsigned 64-bit truncation
-%     function [lo, hi] = lohi_truncate_u64(lo, hi),
-%         lo = bitshift(bitshift(lo, 32), -32);
-%         hi = bitshift(bitshift(hi, 32), -32);
-%     end
-% 
-%     % wrapping unsigned 64-bit truncation
-%     function [lo, hi] = lohi_split_u64(lohi),
-%         lo = bitshift(bitshift(lohi, 32), -32);
-%         hi = bitshift(lohi, -32);
-%     end
-% 
-%     % wrapping unsigned 64-bit truncation
-%     function lohi = lohi_merge_u64(lo, hi),
-%         hi = bitshift(bitshift(lo, -32) + hi, 32);
-%         lo = bitshift(bitshift(lo, 32), -32);
-%         lohi = bitor(lo, hi);
-%     end
-% 
-%     % wrapping unsigned 64-bit addition
-%     function [lo, hi] = lohi_add_u64(lo_left, hi_left, lo_right, hi_right),
-%         lo = lo_left + lo_right;
-%         hi = bitshift(lo, -32) + hi_left + hi_right;
-%     end
-% 
-%     % wrapping unsigned 64-bit multiplication
-%     function [lo, hi] = lohi_mul_u64(lo_left, hi_left, lo_right, hi_right),
-%         lo = lo_left .* lo_right;
-%         hi = bitshift(lo, -32) + bitshift(bitshift(lo_left .* hi_right, 32), -32) + bitshift(bitshift(lo_right .* hi_left, 32), -32);
-%     end
 
 
 
