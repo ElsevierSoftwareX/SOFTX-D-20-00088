@@ -8,9 +8,9 @@
 
 ### Specifications
 
-WITio Version: <!-- Paste vA.B.C.D, e.g., from the last output line of `ver('wit_io');`. -->
-MATLAB Version: <!-- Paste the `MATLAB Version:` line of `ver('MATLAB');`. -->
-Java Version: <!-- Paste the `Java Version:` line of `ver('MATLAB');`. -->
+- WITio Version: <!-- Paste vA.B.C.D, e.g., from the last output line of `ver('wit_io');`. -->
+- MATLAB Version: <!-- Paste the `MATLAB Version:` line of `ver('MATLAB');`. -->
+- Java Version: <!-- Paste the `Java Version:` line of `ver('MATLAB');`. -->
 
 ## Current bug behavior
 
