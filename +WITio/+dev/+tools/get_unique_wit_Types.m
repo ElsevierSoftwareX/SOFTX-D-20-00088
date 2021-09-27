@@ -31,7 +31,7 @@ function [unique_wit_Types, B_diversity_matrix, versions, files] = get_unique_wi
         end
         unique_wit_Types_per_file{ii} = unique(Types);
         fprintf('Number of unique wit Types = %d\n', numel(unique_wit_Types_per_file{ii}));
-        fprintf('Unique wit Types = %s\n', mystrjoin(arrayfun(@(t) sprintf('%d', t), unique_wit_Types_per_file{ii}, 'UniformOutput', false), ', '));
+        fprintf('Unique wit Types = %s\n', WITio.fun.indep.mystrjoin(arrayfun(@(t) sprintf('%d', t), unique_wit_Types_per_file{ii}, 'UniformOutput', false), ', '));
     end
     
     % Generate the diversity matrix
@@ -39,7 +39,7 @@ function [unique_wit_Types, B_diversity_matrix, versions, files] = get_unique_wi
     if isempty(unique_wit_Types), unique_wit_Types = {}; end % Handle case of no unique wit Types
     unique_wit_Types = reshape(unique_wit_Types, 1, []); % Force row column
     fprintf('\nNumber of all unique wit Types = %d\n', numel(unique_wit_Types));
-    fprintf('All unique wit Types = %s\n', mystrjoin(arrayfun(@(t) sprintf('%d', t), unique_wit_Types, 'UniformOutput', false), ', '));
+    fprintf('All unique wit Types = %s\n', WITio.fun.indep.mystrjoin(arrayfun(@(t) sprintf('%d', t), unique_wit_Types, 'UniformOutput', false), ', '));
     B_diversity_matrix = false(numel(files), numel(unique_wit_Types));
     for ii = 1:numel(unique_wit_Types),
         B_diversity_matrix(:,ii) = cellfun(@(s) any(s == unique_wit_Types(ii)), unique_wit_Types_per_file);
