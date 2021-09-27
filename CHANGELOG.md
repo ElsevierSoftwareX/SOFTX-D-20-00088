@@ -67,7 +67,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 - [`WITio`][2.0.1,F11]: Fix the search of other WITio versions and the broken link.
 - [`WITio.tbx.rmpath_addpath`][2.0.1,F12]: In R2011a, no more error on failed `savepath`.
 - [`WITio.fun.generic_sub2ind`][2.0.1,F13]: Add missing `end`.
-- [developer tools][2.0.1,F14]: Add missing package-prefixes and make them handle subdirectories.
+- [`WITio.dev.tools`-functions][2.0.1,F14]: Add missing package-prefixes and make them handle subdirectories.
 - [`README on WIT-tag format.txt`][2.0.1,F15]: Add the missing file format description.
 - [`README.md`][2.0.1,F16]: Improve the text and fix the broken links.
 
@@ -84,7 +84,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 [2.0.1,F11]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/WITio.m
 [2.0.1,F12]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+tbx/rmpath_addpath.m
 [2.0.1,F13]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+fun/generic_sub2ind.m
-[2.0.1,F14]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+dev/
+[2.0.1,F14]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+dev/+tools/
 [2.0.1,F15]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+doc/README%20on%20WIT-tag%20format.txt
 [2.0.1,F16]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/README.md
 
