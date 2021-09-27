@@ -12,7 +12,7 @@
 - MATLAB Version: <!-- Replace with the matching line. -->
 - Operating System: <!-- Replace with the matching line. -->
 - Java Version: <!-- Replace with the matching line. -->
-- WIT In/Out Toolbox Version: <!-- Paste here A.B.C.D of the matching line. -->
+- WITio Version: <!-- Paste here A.B.C.D of the `WIT In/Out Toolbox` or `WIT Input/Output Toolbox` line (or find it in CHANGELOG.md). -->
 
 ## Current bug behavior
 
