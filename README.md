@@ -18,7 +18,7 @@
 
 ### Description
 **WITio** is intended for the users of [WITec] microscopes, who work with WITec
-Project/Data (\*.wip/\*.wid) files (from **v0** to **v7**) and wish to enrich
+Project/Data (\*.wip/\*.wid) files (v0&ndash;v7) and wish to enrich
 their data evaluation by customized automation scripts within [MATLAB] environment.
 Thanks to its fast bidirectional read/write capabilities, **WITio** bridges
 the best of both WITec software and MATLAB software. The toolbox is a great
@@ -54,20 +54,14 @@ Download [the toolbox installer](./WITio.mltbx) and double-click it to install i
 
 ### Installation to MATLAB (from R2011a to R2014a)
 Download [the latest production zip archive](https://gitlab.com/jtholmi/wit_io/-/archive/production/wit_io-production.zip)
-and extract it to the MATLAB work folder. **For the first time**, open the
-folder in MATLAB and run [WITio.m](./WITio.m) to **permanently** add the
-toolbox folder to the MATLAB path. **This requires administration rights.**
-* Without the rights, do one of the following once per MATLAB instance to make **WITio** findable:
-    1. Execute `addpath('toolbox_path');`, where `'toolbox_path'` is **WITio**'s 
-    full installation path.
-    2. Manually right-click **WITio**'s main folder in "Current Folder"-view and 
-    from the context menu left-click "Add to Path" and "Selected Folders and Subfolders".
+and extract it. For the first time, run MATLAB as administrator, go to the
+extracted folder and execute [`WITio`](./WITio.m) in *Command Window* to permanently add
+the toolbox folder to the MATLAB path.
 
-### Installation to context menus (for MATLAB R2011a or newer)
-**Optionally**, run also [WITio.tbx.wip_wid_context_menus.m](./+WITio/+tbx/wip_wid_context_menus.m) to add
-MATLAB-option to the **\*.wip** and **\*.wid** file right-click context
-menus to enable a quick call to `[O_wid, O_wip, O_wit] = WITio.read(file);`.
-**This also requires administration rights.**
+### (Optional) Installation to the \*.wip/\*.wid context menus in Windows (for R2011a or newer)
+Run MATLAB as administrator and execute [`WITio.tbx.wip_wid_context_menus`](./+WITio/+tbx/wip_wid_context_menus.m)
+to add the **WITio** option to the \*.wip and \*.wid file right-click context
+menus to enable a quick external call to `[O_wid, O_wip, O_wit] = WITio.read(file, '-ifall');`.
 
 ### Demo cases
 Execute `WITio.demo` in *Command Window* to list all available demo cases and
@@ -123,7 +117,7 @@ new research and commercial opportunities for the WITec community.
 
 ## Additional information
 
-### Citation (*optional*)
+### Citation (optional)
 J. T. Holmi (2019). WITio: A MATLAB toolbox for WITec Project/Data (\*.wip/\*.wid)
 files (https://gitlab.com/jtholmi/wit_io), GitLab. Version \<x.y.z\>. Retrieved
 \<Month\> \<Day\>, \<Year\>.
