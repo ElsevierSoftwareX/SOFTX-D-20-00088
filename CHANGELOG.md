@@ -55,7 +55,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 - [`WITio.tbx.rmpath_addpath`][2.0.1,C3]: From now on, require the latest WITio version folder as input, fixing the `WITio`-call's addpath issue in R2011a.
 
 [2.0.1,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+tbx/wip_wid_context_menus.m
-[2.0.1,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/third%20party/
+[2.0.1,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/third%20party/
 [2.0.1,C3]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+tbx/rmpath_addpath.m
 
 ### Fixed
