@@ -50,11 +50,13 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 ### Changed
 
-- [`third-party`][2.0.1,C1]: Update the third-party files of `export_fig` to v3.16 and `zstd-jni` to v1.5.0-4.
-- [`WITio.tbx.rmpath_addpath`][2.0.1,C2]: From now on, require the latest WITio version folder as input, fixing the `WITio`-call's addpath issue in R2011a.
+- [`WITio.tbx.wip_wid_context_menus`][2.0.1,C1]: From now on, the context menu for *.wip/*.wid files calls WITio.read with '-ifall'.
+- [`third-party`][2.0.1,C2]: Update the third-party files of `export_fig` to v3.16 and `zstd-jni` to v1.5.0-4.
+- [`WITio.tbx.rmpath_addpath`][2.0.1,C3]: From now on, require the latest WITio version folder as input, fixing the `WITio`-call's addpath issue in R2011a.
 
-[2.0.1,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/third%20party/
-[2.0.1,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+tbx/rmpath_addpath.m
+[2.0.1,C1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+tbx/wip_wid_context_menus.m
+[2.0.1,C2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/third%20party/
+[2.0.1,C3]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+tbx/rmpath_addpath.m
 
 ### Fixed
 
@@ -66,10 +68,11 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 - [`WITio.tbx.pref.get`][2.0.1,F8], [`rm`][2.0.1,F9] and [`set`][2.0.1,F10]: Make them compatible with R2016a.
 - [`WITio`][2.0.1,F11]: Fix the search of other WITio versions and the broken link.
 - [`WITio.tbx.rmpath_addpath`][2.0.1,F12]: In R2011a, no more error on failed `savepath`.
-- [`WITio.fun.generic_sub2ind`][2.0.1,F13]: Add missing `end`.
-- [`WITio.dev.tools`-functions][2.0.1,F14]: Add missing package-prefixes and make them handle subdirectories.
-- [`README on WIT-tag format.txt`][2.0.1,F15]: Add the missing file format description.
-- [`README.md`][2.0.1,F16]: Improve the text and fix the broken links.
+- [`WITio.tbx.wip_wid_context_menus`][2.0.1,F13]: Resolve the context menu installer issues.
+- [`WITio.fun.generic_sub2ind`][2.0.1,F14]: Add missing `end`.
+- [`WITio.dev.tools`-functions][2.0.1,F15]: Add missing package-prefixes and make them handle subdirectories.
+- [`README on WIT-tag format.txt`][2.0.1,F16]: Add the missing file format description.
+- [`README.md`][2.0.1,F17]: Improve the text and fix the broken links.
 
 [2.0.1,F1]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wip/wip.m
 [2.0.1,F2]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+obj/@wid/write.m
@@ -83,10 +86,11 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 [2.0.1,F10]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+tbx/+pref/set.m
 [2.0.1,F11]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/WITio.m
 [2.0.1,F12]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+tbx/rmpath_addpath.m
-[2.0.1,F13]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+fun/generic_sub2ind.m
-[2.0.1,F14]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+dev/+tools/
-[2.0.1,F15]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+doc/README%20on%20WIT-tag%20format.txt
-[2.0.1,F16]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/README.md
+[2.0.1,F13]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+tbx/wip_wid_context_menus.m
+[2.0.1,F14]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+fun/generic_sub2ind.m
+[2.0.1,F15]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+dev/+tools/
+[2.0.1,F16]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/+WITio/+doc/README%20on%20WIT-tag%20format.txt
+[2.0.1,F17]: https://gitlab.com/jtholmi/wit_io/-/blob/v2.0.1/README.md
 
 ### Performance
 
