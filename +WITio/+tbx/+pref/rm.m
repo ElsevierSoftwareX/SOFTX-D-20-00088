@@ -6,8 +6,9 @@
 % corresponding default values) using built-in RMPREF function. This
 % behaves like RMPREF but does not error if group or pref do not exist.
 function rm(pref),
+    if ~ispref('WITio'), return; end % Do nothing if the group does not exist
     if nargin == 0, % If no input, then remove all the preferences
-        if ispref('WITio'), rmpref('WITio'); end
+        rmpref('WITio');
     elseif ischar(pref), % If a char input, then remove the specified preference
         if ispref('WITio', pref), rmpref('WITio', pref); end
     else, % Otherwise, remove the specified multiple preferences

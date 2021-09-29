@@ -11,13 +11,12 @@ function files = get_dir_files_recursively(folder),
         WITio.tbx.pref.set('latest_folder', folder);
     end
     S = dir(folder);
-    files = cellfun(@(n) fullfile(folder, n), {S(~[S.isdir]).name}, 'UniformOutput', false); % Backward compatible with R2011a
+    files = cellfun(@(n) fullfile(folder, n), reshape({S(~[S.isdir]).name}, [], 1), 'UniformOutput', false); % Backward compatible with R2011a
     subfolders = {S([S.isdir]).name};
     for ii = 1:numel(subfolders),
         if strcmp(subfolders{ii}, '.') || strcmp(subfolders{ii}, '..'),
             continue; % Skip . and ..
         end
-        files = [files WITio.dev.tools.get_dir_files_recursively(fullfile(folder, subfolders{ii}))];
+        files = [files; WITio.dev.tools.get_dir_files_recursively(fullfile(folder, subfolders{ii}))];
     end
-    files = files(:); % Force column vector
 end

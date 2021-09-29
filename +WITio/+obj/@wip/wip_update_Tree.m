@@ -5,12 +5,13 @@
 % Update is always called when wip Project object may need to be updated
 % with respect to its underlying wit Tree object.
 % THIS DOES NOT SUPPORT WIP PROJECT OBJECT ARRAYS!
-function wip_update_Tree(obj),
+function wip_update_Tree(obj), %#ok
     if obj.isUpdatingTree, return; end
-    obj.isUpdatingTree = true;
+    obj.isUpdatingTree = true; resetOnCleanup = onCleanup(@() reset_isUpdatingTree(obj)); % Cleanup should work on user interrupts (Ctrl+C) and errors
+    
     OldTree = obj.Tree;
     NewTree = OldTree.Root;
-    if OldTree ~= NewTree,
+    if OldTree ~= NewTree, %#ok
         obj.Tree = NewTree;
         delete(obj.TreeObjectBeingDestroyedListener);
         delete(obj.TreeObjectModifiedListener);
@@ -18,5 +19,8 @@ function wip_update_Tree(obj),
         obj.TreeObjectModifiedListener = NewTree.addlistener('ObjectModified', @(s,e) wip_update_Tree(obj));
     end
     obj.wip_update_Data();
-    obj.isUpdatingTree = false;
+    
+    function reset_isUpdatingTree(obj), %#ok
+        obj.isUpdatingTree = false;
+    end
 end

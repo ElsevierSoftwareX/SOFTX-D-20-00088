@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function tags = regexp_ancestors(obj, pattern, FirstOnly, LayersFurther),
+function tags = regexp_ancestors(obj, pattern, FirstOnly, LayersFurther), %#ok
     % Finds Tag(s) ANCESTORS by specified FullName-pattern, where
     % '<'-characters separate all Names from each other. Returns empty on
     % failure. The search is done layer by layer to ensure the best
@@ -14,12 +14,12 @@ function tags = regexp_ancestors(obj, pattern, FirstOnly, LayersFurther),
     if nargin < 4, LayersFurther = Inf; end % By default, return all matches!
     FullNames = {obj.FullName};
     match = ~cellfun(@isempty, regexp(FullNames, pattern, 'once')); % Benefit from cell-array speed-up
-    if FirstOnly && any(match), % Special case: Limited matches
+    if FirstOnly && any(match), %#ok % Special case: Limited matches
         tags = obj(find(match, 1)); % Return only the first match
-    elseif LayersFurther < 1, % Special case: Limited search range
+    elseif LayersFurther < 1, %#ok % Special case: Limited search range
         tags = reshape(obj(match), 1, []); % Return all matches
-    else,
-        superobj = {obj.Parent}; % Collect the parents
+    else, %#ok
+        superobj = {obj.ParentNow}; % Collect the parents
         tags = [reshape(obj(match), 1, []) regexp_ancestors([superobj{:} WITio.obj.wit.empty], pattern, FirstOnly, LayersFurther-1)]; % Returns always a row vector
     end
 end

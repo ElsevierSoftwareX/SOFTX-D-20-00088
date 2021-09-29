@@ -106,6 +106,11 @@ function [P, R2, SSres, Y_fit, R2_total, SSres_total] = fit_lineshape_arbitrary(
     % ref. [4] with PRECONDITIONING. (3.9.2020)
     % [4] J. R. Shewchuk (1994) 'An Introduction to the Conjugate
     % Gradient Method Without the Agonizing Pain', https://www.cs.cmu.edu/~quake-papers/painless-conjugate-gradient.pdf
+    %
+    % * Implement automatic robust scale-invariance described in
+    % ref. [5]. (8.7.2021)
+    % [5] J. J. Moré (1978) 'The Levenberg-Marquardt algorithm:
+    % Implementation and theory', https://doi.org/10.1007/BFb0067700
     
     if nargin < 5, dim = 3; end % By default, operate 3rd or spectral dimension
     T_begin = now.*86400; % [s]

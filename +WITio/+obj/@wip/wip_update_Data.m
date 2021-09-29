@@ -6,10 +6,11 @@
 % with respect to its underlying wit Tree object.
 % THIS DOES NOT SUPPORT WIP PROJECT OBJECT ARRAYS!
 function wip_update_Data(obj, isObjectBeingDestroyed),
-    if nargin < 2, isObjectBeingDestroyed = false; end
-
+    if obj.isUpdatingData, return; end
+    obj.isUpdatingData = true; resetOnCleanup = onCleanup(@() reset_isUpdatingData(obj)); % Cleanup should work on user interrupts (Ctrl+C) and errors
+    
     % CASE: Data-tag is being destroyed
-    if isObjectBeingDestroyed,
+    if nargin > 1 && isObjectBeingDestroyed,
         delete(obj.DataObjectBeingDestroyedListener);
         delete(obj.DataObjectModifiedListener);
         obj.TreeData = WITio.obj.wit.empty;
@@ -17,12 +18,8 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
         obj.DataObjectBeingDestroyedListener = [];
         obj.DataObjectModifiedListener = [];
         obj.Data = WITio.obj.wid.empty;
-        obj.isUpdatingData = false;
         return;
     end
-    
-    if obj.isUpdatingData, return; end
-    obj.isUpdatingData = true;
     
     % OTHERWISE: Update Data-tag
     TreeData = obj.TreeData;
@@ -48,9 +45,7 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
         return;
     else,
         MC = TreeData.ModifiedCount;
-        if MC == obj.TreeDataModifiedCount,
-            obj.isUpdatingData = false;
-            return; % Do nothing
+        if MC == obj.TreeDataModifiedCount, return; % Do nothing
         else, obj.TreeDataModifiedCount = MC; end
         MDI = TreeData.ModifiedDescendantIndices;
         MDP = TreeData.ModifiedDescendantProperty;
@@ -164,5 +159,8 @@ function wip_update_Data(obj, isObjectBeingDestroyed),
             end
         end
     end
-    obj.isUpdatingData = false;
+    
+    function reset_isUpdatingData(obj), %#ok
+        obj.isUpdatingData = false;
+    end
 end

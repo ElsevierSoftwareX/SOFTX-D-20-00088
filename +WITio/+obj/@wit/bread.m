@@ -5,7 +5,7 @@
 % This function was implemented to enable unzip/zip-utilities and provide
 % SPEED-UP when reading file, because we can call EXPENSIVE fread only
 % once.
-function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress_bar),
+function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress_bar), %#ok
     % Reads a WIT-formatted tag info from the given buffer stream.
     % Reading can be limited by N_bytes_max (if low on memory).
     if nargin < 3, N_bytes_max = Inf; end % Default: no read limit!
@@ -15,7 +15,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
     if nargin < 7, fun_progress_bar = @(x) WITio.obj.wit.progress_bar(x, '-OnlyIncreasing'); end % By default: verbose progress bar in Command Window
     
     % Test the data stream
-    if isempty(buffer),
+    if isempty(buffer), %#ok
         delete(obj); % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
         return;
     end
@@ -24,7 +24,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
     buffer = reshape(buffer, 1, []); % Force row vector (only once!)
     
     verbose = isa(fun_progress_bar, 'function_handle');
-    if verbose,
+    if verbose, %#ok
         % Get buffer size
         BufferSize = uint64(ind_max);
         
@@ -45,10 +45,10 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
     ocu_restore_warning = onCleanup(@() warning(old_state)); % Restore warning state on exit
     
     % Read Magic (8 bytes) (only if Root)
-    if isempty(obj.Parent),
+    if isempty(obj.ParentNow), %#ok
         ind_end = ind_begin-1 + 8;
         % Abort, if the end is reached
-        if ind_end > ind_max,
+        if ind_end > ind_max, %#ok
             delete(obj); % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
             return;
         end
@@ -57,11 +57,11 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
     end
     
     % Read wit Tree objects
-    if ~bread_helper(obj),
+    if ~bread_helper(obj), %#ok
         delete(obj); % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
     end
     
-    function isDone = bread_helper(obj),
+    function isDone = bread_helper(obj), %#ok
         isDone = false; % Needed to properly handle failure cases
         
         % Do not allow obj to notify its ancestors on modifications
@@ -69,7 +69,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         
         % Read NameLength (4 bytes)
         ind_end = ind_begin-1 + 4;
-        if ind_end > ind_max, % Abort, if the end is reached
+        if ind_end > ind_max, %#ok % Abort, if the end is reached
             obj.ParentNow = WITio.obj.wit.empty; % Do not touch obj.Parent.Data on deletion!
             return;
         end
@@ -80,7 +80,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         
         % Read Name (NameLength # of bytes)
         ind_end = ind_begin-1 + double(obj_NameLength);
-        if ind_end > ind_max, % Abort, if the end is reached
+        if ind_end > ind_max, %#ok % Abort, if the end is reached
             obj.ParentNow = WITio.obj.wit.empty; % Do not touch obj.Parent.Data on deletion!
             return;
         end
@@ -90,7 +90,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         
         % Read Type (4 bytes)
         ind_end = ind_begin-1 + 4;
-        if ind_end > ind_max, % Abort, if the end is reached
+        if ind_end > ind_max, %#ok % Abort, if the end is reached
             obj.ParentNow = WITio.obj.wit.empty; % Do not touch obj.Parent.Data on deletion!
             return;
         end
@@ -101,7 +101,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         
         % Read Start (8 bytes)
         ind_end = ind_begin-1 + 8;
-        if ind_end > ind_max, % Abort, if the end is reached
+        if ind_end > ind_max, %#ok % Abort, if the end is reached
             obj.ParentNow = WITio.obj.wit.empty; % Do not touch obj.Parent.Data on deletion!
             return;
         end
@@ -112,7 +112,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         
         % Read End (8 bytes)
         ind_end = ind_begin-1 + 8;
-        if ind_end > ind_max, % Abort, if the end is reached
+        if ind_end > ind_max, %#ok % Abort, if the end is reached
             obj.ParentNow = WITio.obj.wit.empty; % Do not touch obj.Parent.Data on deletion!
             return;
         end
@@ -122,14 +122,14 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         ind_begin = ind_end + 1; % Set next begin index
         
         doVerbose = false;
-        if verbose,
-            if obj_Start >= IntervalNextLimit,
+        if verbose, %#ok
+            if obj_Start >= IntervalNextLimit, %#ok
                 IntervalNextLimit = obj_Start + IntervalBlockSize;
                 doVerbose = true;
             end
         end
         
-        if doVerbose,
+        if doVerbose, %#ok
             fun_now_text(obj.FullName);
         end
         
@@ -138,31 +138,31 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         
         % SPECIAL CASE: Skip if obj meets the given skip Data criteria.
         skip_Data = false;
-        if isa(skip_Data_criteria_for_obj, 'function_handle'),
+        if isa(skip_Data_criteria_for_obj, 'function_handle'), %#ok
             skip_Data = skip_Data_criteria_for_obj(obj);
         end
         
         % Data reading
-        if skip_Data, % Handle Data skipping
+        if skip_Data, %#ok % Handle Data skipping
             ind_begin = double(obj_End)+1; % Double OFFSET for compability!
-        elseif obj_Type == 0, % Read the children
+        elseif obj_Type == 0, %#ok % Read the children
             children = WITio.obj.wit.empty;
-            while(ind_begin < obj_End), % Continue reading until DataEnd
+            while(ind_begin < obj_End), %#ok % Continue reading until DataEnd
                 child = WITio.obj.wit(); % Many times faster than WITio.obj.wit(obj) due to redundant code
                 child.ParentNow = obj; % Adopt the new child being created
-                if bread_helper(child), % Read the new child contents (or destroy it on failure)
-                    children(end+1) = child; % Add child if valid (and avoid Octave-incompatible isvalid-function)
+                if bread_helper(child), %#ok % Read the new child contents (or destroy it on failure)
+                    children(end+1) = child; %#ok % Add child if valid (and avoid Octave-incompatible isvalid-function)
                     child.OrdinalNumber = numel(children);
                 else, delete(child); end % Delete child if not valid (and avoid Octave-incompatible isvalid-function)
             end
             obj.DataNow = children; % Adopt the new child being created
             obj.ChildrenNow = children; % Adopt the new child being created
-        else,
+        else, %#ok
             obj.bread_Data(buffer, N_bytes_max, swapEndianess);
             ind_begin = double(obj_End)+1; % Double OFFSET for compability!
         end % Otherwise, read the Data
         
-        if doVerbose,
+        if doVerbose, %#ok
             fun_now(obj_End);
         end
         
@@ -170,7 +170,7 @@ function bread(obj, buffer, N_bytes_max, swapEndianess, skip_Data_criteria_for_o
         obj.ModifiedAncestors = true;
         
         % SPECIAL CASE: Abort if obj meets the given error criteria.
-        if isa(error_criteria_for_obj, 'function_handle'),
+        if isa(error_criteria_for_obj, 'function_handle'), %#ok
             temp = obj.ParentNow;
             obj.ParentNow = WITio.obj.wit.empty; % Do not touch obj.Parent.Data on deletion!
             error_criteria_for_obj(obj); % EXPECTED TO ERROR if its criteria is met

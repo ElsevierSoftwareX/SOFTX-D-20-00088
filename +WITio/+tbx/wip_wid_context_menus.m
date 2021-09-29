@@ -25,6 +25,7 @@ function wip_wid_context_menus(),
     % Determine the MATLAB executable path
     if strcmp(computer, 'PCWIN'), MatlabExe = fullfile(matlabroot, 'bin', 'matlab.exe'); % Assumed rather than tested
     else, MatlabExe = fullfile(matlabroot, 'bin', 'win64', 'matlab.exe'); end % Verified
+    MatlabExe = strrep(MatlabExe, filesep, '\\'); % Make file separator correct for the reg import
     
     % Determine the MATLAB DDE ShellVerbs
     ShellVerbs = 'ShellVerbs.MATLAB'; % For R2012b or less
@@ -37,14 +38,16 @@ function wip_wid_context_menus(),
     root = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes';
     fprintf(fid, 'Windows Registry Editor Version 5.00\n');
     
+    MatlabCmd = '[file, O_wid, O_wip, O_wit] = WITio.tbx.wip_wid_context_menus_cmd(''%1'');';
+    
     subroot1 = [root '\WITec Data File\shell\MATLAB'];
     fprintf(fid, '\n; Context menu for WITec Data File\n');
     fprintf(fid, '[%s]\n', subroot1);
-    fprintf(fid, '@="MATLAB %s"\n', v); % The text shown under the context menu
+    fprintf(fid, '@="WITio @ MATLAB %s"\n', v); % The text shown under the context menu
     fprintf(fid, '[%s\\command]\n', subroot1);
-    fprintf(fid, '@="\\"%s\\""\n', MatlabExe);
+    fprintf(fid, '@="%s"\n', MatlabExe);
     fprintf(fid, '[%s\\ddeexec]\n', subroot1);
-    fprintf(fid, '@="[filepath, name, ext] = fileparts(''%%1''); cd(filepath); [O_wid, O_wip, O_wit] = WITio.read(fullfile(filepath, [name ext]));"\n');
+    fprintf(fid, '@="%s"\n', MatlabCmd);
     fprintf(fid, '[%s\\ddeexec\\application]\n', subroot1);
     fprintf(fid, '@="%s"\n', ShellVerbs);
     fprintf(fid, '[%s\\ddeexec\\topic]\n', subroot1);
@@ -53,24 +56,25 @@ function wip_wid_context_menus(),
     subroot2 = [root '\WITec Project File\shell\MATLAB'];
     fprintf(fid, '\n; Context menu for WITec Project File\n');
     fprintf(fid, '[%s]\n', subroot2);
-    fprintf(fid, '@="MATLAB %s"\n', v); % The text shown under the context menu
+    fprintf(fid, '@="WITio @ MATLAB %s"\n', v); % The text shown under the context menu
     fprintf(fid, '[%s\\command]\n', subroot2);
-    fprintf(fid, '@="\\"%s\\""\n', MatlabExe);
+    fprintf(fid, '@="%s"\n', MatlabExe);
     fprintf(fid, '[%s\\ddeexec]\n', subroot2);
-    fprintf(fid, '@="[filepath, name, ext] = fileparts(''%%1''); cd(filepath); [O_wid, O_wip, O_wit] = WITio.read(fullfile(filepath, [name ext]));"\n');
+    fprintf(fid, '@="%s"\n', MatlabCmd);
     fprintf(fid, '[%s\\ddeexec\\application]\n', subroot2);
     fprintf(fid, '@="%s"\n', ShellVerbs);
     fprintf(fid, '[%s\\ddeexec\\topic]\n', subroot2);
     fprintf(fid, '@="system"\n');
+    clear C; % Release the file by closing its file stream (to avoid errors)
     
     disp('*Reg-file successfully created:');
     disp(reg_file);
     
-    % Attempt to call regedit through MATLAB
-    status = dos(sprintf('regedit.exe /s "%s"', reg_file));
+    % Attempt to call REG through MATLAB
+    status = dos(sprintf('REG IMPORT "%s"', reg_file));
     if status == 0,
-        disp('*Try regedit: SUCCESS! The *.WIP and *.WID context menus should now be updated accordingly.');
+        disp('*Try REG IMPORT: SUCCESS! The *.WIP and *.WID context menus should now be updated accordingly.');
     else,
-        disp('*Try regedit: FAIL! Either re-run MATLAB under administration rights or manually double-click the reg-file to install it.');
+        disp('*Try REG IMPORT: FAIL! Either re-run MATLAB under administration rights or manually double-click the reg-file to install it.');
     end
 end

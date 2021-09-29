@@ -2,8 +2,8 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function reload(obj),
-    if ~isempty(obj) && ~isempty(obj.File) && obj.HasData,
+function reload(obj), %#ok
+    if ~isempty(obj) && ~isempty(obj.File) && obj.HasData, %#ok
         % Try to open file or abort
         fid = fopen(obj.File, 'r');
         if isempty(fid) || fid == -1, error('File (''%s'') cannot be opened for reading!', obj.File); end

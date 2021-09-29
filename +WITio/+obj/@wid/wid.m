@@ -137,12 +137,14 @@ classdef wid < handle, % Since R2008a
                 for ii = 1:N_pairs,
                     DataClassName = Pairs(ii,1);
                     Data = Pairs(ii,2);
-                    obj(ii).Tag(1).Root = Roots;
-                    obj(ii).Tag(1).RootVersion = Root_Version;
-                    obj(ii).Tag(1).Parent = Data.Parent;
-                    obj(ii).Tag(1).DataClassName = DataClassName;
-                    obj(ii).Tag(1).Data = Data;
-                    [obj(ii).Tag(1).Caption, obj(ii).Tag(1).Id, obj(ii).Tag(1).ImageIndex] = Data.search_children('TData').search_children('Caption', 'ID', 'ImageIndex');
+                    Tag_ii = struct();
+                    Tag_ii.Root = Roots;
+                    Tag_ii.RootVersion = Root_Version;
+                    Tag_ii.Parent = Data.Parent;
+                    Tag_ii.DataClassName = DataClassName;
+                    Tag_ii.Data = Data;
+                    [Tag_ii.Caption, Tag_ii.Id, Tag_ii.ImageIndex] = Data.search_children('TData').search_children('Caption', 'ID', 'ImageIndex');
+                    obj(ii).Tag = Tag_ii; % Indexing only once
                 end
                 
                 % Find Project
@@ -171,6 +173,22 @@ classdef wid < handle, % Since R2008a
             % https://se.mathworks.com/help/matlab/matlab_oop/handle-class-destructors.html
             % https://se.mathworks.com/help/matlab/matlab_oop/example-implementing-linked-lists.html
             % https://blogs.mathworks.com/loren/2013/07/23/deconstructing-destructors/
+        end
+        
+        % Quicker delete-method for sibling wid Data objects
+        function delete_siblings(obj), %#ok
+            [Project, ~, ic] = unique([obj.Project]); %#ok
+            if numel(Project) ~= 1 || numel(ic) ~= numel(obj), %#ok
+                error('The given objects must be of the same wip Project!');
+            end
+            
+            % Delete their tree branches at once (for speed)
+            Tags = [obj.Tag];
+            Tags_DataClassName = [Tags.DataClassName];
+            Tags_Data = [Tags.Data];
+            delete_siblings([Tags_DataClassName Tags_Data]);
+            
+            delete_wrapper(obj);
         end
         
         % Delete wid Data objects without deleting underlying wit Tree objects
