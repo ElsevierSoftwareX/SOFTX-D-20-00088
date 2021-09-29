@@ -26,7 +26,7 @@ script-based automation platform for big data analysis and post-processing,
 which reduces a lot of slow error-prone manual work. This includes file batch
 processing, easily accessible customized tools and more systematic data evaluation.
 When combined with the WITec software's *Autosaving* feature, they can together
-even achieve a powerful real-time during-measurement task automation for industrial
+even achieve powerful real-time during-measurement task automation for industrial
 applications. To summarize, **WITio** aims to constantly open up new research
 and commercial possibilities to the WITec community by jointly keeping up with
 the ever-increasing big data for broader insights.
