@@ -74,6 +74,7 @@
 % '-DisableAutoIgnoreChannels': Disables automatic color channel analysis,
 % whether they are mostly (>50%) black (= zero) or not.
 % '-IgnoreChannels': Ignores the specified color channels.
+% '-IgnoreEdges': Ignores the edge regions in the corrections.
 % '-LocalWindowSize' (= 17 by default): Used to window-filtering of std
 % during the local variance minimization procedure. The number should be an
 % odd integer.
@@ -176,6 +177,9 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     IgnoreChannels = [];
     if numel(datas) > 0, IgnoreChannels = datas{1}; end
     if numel(IgnoreChannels) == 1, IgnoreChannels = repmat(IgnoreChannels, [1 D]); end
+    
+    % Check if IgnoreEdges was specified
+    IgnoreEdges = WITio.fun.varargin_dashed_str.exists('IgnoreEdges', varargin); % By default, process the edges as well
     
     %% Preparation
     
@@ -378,8 +382,8 @@ function [I_best, N_best, cropIndices] = unpattern_video_stitching_helper(I, N_S
     I_best = remove_pattern(I, P_best, B_5, inds_begin(ii_best,:)); % Restore too bright regions if requested
     I_pattern = remove_pattern(ones(size(I), class(I)).*128, P_best, B_5, inds_begin(ii_best,:));
     
-    % Continue by calculating the edge patterns (if not to be cropped)
-    if ~CropEdgePatterns,
+    % Continue by calculating the edge patterns (if not to be cropped or ignored)
+    if ~CropEdgePatterns && ~IgnoreEdges,
         % Attempt to find edges as post-processing step
         [P_left_edge, P_right_edge, P_top_edge, P_bottom_edge] = find_edge_patterns();
         

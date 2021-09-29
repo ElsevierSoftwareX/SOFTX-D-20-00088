@@ -6,7 +6,7 @@
 % following case-insensitive extra inputs:
 % '-CustomFun' (= none by default): Can be used to provide call custom
 % function for writing wit Tree object. This is used in wip-class read.
-function obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteria_for_obj, varargin),
+function obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteria_for_obj, varargin), %#ok
     % Reads a WIP-formatted tag from the given file stream.
     % Reading can be limited by N_bytes_max (if low on memory).
     if nargin < 2, N_bytes_max = Inf; end % By default: no read limit!
@@ -33,12 +33,12 @@ function obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteri
     obj = WITio.obj.wit();
     
     % Then read the file
-    if ~Silent,
+    if ~Silent, %#ok
         fprintf('\nReading from file: %s\n', FileName);
     end
-    if isa(CustomFun, 'function_handle'),
+    if isa(CustomFun, 'function_handle'), %#ok
         CustomFun(obj, File);
-    else,
+    else, %#ok
         % Try to open file
         fid = fopen(File, 'r');
         if isempty(fid) || fid == -1, error('File (''%s'') cannot be opened for reading!', File); end
@@ -53,20 +53,20 @@ function obj = read(File, N_bytes_max, skip_Data_criteria_for_obj, error_criteri
         
         % Determine whether or not to use low-on-memory scheme
         lowOnMemory = FileSize > N_bytes_max;
-        if ~lowOnMemory,
-            try, % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
+        if ~lowOnMemory, %#ok
+            try, %#ok % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
                 % Avoid call to builtin 'memory', which is Octave-incompatible!
-                buffer = zeros(FileSize, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
+                buffer = zeros(FileSize, 1, 'uint8'); %#ok % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
                 clear buffer;
-            catch, % OTHERWISE USE LOW-ON-MEMORY SCHEME!
+            catch, %#ok % OTHERWISE USE LOW-ON-MEMORY SCHEME!
                 lowOnMemory = true;
             end
         end
         
-        if ~lowOnMemory, % FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
+        if ~lowOnMemory, %#ok % FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
             buffer = fread(fid, Inf, 'uint8=>uint8'); % Read the file content to the buffer
             obj.bread(buffer, N_bytes_max, [], skip_Data_criteria_for_obj, error_criteria_for_obj); % Parse the file content in the buffer
-        else, % OTHERWISE USE LOW-ON-MEMORY SCHEME!
+        else, %#ok % OTHERWISE USE LOW-ON-MEMORY SCHEME!
             if isinf(N_bytes_max), N_bytes_max = 4096; end % Do not obey infinite N_bytes_max here!
             obj.fread(fid, N_bytes_max, [], skip_Data_criteria_for_obj, error_criteria_for_obj);
         end

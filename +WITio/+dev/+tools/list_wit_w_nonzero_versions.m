@@ -13,7 +13,7 @@
     '*.*', 'WIT-formatted files (*.*)'}, ...
     'Open Project', 'MultiSelect', 'off');
 if ~iscell(filename), filename = {filename}; end
-if folder ~= 0, file = fullfile(folder, filename);
+if ischar(folder), file = fullfile(folder, filename);
 else, return; end % Abort as no file was selected!
 
 % Read file wit-tags

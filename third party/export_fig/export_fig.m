@@ -23,6 +23,7 @@ function [imageData, alpha] = export_fig(varargin) %#ok<*STRCL1>
 %   export_fig ... -bookmark
 %   export_fig ... -clipboard<:format>
 %   export_fig ... -update
+%   export_fig ... -version
 %   export_fig ... -nofontswap
 %   export_fig ... -font_space <char>
 %   export_fig ... -linecaps
@@ -30,6 +31,7 @@ function [imageData, alpha] = export_fig(varargin) %#ok<*STRCL1>
 %   export_fig ... -preserve_size
 %   export_fig ... -options <optionsStruct>
 %   export_fig ... -silent
+%   export_fig ... -regexprep <pattern> <replace>
 %   export_fig(..., handle)
 %
 % This function saves a figure or single axes to one or more vector and/or
@@ -166,6 +168,7 @@ function [imageData, alpha] = export_fig(varargin) %#ok<*STRCL1>
 %             device. This solves some bugs with Matlab's default -depsc2 device
 %             such as discolored subplot lines on images (vector formats only).
 %   -update - option to download and install the latest version of export_fig
+%   -version - return the current export_fig version, without any figure export
 %   -nofontswap - option to avoid font swapping. Font swapping is automatically
 %             done in vector formats (only): 11 standard Matlab fonts are
 %             replaced by the original figure fonts. This option prevents this.
@@ -183,6 +186,10 @@ function [imageData, alpha] = export_fig(varargin) %#ok<*STRCL1>
 %             options.PNG.BitDepth=4. Valid only for PNG,TIF,JPG output formats.
 %   -silent - option to avoid various warning and informational messages, such
 %             as version update checks, transparency or renderer issues, etc.
+%   -regexprep <old> <new> - replaces all occurances of <old> (a regular expression
+%             string or array of strings; case-sensitive), with the corresponding
+%             <new> string(s), in EPS/PDF files (only). See regexp function's doc.
+%             Warning: invalid replacement can make your EPS/PDF file unreadable!
 %   handle -  The handle of the figure, axes or uipanels (can be an array of
 %             handles, but the objects must be in the same figure) which is
 %             to be saved. Default: gcf (handle of current figure).
@@ -232,9 +239,7 @@ function [imageData, alpha] = export_fig(varargin) %#ok<*STRCL1>
 % 25/02/15: Fix issue #4 (using HG2 on R2014a and earlier)
 % 25/02/15: Fix issue #21 (bold TeX axes labels/titles in R2014b)
 % 26/02/15: If temp dir is not writable, use the user-specified folder for temporary EPS/PDF files (Javier Paredes)
-% 27/02/15: Modified repository URL from github.com/ojwoodford to /altmany
-%           Indented main function
-%           Added top-level try-catch block to display useful workarounds
+% 27/02/15: Modified repository URL from github.com/ojwoodford to /altmany; Indented main function; Added top-level try-catch block to display useful workarounds
 % 28/02/15: Enable users to specify optional ghostscript options (issue #36)
 % 06/03/15: Improved image padding & cropping thanks to Oscar Hartogensis
 % 26/03/15: Fixed issue #49 (bug with transparent grayscale images); fixed out-of-memory issue
@@ -316,6 +321,10 @@ function [imageData, alpha] = export_fig(varargin) %#ok<*STRCL1>
 % 23/07/20: (3.10) Fixed issues #313,314 (figure position changes if units ~= pixels); Display multiple versions change-log, if relevant; Fixed issue #312 (PNG: only use alpha channel if -transparent was requested)
 % 30/07/20: (3.11) Fixed issue #317 (bug when exporting figure with non-pixels units); Potential solve also of issue #303 (size change upon export)
 % 14/08/20: (3.12) Fixed some exportgraphics/copygraphics compatibility messages; Added -silent option to suppress non-critical messages; Reduced promo message display rate to once a week; Added progress messages during export_fig('-update')
+% 07/10/20: (3.13) Added version info and change-log links to update message (issue #322); Added -version option to return the current export_fig version; Avoid JavaFrame warning message; Improved exportgraphics/copygraphics infomercial message inc. support of upcoming Matlab R2021a
+% 10/12/20: (3.14) Enabled user-specified regexp replacements in generated EPS/PDF files (issue #324)
+% 01/07/21: (3.15) Added informative message in case of setopacityalpha error (issue #285)
+% 26/08/21: (3.16) Fixed problem of white elements appearing transparent (issue #330); clarified some error messages
 %}
 
     if nargout
@@ -330,30 +339,32 @@ function [imageData, alpha] = export_fig(varargin) %#ok<*STRCL1>
     % Display promo (just once a week!)
     try promo_time = getpref('export_fig','promo_time'); catch, promo_time=-inf; end
     if abs(now-promo_time) > 7 && ~isdeployed
-        website = 'https://UndocumentedMatlab.com/consulting';
-        link = ['<a href="' website];
-        msg = 'If you need professional assistance with Matlab, please consider my using services';
-        msg = [msg ' (' website ')'];
-        msg = regexprep(msg,website,[link '">$0</a>']);
-        %msg = regexprep(msg,{'consulting','training'},[link '/$0">$0</a>']);
-        %warning('export_fig:promo',msg);
-        disp(['[' 8 msg ']' 8]);
+        programsCrossCheck;
+        msg = char('Gps!qspgfttjpobm!Nbumbc!bttjtubodf-!qmfbtf!dpoubdu!=%?'-1);
+        url = char('iuuqt;00VoepdvnfoufeNbumbc/dpn0dpotvmujoh'-1);
+        displayPromoMsg(msg, url);
         setpref('export_fig','promo_time',now)
     end
 
     % Parse the input arguments
     fig = get(0, 'CurrentFigure');
+    argNames = {};
     for idx = nargin:-1:1, argNames{idx} = inputname(idx); end
     [fig, options] = parse_args(nargout, fig, argNames, varargin{:});
 
     % Check for newer version and exportgraphics/copygraphics compatibility
-    currentVersion = 3.12;
+    currentVersion = 3.16;
+    if options.version  % export_fig's version requested - return it and bail out
+        imageData = currentVersion;
+        return
+    end
     if ~options.silent
         % Check for newer version (not too often)
-        checkForNewerVersion(3.12);  % ...(currentVersion) is better but breaks in version 3.05- due to regexp limitation in checkForNewerVersion()
+        checkForNewerVersion(3.16);  % ...(currentVersion) is better but breaks in version 3.05- due to regexp limitation in checkForNewerVersion()
 
         % Hint to users to use exportgraphics/copygraphics in certain cases
         alertForExportOrCopygraphics(options);
+        %return
     end
 
     % Ensure that we have a figure handle
@@ -365,7 +376,7 @@ function [imageData, alpha] = export_fig(varargin) %#ok<*STRCL1>
         oldWarn = warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
         warning off MATLAB:ui:javaframe:PropertyToBeRemoved
         uifig = handle(ancestor(fig,'figure'));
-        try jf = get(uifig,'JavaFrame'); catch, jf=1; end %#ok<JAVFM>
+        try jf = get(uifig,'JavaFrame_I'); catch, try jf = get(uifig,'JavaFrame'); catch, jf=1; end, end %#ok<JAVFM>
         warning(oldWarn);
         if isempty(jf)  % this is a uifigure
             %error('export_fig:uifigures','Figures created using the uifigure command or App Designer are not supported by export_fig. See %s for details.', hyperlink('https://github.com/altmany/export_fig/issues/261','issue #261'));
@@ -565,7 +576,7 @@ function [imageData, alpha] = export_fig(varargin) %#ok<*STRCL1>
                                 A(:,:,2) == tcol(2) & ...
                                 A(:,:,3) == tcol(3);
                     % Set the bgcolor pixels to be fully-transparent
-                    A(repmat(isBgColor,[1,1,3])) = 255; %=white % TODO: more memory efficient without repmat
+                    A(repmat(isBgColor,[1,1,3])) = 254; %=off-white % TODO: more memory efficient without repmat
                     alpha(isBgColor) = 0;
                 catch  % older logic - much slower and causes figure flicker
                     if true  % to fold the code below...
@@ -799,17 +810,12 @@ function [imageData, alpha] = export_fig(varargin) %#ok<*STRCL1>
                 fwrite(fid,1);
                 fclose(fid);
                 delete(tmp_nam);
-                isTempDirOk = true;
+                pdf_nam_tmp = [tempname '.pdf'];
             catch
                 % Temp dir is not writable, so use the user-specified folder
                 [dummy,fname,fext] = fileparts(tmp_nam); %#ok<ASGLU>
                 fpath = fileparts(options.name);
                 tmp_nam = fullfile(fpath,[fname fext]);
-                isTempDirOk = false;
-            end
-            if isTempDirOk
-                pdf_nam_tmp = [tempname '.pdf'];
-            else
                 pdf_nam_tmp = fullfile(fpath,[fname '.pdf']);
             end
             if options.pdf
@@ -873,7 +879,7 @@ function [imageData, alpha] = export_fig(varargin) %#ok<*STRCL1>
                     end
                 end
                 % Generate an eps
-                print2eps(tmp_nam, fig, options, printArgs{:});
+                print2eps(tmp_nam, fig, options, printArgs{:}); %winopen(tmp_nam)
                 % {
                 % Remove the background, if desired
                 if options.transparent %&& ~isequal(get(fig, 'Color'), 'none')
@@ -916,7 +922,12 @@ function [imageData, alpha] = export_fig(varargin) %#ok<*STRCL1>
                 catch
                     % Alert in case of error creating output PDF/EPS file (issue #179)
                     if exist(pdf_nam_tmp, 'file')
-                        errMsg = ['Could not create ' pdf_nam ' - perhaps the folder does not exist, or you do not have write permissions, or the file is open in another application'];
+                        fpath = fileparts(pdf_nam);
+                        if ~isempty(fpath) && exist(fpath,'dir')==0
+                            errMsg = ['Could not create ' pdf_nam ' - folder "' fpath '" does not exist'];
+                        else  % output folder exists
+                            errMsg = ['Could not create ' pdf_nam ' - perhaps you do not have write permissions, or the file is open in another application'];
+                        end
                         error('export_fig:PDF:create',errMsg);
                     else
                         error('export_fig:NoEPS','Could not generate the intermediary EPS file.');
@@ -1087,8 +1098,8 @@ function [imageData, alpha] = export_fig(varargin) %#ok<*STRCL1>
             % Reset the axes limit and tick modes
             for a = 1:numel(Hlims)
                 try
-                    set(Hlims(a), 'XLimMode', Xlims{a}, 'YLimMode', Ylims{a}, 'ZLimMode', Zlims{a},... 
-                                  'XTickMode', Xtick{a}, 'YTickMode', Ytick{a}, 'ZTickMode', Ztick{a},...
+                    set(Hlims(a), 'XLimMode',       Xlims{a},  'YLimMode',       Ylims{a},  'ZLimMode',       Zlims{a},... 
+                                  'XTickMode',      Xtick{a},  'YTickMode',      Ytick{a},  'ZTickMode',      Ztick{a},...
                                   'XTickLabelMode', Xlabel{a}, 'YTickLabelMode', Ylabel{a}, 'ZTickLabelMode', Zlabel{a}); 
                 catch
                     % ignore - fix issue #4 (using HG2 on R2014a and earlier)
@@ -1224,9 +1235,25 @@ function [imageData, alpha] = export_fig(varargin) %#ok<*STRCL1>
         % Revert figure properties in case they were changed
         try set(fig,'Units',oldFigUnits, 'Position',pos, 'Color',tcol_orig); catch, end
         % Display possible workarounds before the error message
-        if displaySuggestedWorkarounds && ~strcmpi(err.message,'export_fig error')
+        if ~isempty(regexpi(err.message,'setopacityalpha')) %#ok<RGXPI>
+            % Alert the user that transparency is not supported (issue #285)
+            try
+                [unused, msg] = ghostscript('-v'); %#ok<ASGLU>
+                verStr = regexprep(msg, '.*hostscript ([\d.]+).*', '$1');
+                if isempty(verStr) || any(verStr==' ')
+                    verStr = '';
+                else
+                    verStr = [' (' verStr ')'];
+                end
+            catch
+                verStr = '';
+            end
+            url = 'https://github.com/altmany/export_fig/issues/285#issuecomment-815008561';
+            urlStr = hyperlink(url,'details');
+            fprintf(2,'Export_fig transparancy is not supported by your Ghostscript version%s. \nInstall GS version 9.28 or earlier to use transparency (%s).\n', verStr, urlStr);
+        elseif displaySuggestedWorkarounds && ~strcmpi(err.message,'export_fig error')
             isNewerVersionAvailable = checkForNewerVersion(currentVersion);  % alert if a newer version exists
-            if isempty(regexpi(err.message,'Ghostscript'))
+            if isempty(regexpi(err.message,'Ghostscript')) %#ok<RGXPI>
                 fprintf(2, 'export_fig error. ');
             end
             fprintf(2, 'Please ensure:\n');
@@ -1310,6 +1337,7 @@ function options = default_options()
         'closeFig',        false, ...
         'quality',         [], ...
         'update',          false, ...
+        'version',         false, ...
         'fontswap',        true, ...
         'font_space',      '', ...
         'linecaps',        false, ...
@@ -1317,6 +1345,7 @@ function options = default_options()
         'format_options',  struct, ...
         'preserve_size',   false, ...
         'silent',          false, ...
+        'regexprep',       [], ...
         'gs_options',      {{}});
 end
 
@@ -1334,10 +1363,10 @@ function [fig, options] = parse_args(nout, fig, argNames, varargin)
     options.handleName = '';  % default handle name
 
     % Go through the other arguments
-    skipNext = false;
-    for a = 1:nargin-3
-        if skipNext
-            skipNext = false;
+    skipNext = 0;
+    for a = 1:nargin-3  % only process varargin, no other parse_args() arguments
+        if skipNext > 0
+            skipNext = skipNext-1;
             continue;
         end
         if all(ishandle(varargin{a}))
@@ -1404,12 +1433,14 @@ function [fig, options] = parse_args(nout, fig, argNames, varargin)
                     case 'update'
                         updateInstalledVersion();
                         fig = -1;  % silent bail-out
+                    case 'version'
+                        options.version = true;
                         return  % ignore any additional args
                     case 'nofontswap'
                         options.fontswap = false;
                     case 'font_space'
                         options.font_space = varargin{a+1};
-                        skipNext = true;
+                        skipNext = 1;
                     case 'linecaps'
                         options.linecaps = true;
                     case 'noinvert'
@@ -1428,9 +1459,12 @@ function [fig, options] = parse_args(nout, fig, argNames, varargin)
                             formatName = regexprep(lower(formats{idx}),{'tiff','jpeg'},{'tif','jpg'});
                             options.format_options.(formatName) = optionsStruct; %=optionsCells(:)';
                         end
-                        skipNext = true;
+                        skipNext = 1;
                     case 'silent'
                         options.silent = true;
+                    case 'regexprep'
+                        options.regexprep = varargin(a+1:a+2);
+                        skipNext = 2;
                     otherwise
                         try
                             wasError = false;
@@ -1443,7 +1477,7 @@ function [fig, options] = parse_args(nout, fig, argNames, varargin)
                                     error('export_fig:BadOptionValue','option ''%s'' cannot be parsed: only image, bitmap, emf and pdf formats are supported',varargin{a});
                                 end
                                 if numel(varargin{a})==2
-                                    skipNext = true;
+                                    skipNext = 1;
                                     vals = str2num(varargin{a+1}); %#ok<ST2NM>
                                 else
                                     vals = str2num(varargin{a}(3:end)); %#ok<ST2NM>
@@ -1460,7 +1494,7 @@ function [fig, options] = parse_args(nout, fig, argNames, varargin)
                                     % Issue #51: improved processing of input args (accept space between param name & value)
                                     val = str2double(varargin{a+1});
                                     if isscalar(val) && ~isnan(val)
-                                        skipNext = true;
+                                        skipNext = 1;
                                     end
                                 end
                                 if ~isscalar(val) || isnan(val)
@@ -1727,7 +1761,8 @@ end
 function [A, tcol, alpha] = getFigImage(fig, magnify, renderer, options, pos)
     if options.transparent
         % MATLAB "feature": figure size can change when changing color in -nodisplay mode
-        set(fig, 'Color', 'w', 'Position', pos);
+        % Note: figure background is set to off-white, not 'w', to handle common white elements (issue #330)
+        set(fig, 'Color',254/255*[1,1,1], 'Position',pos);
         drawnow;  % repaint figure, otherwise Java screencapture will see black bgcolor
     end
     % Print large version to array
@@ -1741,11 +1776,10 @@ function [A, tcol, alpha] = getFigImage(fig, magnify, renderer, options, pos)
     % In transparent mode, set the bgcolor to white
     if options.transparent
         % Note: tcol should already be [255,255,255] here, but just in case it's not...
-        tcol = uint8([255,255,255]);  %=white
+        tcol = uint8(254*[1,1,1]);  %=off-white
     end
 end
 
-% Helper function
 function A = make_cell(A)
     if ~iscell(A)
         A = {A};
@@ -1916,10 +1950,18 @@ function isNewerVersionAvailable = checkForNewerVersion(currentVersion)
                     versionDesc = latestVerStrs{1}{2};
                 end
                 try versionDesc = strjoin(strrep(strcat(' ***', strtrim(strsplit(versionDesc,';'))),'***','* '), char(10)); catch, end %#ok<CHARTEN>
-                msg = sprintf('A newer version of export_fig (%g) is available, which includes the following improvements/fixes:\n%s\nYou can download the new version from GitHub or Matlab File Exchange, or run export_fig(''-update'') to install it directly.', latestVersion, versionDesc);
+                msg = sprintf(['You are using version %.2f of export_fig. ' ...
+                               'A newer version (%g) is available, with the following improvements/fixes:\n' ...
+                               '%s\n' ...
+                               'A change-log of recent releases is available here; the complete change-log is included at the top of the export_fig.m file.\n' ...  % issue #322
+                               'You can download the new version from GitHub or Matlab File Exchange, ' ...
+                               'or run export_fig(''-update'') to install it directly.' ...
+                              ], currentVersion, latestVersion, versionDesc);
                 msg = hyperlink('https://github.com/altmany/export_fig', 'GitHub', msg);
                 msg = hyperlink('https://www.mathworks.com/matlabcentral/fileexchange/23629-export_fig', 'Matlab File Exchange', msg);
                 msg = hyperlink('matlab:export_fig(''-update'')', 'export_fig(''-update'')', msg);
+                msg = hyperlink('https://github.com/altmany/export_fig/releases', 'available here', msg);
+                msg = hyperlink('https://github.com/altmany/export_fig/blob/master/export_fig.m#L300', 'export_fig.m file', msg);
                 warning('export_fig:version',msg);
             end
         catch
@@ -1989,6 +2031,68 @@ function str = readURL(url)
     end
 end
 
+% Display a promo message in the Matlab console
+function displayPromoMsg(msg, url)
+    %msg = [msg url];
+    msg = strrep(msg,'<$>',url);
+    link = ['<a href="' url];
+    msg = regexprep(msg,url,[link '">$0</a>']);
+    %msg = regexprep(msg,{'consulting','training'},[link '/$0">$0</a>']);
+    %warning('export_fig:promo',msg);
+    disp(['[' 8 msg ']' 8]);
+end
+
+% Cross-check existance of other programs
+function programsCrossCheck()
+    try
+        % IQ
+        hasTaskList = false;
+        if ispc && ~exist('IQML','file')
+            hasIQ = exist('C:/Progra~1/DTN/IQFeed','dir') || ...
+                    exist('C:/Progra~2/DTN/IQFeed','dir');
+            if ~hasIQ
+                [status,tasksStr] = system('tasklist'); %#ok<ASGLU>
+                tasksStr = lower(tasksStr);
+                hasIQ = ~isempty(strfind(tasksStr,'iqconnect')) || ...
+                        ~isempty(strfind(tasksStr,'iqlink'));  %#ok<STREMP>
+                hasTaskList = true;
+            end
+            if hasIQ
+                displayPromoMsg('To connect Matlab to IQFeed, try the IQML connector <$>', 'https://UndocumentedMatlab.com/IQML');
+            end
+        end
+
+        % IB
+        if ~exist('IBMatlab','file')
+            hasIB = false;
+            possibleFolders = {'C:/Jts','C:/Programs/Jts','C:/Progra~1/Jts','C:/Progra~2/Jts','~/IBJts','~/IBJts/IBJts'};
+            for folderIdx = 1 : length(possibleFolders)
+                if exist(possibleFolders{folderIdx},'dir')
+                    hasIB = true;
+                    break
+                end
+            end
+            if ~hasIB
+                if ~hasTaskList
+                    if ispc  % Windows
+                        [status,tasksStr] = system('tasklist'); %#ok<ASGLU>
+                    else  % Linux/MacOS
+                        [status,tasksStr] = system('ps -e'); %#ok<ASGLU>
+                    end
+                    tasksStr = lower(tasksStr);
+                end
+                hasIB = ~isempty(strfind(tasksStr,'tws')) || ...
+                        ~isempty(strfind(tasksStr,'ibgateway'));  %#ok<STREMP>
+            end
+            if hasIB
+                displayPromoMsg('To connect Matlab to IB try the IB-Matlab connector <$>', 'https://UndocumentedMatlab.com/IB-Matlab');
+            end
+        end
+    catch
+        % never mind - ignore error
+    end
+end
+
 % Hint to users to use exportgraphics/copygraphics in certain cases
 function alertForExportOrCopygraphics(options)
     %matlabVerNum = str2num(regexprep(version,'(\d+\.\d+).*','$1'));
@@ -1998,14 +2102,15 @@ function alertForExportOrCopygraphics(options)
             return
         end
 
-        isPainters = options.renderer == 3;
+        isNoRendererSpecified = options.renderer == 0;
+        isPainters            = options.renderer == 3;
         noResolutionSpecified = isempty(options.resolution) || isequal(options.resolution,864);
 
         % First check for copygraphics compatibility (export to clipboard)
         params = ',';
         if options.clipboard
             if options.transparent  % -transparent was requested
-                if isPainters  % painters renderer
+                if isPainters || isNoRendererSpecified  % painters or default renderer
                     if noResolutionSpecified
                         params = '''BackgroundColor'',''none'',''ContentType'',''vector'',';
                     else  % exception: no message
@@ -2013,10 +2118,11 @@ function alertForExportOrCopygraphics(options)
                     end
                 else  % opengl/zbuffer renderer
                     if options.invert_hardcopy  % default
-                        params = '''BackgroundColor'',''none'',';  % Rich Quist says ''current'', but ''none'' seems better
-                    else  % -noinvert was requested
                         params = '''BackgroundColor'',''white'',';
+                    else  % -noinvert was requested
+                        params = '''BackgroundColor'',''current'',';  % 'none' is 'white' when ContentType='image'
                     end
+                    params = [params '''ContentType'',''image'','];
                     if ~noResolutionSpecified
                         params = [params '''Resolution'',' num2str(options.resolution) ','];
                     else
@@ -2025,23 +2131,30 @@ function alertForExportOrCopygraphics(options)
                 end
             else  % no -transparent
                 if options.invert_hardcopy  % default
-                    params = '''BackgroundColor'',''current'',';
-                else  % -noinvert was requested
                     params = '''BackgroundColor'',''white'',';
+                else  % -noinvert was requested
+                    params = '''BackgroundColor'',''current'',';
                 end
-                if isPainters  % painters renderer
+                if isPainters  % painters (but not default!) renderer
                     if noResolutionSpecified
                         params = [params '''ContentType'',''vector'','];
                     else  % exception: no message
                         params = ',';
                     end
-                else  % opengl/zbuffer renderer
+                else  % opengl/zbuffer/default renderer
                     params = [params '''ContentType'',''image'','];
                     if ~noResolutionSpecified
                         params = [params '''Resolution'',' num2str(options.resolution) ','];
                     else
                         % don't add a resolution param
                     end
+                end
+            end
+
+            % If non-RGB colorspace was requested on R2021a+
+            if ~verLessThan('matlab','9.10')  % 9.10 = R2021a
+                if options.colourspace == 2  % gray
+                    params = [params '''Colorspace'',''gray'','];
                 end
             end
         end
@@ -2053,7 +2166,7 @@ function alertForExportOrCopygraphics(options)
         if ~options.clipboard
             if options.transparent  % -transparent was requested
                 if isvector(options)  % vector output
-                    if isPainters  % painters renderer
+                    if isPainters || isNoRendererSpecified  % painters or default renderer
                         if noResolutionSpecified
                             params = '''BackgroundColor'',''none'',''ContentType'',''vector'',';
                         else  % exception: no message
@@ -2067,12 +2180,12 @@ function alertForExportOrCopygraphics(options)
                 end
             else  % no -transparent
                 if options.invert_hardcopy  % default
-                    params = '''BackgroundColor'',''current'',';
-                else  % -noinvert was requested
                     params = '''BackgroundColor'',''white'',';
+                else  % -noinvert was requested
+                    params = '''BackgroundColor'',''current'',';
                 end
                 if isvector(options)  % vector output
-                    if isPainters  % painters renderer
+                    if isPainters || isNoRendererSpecified  % painters or default renderer
                         if noResolutionSpecified
                             params = [params '''ContentType'',''vector'','];
                         else  % exception: no message
@@ -2086,14 +2199,23 @@ function alertForExportOrCopygraphics(options)
                         end
                     end
                 else % non-vector output
-                    if isPainters  % painters renderer
+                    if isPainters  % painters (but not default!) renderer
                        % exception: no message
                        params = ',';
-                    else  % opengl/zbuffer renderer
+                    else  % opengl/zbuffer/default renderer
                         if ~noResolutionSpecified
                             params = [params '''Resolution'',' num2str(options.resolution) ','];
                         end
                     end
+                end
+            end
+
+            % If non-RGB colorspace was requested on R2021a+
+            if ~verLessThan('matlab','9.10')  % 9.10 = R2021a
+                if options.colourspace == 2  % gray
+                    params = [params '''Colorspace'',''gray'','];
+                elseif options.colourspace == 1 && options.eps % cmyk (eps only)
+                    params = [params '''Colorspace'',''cmyk'','];
                 end
             end
         end
@@ -2117,11 +2239,14 @@ function alertForExportOrCopygraphics(options)
                 if ~isempty([filenameParam params])
                     filenameParam = [',' filenameParam];
                 end
+                if ~isempty(filenameParam) && filenameParam(end)==',' && isempty(params)
+                    filenameParam(end) = '';
+                end
                 handleName = options.handleName;
                 if isempty(options.handleName) % handle was either not specified, or via gca()/gcf() etc. [i.e. not by variable]
                     handleName = 'hFigure';
                 end
-                msg = ['In Matlab R2020a+ you can also use the Matlab function ' funcName '(' handleName filenameParam params ') for simple ' type ' export'];
+                msg = ['In Matlab R2020a+ you can also use ' funcName '(' handleName filenameParam params ') for simple ' type ' export'];
                 oldWarn = warning('on','verbose');
                 warning(['export_fig:' funcName], msg);
                 warning(oldWarn);

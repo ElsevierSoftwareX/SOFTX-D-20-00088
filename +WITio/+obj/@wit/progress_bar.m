@@ -12,7 +12,7 @@
 % '-OnlyDecreasing' (= false): Set to allow only decreasing progress bar.
 % '-TextUpdateInterval' (= 100ms): Set to determine progress bar text update
 % interval in seconds. This is used to improve the code performance.
-function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max, varargin),
+function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max, varargin), %#ok
     persistent tictoc N_dots_lower N_bytes_lower N_dots_upper N_bytes_upper latest_text latest_text_toc;
     
     % Determine whether or not to use \b to update fprintf
@@ -62,31 +62,31 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
     latest_text_toc = 0;
     
     % Determine in which way to update the progress bar
-    if isDesktop,
-        if Reverse,
+    if isDesktop, %#ok
+        if Reverse, %#ok
             if FlipStartEnd, progress_bar_now = @progress_bar_now_yes_reverse_yes_flip;
             else, progress_bar_now = @progress_bar_now_yes_reverse_no_flip; end
-        else,
+        else, %#ok
             if FlipStartEnd, progress_bar_now = @progress_bar_now_no_reverse_yes_flip;
             else, progress_bar_now = @progress_bar_now_no_reverse_no_flip; end
         end
-    else, % Enforce No Reverse and No Flip for -nodesktop
+    else, %#ok % Enforce No Reverse and No Flip for -nodesktop
         progress_bar_now = @progress_bar_now_no_reverse_no_flip;
     end
     
     % Return the key functions to operate the progress bar
     fun_start = @progress_bar_start;
-    if isDesktop,
-        if OnlyIncreasing,
+    if isDesktop, %#ok
+        if OnlyIncreasing, %#ok
             if FlipStartEnd, fun_now = @progress_bar_now_only_decrease;
             else, fun_now = @progress_bar_now_only_increase; end
-        elseif OnlyDecreasing,
+        elseif OnlyDecreasing, %#ok
             if FlipStartEnd, fun_now = @progress_bar_now_only_increase;
             else, fun_now = @progress_bar_now_only_decrease; end
-        else,
+        else, %#ok
             fun_now = @progress_bar_now_either_increase_or_decrease;
         end
-    else, % Enforce Only Increasing for -nodesktop
+    else, %#ok % Enforce Only Increasing for -nodesktop
         fun_now = @progress_bar_now_only_increase;
     end
     fun_end = @progress_bar_end; % Can be combined with onCleanup when used
@@ -95,7 +95,7 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
     if isDesktop, fun_now_text = @progress_bar_now_text;
     else, fun_now_text = @progress_bar_now_test_nodesktop; end
     
-    function progress_bar_start(N_bytes_now),
+    function progress_bar_start(N_bytes_now), %#ok
         % Initialize the progress bar
         tictoc = tic;
         if Reverse, fprintf([' 100%%' repmat(' ', [1 floor(width_in_characters./2)-4]) '50%%' repmat(' ', [1 ceil(width_in_characters./2)-5]) '0%% complete!\n']);
@@ -104,37 +104,37 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
         else, fprintf('['); end % Special case: -nodesktop
         progress_bar_now_either_increase_or_decrease(N_bytes_now);
     end
-    function progress_bar_now_either_increase_or_decrease(N_bytes_now, fun_before, fun_after),
+    function progress_bar_now_either_increase_or_decrease(N_bytes_now, fun_before, fun_after), %#ok
         % Progress the progress bar
-        if N_bytes_now >= N_bytes_upper, % If true, then increase dots
+        if N_bytes_now >= N_bytes_upper, %#ok % If true, then increase dots
             if nargin > 1, fun_before(); end
             progress_bar_now_increase(N_bytes_now);
             if nargin > 2, fun_after(); end
-        elseif N_bytes_now < N_bytes_lower, % If true, then decrease dots
+        elseif N_bytes_now < N_bytes_lower, %#ok % If true, then decrease dots
             if nargin > 1, fun_before(); end
             progress_bar_now_decrease(N_bytes_now);
             if nargin > 2, fun_after(); end
         end
     end
-    function progress_bar_now_only_increase(N_bytes_now, fun_before, fun_after),
+    function progress_bar_now_only_increase(N_bytes_now, fun_before, fun_after), %#ok
         % Progress the progress bar
-        if N_bytes_now >= N_bytes_upper, % If true, then increase dots
+        if N_bytes_now >= N_bytes_upper, %#ok % If true, then increase dots
             if nargin > 1, fun_before(); end
             progress_bar_now_increase(N_bytes_now);
             if nargin > 2, fun_after(); end
         end
     end
-    function progress_bar_now_only_decrease(N_bytes_now, fun_before, fun_after),
+    function progress_bar_now_only_decrease(N_bytes_now, fun_before, fun_after), %#ok
         % Progress the progress bar
-        if N_bytes_now < N_bytes_lower, % If true, then decrease dots
+        if N_bytes_now < N_bytes_lower, %#ok % If true, then decrease dots
             if nargin > 1, fun_before(); end
             progress_bar_now_decrease(N_bytes_now);
             if nargin > 2, fun_after(); end
         end
     end
-    function progress_bar_now_increase(N_bytes_now),
-        while true, % Do-while
-            if N_dots_upper >= width_in_characters,
+    function progress_bar_now_increase(N_bytes_now), %#ok
+        while true, %#ok % Do-while
+            if N_dots_upper >= width_in_characters, %#ok
                 N_dots_upper = width_in_characters;
                 N_bytes_upper = N_bytes_now + 1;
                 N_dots_lower = width_in_characters;
@@ -143,7 +143,7 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
             end
             N_dots_upper = N_dots_upper + 1;
             N_bytes_upper = N_bytes(N_dots_upper + 1);
-            if N_bytes_now < N_bytes_upper,
+            if N_bytes_now < N_bytes_upper, %#ok
                 N_dots_lower = N_dots_upper - 1;
                 N_bytes_lower = N_bytes(N_dots_lower + 1);
                 break;
@@ -151,9 +151,9 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
         end
         progress_bar_now();
     end
-    function progress_bar_now_decrease(N_bytes_now),
-        while true, % Do-while
-            if N_dots_lower <= 0,
+    function progress_bar_now_decrease(N_bytes_now), %#ok
+        while true, %#ok % Do-while
+            if N_dots_lower <= 0, %#ok
                 N_dots_lower = 0;
                 N_bytes_lower = N_bytes_now;
                 N_dots_upper = 1;
@@ -162,7 +162,7 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
             end
             N_dots_lower = N_dots_lower - 1;
             N_bytes_lower = N_bytes(N_dots_lower + 1);
-            if N_bytes_now >= N_bytes_lower,
+            if N_bytes_now >= N_bytes_lower, %#ok
                 N_dots_upper = N_dots_lower + 1;
                 N_bytes_upper = N_bytes(N_dots_upper + 1);
                 break;
@@ -170,37 +170,37 @@ function [fun_start, fun_now, fun_end, fun_now_text] = progress_bar(N_bytes_max,
         end
         progress_bar_now();
     end
-    function progress_bar_now_yes_reverse_yes_flip(),
+    function progress_bar_now_yes_reverse_yes_flip(), %#ok
         fprintf([repmat('\b', [1 numel(latest_text)+width_in_characters+3]) '[' repmat(' ', [1 N_dots_lower]) repmat(Character, [1 width_in_characters-N_dots_lower]) ']\n%s'], latest_text);
     end
-    function progress_bar_now_yes_reverse_no_flip(),
+    function progress_bar_now_yes_reverse_no_flip(), %#ok
         fprintf([repmat('\b', [1 numel(latest_text)+width_in_characters+3]) '[' repmat(' ', [1 width_in_characters-N_dots_lower]) repmat(Character, [1 N_dots_lower]) ']\n%s'], latest_text);
     end
-    function progress_bar_now_no_reverse_yes_flip(),
+    function progress_bar_now_no_reverse_yes_flip(), %#ok
         fprintf([repmat('\b', [1 numel(latest_text)+width_in_characters+3]) '[' repmat(Character, [1 width_in_characters-N_dots_lower]) repmat(' ', [1 N_dots_lower]) ']\n%s'], latest_text);
     end
-    function progress_bar_now_no_reverse_no_flip(),
+    function progress_bar_now_no_reverse_no_flip(), %#ok
         if isDesktop, fprintf([repmat('\b', [1 numel(latest_text)+width_in_characters+3]) '[' repmat(Character, [1 N_dots_lower]) repmat(' ', [1 width_in_characters-N_dots_lower]) ']\n%s'], latest_text);
-        else,
+        else, %#ok
             fprintf(repmat(Character, [1 N_dots_lower-N_dots_lower_nodesktop]));
             N_dots_lower_nodesktop = N_dots_lower; % Update for -nodesktop
         end
     end
-    function progress_bar_end(),
+    function progress_bar_end(), %#ok
         % Finalize the progress bar
-        if isDesktop, fprintf([repmat('\b', [1 numel(latest_text)])]); % Undo latest fprintf
+        if isDesktop, fprintf(repmat('\b', [1 numel(latest_text)])); % Undo latest fprintf
         else, fprintf([repmat(' ', [1 width_in_characters-N_dots_lower_nodesktop]) ']\n']); end % Special case: -nodesktop
         latest_text = '';
         toc(tictoc);
     end
-    function progress_bar_now_text(text),
+    function progress_bar_now_text(text), %#ok
         text_toc = toc(tictoc);
         if text_toc - latest_text_toc < TextUpdateInterval, return; end % Stop if less than the specified interval from the previous call
         latest_text_toc = text_toc;
         fprintf([repmat('\b', [1 numel(latest_text)]) '%s'], text); % Undo latest fprintf before showing the text
         latest_text = text;
     end
-    function progress_bar_now_test_nodesktop(test),
+    function progress_bar_now_test_nodesktop(test), %#ok
         % DO NOTHING!
     end
 end

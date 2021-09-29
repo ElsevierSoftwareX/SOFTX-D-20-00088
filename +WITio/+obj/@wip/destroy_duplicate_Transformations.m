@@ -11,53 +11,48 @@ function destroy_duplicate_Transformations(obj),
         % Keep only the transformations
         B_T = ~cellfun(@isempty, regexp(Types, 'Transformation$', 'once'));
         O_wid = O_wid(B_T);
-        Types = Types(B_T);
+        Tags = [O_wid.Tag];
+        % Stop if no transformation tags were found
+        if isempty(Tags), return; end % Required for backward compatibility with R2011a
+        
         inds = 1:numel(O_wid);
-        Datas = {O_wid.Data};
-
-        % Loop through the transformations
-        B_destroyed = false(1, numel(O_wid));
-        for ii = inds,
-            if B_destroyed(ii), continue; end % Skip if already destroyed
-            B_next = inds > ii & ~B_destroyed;
-            B_next(B_next) = strcmp(Types(B_next), Types{ii});
-            inds_next = find(B_next);
-            for jj = 1:numel(inds_next),
-                ind_jj = inds_next(jj);
-                if isequal_nested_structs(Datas{ii}, Datas{ind_jj}),
-                    linked_tags = WITio.obj.wid.find_linked_wits_to_this_wid(O_wid(ind_jj));
-                    for nn = 1:numel(linked_tags),
-                        linked_tags(nn).Data(linked_tags(nn).Data == O_wid(ind_jj).Id) = O_wid(ii).Id;
-                    end
-                    delete(O_wid(ind_jj));
-                    B_destroyed(ind_jj) = true;
-                end
-            end
+        Tags_DataClassNames = [Tags.DataClassName]; % Skip major redundancy by avoiding implicit DataTree_get!
+        DataClassNames = {Tags_DataClassNames.Data};
+        DataClassNames_unique = unique(DataClassNames);
+        Tags_Datas = [Tags.Data]; % Skip major redundancy by avoiding implicit DataTree_get!
+        first_at = zeros(size(inds));
+        B_unique = false(size(inds));
+        for jj = 1:numel(DataClassNames_unique), % Look through different kinds of transformations
+            DataClassNames_unique_jj = DataClassNames_unique{jj};
+            B_jj = strcmp(DataClassNames, DataClassNames_unique_jj);
+            inds_jj = inds(B_jj);
+            Tags_Datas_jj = Tags_Datas(B_jj).search_children(DataClassNames_unique_jj);
+            [~, ia, ic] = Tags_Datas_jj.unique_by_Name_Data(); % Find duplicates
+            first_at(B_jj) = inds_jj(ia(ic));
+            B_unique(inds_jj(ia)) = true;
         end
-    end
-    
-    function tf = isequal_nested_structs(A, B),
-        tf = false;
-        if isstruct(A) == false && isstruct(B) == false,
-            tf = isequal(A, B);
-            return; % Exit if both are not structs
-        elseif isstruct(A) == false || isstruct(B) == false,
-            return; % Exit if either is not struct
+        
+        % Stop if no duplicates were found
+        if all(B_unique), return; end
+        
+        % List all the project's ID-tags (except NextDataID, ServiceID, LicenseID, LastApplicationSessionIDs and ID<TData)
+        tags = obj(ii).Tree.regexp_all_Names('^(?!NextDataID|ServiceID|LicenseID|LastApplicationSessionIDs).+ID(List)?$');
+        tags_Ids = {tags.Data};
+        Ids_all_old = double(unique([tags_Ids{:}]));
+        
+        % Create sparse map from old Ids to new Ids
+        Ids = [O_wid.Id];
+        Ids_old = Ids(~B_unique);
+        Ids_new = Ids(first_at(~B_unique));
+        S = sparse(Ids_all_old+1, ones(size(Ids_all_old)), Ids_all_old);
+        S(Ids_old+1) = Ids_new;
+        
+        % Update the Ids
+        for jj = 1:numel(tags_Ids),
+            tags(jj).Data = int32(full(S(tags_Ids{jj}+1)));
         end
-        A_fields = fieldnames(A);
-        A_values = struct2cell(A);
-        B_fields = fieldnames(B);
-        B_values = struct2cell(B);
-        if numel(A_fields) ~= numel(B_fields) || ...
-            numel(A_values) ~= numel(B_values),
-            return;
-        end
-        for cc = 1:numel(A_fields),
-            if ~strcmp(A_fields{cc}, B_fields{cc}) || ...
-                    ~isequal_nested_structs(A_values{cc}, B_values{cc}),
-                return;
-            end
-        end
-        tf = true;
+        
+        % Remove duplicates
+        delete_siblings(O_wid(~B_unique));
     end
 end

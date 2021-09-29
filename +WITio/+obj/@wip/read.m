@@ -63,7 +63,7 @@ function [O_wid, O_wip, O_wit] = read(varargin),
             '*.zst;*.zsT;*.zSt;*.zST;*.Zst;*.ZsT;*.ZSt;*.ZST', 'Compressed Files (*.zst)'};
         [filename, folder] = uigetfile(filter, 'Open Project', WITio.tbx.pref.get('latest_folder', cd), 'MultiSelect', 'on');
         if ~iscell(filename), filename = {filename}; end
-        if folder ~= 0,
+        if ischar(folder),
             files = fullfile(folder, filename);
             WITio.tbx.pref.set('latest_folder', folder); % Remember permanently the latest folder
         else, return; end % Abort as no file was selected!

@@ -7,19 +7,19 @@
 % This can be customized with the following case-insensitive extra inputs:
 % '-CustomFun' (= none by default): Can be used to provide call custom
 % function for writing wit Tree object. This is used in wip-class write.
-function write(obj, varargin),
+function write(obj, varargin), %#ok
     % Get Root only once
     Root = obj.Root;
     
     % First char array input is always File if non-dashed
-    if nargin > 1 && ischar(varargin{1}) && ~strncmp(varargin{1}, '-', 1),
+    if nargin > 1 && ischar(varargin{1}) && ~strncmp(varargin{1}, '-', 1), %#ok
         File = varargin{1};
-        if isempty(File),
+        if isempty(File), %#ok
             error('File must be a non-empty char array!');
         end
-    else, % If not found, then use Root's File-property
+    else, %#ok % If not found, then use Root's File-property
         File = Root.File;
-        if isempty(File),
+        if isempty(File), %#ok
             error('Root has no File specified! Provide File as a char array!');
         end
     end
@@ -35,9 +35,9 @@ function write(obj, varargin),
     
     % Then write the root
     fprintf('\nWriting to file: %s\n', FileName);
-    if isa(CustomFun, 'function_handle'),
+    if isa(CustomFun, 'function_handle'), %#ok
         CustomFun(Root, File);
-    else,
+    else, %#ok
         % Disable automatic flushing using 'W'-flag instead of 'w'-flag: http://undocumentedmatlab.com/blog/improving-fwrite-performance
         fid = fopen(File, 'W'); % Instead of 'w'!
         if fid == -1 || isempty(fid), error('File (''%s'') cannot be opened for writing!', File); end
@@ -47,17 +47,17 @@ function write(obj, varargin),
         
         % Determine whether or not to use low-on-memory scheme
         lowOnMemory = false;
-        try, % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
+        try, %#ok % TRY TO FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
             % Avoid call to builtin 'memory', which is Octave-incompatible!
-            buffer = zeros(obj.End, 1, 'uint8'); % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
+            buffer = zeros(obj.End, 1, 'uint8'); %#ok % Preallocate the buffer OR ERROR IF LOW-ON-MEMORY!
             clear buffer;
-        catch, % OTHERWISE USE LOW-ON-MEMORY SCHEME!
+        catch, %#ok % OTHERWISE USE LOW-ON-MEMORY SCHEME!
             lowOnMemory = true;
         end
         
-        if ~lowOnMemory, % FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
+        if ~lowOnMemory, %#ok % FIT THE FILE CONTENT TO BUFFER IN MEMORY AT ONCE
             fwrite(fid, obj.bwrite(), 'uint8');
-        else, % OTHERWISE USE LOW-ON MEMORY SCHEME!
+        else, %#ok % OTHERWISE USE LOW-ON MEMORY SCHEME!
             Root.fwrite(fid);
         end
     end

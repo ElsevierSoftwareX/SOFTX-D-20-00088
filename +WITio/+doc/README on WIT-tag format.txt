@@ -30,14 +30,36 @@ KEY ASSUMPTIONS FOR THE CODE IMPLEMENTATION:
 ===========================================================================
 
 ***************************************************************************
-%% Last updated 20.2.2020 by Joonas T. Holmi
+%% Last updated 27.9.2021 by Joonas T. Holmi
 ***************************************************************************
 
-MAGIC string (1x8 char) in the beginning of the WIP/WID-files:
+MAGIC string (8x1 uint8=>char) in the beginning of the WIP/WID-files: % (a row vector in MATLAB)
 	= 'WIT_PRCT'/'WIT_DATA' (v0-v5)
 	= 'WIT_PR06'/'WIT_DA06' (v6-v7)
 
-As far as the author knows, the file format is always LITTLE ENDIAN ORDERED
+===========================================================================
+%% NESTED WIT-TAG FILE FORMAT (after the 8-byte MAGIC string above)
+===========================================================================
+
+CONSTRUCT the (first) wit-class object and fill-in its key properties. File
+binary is read further at each line by the byte size of the class specified
+in ()-brackets. The file format is always stored in LITTLE-ENDIAN ORDERING.
+
+NameLength (uint32)    % Determines how many bytes to read for Name
+                       % Define N = NameLength
+Name (Nx1 uint8=>char) % An ASCII string (a row vector in MATLAB)
+Type (uint32) = 0-9    % 0=wit, 1=unused, 2=double, 3=single, 4=int64, 5=int32, 6=uint32/uint16, 7=uint8, 8=logical, 9=string
+                       % Here Type == 1 is probably always unused based on the data so far
+Start (uint64)         % File pointer to the start of Data
+End (uint64)           % File pointer to the end of Data, pointing 1-byte beyond Data
+                       % Define M = End-Start
+Data (Mx1 uint8=>Type) % An array of Type-class, which few special cases:
+                       % - If Type == 0: RECURSIVELY CONSTRUCT a nested wit Tree object array
+                       % - If Type == 6: An uint32 array (if mod(M,4) == 0) or an uint16 array (otherwise)
+                       % - If Type == 9: A string array, where each string is constructed from its StringLength (uint32) and String pair (like in the NameLength-Name pair case)
+                       % Data is always written in LITTLE-ENDIAN ORDERING
+
+REPEAT ABOVE TILL THE END OF FILE.
 
 ===========================================================================
 %% MAIN STRUCTURE of WIP-files

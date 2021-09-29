@@ -59,5 +59,6 @@ function [Pairs, Roots] = get_Data_DataClassName_pairs(O_wit),
     end
     
     % Remove duplicates
-    Pairs = unique(Pairs, 'rows');
+    [~, ia] = unique(reshape([Pairs.Id], size(Pairs)), 'rows'); % This should be deterministic, whereas the simple unique of object handles can be non-deterministic!
+    Pairs = Pairs(ia,:);
 end

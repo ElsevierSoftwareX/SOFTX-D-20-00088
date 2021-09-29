@@ -2,7 +2,7 @@
 % Copyright (c) 2019, Joonas T. Holmi (jtholmi@gmail.com)
 % All rights reserved.
 
-function bread_Data(obj, buffer, N_bytes_max, swapEndianess),
+function bread_Data(obj, buffer, N_bytes_max, swapEndianess), %#ok
     % Reads a WIT-formatted tag data from the given buffer stream.
     % Reading can be limited by N_bytes_max (if low on memory).
     if nargin < 3, N_bytes_max = Inf; end % Default: no read limit!
@@ -26,7 +26,7 @@ function bread_Data(obj, buffer, N_bytes_max, swapEndianess),
     if ind_end > ind_max, return; end
 
     % Skip, if upper read limit is reached.
-    if Length > N_bytes_max,
+    if Length > N_bytes_max, %#ok
         obj.File = obj.File; % Save the parent filename for the later
         return;
     end
@@ -35,33 +35,33 @@ function bread_Data(obj, buffer, N_bytes_max, swapEndianess),
     Data = reshape(buffer(ind_begin:ind_end), 1, []); % Row vector
     
     % Convert the read data to proper type specified by Type
-    if swapEndianess, % Swap endianess using built-in flipud and reshape
-        switch(obj.Type),
-            case 2, % Double (8 bytes)
+    if swapEndianess, %#ok % Swap endianess using built-in flipud and reshape
+        switch(obj.Type), %#ok
+            case 2, %#ok % Double (8 bytes)
                 if mod(Length, 8) == 0, Data = typecast(reshape(flipud(reshape(Data, 8, [])), 1, []), 'double'); % Convert only if proper byte length
                 else, warning(warning_msg(), 'double'); end
-            case 3, % Float (4 bytes)
+            case 3, %#ok % Float (4 bytes)
                 if mod(Length, 4) == 0, Data = typecast(reshape(flipud(reshape(Data, 4, [])), 1, []), 'single'); % Convert only if proper byte length
                 else, warning(warning_msg(), 'single'); end
-            case 4, % Int64 (8 bytes)
+            case 4, %#ok % Int64 (8 bytes)
                 if mod(Length, 8) == 0, Data = typecast(reshape(flipud(reshape(Data, 8, [])), 1, []), 'int64'); % Convert only if proper byte length
                 else, warning(warning_msg(), 'int64'); end
-            case 5, % Int32 (4 bytes)
+            case 5, %#ok % Int32 (4 bytes)
                 if mod(Length, 4) == 0, Data = typecast(reshape(flipud(reshape(Data, 4, [])), 1, []), 'int32'); % Convert only if proper byte length
                 else, warning(warning_msg(), 'int32'); end
-            case 6, % Uint32 (4 bytes) % SPECIAL CASE: Uint16 for 'Dates'-tag (2 bytes)
-                if mod(Length, 4) == 0, Data = typecast(reshape(flipud(reshape(Data, 4, [])), 1, []), 'uint32'); % Convert only if proper byte length
+            case 6, %#ok % Uint32 (4 bytes) % SPECIAL CASE: Uint16 for 'Dates'-tag (2 bytes)
+                if mod(Length, 4) == 0, Data = typecast(reshape(flipud(reshape(Data, 4, [])), 1, []), 'uint32'); %#ok % Convert only if proper byte length
                 elseif mod(Length, 2) == 0, Data = typecast(reshape(flipud(reshape(Data, 2, [])), 1, []), 'uint16'); % SPECIAL CASE: for 'Dates'-tag
                 else, warning(warning_msg(), 'uint32 or uint16'); end
-            case 7, % Uint8 (1 byte)
+            case 7, %#ok % Uint8 (1 byte)
                 Data = uint8(Data);
-            case 8, % Bool (1 byte)
+            case 8, %#ok % Bool (1 byte)
                 Data = cast(Data, 'logical'); % Cast instead of logical for compability!
-            case 9, % NameLength (4 bytes) + String (NameLength # of bytes)
+            case 9, %#ok % NameLength (4 bytes) + String (NameLength # of bytes)
                 strs = {''};
                 N_strs = 0;
                 subind_begin = uint32(1);
-                while subind_begin < numel(Data),
+                while subind_begin < numel(Data), %#ok
                     N_strs = N_strs + 1; % Set number of strings
                     subind_end = subind_begin-1 + 4;
                     str_len = typecast(Data(subind_begin:subind_end), 'uint32');
@@ -71,37 +71,37 @@ function bread_Data(obj, buffer, N_bytes_max, swapEndianess),
                     subind_begin = subind_end + 1; % Set next begin index
                 end
                 if numel(strs) == 1, Data = strs{1};
-                else, Data = strs; end;
-            otherwise,
+                else, Data = strs; end
+            otherwise, %#ok
                 warning('Tag(%s): Unsupported Type (%d)!', obj.FullName, obj.Type);
         end
-    else,
-        switch(obj.Type),
-            case 2, % Double (8 bytes)
+    else, %#ok
+        switch(obj.Type), %#ok
+            case 2, %#ok % Double (8 bytes)
                 if mod(Length, 8) == 0, Data = typecast(Data, 'double'); % Convert only if proper byte length
                 else, warning(warning_msg(), 'double'); end
-            case 3, % Float (4 bytes)
+            case 3, %#ok % Float (4 bytes)
                 if mod(Length, 4) == 0, Data = typecast(Data, 'single'); % Convert only if proper byte length
                 else, warning(warning_msg(), 'single'); end
-            case 4, % Int64 (8 bytes)
+            case 4, %#ok % Int64 (8 bytes)
                 if mod(Length, 8) == 0, Data = typecast(Data, 'int64'); % Convert only if proper byte length
                 else, warning(warning_msg(), 'int64'); end
-            case 5, % Int32 (4 bytes)
+            case 5, %#ok % Int32 (4 bytes)
                 if mod(Length, 4) == 0, Data = typecast(Data, 'int32'); % Convert only if proper byte length
                 else, warning(warning_msg(), 'int32'); end
-            case 6, % Uint32 (4 bytes) % SPECIAL CASE: Uint16 for 'Dates'-tag (2 bytes)
-                if mod(Length, 4) == 0, Data = typecast(Data, 'uint32'); % Convert only if proper byte length
+            case 6, %#ok % Uint32 (4 bytes) % SPECIAL CASE: Uint16 for 'Dates'-tag (2 bytes)
+                if mod(Length, 4) == 0, Data = typecast(Data, 'uint32'); %#ok % Convert only if proper byte length
                 elseif mod(Length, 2) == 0, Data = typecast(Data, 'uint16'); % SPECIAL CASE: for 'Dates'-tag
                 else, warning(warning_msg(), 'uint32 or uint16'); end
-            case 7, % Uint8 (1 byte)
+            case 7, %#ok % Uint8 (1 byte)
                 Data = uint8(Data);
-            case 8, % Bool (1 byte)
+            case 8, %#ok % Bool (1 byte)
                 Data = cast(Data, 'logical'); % Cast instead of logical for compability!
-            case 9, % NameLength (4 bytes) + String (NameLength # of bytes)
+            case 9, %#ok % NameLength (4 bytes) + String (NameLength # of bytes)
                 strs = {''};
                 N_strs = 0;
                 subind_begin = uint32(1);
-                while subind_begin < numel(Data),
+                while subind_begin < numel(Data), %#ok
                     N_strs = N_strs + 1; % Set number of strings
                     subind_end = subind_begin-1 + 4;
                     str_len = typecast(Data(subind_begin:subind_end), 'uint32');
@@ -111,8 +111,8 @@ function bread_Data(obj, buffer, N_bytes_max, swapEndianess),
                     subind_begin = subind_end + 1; % Set next begin index
                 end
                 if numel(strs) == 1, Data = strs{1};
-                else, Data = strs; end;
-            otherwise,
+                else, Data = strs; end
+            otherwise, %#ok
                 warning('Tag(%s): Unsupported Type (%d)!', obj.FullName, obj.Type);
         end
     end
@@ -121,7 +121,7 @@ function bread_Data(obj, buffer, N_bytes_max, swapEndianess),
     obj.ChildrenNow = obj([]); % Faster than WITio.obj.wit.empty
     
     % Implemented an inner function to avoid EXPENSIVE calls to sprintf.
-    function str = warning_msg(),
+    function str = warning_msg(), %#ok
         str = sprintf('Tag(%s): Data inconsistent with Type (%%s)!', obj.FullName); % Warning message
     end
 end

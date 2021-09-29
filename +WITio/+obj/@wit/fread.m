@@ -3,7 +3,7 @@
 % All rights reserved.
 
 % USE THIS ONLY IF LOW-ON MEMORY OR WHEN READING HUGE FILES!
-function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress_bar),
+function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj, error_criteria_for_obj, fun_progress_bar), %#ok
     % Reads a WIT-formatted tag info from the given file stream.
     % Reading can be limited by N_bytes_max (if low on memory).
     if nargin < 3, N_bytes_max = Inf; end % Default: no read limit!
@@ -13,7 +13,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
     if nargin < 7, fun_progress_bar = @(x) WITio.obj.wit.progress_bar(x, '-OnlyIncreasing'); end % By default: verbose progress bar in Command Window
     
     % Test the file stream
-    if isempty(fid) || fid == -1,
+    if isempty(fid) || fid == -1, %#ok
         delete(obj); % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
     end
     
@@ -22,7 +22,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
     else, endianess = 'b'; end
     
     verbose = isa(fun_progress_bar, 'function_handle');
-    if verbose,
+    if verbose, %#ok
         % Get file size
         fseek(fid, 0, 'eof'); % Go to end of file
         FileSize = ftell(fid); % Get file size
@@ -45,27 +45,27 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
     ocu_restore_warning = onCleanup(@() warning(old_state)); % Restore warning state on exit
     
     % Read Magic (8 bytes) (only if Root)
-    if isempty(obj.Parent),
+    if isempty(obj.ParentNow), %#ok
         % Abort, if file stream has reached the end
-        if feof(fid),
+        if feof(fid), %#ok
             delete(obj); % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
         end
         obj.Magic = reshape(fread(fid, 8, 'uint8=>char', 0, endianess), 1, []); % Force ascii-conversion
     end
     
     % Read wit Tree objects
-    if ~fread_helper(obj),
+    if ~fread_helper(obj), %#ok
         delete(obj); % Delete obj if not valid (and avoid Octave-incompatible isvalid-function)
     end
     
-    function isDone = fread_helper(obj),
+    function isDone = fread_helper(obj), %#ok
         isDone = false; % Needed to properly handle failure cases
         
         % Do not allow obj to notify its ancestors on modifications
         obj.ModifiedAncestors = false;
         
         % Read NameLength (4 bytes)
-        if feof(fid), % Abort, if file stream has reached the end
+        if feof(fid), %#ok % Abort, if file stream has reached the end
             obj.ParentNow = WITio.obj.wit.empty; % Do not touch obj.Parent.Data on deletion!
             return;
         end
@@ -73,7 +73,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         obj.NameLength = obj_NameLength;
         
         % Read Name (NameLength # of bytes)
-        if feof(fid), % Abort, if file stream has reached the end
+        if feof(fid), %#ok % Abort, if file stream has reached the end
             obj.ParentNow = WITio.obj.wit.empty; % Do not touch obj.Parent.Data on deletion!
             return;
         end
@@ -81,7 +81,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         obj.NameNow = obj_NameNow;
         
         % Read Type (4 bytes)
-        if feof(fid), % Abort, if file stream has reached the end
+        if feof(fid), %#ok % Abort, if file stream has reached the end
             obj.ParentNow = WITio.obj.wit.empty; % Do not touch obj.Parent.Data on deletion!
             return;
         end
@@ -89,7 +89,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         obj.Type = obj_Type;
         
         % Read Start (8 bytes)
-        if feof(fid), % Abort, if file stream has reached the end
+        if feof(fid), %#ok % Abort, if file stream has reached the end
             obj.ParentNow = WITio.obj.wit.empty; % Do not touch obj.Parent.Data on deletion!
             return;
         end
@@ -97,7 +97,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         obj.Start = obj_Start;
         
         % Read End (8 bytes)
-        if feof(fid), % Abort, if file stream has reached the end
+        if feof(fid), %#ok % Abort, if file stream has reached the end
             obj.ParentNow = WITio.obj.wit.empty; % Do not touch obj.Parent.Data on deletion!
             return;
         end
@@ -105,14 +105,14 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         obj.End = obj_End;
         
         doVerbose = false;
-        if verbose,
-            if obj_Start >= IntervalNextLimit,
+        if verbose, %#ok
+            if obj_Start >= IntervalNextLimit, %#ok
                 IntervalNextLimit = obj_Start + IntervalBlockSize;
                 doVerbose = true;
             end
         end
         
-        if doVerbose,
+        if doVerbose, %#ok
             fun_now_text(obj.FullName);
         end
         
@@ -121,20 +121,20 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         
         % SPECIAL CASE: Skip if obj meets the given skip Data criteria.
         skip_Data = false;
-        if isa(skip_Data_criteria_for_obj, 'function_handle'),
+        if isa(skip_Data_criteria_for_obj, 'function_handle'), %#ok
             skip_Data = skip_Data_criteria_for_obj(obj);
         end
         
         % Data reading
-        if skip_Data, % Handle Data skipping
+        if skip_Data, %#ok % Handle Data skipping
             fseek(fid, double(obj_End), 'bof'); % Double OFFSET for compability!
-        elseif obj_Type == 0, % Read the children
+        elseif obj_Type == 0, %#ok % Read the children
             children = WITio.obj.wit.empty;
-            while(ftell(fid) < obj_End), % Continue reading until DataEnd
+            while(ftell(fid) < obj_End), %#ok % Continue reading until DataEnd
                 child = WITio.obj.wit(); % Many times faster than WITio.obj.wit(obj) due to redundant code
                 child.ParentNow = obj; % Adopt the new child being created
-                if fread_helper(child), % Read the new child contents (or destroy it on failure)
-                    children(end+1) = child; % Add child if valid (and avoid Octave-incompatible isvalid-function)
+                if fread_helper(child), %#ok % Read the new child contents (or destroy it on failure)
+                    children(end+1) = child; %#ok % Add child if valid (and avoid Octave-incompatible isvalid-function)
                     child.OrdinalNumber = numel(children);
                 else, delete(child); end % Delete child if not valid (and avoid Octave-incompatible isvalid-function)
             end
@@ -142,7 +142,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
             obj.ChildrenNow = children; % Adopt the new child being created
         else, obj.fread_Data(fid, N_bytes_max, swapEndianess); end % Otherwise, read the Data
         
-        if verbose,
+        if verbose, %#ok
             fun_now(obj_End);
         end
         
@@ -150,7 +150,7 @@ function fread(obj, fid, N_bytes_max, swapEndianess, skip_Data_criteria_for_obj,
         obj.ModifiedAncestors = true;
         
         % SPECIAL CASE: Abort if obj meets the given error criteria.
-        if isa(error_criteria_for_obj, 'function_handle'),
+        if isa(error_criteria_for_obj, 'function_handle'), %#ok
             temp = obj.ParentNow;
             obj.ParentNow = WITio.obj.wit.empty; % Do not touch obj.Parent.Data on deletion!
             error_criteria_for_obj(obj); % EXPECTED TO ERROR if its criteria is met
