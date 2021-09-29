@@ -27,7 +27,7 @@ and this project adheres to [Explicit Versioning][ExpVer,1], summarized by [![**
 
 
 
-## [2.0.1] - 2021-09-27
+## [2.0.1] - 2021-09-29
 
 ### Added
 
