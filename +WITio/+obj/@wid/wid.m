@@ -206,12 +206,12 @@ classdef wid < handle, % Since R2008a
         % File (READ-ONLY, DEPENDENT)
         function File = get.File(obj),
             File = '';
-            if ~isempty(obj.Tag) && ~isempty(obj.Tag.Data),
-                % This can differ from obj.Tag.Root.File, when wid-object
-                % content has been merged from another project file to this
-                % project file using WITio.obj.wip.append-function, which uses copy-
-                % function of wit-class.
-                File = obj.Tag.Data.File;
+            if ~isempty(obj.Tag) && ~isempty(obj.Tag.Root),
+                % This will always show obj.Tag.Root.File, even though its
+                % obj.Tag.Data.File may differ due to obj-copying or low-
+                % memory-mode. The root's File is needed to show correct
+                % file ownership, e.g., in the Project Manager.
+                File = obj.Tag.Root.File;
             end
         end
         
