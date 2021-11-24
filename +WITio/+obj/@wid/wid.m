@@ -451,6 +451,7 @@ classdef wid < handle, % Since R2008a
         
         % Spatial filter object Data
         [obj, Average] = spatial_average(obj);
+        [obj, Fun] = spatial_fun(obj, fun, str_fun, varargin);
         
         % Spectral stitching
         [new_obj, Graph, Data, W, D] = spectral_stitch(obj, varargin); % Add '-debug' as input to see debug plots
