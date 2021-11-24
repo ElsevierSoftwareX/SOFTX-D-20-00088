@@ -150,7 +150,7 @@ function O_wid = manager(obj, varargin),
     files = cell(size(list));
     prev = ''; % Keep track of the previous filename
     for ii = 1:numel(O_wid), % Add only the first filename and omit immediately subsequent duplicates
-        this = O_wid(ii).Tag.Data.File;
+        this = O_wid(ii).Tag.Root.File;
         if isempty(prev) || ~strcmp(this, prev);
             files{ii} = this;
             prev = this;
